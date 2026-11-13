@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Neuraxial and anticoagulation</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  /* desk card 17×11: clinical text >= 10 pt printed (--fb) */
+  .sheet { --accent: var(--wf); --fb: calc(10pt / var(--k)); --gap: 0.13in; padding: calc(0.32in / var(--k)) calc(0.55in / var(--k)) calc(0.25in / var(--k)); }
+  .masthead { gap: 0.3in; padding-bottom: 0.06in; }
+  .masthead h1 { font-size: calc(31pt / var(--k)); padding-bottom: 0; }
+  .masthead .kicker { margin-bottom: 0.04in; }
+  .masthead .sub { margin-top: 22pt; padding-bottom: 0.02in; max-width: 8.4in; }
+  .panel { gap: 0.06in; padding-top: 0.07in; }
+  .panel > *, .col > * { flex-shrink: 0; }
+  .ph.inl { grid-template-columns: auto auto minmax(0, 1fr); }
+  .ph.inl .num { grid-row: auto; }
+  .ph.inl .src { grid-column: 3; }
+  .masthead .sub .own { display: inline-flex; font-size: calc(11pt / var(--k)); line-height: 1.2; }
+  /* fetal-heart-rate pointers to 28/29, under the title (the title block has height to spare beside the subtitle) */
+  .masthead .fhr { font: 600 calc(10pt / var(--k))/1.1 "Inter"; color: var(--ink-2); margin-top: 0.02in; white-space: nowrap; }
+  table.t, .small, .xs, .chk, .plt, .callout-stop, .box, .own, .qrh, .clk { font-size: var(--fb); line-height: 1.21; }
+  table.t td { padding: 2.5pt 5pt; }
+  table.t th { padding-bottom: 3pt; }
+  table.t td.k { white-space: normal; }
+  .box { padding: 0.05in 0.09in 0.06in; }
+  .box > h4 { font-size: calc(10.5pt / var(--k)); margin-bottom: 2pt; }
+  .box.delivery-plan { padding-block: 0.04in; }
+  .delivery-plan p { margin: 0; }
+  .delivery-plan p + p { margin-top: 2pt; padding-top: 2pt; border-top: 0.75pt solid var(--rule); }
+  .box.plain { background: var(--paper); border: 0.75pt solid var(--rule); border-top: 2pt solid var(--wf); }
+  .foot { padding-top: 0.06in; }
+  .op { font-weight: 800; letter-spacing: .02em; text-transform: uppercase; color: var(--ink); }
+  /* restrained high-alert marker for anticoagulant dosing */
+  .tag.med-alert { border: 1pt solid var(--ink); background: var(--t-ink); color: var(--ink); font-size: var(--type-min); vertical-align: .2em; margin-left: 6pt; }
+
+  /* restart-clock key: two independent clocks, each from its own event, merging at one gate */
+  .clk { display: grid; grid-template-columns: auto minmax(0.3in, 0.25fr) auto calc(14pt / var(--k)) minmax(0, 3fr); grid-template-rows: auto auto; align-items: center; row-gap: calc(3pt / var(--k)); padding: calc(3pt / var(--k)) 0 calc(3pt / var(--k)); border-bottom: 0.75pt solid var(--rule); }
+  .clk .ev { display: flex; align-items: center; gap: calc(5pt / var(--k)); font-weight: 700; white-space: nowrap; padding-right: calc(5pt / var(--k)); }
+  .clk .ev i { flex: none; width: calc(9pt / var(--k)); height: calc(9pt / var(--k)); border-radius: 50%; border: 1.6pt solid var(--ink); background: var(--paper); }
+  .clk .clock-line { position: relative; height: 0; border-top: 1.6pt solid var(--ink-2); }
+  .clk .clock-line::after { content: ""; position: absolute; right: -1pt; top: calc(-4.6pt); border-top: 3.6pt solid transparent; border-bottom: 3.6pt solid transparent; border-left: 7pt solid var(--ink-2); }
+  .clk .tk { white-space: nowrap; padding: calc(1pt / var(--k)) calc(6pt / var(--k)); margin-left: calc(4pt / var(--k)); border: 1pt solid var(--ink-2); background: var(--t-go); font-weight: 700; }
+  .clk .tk b { font-weight: 800; }
+  .clk .br { grid-column: 4; grid-row: 1 / span 2; align-self: stretch; position: relative; margin: calc(9pt / var(--k)) 0; border: 1.6pt solid var(--ink-2); border-left: 0; }
+  .clk .br::after { content: ""; position: absolute; left: 100%; top: 50%; width: calc(6pt / var(--k)); border-top: 1.6pt solid var(--ink-2); }
+  .clk .gate { grid-column: 5; grid-row: 1 / span 2; margin-left: calc(6pt / var(--k)); padding: calc(4pt / var(--k)) calc(8pt / var(--k)); border: 1.4pt solid var(--ink); background: var(--t-go); }
+  .clk .gate b { font-weight: 800; }
+  .clk .gate .pre { display: block; margin-top: 2pt; padding-top: 2pt; border-top: 0.75pt solid var(--ink-3); font-weight: 700; }
+
+  /* timing table */
+  .scope { margin: 0; font-size: var(--fb); line-height: 1.2; color: var(--ink); font-weight: 600; border-left: 2pt solid var(--wf); padding-left: calc(6pt / var(--k)); }
+  .scope b { font-weight: 800; }
+  .sheet table.tm th { font-size: calc(10pt / var(--k)); line-height: 1.12; text-transform: none; letter-spacing: 0; text-wrap: wrap; vertical-align: bottom; }
+  table.tm th.c, table.tm td.c { text-align: center; }
+  table.tm td.c { font-weight: 800; font-size: calc(11pt / var(--k)); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  table.tm td.c small { display: block; font: 500 var(--fb)/1.16 "Inter"; color: var(--ink-2); white-space: normal; }
+  table.tm { table-layout: fixed; }
+  table.tm td.k .regimen { font-weight: 800; color: var(--ink); line-height: 1.16; }
+  table.tm td.k .agent { display: block; }
+  table.tm td.k .agent + .agent { margin-top: 2pt; }
+  table.tm td.k .agent b { font-weight: 800; }
+  table.tm td.k small { font-weight: 600; font-size: var(--fb); color: var(--ink-3); line-height: 1.16; }
+  table.tm td.k small::before { content: "· "; }
+  table.tm td.k .agent + small { display: block; }
+  table.tm td.k .agent + small::before { content: ""; }
+  table.tm td.cat { font-size: var(--fb); line-height: 1.16; }
+  table.tm td.cat.mid { vertical-align: middle; }
+  /* one rule shared by several regimen rows: top-aligned, with a bracket spanning its rows */
+  table.tm td.cat.shared { position: relative; vertical-align: top; padding-left: 12pt; }
+  table.tm td.cat.shared::before { content: ""; position: absolute; left: 3pt; top: 4pt; bottom: 4pt; width: 4pt; border-left: 1.5pt solid var(--wf); border-block: 1.5pt solid var(--wf); }
+  table.tm tr.grp td { background: color-mix(in srgb, var(--c) 12%, white); font: 800 calc(10pt / var(--k))/1.1 "Inter"; letter-spacing: .03em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); padding: 2.5pt 5pt 1.5pt; }
+  table.tm tr.grp .grp-note { float: right; text-transform: none; letter-spacing: 0; color: var(--ink); font-weight: 700; font-size: var(--fb); line-height: 1.1; background: var(--paper); border: 0; border-left: 2pt solid var(--wf); padding: 0 5pt; margin: -1pt 0 0; }
+  table.tm td.c.hold { background: color-mix(in srgb, var(--wf) 12%, white); border-left: 1pt solid var(--ink-2); border-right: 1pt solid var(--ink-2); }
+  table.tm td.c.restart { background: var(--t-go); }
+  table.tm td.c.r2 { white-space: normal; }
+  table.tm td.c.qual-answer { font-size: var(--fb); font-weight: 700; padding-inline: 2pt; white-space: normal; }
+  table.tm td.c small b.ink { color: var(--ink); font-weight: 700; }
+  /* header: group labels above the hold column and the paired restart clocks */
+  table.tm th.gh { text-align: center; font-weight: 800; color: var(--ink); padding: 2pt 4pt 2pt; border-bottom: 0.75pt solid var(--ink-2); }
+  table.tm th.gh.hold { border-left: 1pt solid var(--ink-2); border-right: 1pt solid var(--ink-2); border-top: 1pt solid var(--ink-2); }
+  table.tm th.gh.rs { border: 1pt solid var(--ink-2); border-bottom: 0.75pt solid var(--ink-2); background: var(--t-go); }
+  table.tm th.hold-h { border-left: 1pt solid var(--ink-2); border-right: 1pt solid var(--ink-2); border-top: 1pt solid var(--ink-2); padding-top: 2pt; }
+  table.tm th.hold-h b { font-weight: 800; color: var(--ink); }
+  table.tm th.rsh { background: var(--t-go); border-top: 1pt solid var(--ink-2); color: var(--ink); padding-top: 2pt; }
+  table.tm th.r1, table.tm th.r2 { padding-inline: 2pt; white-space: nowrap; }
+  table.tm th.r1 { border-left: 1pt solid var(--ink-2); } table.tm th.r2 { border-right: 1pt solid var(--ink-2); }
+  table.tm td.r1 { border-left: 1pt solid var(--ink-2); }
+  table.tm td.r2 { border-right: 1pt solid var(--ink-2); border-left: 0.75pt dashed var(--ink-3); }
+  table.tm td.restart-qual { background: var(--t-ink); font-size: var(--fb); line-height: 1.16; font-weight: 700; text-align: center; border-left: 1pt solid var(--ink-2); border-right: 1pt solid var(--ink-2); padding: 1.5pt 4pt 2.5pt; }
+  table.tm tr:has(+ tr > td.restart-qual) > td.restart { border-bottom: none; }
+  .tm-notes { margin: 0; font-size: var(--fb); line-height: 1.2; color: var(--ink-2); }
+  .tm-notes b { color: var(--ink); }
+  .nw { white-space: nowrap; }
+
+  /* platelet ladder: full range endpoints; actions bold so meaning survives without colour */
+  .plt-any { margin: 0; padding: 3pt 0 3pt 7pt; border-left: 3pt solid var(--ink); font-weight: 600; }
+  .plt-any b { font-weight: 800; }
+  .plt { display: grid; grid-template-columns: calc(1.42in / var(--k)) minmax(0, 1fr); gap: 0; }
+  .plt > .v { font: 800 calc(11.5pt / var(--k))/1.1 "Inter"; padding: 5pt 6pt; color: #fff; display: flex; align-items: center; white-space: nowrap; border-bottom: 0.75pt solid var(--paper); }
+  .plt > .v { padding-block: 4pt; justify-content: flex-end; font-variant-numeric: tabular-nums; }
+  .plt > .d { padding: 4pt 8pt; border-bottom: 0.75pt solid var(--rule); }
+  .plt .plt-action { color: var(--ink); font-weight: 800; }
+  .plt > .v.g { background: var(--go); } .plt > .v.a { background: var(--warn); color: var(--ink); } .plt > .v.r { background: var(--hem); }
+  .plt > .d.g { background: var(--t-go); } .plt > .d.a { background: var(--t-warn); } .plt > .d.r { background: color-mix(in srgb, var(--hem) 12%, white); }
+
+  .own { display: flex; gap: 0.1in; align-items: center; background: var(--paper); color: var(--ink); border: 0.75pt solid var(--rule); border-left: 4pt solid var(--wf); padding: 0.06in 0.1in; font-weight: 700; }
+  .own .ico { flex: none; font: 800 calc(10pt / var(--k))/1 "Inter"; border: 1.5pt solid var(--wf); color: var(--wf); padding: 3pt 5pt; letter-spacing: .04em; }
+  .callout-stop { font-weight: 500; }
+  .callout-stop b { font-weight: 800; }
+  .ud { font-size: var(--fb); line-height: 1.21; margin: 0; }
+  .ud dt { font-weight: 800; padding-top: 2pt; border-top: 0.75pt solid var(--rule); }
+  .ud dd { margin: 1pt 0 2pt; padding-left: 7pt; border-left: 3pt solid var(--ink-3); }
+  .ud dd.warn { border-left-color: var(--warn); }
+  .chk { display: grid; grid-template-columns: auto 1fr; gap: 1.5pt 9pt; align-items: baseline; }
+  .chk dt { font-weight: 800; white-space: nowrap; color: var(--c); }
+  .chk dd { margin: 0; }
+  .chk dt.now { color: var(--stop); }
+
+  /* hematoma emergency face: trigger → call → image → hand off → after */
+  .ph .deadline { justify-self: start; }
+  .qrh { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 9pt; align-items: baseline; }
+  .qrh .mode { grid-column: 1 / -1; font: 800 calc(10pt / var(--k))/1.1 "Inter"; letter-spacing: .07em; text-transform: uppercase; color: var(--stop); margin: 1pt 0 1pt; }
+  .qrh dt { font-weight: 800; white-space: nowrap; padding: 3pt 0; border-top: 0.75pt solid var(--rule); }
+  .qrh dd { margin: 0; padding: 3pt 0; border-top: 0.75pt solid var(--rule); }
+  .qrh dd b { font-weight: 800; }
+  .qrh .lf { display: block; margin-top: 1pt; color: var(--wf); font-weight: 600; }
+  .qrh .after { grid-column: 1 / -1; margin-top: 2pt; padding-top: 2pt; border-top: 1.4pt solid var(--ink-3); color: var(--ink-2); }
+  .qrh .after b { color: var(--ink); }
+  .qrh .tag.local { font-size: var(--type-min); padding: 1pt 4pt; margin-right: 3pt; vertical-align: .05em; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="19-med-card.html" title="Medication companion">‹ 19</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html" selected="">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="21-before-discharge.html" title="Before discharge">21 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/20-neuraxial.pdf">PDF</a></nav>
+<div class="sheet landscape-17x11 c-wf" style="--k:0.75">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>L&amp;D&nbsp;· OR&nbsp;· postpartum&nbsp;· with anesthesia</div>
+      <h1><span class="sid">20</span>Neuraxial &amp; anticoagulation</h1>
+      <div class="fhr">FHR fall after placement or bolus <a href="29-fm-response.html#p-B" class="xlink"><span class="xref c-fet">29&nbsp;· B</span></a>&nbsp;· uncertain FHR source <a href="28-fm-signal.html#p-A" class="xlink"><span class="xref c-fet">28&nbsp;· A</span></a></div>
+    </div>
+    <div class="sub"><span class="own"><span class="ico">ANES</span><span>Anesthesia makes the final neuraxial decision. Primary L&amp;D team: confirm drug, dose, last-dose time and platelets; enter the hold order.</span></span></div>
+    <nav class="setnav rel"><em>See also</em><a href="16-pe-dvt.html" class="xlink"><span><b>16</b>PE / DVT</span></a><a href="14-pp-headache.html" class="xlink"><span><b>14</b>PP headache</span></a><a href="27-ob-consult.html" class="xlink"><span><b>27</b>OB/GYN consult</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-20.svg)"></div>
+
+  <div class="cols" style="grid-template-columns: 0.82fr 2fr 0.98fr;">
+    <!-- COL 1 -->
+    <div class="col">
+      <section class="panel c-wf" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>Before the needle</h2><span class="src">SOAP 2018&nbsp;· ASRA 2025</span></div>
+        <dl class="chk c-wf">
+          <dt>Drug</dt><dd>Agent, dose, <b>time of last dose</b> from the MAR</dd>
+          <dt>Labs</dt><dd>Platelets (trend) <a href="20-neuraxial.html#p-03" class="xlink"><span class="xref c-wf">20&nbsp;· 03</span></a>; UFH &gt; 4&nbsp;d → platelet count (HIT); Cr</dd>
+          <dt>Other</dt><dd>Antiplatelet + anticoagulant together, DOAC, warfarin, fondaparinux → anesthesia</dd>
+          <dt>Bleeding</dt><dd>History, DIC signs, ongoing PPH</dd>
+          <dt>Removal</dt><dd><b>Pulling the catheter = a neuraxial procedure.</b> Same holds, same platelet rules.</dd>
+          <dt>Order</dt><dd>Write the hold and the earliest restart time.</dd>
+        </dl>
+      </section>
+
+      <section class="panel c-wf" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Platelets</h2><span class="src">SOAP Thrombocytopenia Consensus 2021</span></div>
+        <p class="plt-any small"><b>At any platelet count:</b> bleeding history or DIC → avoid neuraxial procedures or consult hematology.</p>
+        <div class="plt">
+          <div class="v g">≥ 70,000</div><div class="d g">Low risk&nbsp;— <b class="plt-action">reasonable to proceed</b> <span class="muted">(GT, ITP, HDP; no bleeding, no DIC)</span></div>
+          <div class="v a">50,000–70,000</div><div class="d a">Competing risks may justify it&nbsp;— <b class="plt-action">anesthesia decides</b></div>
+          <div class="v r">&lt; 50,000</div><div class="d r">Likely ↑ hematoma risk&nbsp;— <b class="plt-action">reasonable to avoid</b></div>
+        </div>
+        <ul class="ls small tight">
+          <li><b>Thrombocytopenia of unknown cause</b> and platelets &lt; 70,000 → hematology workup first.</li>
+          <li><b>HELLP:</b> platelet count within 6&nbsp;h of the procedure or removal.</li>
+        </ul>
+      </section>
+
+      <div class="box plain small grow delivery-plan">
+        <h4>Before delivery&nbsp;· plan at 36&nbsp;wk</h4>
+        <p>OB → anesthesia handoff for every patient on UFH or LMWH. On <b>prophylactic</b> LMWH: consider switching to <span class="dose">UFH 5,000&nbsp;units SUBQ BID</span> at 36&nbsp;wk, sooner if early or urgent delivery likely. Therapeutic anticoagulation: individualized delivery plan that keeps treatment intensity.</p>
+        <p>Teach: <b>skip the dose and call</b> with contractions, ROM or bleeding.</p>
+      </div>
+    </div>
+
+    <!-- COL 2 -->
+    <div class="col">
+      <section class="panel c-wf grow" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>Timing: hold&nbsp;· catheter&nbsp;· restart <span class="tag med-alert">High alert</span></h2><span class="src">SOAP 2018 Table 3&nbsp;· ASRA 2025&nbsp;· Lovenox label 2025&nbsp;· restart clocks match <a href="06-postpartum.html#p-E" class="xlink"><span class="xref c-wf">6&nbsp;· E</span></a></span></div>
+        <p class="scope"><b>Applies to:</b> subcutaneous dosing unless noted; normal renal function, &gt; 40&nbsp;kg. CrCl &lt; 30: use the enoxaparin row below.</p>
+        <div class="clk" aria-label="Restart clocks">
+          <span class="ev"><i></i>Neuraxial puncture</span><span class="clock-line"></span><span class="tk">① <b>After puncture</b></span>
+          <span class="br"></span>
+          <div class="gate"><b>Restart only when BOTH clocks have run</b>, at the later time&nbsp;— and only with hemostasis and no PPH<span class="pre">Catheter still in? Follow the row’s “Indwelling catheter” rule.</span></div>
+          <span class="ev"><i></i>Catheter removal</span><span class="clock-line"></span><span class="tk">② <b>After removal</b></span>
+        </div>
+        <table class="t tm">
+          <colgroup><col style="width:29%"><col style="width:23%"><col style="width:26%"><col style="width:11%"><col style="width:11%"></colgroup>
+          <thead>
+            <tr><th>Drug&nbsp;· regimen</th><th class="c hold-h"><b>Hold before:</b> last dose → puncture or catheter removal</th><th>Indwelling catheter</th><th class="c r1 rsh">① After<br>puncture</th><th class="c r2 rsh">② After<br>removal</th></tr>
+          </thead>
+          <tbody>
+            <tr class="grp"><td colspan="5">Unfractionated heparin (UFH)</td></tr>
+            <tr><td class="k"><span class="regimen">5,000&nbsp;units BID or TID</span><small>low&nbsp;dose</small></td><td class="c hold">≥ 4–6&nbsp;h<small><span class="op">or</span> normal aPTT / anti-Xa</small></td><td class="cat">OK (5,000&nbsp;units BID); remove ≥ 4–6&nbsp;h after a dose</td><td class="c restart r1">≥ 1&nbsp;h</td><td class="c restart r2">≥ 1&nbsp;h</td></tr>
+            <tr><td class="k"><span class="regimen">7,500 or 10,000&nbsp;units BID; ≤ 20,000&nbsp;units/day</span><small>intermediate</small></td><td class="c hold">≥ 12&nbsp;h<small><span class="op">and</span> normal coagulation</small></td><td class="cat shared" rowspan="2">Safety not established&nbsp;— anesthesia decides</td><td class="c restart r1">≥ 1&nbsp;h</td><td class="c restart r2">≥ 1&nbsp;h</td></tr>
+            <tr><td class="k"><span class="regimen">&gt; 10,000&nbsp;units/dose or &gt; 20,000&nbsp;units/day</span><small>high</small></td><td class="c hold">≥ 24&nbsp;h<small><span class="op">and</span> normal aPTT <span class="op">or</span> undetectable anti-Xa</small></td><td class="c restart r1">≥ 1&nbsp;h</td><td class="c restart r2">≥ 1&nbsp;h</td></tr>
+            <tr><td class="k"><span class="regimen">IV infusion</span></td><td class="c hold">Stop 4–6&nbsp;h<small><span class="op">and</span> normal aPTT</small></td><td class="cat">Not with the infusion running</td><td class="c restart r1">≥ 1&nbsp;h<small>no PPH</small></td><td class="c r2 qual-answer">Anesthesia</td></tr>
+            <tr class="grp"><td colspan="5">Enoxaparin / dalteparin&nbsp;· LMWH <span class="grp-note">Bloody or traumatic tap → ASRA: delay LMWH 24&nbsp;h</span></td></tr>
+            <tr><td class="k"><span class="regimen">Enoxaparin ≤ 40&nbsp;mg daily&nbsp;· dalteparin 5,000&nbsp;units daily</span><small>low&nbsp;dose&nbsp;· daily</small></td><td class="c hold">≥ 12&nbsp;h</td><td class="cat"><b>May stay</b>&nbsp;— first LMWH dose ≥ 12&nbsp;h after placement; remove ≥ 12&nbsp;h after a dose</td><td class="c restart r1">≥ 12&nbsp;h</td><td class="c restart r2">≥ 4&nbsp;h</td></tr>
+            <tr><td class="k"><span class="regimen">Enoxaparin 30&nbsp;mg q12h</span><small>low&nbsp;dose&nbsp;· q12h</small></td><td class="c hold">≥ 12&nbsp;h</td><td class="cat shared" rowspan="4"><b>Remove the catheter before the first LMWH dose after neuraxial placement</b></td><td class="c restart r1">≥ 12&nbsp;h</td><td class="c restart r2">≥ 4&nbsp;h</td></tr>
+            <tr><td class="k"><span class="regimen">Enoxaparin &gt; 40&nbsp;mg and &lt; 1.5&nbsp;mg/kg daily, or &gt; 30&nbsp;mg and &lt; 1&nbsp;mg/kg q12h</span><small>intermediate</small></td><td class="c hold">12–24&nbsp;h<small>no data for one interval&nbsp;— anesthesia</small></td><td class="c restart r1">≥ 24&nbsp;h</td><td class="c restart r2">≥ 4&nbsp;h</td></tr>
+            <tr><td class="k" rowspan="2"><span class="regimen agent"><b>Enoxaparin</b> 1&nbsp;mg/kg q12h or 1.5&nbsp;mg/kg daily</span><span class="regimen agent"><b>Dalteparin</b> 120&nbsp;units/kg q12h or 200&nbsp;units/kg daily</span><small>high (therapeutic)</small></td><td class="c hold" rowspan="2">≥ 24&nbsp;h<small>after the last dose; on q12h, skip the 2nd daily dose</small></td><td class="c restart r1">≥ 24&nbsp;h</td><td class="c restart r2">≥ 4&nbsp;h</td></tr>
+            <tr><td class="restart-qual" colspan="2">Also ≥ 24&nbsp;h after surgery <span class="nw">(48–72&nbsp;h</span> if high bleeding risk)</td></tr>
+            <tr><td class="k"><span class="regimen">Enoxaparin, CrCl &lt; 30</span></td><td class="c hold">Double<small><b class="ink">the hold interval</b></small></td><td class="cat" colspan="3"><b>Hold ≥ 24&nbsp;h after 30&nbsp;mg daily&nbsp;· ≥ 48&nbsp;h after 1&nbsp;mg/kg/day.</b> Label: elimination prolonged; anti-Xa can help&nbsp;— ask anesthesia and pharmacy.</td></tr>
+            <tr class="grp"><td colspan="5">Antiplatelet drugs</td></tr>
+            <tr><td class="k"><span class="regimen">Low-dose aspirin&nbsp;· NSAIDs alone</span></td><td class="c">No hold</td><td class="cat" colspan="3">On thromboprophylaxis with a catheter in: consider holding NSAIDs and aspirin, <b>not acetaminophen</b>, until it is out. Aspirin + low platelets: no evidence → anesthesia.</td></tr>
+          </tbody>
+        </table>
+        <p class="tm-notes"><b>Bridge:</b> SOAP lets low-dose UFH bridge when LMWH must wait (restart 1&nbsp;h vs 4&nbsp;h). <b>Anti-Xa (ASRA):</b> inside the hold window, ≤ 0.1 IU/mL may support proceeding. <b>SOAP vs ASRA:</b> ASRA restarts low-dose UFH right after removal; this card: SOAP’s ≥ 1&nbsp;h.</p>
+      </section>
+    </div>
+
+    <!-- COL 3 -->
+    <div class="col">
+      <section class="panel c-stop" id="p-04">
+        <div class="ph"><span class="num">04</span><h2>Spinal-epidural hematoma</h2><span class="src">ASA 2023&nbsp;· SOAP 2018&nbsp;· Lovenox boxed warning</span></div>
+        <div class="callout-stop"><div class="ico">!</div><div><b>New numbness or weakness, back pain, bowel or bladder dysfunction</b>&nbsp;— especially after the block had worn off.</div></div>
+        <dl class="qrh">
+          <div class="mode">Now&nbsp;· in parallel</div>
+          <dt>Call</dt><dd><b>Anesthesia and neurosurgery now</b><span class="lf" data-required-local=""><span class="tag local">Local</span>pager <span class="lfv" data-local="anesthesia_contact">____</span>&nbsp;· neurosurgery <span class="lfv" data-local="neurosurgery_contact">____</span></span></dd>
+          <dt>Image</dt><dd><b>Urgent MRI</b>&nbsp;— don’t delay imaging; CT first if MRI not immediate<span class="lf" data-required-local=""><span class="tag local">Local</span>MRI pathway <span class="lfv" data-local="spinal_hematoma_mri_pathway">____</span></span></dd>
+          <dt>Hand off</dt><dd>Symptom onset time ____&nbsp;· decompression ideally within <b>8–12&nbsp;h</b> of onset. Back pain may be transient; weakness can progress.</dd>
+          <dt>Consider</dt><dd>Fever + back pain + deficit → epidural abscess.</dd>
+          <div class="after"><b>After response:</b> report cases&nbsp;— quality, ASA AIRS, MedWatch. <span class="tag local">Local</span>Neuraxial-anticoagulation protocol <span class="lfv" data-local="neuraxial_anticoag_protocol">____</span></div>
+        </dl>
+      </section>
+
+      <section class="panel c-wf" id="p-05">
+        <div class="ph"><span class="num">05</span><h2>Urgent delivery, hold not met</h2><span class="src">SOAP 2018 Figures 3–4&nbsp;· ASRA 2025</span></div>
+        <dl class="ud">
+          <dt>Low- or intermediate-dose UFH, any timing</dt><dd><b>Neuraxial may still be right:</b> in an urgent case the risk of general anesthesia can exceed the hematoma risk&nbsp;— placing without delay may be appropriate.</dd>
+          <dt>High-dose UFH &lt; 24&nbsp;h or abnormal aPTT&nbsp;· low-dose LMWH &lt; 12&nbsp;h&nbsp;· higher-dose LMWH &lt; 24&nbsp;h</dt><dd class="warn"><b>Insufficient data&nbsp;— consider general anesthesia.</b> Anesthesia weighs airway and comorbidity against hematoma risk.</dd>
+        </dl>
+        <div class="small"><b>Protamine</b> only when UFH must be reversed urgently. Every unit keeps a written hold-and-restart protocol shared with nursing (SOAP). Higher-level care <a href="27-ob-consult.html#p-E" class="xlink"><span class="xref c-wf">27&nbsp;· E</span></a> <a href="27-ob-consult.html#p-F" class="xlink"><span class="xref c-wf">27&nbsp;· F</span></a></div>
+      </section>
+
+      <section class="panel c-wf grow" id="p-06">
+        <div class="ph inl"><span class="num">06</span><h2>Neuro checks</h2><span class="src">ASA 2023 statement</span></div>
+        <dl class="chk c-wf">
+          <dt class="now">Any time</dt><dd><b>Call anesthesia now</b> for increasing or dense motor block</dd>
+          <dt>After delivery</dt><dd>Assess motor block <b>hourly</b> until it resolves</dd>
+          <dt>4&nbsp;h</dt><dd><b>Call anesthesia</b> if motor block persists 4&nbsp;h after the last local anesthetic dose or infusion stop</dd>
+          <dt>Catheter</dt><dd>Removal by anesthesia or per local protocol, only after the hold interval in 02</dd>
+        </dl>
+      </section>
+    </div>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> Leffert L, Butwick A, Carvalho B, et al. The Society for Obstetric Anesthesia and Perinatology Consensus Statement on the Anesthetic Management of Pregnant and Postpartum Women Receiving Thromboprophylaxis or Higher Dose Anticoagulants. Anesth Analg 2018;126:928–44 (Table 3, Figures 3–4); Bauer ME, Arendt K, Beilin Y, et al. SOAP Interdisciplinary Consensus Statement on Neuraxial Procedures in Obstetric Patients with Thrombocytopenia. Anesth Analg 2021;132:1531–44; Kopp SL, Vandermeulen E, McBane RD, et al. Regional anesthesia in the patient receiving antithrombotic or thrombolytic therapy: ASRA Pain Medicine Evidence-Based Guidelines (5th ed.). Reg Anesth Pain Med 2025 (doi 10.1136/rapm-2024-105766); ASA Statement on Neurologic Complications of Neuraxial Analgesia/Anesthesia in Obstetrics (Oct 2023); Lovenox prescribing information (05/2025) §5.1 and boxed warning. Restart times for LMWH are identical to sheet 6&nbsp;· E. <div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek0xMSwwSDEyVjFIMTF6TTEyLDBIMTNWMUgxMnpNMTUsMEgxNlYxSDE1ek0xNywwSDE4VjFIMTd6TTE4LDBIMTlWMUgxOHpNMTksMEgyMFYxSDE5ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTAsMUgxMVYySDEwek0xMSwxSDEyVjJIMTF6TTE0LDFIMTVWMkgxNHpNMTUsMUgxNlYySDE1ek0xNiwxSDE3VjJIMTZ6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTEwLDJIMTFWM0gxMHpNMTIsMkgxM1YzSDEyek0xNSwySDE2VjNIMTV6TTE3LDJIMThWM0gxN3pNMTgsMkgxOVYzSDE4ek0xOSwySDIwVjNIMTl6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTE4LDNIMTlWNEgxOHpNMTksM0gyMFY0SDE5ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTgsNEg5VjVIOHpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNMTAsNUgxMVY2SDEwek0xMiw1SDEzVjZIMTJ6TTEzLDVIMTRWNkgxM3pNMTUsNUgxNlY2SDE1ek0xNiw1SDE3VjZIMTZ6TTE5LDVIMjBWNkgxOXpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTgsN0g5VjhIOHpNOSw3SDEwVjhIOXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE1LDdIMTZWOEgxNXpNMTcsN0gxOFY4SDE3ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTMsOEg0VjlIM3pNNiw4SDdWOUg2ek03LDhIOFY5SDd6TTEwLDhIMTFWOUgxMHpNMTIsOEgxM1Y5SDEyek0xMyw4SDE0VjlIMTN6TTE0LDhIMTVWOUgxNHpNMTYsOEgxN1Y5SDE2ek0yMCw4SDIxVjlIMjB6TTIyLDhIMjNWOUgyMnpNMjMsOEgyNFY5SDIzek0yNCw4SDI1VjlIMjR6TTI2LDhIMjdWOUgyNnpNMjcsOEgyOFY5SDI3ek0wLDlIMVYxMEgwek0zLDlINFYxMEgzek01LDlINlYxMEg1ek03LDlIOFYxMEg3ek04LDlIOVYxMEg4ek0xMyw5SDE0VjEwSDEzek0xNCw5SDE1VjEwSDE0ek0xNiw5SDE3VjEwSDE2ek0yMCw5SDIxVjEwSDIwek0yMiw5SDIzVjEwSDIyek0yNSw5SDI2VjEwSDI1ek0yOCw5SDI5VjEwSDI4ek0zLDEwSDRWMTFIM3pNNSwxMEg2VjExSDV6TTYsMTBIN1YxMUg2ek03LDEwSDhWMTFIN3pNOSwxMEgxMFYxMUg5ek0xMCwxMEgxMVYxMUgxMHpNMTQsMTBIMTVWMTFIMTR6TTE3LDEwSDE4VjExSDE3ek0xOSwxMEgyMFYxMUgxOXpNMjAsMTBIMjFWMTFIMjB6TTIxLDEwSDIyVjExSDIxek0yNCwxMEgyNVYxMUgyNHpNMjUsMTBIMjZWMTFIMjV6TTI2LDEwSDI3VjExSDI2ek0yNywxMEgyOFYxMUgyN3pNMTEsMTFIMTJWMTJIMTF6TTEzLDExSDE0VjEySDEzek0xNCwxMUgxNVYxMkgxNHpNMTUsMTFIMTZWMTJIMTV6TTE2LDExSDE3VjEySDE2ek0xOCwxMUgxOVYxMkgxOHpNMTksMTFIMjBWMTJIMTl6TTIwLDExSDIxVjEySDIwek0yMSwxMUgyMlYxMkgyMXpNMjMsMTFIMjRWMTJIMjN6TTI2LDExSDI3VjEySDI2ek0yNywxMUgyOFYxMkgyN3pNMCwxMkgxVjEzSDB6TTIsMTJIM1YxM0gyek02LDEySDdWMTNINnpNMTMsMTJIMTRWMTNIMTN6TTE2LDEySDE3VjEzSDE2ek0xNywxMkgxOFYxM0gxN3pNMTgsMTJIMTlWMTNIMTh6TTE5LDEySDIwVjEzSDE5ek0yMCwxMkgyMVYxM0gyMHpNMjEsMTJIMjJWMTNIMjF6TTIyLDEySDIzVjEzSDIyek0yMywxMkgyNFYxM0gyM3pNMjUsMTJIMjZWMTNIMjV6TTI3LDEySDI4VjEzSDI3ek0yOCwxMkgyOVYxM0gyOHpNMiwxM0gzVjE0SDJ6TTMsMTNINFYxNEgzek00LDEzSDVWMTRINHpNOSwxM0gxMFYxNEg5ek0xMCwxM0gxMVYxNEgxMHpNMTIsMTNIMTNWMTRIMTJ6TTE5LDEzSDIwVjE0SDE5ek0yMCwxM0gyMVYxNEgyMHpNMjEsMTNIMjJWMTRIMjF6TTEsMTRIMlYxNUgxek02LDE0SDdWMTVINnpNMTEsMTRIMTJWMTVIMTF6TTE0LDE0SDE1VjE1SDE0ek0yNSwxNEgyNlYxNUgyNXpNMjYsMTRIMjdWMTVIMjZ6TTI3LDE0SDI4VjE1SDI3ek0yOCwxNEgyOVYxNUgyOHpNNCwxNUg1VjE2SDR6TTcsMTVIOFYxNkg3ek04LDE1SDlWMTZIOHpNMTEsMTVIMTJWMTZIMTF6TTEyLDE1SDEzVjE2SDEyek0xMywxNUgxNFYxNkgxM3pNMTQsMTVIMTVWMTZIMTR6TTE1LDE1SDE2VjE2SDE1ek0xNywxNUgxOFYxNkgxN3pNMTgsMTVIMTlWMTZIMTh6TTE5LDE1SDIwVjE2SDE5ek0yMCwxNUgyMVYxNkgyMHpNMjIsMTVIMjNWMTZIMjJ6TTI0LDE1SDI1VjE2SDI0ek0yNSwxNUgyNlYxNkgyNXpNMjcsMTVIMjhWMTZIMjd6TTAsMTZIMVYxN0gwek0xLDE2SDJWMTdIMXpNNCwxNkg1VjE3SDR6TTUsMTZINlYxN0g1ek02LDE2SDdWMTdINnpNNywxNkg4VjE3SDd6TTksMTZIMTBWMTdIOXpNMTIsMTZIMTNWMTdIMTJ6TTE1LDE2SDE2VjE3SDE1ek0xNywxNkgxOFYxN0gxN3pNMTksMTZIMjBWMTdIMTl6TTIxLDE2SDIyVjE3SDIxek0yNywxNkgyOFYxN0gyN3pNMSwxN0gyVjE4SDF6TTIsMTdIM1YxOEgyek00LDE3SDVWMThINHpNNSwxN0g2VjE4SDV6TTcsMTdIOFYxOEg3ek0xMSwxN0gxMlYxOEgxMXpNMTIsMTdIMTNWMThIMTJ6TTEzLDE3SDE0VjE4SDEzek0xNCwxN0gxNVYxOEgxNHpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0yMSwxN0gyMlYxOEgyMXpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNSwxN0gyNlYxOEgyNXpNMjgsMTdIMjlWMThIMjh6TTAsMThIMVYxOUgwek0yLDE4SDNWMTlIMnpNMywxOEg0VjE5SDN6TTQsMThINVYxOUg0ek01LDE4SDZWMTlINXpNNiwxOEg3VjE5SDZ6TTcsMThIOFYxOUg3ek0xMCwxOEgxMVYxOUgxMHpNMTMsMThIMTRWMTlIMTN6TTE3LDE4SDE4VjE5SDE3ek0yMSwxOEgyMlYxOUgyMXpNMjIsMThIMjNWMTlIMjJ6TTI3LDE4SDI4VjE5SDI3ek0yOCwxOEgyOVYxOUgyOHpNMiwxOUgzVjIwSDJ6TTcsMTlIOFYyMEg3ek05LDE5SDEwVjIwSDl6TTE2LDE5SDE3VjIwSDE2ek0xNywxOUgxOFYyMEgxN3pNMTgsMTlIMTlWMjBIMTh6TTIyLDE5SDIzVjIwSDIyek0yMywxOUgyNFYyMEgyM3pNMjcsMTlIMjhWMjBIMjd6TTI4LDE5SDI5VjIwSDI4ek0wLDIwSDFWMjFIMHpNNiwyMEg3VjIxSDZ6TTgsMjBIOVYyMUg4ek05LDIwSDEwVjIxSDl6TTEwLDIwSDExVjIxSDEwek0xMSwyMEgxMlYyMUgxMXpNMTIsMjBIMTNWMjFIMTJ6TTEzLDIwSDE0VjIxSDEzek0xNCwyMEgxNVYyMUgxNHpNMTksMjBIMjBWMjFIMTl6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjYsMjBIMjdWMjFIMjZ6TTgsMjFIOVYyMkg4ek0xMCwyMUgxMVYyMkgxMHpNMTIsMjFIMTNWMjJIMTJ6TTEzLDIxSDE0VjIySDEzek0xNiwyMUgxN1YyMkgxNnpNMTcsMjFIMThWMjJIMTd6TTE5LDIxSDIwVjIySDE5ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI2LDIxSDI3VjIySDI2ek0yNywyMUgyOFYyMkgyN3pNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek04LDIySDlWMjNIOHpNMTAsMjJIMTFWMjNIMTB6TTEyLDIySDEzVjIzSDEyek0xMywyMkgxNFYyM0gxM3pNMTYsMjJIMTdWMjNIMTZ6TTE3LDIySDE4VjIzSDE3ek0xOCwyMkgxOVYyM0gxOHpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjcsMjJIMjhWMjNIMjd6TTAsMjNIMVYyNEgwek02LDIzSDdWMjRINnpNOSwyM0gxMFYyNEg5ek0xMSwyM0gxMlYyNEgxMXpNMTIsMjNIMTNWMjRIMTJ6TTEzLDIzSDE0VjI0SDEzek0xNSwyM0gxNlYyNEgxNXpNMTYsMjNIMTdWMjRIMTZ6TTIwLDIzSDIxVjI0SDIwek0yNCwyM0gyNVYyNEgyNHpNMjUsMjNIMjZWMjRIMjV6TTI2LDIzSDI3VjI0SDI2ek0yNywyM0gyOFYyNEgyN3pNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek05LDI0SDEwVjI1SDl6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTMsMjRIMTRWMjVIMTN6TTE2LDI0SDE3VjI1SDE2ek0xNywyNEgxOFYyNUgxN3pNMTgsMjRIMTlWMjVIMTh6TTIwLDI0SDIxVjI1SDIwek0yMSwyNEgyMlYyNUgyMXpNMjIsMjRIMjNWMjVIMjJ6TTIzLDI0SDI0VjI1SDIzek0yNCwyNEgyNVYyNUgyNHpNMjcsMjRIMjhWMjVIMjd6TTI4LDI0SDI5VjI1SDI4ek0wLDI1SDFWMjZIMHpNMiwyNUgzVjI2SDJ6TTMsMjVINFYyNkgzek00LDI1SDVWMjZINHpNNiwyNUg3VjI2SDZ6TTgsMjVIOVYyNkg4ek05LDI1SDEwVjI2SDl6TTEyLDI1SDEzVjI2SDEyek0xNCwyNUgxNVYyNkgxNHpNMTksMjVIMjBWMjZIMTl6TTIwLDI1SDIxVjI2SDIwek0yMSwyNUgyMlYyNkgyMXpNMjIsMjVIMjNWMjZIMjJ6TTIzLDI1SDI0VjI2SDIzek0yNCwyNUgyNVYyNkgyNHpNMjUsMjVIMjZWMjZIMjV6TTI2LDI1SDI3VjI2SDI2ek0wLDI2SDFWMjdIMHpNMiwyNkgzVjI3SDJ6TTMsMjZINFYyN0gzek00LDI2SDVWMjdINHpNNiwyNkg3VjI3SDZ6TTksMjZIMTBWMjdIOXpNMTEsMjZIMTJWMjdIMTF6TTEzLDI2SDE0VjI3SDEzek0xNiwyNkgxN1YyN0gxNnpNMTcsMjZIMThWMjdIMTd6TTE5LDI2SDIwVjI3SDE5ek0yNCwyNkgyNVYyN0gyNHpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yOCwyNkgyOVYyN0gyOHpNMCwyN0gxVjI4SDB6TTYsMjdIN1YyOEg2ek04LDI3SDlWMjhIOHpNOSwyN0gxMFYyOEg5ek0xMCwyN0gxMVYyOEgxMHpNMTEsMjdIMTJWMjhIMTF6TTEyLDI3SDEzVjI4SDEyek0xMywyN0gxNFYyOEgxM3pNMTcsMjdIMThWMjhIMTd6TTE4LDI3SDE5VjI4SDE4ek0xOSwyN0gyMFYyOEgxOXpNMjAsMjdIMjFWMjhIMjB6TTIyLDI3SDIzVjI4SDIyek0yNywyN0gyOFYyOEgyN3pNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek0xMCwyOEgxMVYyOUgxMHpNMTIsMjhIMTNWMjlIMTJ6TTE2LDI4SDE3VjI5SDE2ek0xNywyOEgxOFYyOUgxN3pNMjAsMjhIMjFWMjlIMjB6TTIyLDI4SDIzVjI5SDIyek0yMywyOEgyNFYyOUgyM3pNMjUsMjhIMjZWMjlIMjV6TTI3LDI4SDI4VjI5SDI3eiIgaWQ9InFyLXBhdGgiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIiBzdHJva2U9Im5vbmUiLz48L3N2Zz4="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

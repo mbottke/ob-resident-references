@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Hypertension: maintenance therapy</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--htn); --body: calc(13.2pt / var(--k)); }
+  .masthead .sub { max-width: 7.4in; }
+  /* round 2: body copy at 13.2 pt printed (l09 18×24 body step) (spare height spent on reading size) */
+  .sheet .small, .drug .ci, .rxg > div, .avoid, .ladder > div, .thr > div { font-size: var(--body); }
+  /* threshold strip: three cells, one rule each */
+  .thr { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.16in; }
+  .thr > div { border-top: 4pt solid var(--c); background: color-mix(in srgb, var(--c) var(--tint-1), white); padding: 6pt 10pt 8pt; line-height: 1.3; }
+  .thr .k { font: 800 calc(11pt / var(--k))/1.1 "Inter"; letter-spacing: .08em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); display: block; margin-bottom: 4pt; }
+  .thr .big { font: 800 calc(30pt / var(--k))/1.04 "Inter"; letter-spacing: -0.012em; display: block; color: var(--ink); }
+  .thr .hd { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 9pt; margin-bottom: 4pt; }
+  .thr .hd .act { margin: 0; }
+  .thr .act { display: flex; flex-wrap: wrap; align-items: center; gap: 4pt 8pt; font: 700 calc(15pt / var(--k))/1.2 "Inter"; color: var(--ink-2); margin: 3pt 0 5pt; }
+  .thr > div.sev { --c: var(--stop); background: var(--t-stop); }
+  .thr > div.sev .act { color: var(--ink); }
+  /* drug card: start / increase-or-titrate-to / max cells */
+  .drug { border-top: 1pt solid var(--rule); border-bottom: 0; padding: calc(4pt / var(--k)) 0 calc(4pt / var(--k)); }
+  .ph + .drug { border-top: 0; padding-top: 0; }
+  .drug .nm { font-size: calc(21pt / var(--k)); line-height: 1.1; }
+  .rxg { display: grid; grid-template-columns: 0.92fr 1fr 1.16fr; gap: 0 10pt; margin: 4pt 0 4pt; }
+  .rxg > div { border-left: 1.5pt solid color-mix(in srgb, var(--c) 45%, white); padding: 0 0 0 7pt; line-height: 1.25; }
+  .rxg .t { font: 800 calc(11pt / var(--k))/1 "Inter"; letter-spacing: .07em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); display: block; margin-bottom: 3pt; }
+  .rxg .dose { font-size: 18pt; display: block; line-height: 1.15; }
+  .rxg .dose.sm { font-size: 16pt; }
+  .rxg .sched { display: block; font-weight: 700; color: var(--ink); margin-top: 1pt; }
+  .drug .nm .pill { font: 700 calc(12pt / var(--k))/1.15 "Inter"; letter-spacing: .01em; text-transform: none; color: #fff; background: var(--c); padding: 2.5pt 6pt 2pt; border-radius: 999px; margin-left: 6pt; vertical-align: 0.12em; }
+  .drug .nm .pill.pp { background: var(--wf); }
+  .drug .ci { line-height: 1.3; }
+  .drug .ci + .ci { margin-top: 2pt; }
+  .drug .ci.ink b, .drug .ci.monitoring b { color: var(--ink); }
+  .drug .ok { color: var(--ink); font-weight: 700; }
+  /* combination ladder */
+  .ladder { display: grid; grid-template-columns: 1fr 1fr 1.14fr; gap: 13pt; }
+  .ladder > div { position: relative; padding: 4pt 9pt 6pt 12pt; background: var(--paper); border-left: calc(3pt / var(--k)) solid var(--c); line-height: 1.26; }
+  .ladder > div:not(:last-child)::after { content: "→"; position: absolute; right: -11pt; top: 50%; transform: translateY(-50%); font: 800 11pt/1 "Inter"; color: var(--c); }
+  .ladder .n { font: 900 22pt/1 "Inter Display"; color: var(--c); display: block; margin-bottom: 2pt; }
+  .ladder b.h { display: block; font-size: 1.04em; margin-bottom: 2pt; }
+  .avoid { display: grid; grid-template-columns: auto 1fr; gap: 4pt 10pt; line-height: 1.28; align-items: baseline; }
+  .avoid dt { font-weight: 800; color: var(--stop); white-space: nowrap; }
+  .avoid dd { margin: 0; }
+  /* ruled rows (vis8 #21) */
+  .avoid { row-gap: calc(2pt / var(--k)); }
+  .avoid dd + dt, .avoid dd + dt + dd { border-top: .75pt solid var(--rule); padding-top: calc(2pt / var(--k)); }
+  .bp-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ret { display: grid; grid-template-columns: 1fr 1fr; gap: 0.12in; }
+  /* LOCAL blanks: one labelled field per row */
+  .lf { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4pt 10pt; align-items: baseline; }
+  .lf dt { font-weight: 700; white-space: nowrap; }
+  .lf dd { margin: 0; }
+  .lf .f { display: inline-block; min-width: 3.2em; border-bottom: .75pt solid var(--ink-3); height: .95em; vertical-align: -0.12em; }
+  /* one row: label + blank per field */
+  .lf.across { display: flex; flex-wrap: wrap; gap: 4pt 12pt; align-items: baseline; }
+  .lf.across > div { display: flex; align-items: baseline; gap: 4pt; white-space: nowrap; }
+  .lf.across > div > b { font-weight: 700; }
+  .lf.across .f { min-width: 3.6em; }
+  /* p15: keep content blocks at natural height */
+  .sheet > .cols { flex: 0 0 auto; }
+  /* round 3 (o1/o3): urgent-return gate first, compact header, destination-led rows (w3) */
+  .panel.gate .ph { grid-template-columns: auto auto minmax(0, 1fr); align-items: baseline; }
+  .panel.gate .ph .num { grid-row: auto; }
+  .panel.gate .ph h2 { font-size: calc(24pt / var(--k)); }
+  .panel.gate .ph .src { grid-column: auto; }
+  .ret .callout-stop { display: grid; grid-template-columns: auto auto minmax(0, 1fr); column-gap: 10pt; row-gap: 4pt; align-items: baseline; }
+  .ret .callout-stop .ico { grid-row: span 2; align-self: start; }
+  .ret .destination { font: 800 calc(16pt / var(--k))/1.1 "Inter"; white-space: nowrap; }
+  .ret .callout-stop .xref { margin-left: 3pt; }
+  /* nifedipine ER: dose relationships on one mg/day axis (e2) */
+  .ga2.nifedipine-dose { --ga2-topic: var(--htn); margin: 3pt 0 2pt; }
+  .ga2.nifedipine-dose .lbl { font-weight: 800; fill: var(--ga2-topic); letter-spacing: .07em; }
+  .ga2.nifedipine-dose .v { font-weight: 800; }
+  .ga2.nifedipine-dose .s { font-weight: 700; }
+  .ga2.nifedipine-dose .ax { fill: var(--ink-3); font-weight: 600; }
+  .ga2.nifedipine-dose .axis { stroke: #999; stroke-width: 1; }
+  .ga2.nifedipine-dose .dose-cap { fill: none; stroke: var(--ga2-topic); stroke-width: 1.4; }
+  .ga2.nifedipine-dose .dose-cap.max { stroke-width: 2.6; }
+  .ga2.nifedipine-dose .dose-cap.label { stroke-dasharray: 3 2; }
+  /* titration step as its own text row, not a bracket on the dose axis (vis4 #2 / vis8 #3) */
+  .drug .ci.titrate { margin-top: calc(2pt / var(--k)); }
+  .drug .ci.titrate b { color: var(--ink); }
+  .drug .ci.titrate .t { font: 800 calc(11pt / var(--k))/1 "Inter"; letter-spacing: .07em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); margin-right: 4pt; }
+  /* ladder third step: one branch per setting (w3) */
+  .ladder .population-branch { display: block; }
+  .ladder .population-branch + .population-branch { border-top: .75pt solid color-mix(in srgb, var(--c) 40%, white); margin-top: 3pt; padding-top: 3pt; }
+  /* compatible alternative pulled out of the red Avoid list (w3) */
+  .lactation-alternative { border-left: 2pt solid var(--wf); padding-left: 8pt; font-size: var(--body); line-height: 1.28; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="10-feeding.html" title="Feeding">‹ 10</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html" selected="">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="12-diabetes.html" title="Diabetes">12 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/11-bp-meds.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-htn" style="--k:1.12">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Clinic&nbsp;· postpartum&nbsp;· discharge</div>
+      <h1><span class="sid">11</span>BP maintenance</h1>
+    </div>
+    <div class="sub">Oral antihypertensives in pregnancy and after birth: when to start, dose, titrate, combine, wean.<br><span class="muted">Acute severe-range treatment is not here</span> <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="02-emergencies.html" class="xlink"><span><b>2</b>Emergencies</span></a><a href="01-triage.html" class="xlink"><span><b>1</b>Triage</span></a><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="14-pp-headache.html" class="xlink"><span><b>14</b>PP headache</span></a><a href="25-dyad-discharge.html" class="xlink"><span><b>25</b>Dyad → home</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-11.svg)"></div>
+
+  <!-- 08 call / return: full width, first (urgent exit before maintenance) -->
+  <section class="panel c-stop gate" id="p-08">
+    <div class="ph"><span class="num">08</span><h2>Call now / come in</h2><span class="src">ACOG Severe HTN Bundle 2025&nbsp;· PB 222</span></div>
+    <div class="ret">
+      <div class="callout-stop small"><div class="ico">!</div><span class="destination">L&amp;D / ED now</span><span>SBP ≥ 160 or DBP ≥ 110 (recheck in 15&nbsp;min)&nbsp;— acute lanes and magnesium decision <a href="02-emergencies.html#p-B" class="xlink"><span class="xref inverse c-htn">2&nbsp;· B</span></a></span><span class="destination">911</span><span>Seizure, chest pain, can’t breathe</span></div>
+      <div class="box small" style="--c:var(--htn)"><b>Urgent assessment, whatever the BP:</b> persistent headache, visual symptoms, upper abdominal pain or dyspnea <a href="06-postpartum.html#p-B" class="xlink"><span class="xref c-htn">6&nbsp;· B</span></a>. <b>Same-day review:</b> lightheaded or fainting on meds, or repeated home SBP ≥ 150 or DBP ≥ 100 despite medication.</div>
+    </div>
+  </section>
+
+  <!-- 01 thresholds: full width -->
+  <section class="panel c-htn mt2" id="p-01">
+    <div class="ph"><span class="num">01</span><h2>When to start or titrate</h2><span class="src">ACOG CHAP Practice Advisory 2022 (reaff. 2025)&nbsp;· PB 203 (reaff. 2024)&nbsp;· PB 222 (reaff. 2026)&nbsp;· Severe HTN Bundle 2025</span></div>
+    <div class="thr">
+      <div class="sev">
+        <span class="k">Severe range&nbsp;— any setting</span>
+        <span class="big">SBP ≥ 160<br>or DBP ≥ 110</span><span class="act">for ≥ 15&nbsp;min <span class="deadline">treat within 60&nbsp;min</span></span>
+        → <b>acute lanes</b> <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a>. Not a reason to up-titrate oral meds and send home.
+      </div>
+      <div>
+        <span class="k">Chronic HTN&nbsp;· pregnancy</span>
+        <span class="hd"><span class="big">≥ 140/90</span><span class="act">start or titrate</span></span>
+        Target <b>SBP &lt; 140 and DBP &lt; 90</b> (CHAP treatment arm; ACOG bundle). Continue prepregnancy meds if pregnancy-compatible. <b>&gt; 20&nbsp;wk:</b> rule out superimposed preeclampsia before escalating <a href="01-triage.html#p-03" class="xlink"><span class="xref c-htn">1&nbsp;· 03</span></a>; third-trimester growth US.
+      </div>
+      <div>
+        <span class="k">Postpartum</span>
+        <span class="hd"><span class="big">≥ 150/100</span><span class="act">start meds</span></span>
+        Persistent <b>SBP ≥ 150 or DBP ≥ 100</b> on 2 readings 4–6&nbsp;h apart <a href="06-postpartum.html#p-B" class="xlink"><span class="xref c-htn">6&nbsp;· B</span></a>. Adjust to keep ≤ 150/100 (PB 203); a lower goal is reasonable once delivered. <b>Repeated home SBP ≥ 150 or DBP ≥ 100 on meds → same-day review.</b>
+      </div>
+    </div>
+    <div class="xs muted">CHAP enrolled chronic HTN only; ACOG says the trial set a treatment threshold, not a proven goal. Applying 140/90 to gestational HTN is extrapolation: follow unit policy.</div>
+  </section>
+
+  <div class="cols mt2 bp-columns">
+    <!-- LEFT -->
+    <div class="col">
+      <section class="panel c-htn" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>First line <small>pregnancy &amp; postpartum</small></h2><span class="src">ACOG PB 203 Table 2&nbsp;· PB 222&nbsp;· FDA labels&nbsp;· LactMed</span></div>
+        <div class="drug c-htn" id="nifedipine-er">
+          <div class="nm">NIFEdipine ER <small>extended-release only</small></div>
+          <figure class="ga2 nifedipine-dose"><svg viewBox="0 0 523 92" role="img" aria-label="Nifedipine ER (extended-release) dose axis 0 to 120 mg per day: start 30 to 60 mg once daily; Adalat CC-type generics label maximum 90 mg per day; maximum 120 mg per day, daily or 60 mg BID">
+<text class="lbl" x="144.0" y="22" font-size="11">START</text>
+<text class="v" x="144.0" y="40" font-size="18">30–60&nbsp;mg</text>
+<text class="s" x="144.0" y="55" font-size="12">PO once daily</text>
+<text class="lbl" x="390" y="10" font-size="11" text-anchor="end">ADALAT CC–TYPE</text>
+<text class="lbl" x="390" y="22" font-size="11" text-anchor="end">GENERICS</text>
+<text class="v" x="390" y="40" font-size="18" text-anchor="end">90&nbsp;mg/day</text>
+<text class="s" x="390" y="55" font-size="12" text-anchor="end">label max</text>
+<text class="lbl" x="522.0" y="22" font-size="11" text-anchor="end">MAX</text>
+<text class="v" x="522.0" y="40" font-size="18" text-anchor="end">120&nbsp;mg/day</text>
+<text class="s" x="522.0" y="55" font-size="12" text-anchor="end">daily or 60&nbsp;mg BID</text>
+<line class="axis" x1="18.0" y1="73" x2="522.0" y2="73"></line>
+<rect class="ga2-recommended" x="144.0" y="61" width="126.0" height="12"></rect>
+<line class="dose-cap label" x1="396.0" y1="2" x2="396.0" y2="76"></line>
+<line class="dose-cap max" x1="522.0" y1="58" x2="522.0" y2="76"></line>
+<line class="axis" x1="18.0" y1="73" x2="18.0" y2="77"></line><line class="axis" x1="144.0" y1="73" x2="144.0" y2="77"></line><line class="axis" x1="270.0" y1="73" x2="270.0" y2="77"></line><line class="axis" x1="396.0" y1="73" x2="396.0" y2="77"></line><line class="axis" x1="522.0" y1="73" x2="522.0" y2="77"></line>
+<text class="ax" x="18.0" y="89" font-size="10.5" text-anchor="start">0</text><text class="ax" x="144.0" y="89" font-size="10.5" text-anchor="middle">30</text><text class="ax" x="270.0" y="89" font-size="10.5" text-anchor="middle">60</text><text class="ax" x="396.0" y="89" font-size="10.5" text-anchor="middle">90</text><text class="ax" x="522.0" y="89" font-size="10.5" text-anchor="end">120&nbsp;mg/day</text>
+</svg></figure>
+          <div class="ci titrate"><span class="t">Increase by</span> <b>30&nbsp;mg</b> every 7–14&nbsp;d <span class="muted">(faster if seen often)</span></div>
+          <div class="ci">Swallow whole. <b>IR capsules only for acute severe BP</b>; never SL. Avoid with tachycardia. Headache, flushing, edema. <span class="ok">Lactation: compatible.</span></div>
+        </div>
+        <div class="drug c-htn">
+          <div class="nm">Labetalol</div>
+          <div class="rxg">
+            <div><span class="t">Start</span><span class="dose">100–200&nbsp;mg</span><span class="sched">PO BID</span></div>
+            <div><span class="t">Increase by</span><span class="dose sm">100&nbsp;mg BID</span><span class="sched">q2–3&nbsp;d</span>(steps ≤ 200&nbsp;mg BID)</div>
+            <div><span class="t">Max</span><span class="dose">2,400&nbsp;mg/day</span><span class="sched">800&nbsp;mg TID</span></div>
+          </div>
+          <div class="ci"><b>Avoid:</b> asthma, heart block, bradycardia, preexisting myocardial disease, decompensated cardiac function.</div>
+          <div class="ci ink">Pregnancy often needs TID dosing. <b>Step down; don’t stop abruptly.</b></div>
+          <div class="ci"><span class="ok">Lactation: preferred β-blocker</span> <span class="muted">(LactMed: other agents may be preferred for a preterm infant).</span></div>
+        </div>
+      </section>
+
+      <section class="panel c-htn" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Second &amp; third line</h2><span class="src">ACOG PB 203&nbsp;· FDA labels (Vasotec 2026, Norvasc)&nbsp;· LactMed&nbsp;· ACC 2026</span></div>
+        <div class="drug c-htn">
+          <div class="nm">Hydrochlorothiazide <span class="pill">Pregnancy &amp; postpartum add-on</span></div>
+          <div class="rxg">
+            <div><span class="t">Dose</span><span class="dose">12.5–50&nbsp;mg</span><span class="sched">PO daily</span></div>
+            <div style="grid-column: span 2"><span class="t">Role</span>Second- or third-line in pregnancy (PB 203); volume-depletion concern not borne out in trials.</div>
+          </div>
+          <div class="ci"><span class="ok">Lactation: ≤ 50&nbsp;mg/day acceptable</span>; intense diuresis may reduce milk supply.</div>
+        </div>
+        <div class="drug c-htn">
+          <div class="nm">Enalapril <span class="pill pp">Postpartum only</span></div>
+          <div class="rxg">
+            <div><span class="t">Start</span><span class="dose">5&nbsp;mg</span><span class="sched">PO daily</span>(2.5&nbsp;mg if CrCl ≤ 30)</div>
+            <div><span class="t">Titrate toward</span><span class="dose sm">10–40&nbsp;mg/day</span><span class="sched">Give daily or BID</span>Adjust every 7–14&nbsp;d</div>
+            <div><span class="t">Max</span><span class="dose">40&nbsp;mg/day</span><span class="sched">or 20&nbsp;mg BID</span></div>
+          </div>
+          <div class="ci"><b>Contraindicated in pregnancy</b> (boxed fetal toxicity) → contraception plan before start. <b>Do not use</b> with prior ACE-inhibitor–associated angioedema or hereditary angioedema.</div>
+          <div class="ci monitoring">Check <b>K and Cr</b> at start and after titration; no K supplements or K-sparing diuretics.</div>
+          <div class="ci"><span class="ok">Lactation: compatible</span> (low milk levels).</div>
+        </div>
+        <div class="drug c-htn">
+          <div class="nm">Amlodipine <span class="pill pp">Postpartum</span></div>
+          <div class="rxg">
+            <div><span class="t">Start</span><span class="dose">5&nbsp;mg</span><span class="sched">PO daily</span></div>
+            <div><span class="t">Titrate to</span><span class="dose sm">10&nbsp;mg</span><span class="sched">after 7–14&nbsp;d</span></div>
+            <div><span class="t">Max</span><span class="dose">10&nbsp;mg/day</span></div>
+          </div>
+          <div class="ci">Alternative to NIFEdipine ER&nbsp;— <b>not both</b> (same class). Not an ACOG-listed pregnancy agent. <span class="ok">Lactation: compatible.</span></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col">
+      <section class="panel c-stop" id="p-05">
+        <div class="ph"><span class="num">05</span><h2>Avoid</h2><span class="src">ACOG PB 203&nbsp;· FDA boxed warnings&nbsp;· ACC 2026</span></div>
+        <dl class="avoid">
+          <dt>Pregnancy</dt><dd><b>ACE inhibitors, ARBs, direct renin inhibitors</b> (aliskiren), mineralocorticoid antagonists&nbsp;— fetal renal toxicity. Switch at the first visit.</dd>
+          <dt>Atenolol</dt><dd>Growth restriction; concentrates in milk&nbsp;— prefer labetalol.</dd>
+          <dt>Methyldopa</dt><dd>Less effective; sedation, depression. Avoid postpartum.</dd>
+          <dt>IR NIFEdipine</dt><dd>Not for maintenance; never sublingual.</dd>
+        </dl>
+        <div class="lactation-alternative"><b>Lactation-compatible alternative:</b> Metoprolol: low milk transfer, compatible.</div>
+      </section>
+      <section class="panel c-htn" id="p-04">
+        <div class="ph"><span class="num">04</span><h2>Combination therapy</h2><span class="src">ACOG PB 222&nbsp;· PB 203</span></div>
+        <div class="ladder">
+          <div><span class="n">1</span><b class="h">One first-line agent</b>Titrate to the BP target, limited by its maximum dose or side effects.</div>
+          <div><span class="n">2</span><b class="h">Add the other class</b>If BP remains above target: labetalol + NIFEdipine ER.</div>
+          <div><span class="n">3</span><b class="h">Third agent&nbsp;· by setting</b><span class="population-branch"><b>Pregnant:</b> HCTZ, with MFM.</span><span class="population-branch"><b>Postpartum:</b> <span class="nowrap">enalapril <a href="03-labor-efm.html" class="xlink"><span class="xref here">03</span></a></span></span></div>
+        </div>
+        <div class="small">3rd agent in pregnancy or BP rising on treatment → <b>evaluate for superimposed preeclampsia</b>; involve MFM. Chronic HTN postpartum: back to prepregnancy regimen with primary care.</div>
+      </section>
+      <section class="panel c-htn" id="p-06">
+        <div class="ph"><span class="num">06</span><h2>Home BP monitoring</h2><span class="src">ACOG PB 203&nbsp;· Severe HTN Bundle 2025&nbsp;· ACC/AHA 2017 SMBP checklist</span></div>
+        <ul class="ls check small">
+          <li><b>Validated upper-arm cuff</b> (validatebp.org); bladder encircles ≥ 80% of arm. Check it once against office BP.</li>
+          <li>Seated, back supported, feet flat, arm at heart level; avoid caffeine and tobacco for ≥ 30&nbsp;min before measuring; rest 5&nbsp;min.</li>
+          <li>Morning before meds and evening: <b>2 readings, 1&nbsp;min apart</b>; record every reading.</li>
+          <li>Cuff + log for every HDP discharge on meds, and for chronic HTN from the first prenatal visit.</li>
+        </ul>
+        <div class="box local small"><div class="lf across"><div><b>Remote-BP program / schedule</b><i class="f" data-local="remote_bp_program"></i></div><div><b>Who reviews logs</b><i class="f" data-local="remote_bp_log_reviewer"></i></div><div><b>Route</b><i class="f" data-local="remote_bp_route"></i></div></div></div>
+      </section>
+
+      <section class="panel c-htn grow" id="p-07">
+        <div class="ph"><span class="num">07</span><h2>After discharge: follow up, wean</h2><span class="src">ACOG CO 736 (reaff. 2025)&nbsp;· PB 203&nbsp;· PB 222</span></div>
+        <ul class="ls small">
+          <li><b>BP check ≤ 72&nbsp;h after discharge</b> if severe HTN; <b>by 7–10&nbsp;d</b> for every HDP <a href="06-postpartum.html#p-A" class="xlink"><span class="xref c-wf">6&nbsp;· A</span></a>.</li>
+          <li>BP dips after birth, then <b>often peaks days 3–6</b> and may stay up through weeks 1–2; postpartum preeclampsia can present up to 6&nbsp;wk. An early rapid fall suggests blood loss.</li>
+          <li><b>Wean one drug at a time</b>; reduce labetalol gradually. Hypertension persisting &gt; 12&nbsp;wk postpartum → reclassify as chronic HTN.</li>
+          <li>Any HDP = lifelong cardiovascular risk: primary-care handoff, yearly BP. <span class="nowrap">Discharge BP plan <a href="25-dyad-discharge.html#p-B" class="xlink"><span class="xref c-wf">25&nbsp;· B / H</span></a></span></li>
+        </ul>
+        <div class="box local small"><dl class="lf"><dt>Wean</dt><dd>when home BP &lt; <i class="f" data-local="pp_bp_wean_sbp"></i>/<i class="f" data-local="pp_bp_wean_dbp"></i> for <i class="f" data-local="pp_bp_wean_days"></i> d</dd><dt>Stop</dt><dd>when &lt; <i class="f" data-local="pp_bp_stop_sbp"></i>/<i class="f" data-local="pp_bp_stop_dbp"></i> on lowest dose</dd><dt>Recheck</dt><dd><i class="f" data-local="pp_bp_recheck_days"></i> d after stopping</dd></dl></div>
+      </section>
+    </div>
+  </div>
+
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG PB 203 Chronic Hypertension in Pregnancy (2019, reaff. 2024), Table 2 and postpartum section; ACOG PB 222 Gestational Hypertension and Preeclampsia (2020, reaff. 2026); ACOG Practice Advisory, Clinical Guidance for the Integration of the Findings of the CHAP Study (Apr 2022, reaff. Mar 2025); Tita AT et al., N Engl J Med 2022;386:1781–92 (CHAP); ACOG Severe Hypertension in Pregnancy Bundle (updated Jan 2025); ACOG CO 736 (reaff. 2025); FDA labeling: Procardia XL (2026), nifedipine ER matrix-tablet generics, labetalol HCl tablets (2026), Vasotec (2026), Norvasc (2023); NLM LactMed: enalapril, amlodipine (2024), hydrochlorothiazide (2025), nifedipine, labetalol; Whelton PK et al., 2017 ACC/AHA Hypertension Guideline (self-measured BP checklist); Rajendran et al., Antihypertensive Medications in Pregnancy and Lactation, ACC Expert Analysis (Jul 2026). Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTMsMUgxNFYySDEzek0xNywxSDE4VjJIMTd6TTE5LDFIMjBWMkgxOXpNMjAsMUgyMVYySDIwek0yMiwxSDIzVjJIMjJ6TTI4LDFIMjlWMkgyOHpNMCwySDFWM0gwek0yLDJIM1YzSDJ6TTMsMkg0VjNIM3pNNCwySDVWM0g0ek02LDJIN1YzSDZ6TTgsMkg5VjNIOHpNOSwySDEwVjNIOXpNMTEsMkgxMlYzSDExek0xNywySDE4VjNIMTd6TTE5LDJIMjBWM0gxOXpNMjIsMkgyM1YzSDIyek0yNCwySDI1VjNIMjR6TTI1LDJIMjZWM0gyNXpNMjYsMkgyN1YzSDI2ek0yOCwySDI5VjNIMjh6TTAsM0gxVjRIMHpNMiwzSDNWNEgyek0zLDNINFY0SDN6TTQsM0g1VjRINHpNNiwzSDdWNEg2ek04LDNIOVY0SDh6TTEwLDNIMTFWNEgxMHpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTEzLDNIMTRWNEgxM3pNMTYsM0gxN1Y0SDE2ek0xOCwzSDE5VjRIMTh6TTIyLDNIMjNWNEgyMnpNMjQsM0gyNVY0SDI0ek0yNSwzSDI2VjRIMjV6TTI2LDNIMjdWNEgyNnpNMjgsM0gyOVY0SDI4ek0wLDRIMVY1SDB6TTIsNEgzVjVIMnpNMyw0SDRWNUgzek00LDRINVY1SDR6TTYsNEg3VjVINnpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNOSw1SDEwVjZIOXpNMTAsNUgxMVY2SDEwek0xMyw1SDE0VjZIMTN6TTE2LDVIMTdWNkgxNnpNMTgsNUgxOVY2SDE4ek0xOSw1SDIwVjZIMTl6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek05LDdIMTBWOEg5ek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTUsN0gxNlY4SDE1ek0xNyw3SDE4VjhIMTd6TTE4LDdIMTlWOEgxOHpNMjAsN0gyMVY4SDIwek0wLDhIMVY5SDB6TTEsOEgyVjlIMXpNNCw4SDVWOUg0ek01LDhINlY5SDV6TTYsOEg3VjlINnpNMTEsOEgxMlY5SDExek0xMiw4SDEzVjlIMTJ6TTE3LDhIMThWOUgxN3pNMTksOEgyMFY5SDE5ek0yMyw4SDI0VjlIMjN6TTI1LDhIMjZWOUgyNXpNMjYsOEgyN1Y5SDI2ek0yNyw4SDI4VjlIMjd6TTI4LDhIMjlWOUgyOHpNMyw5SDRWMTBIM3pNNSw5SDZWMTBINXpNOSw5SDEwVjEwSDl6TTExLDlIMTJWMTBIMTF6TTEyLDlIMTNWMTBIMTJ6TTEzLDlIMTRWMTBIMTN6TTE1LDlIMTZWMTBIMTV6TTE2LDlIMTdWMTBIMTZ6TTE3LDlIMThWMTBIMTd6TTE4LDlIMTlWMTBIMTh6TTIxLDlIMjJWMTBIMjF6TTIyLDlIMjNWMTBIMjJ6TTIzLDlIMjRWMTBIMjN6TTI0LDlIMjVWMTBIMjR6TTI1LDlIMjZWMTBIMjV6TTI2LDlIMjdWMTBIMjZ6TTI3LDlIMjhWMTBIMjd6TTI4LDlIMjlWMTBIMjh6TTEsMTBIMlYxMUgxek0yLDEwSDNWMTFIMnpNNCwxMEg1VjExSDR6TTYsMTBIN1YxMUg2ek03LDEwSDhWMTFIN3pNOCwxMEg5VjExSDh6TTExLDEwSDEyVjExSDExek0xMiwxMEgxM1YxMUgxMnpNMTMsMTBIMTRWMTFIMTN6TTE1LDEwSDE2VjExSDE1ek0xNiwxMEgxN1YxMUgxNnpNMTgsMTBIMTlWMTFIMTh6TTIyLDEwSDIzVjExSDIyek0yMywxMEgyNFYxMUgyM3pNMjgsMTBIMjlWMTFIMjh6TTAsMTFIMVYxMkgwek0xLDExSDJWMTJIMXpNNywxMUg4VjEySDd6TTgsMTFIOVYxMkg4ek0xMCwxMUgxMVYxMkgxMHpNMTUsMTFIMTZWMTJIMTV6TTE3LDExSDE4VjEySDE3ek0xOCwxMUgxOVYxMkgxOHpNMjEsMTFIMjJWMTJIMjF6TTIyLDExSDIzVjEySDIyek0yNSwxMUgyNlYxMkgyNXpNMjcsMTFIMjhWMTJIMjd6TTI4LDExSDI5VjEySDI4ek0xLDEySDJWMTNIMXpNNiwxMkg3VjEzSDZ6TTgsMTJIOVYxM0g4ek0xMCwxMkgxMVYxM0gxMHpNMTcsMTJIMThWMTNIMTd6TTE4LDEySDE5VjEzSDE4ek0yMCwxMkgyMVYxM0gyMHpNMjEsMTJIMjJWMTNIMjF6TTIzLDEySDI0VjEzSDIzek0yNywxMkgyOFYxM0gyN3pNMywxM0g0VjE0SDN6TTQsMTNINVYxNEg0ek01LDEzSDZWMTRINXpNNywxM0g4VjE0SDd6TTExLDEzSDEyVjE0SDExek0xMywxM0gxNFYxNEgxM3pNMTQsMTNIMTVWMTRIMTR6TTE1LDEzSDE2VjE0SDE1ek0xNiwxM0gxN1YxNEgxNnpNMTcsMTNIMThWMTRIMTd6TTE4LDEzSDE5VjE0SDE4ek0yMiwxM0gyM1YxNEgyMnpNMjMsMTNIMjRWMTRIMjN6TTI0LDEzSDI1VjE0SDI0ek0yNSwxM0gyNlYxNEgyNXpNMjYsMTNIMjdWMTRIMjZ6TTI3LDEzSDI4VjE0SDI3ek0yOCwxM0gyOVYxNEgyOHpNMSwxNEgyVjE1SDF6TTIsMTRIM1YxNUgyek0zLDE0SDRWMTVIM3pNNCwxNEg1VjE1SDR6TTUsMTRINlYxNUg1ek02LDE0SDdWMTVINnpNNywxNEg4VjE1SDd6TTgsMTRIOVYxNUg4ek05LDE0SDEwVjE1SDl6TTEwLDE0SDExVjE1SDEwek0xMSwxNEgxMlYxNUgxMXpNMTIsMTRIMTNWMTVIMTJ6TTE0LDE0SDE1VjE1SDE0ek0xNSwxNEgxNlYxNUgxNXpNMTgsMTRIMTlWMTVIMTh6TTIxLDE0SDIyVjE1SDIxek0yNCwxNEgyNVYxNUgyNHpNMjUsMTRIMjZWMTVIMjV6TTI2LDE0SDI3VjE1SDI2ek0yOCwxNEgyOVYxNUgyOHpNMCwxNUgxVjE2SDB6TTEsMTVIMlYxNkgxek0zLDE1SDRWMTZIM3pNOCwxNUg5VjE2SDh6TTksMTVIMTBWMTZIOXpNMTAsMTVIMTFWMTZIMTB6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTQsMTVIMTVWMTZIMTR6TTE1LDE1SDE2VjE2SDE1ek0xNiwxNUgxN1YxNkgxNnpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0yMCwxNUgyMVYxNkgyMHpNMjQsMTVIMjVWMTZIMjR6TTI3LDE1SDI4VjE2SDI3ek0yOCwxNUgyOVYxNkgyOHpNMSwxNkgyVjE3SDF6TTIsMTZIM1YxN0gyek0zLDE2SDRWMTdIM3pNNCwxNkg1VjE3SDR6TTYsMTZIN1YxN0g2ek04LDE2SDlWMTdIOHpNMTIsMTZIMTNWMTdIMTJ6TTE1LDE2SDE2VjE3SDE1ek0xNywxNkgxOFYxN0gxN3pNMTksMTZIMjBWMTdIMTl6TTIxLDE2SDIyVjE3SDIxek0yNywxNkgyOFYxN0gyN3pNMCwxN0gxVjE4SDB6TTEsMTdIMlYxOEgxek0yLDE3SDNWMThIMnpNMywxN0g0VjE4SDN6TTUsMTdINlYxOEg1ek05LDE3SDEwVjE4SDl6TTEwLDE3SDExVjE4SDEwek0xMSwxN0gxMlYxOEgxMXpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNSwxN0gxNlYxOEgxNXpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0xOCwxN0gxOVYxOEgxOHpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNCwxN0gyNVYxOEgyNHpNMjUsMTdIMjZWMThIMjV6TTI3LDE3SDI4VjE4SDI3ek0yOCwxN0gyOVYxOEgyOHpNMiwxOEgzVjE5SDJ6TTQsMThINVYxOUg0ek01LDE4SDZWMTlINXpNNiwxOEg3VjE5SDZ6TTcsMThIOFYxOUg3ek0xMCwxOEgxMVYxOUgxMHpNMTEsMThIMTJWMTlIMTF6TTEyLDE4SDEzVjE5SDEyek0xMywxOEgxNFYxOUgxM3pNMTQsMThIMTVWMTlIMTR6TTE1LDE4SDE2VjE5SDE1ek0xOCwxOEgxOVYxOUgxOHpNMjAsMThIMjFWMTlIMjB6TTIyLDE4SDIzVjE5SDIyek0yMywxOEgyNFYxOUgyM3pNMjQsMThIMjVWMTlIMjR6TTI2LDE4SDI3VjE5SDI2ek0yOCwxOEgyOVYxOUgyOHpNNSwxOUg2VjIwSDV6TTcsMTlIOFYyMEg3ek04LDE5SDlWMjBIOHpNMTAsMTlIMTFWMjBIMTB6TTE2LDE5SDE3VjIwSDE2ek0xNywxOUgxOFYyMEgxN3pNMTgsMTlIMTlWMjBIMTh6TTIyLDE5SDIzVjIwSDIyek0yMywxOUgyNFYyMEgyM3pNMjcsMTlIMjhWMjBIMjd6TTI4LDE5SDI5VjIwSDI4ek0wLDIwSDFWMjFIMHpNMSwyMEgyVjIxSDF6TTIsMjBIM1YyMUgyek0zLDIwSDRWMjFIM3pNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek03LDIwSDhWMjFIN3pNOCwyMEg5VjIxSDh6TTEyLDIwSDEzVjIxSDEyek0xNiwyMEgxN1YyMUgxNnpNMTcsMjBIMThWMjFIMTd6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjUsMjBIMjZWMjFIMjV6TTI4LDIwSDI5VjIxSDI4ek04LDIxSDlWMjJIOHpNMTEsMjFIMTJWMjJIMTF6TTEzLDIxSDE0VjIySDEzek0xNCwyMUgxNVYyMkgxNHpNMTUsMjFIMTZWMjJIMTV6TTE2LDIxSDE3VjIySDE2ek0xOCwyMUgxOVYyMkgxOHpNMTksMjFIMjBWMjJIMTl6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek05LDIySDEwVjIzSDl6TTEwLDIySDExVjIzSDEwek0xMSwyMkgxMlYyM0gxMXpNMTQsMjJIMTVWMjNIMTR6TTE1LDIySDE2VjIzSDE1ek0xOSwyMkgyMFYyM0gxOXpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjUsMjJIMjZWMjNIMjV6TTI2LDIySDI3VjIzSDI2ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNMTAsMjNIMTFWMjRIMTB6TTEyLDIzSDEzVjI0SDEyek0xNCwyM0gxNVYyNEgxNHpNMTUsMjNIMTZWMjRIMTV6TTE3LDIzSDE4VjI0SDE3ek0xOSwyM0gyMFYyNEgxOXpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0yNywyM0gyOFYyNEgyN3pNMjgsMjNIMjlWMjRIMjh6TTAsMjRIMVYyNUgwek0yLDI0SDNWMjVIMnpNMywyNEg0VjI1SDN6TTQsMjRINVYyNUg0ek02LDI0SDdWMjVINnpNOCwyNEg5VjI1SDh6TTksMjRIMTBWMjVIOXpNMTEsMjRIMTJWMjVIMTF6TTEyLDI0SDEzVjI1SDEyek0xNywyNEgxOFYyNUgxN3pNMTgsMjRIMTlWMjVIMTh6TTE5LDI0SDIwVjI1SDE5ek0yMCwyNEgyMVYyNUgyMHpNMjEsMjRIMjJWMjVIMjF6TTIyLDI0SDIzVjI1SDIyek0yMywyNEgyNFYyNUgyM3pNMjQsMjRIMjVWMjVIMjR6TTI1LDI0SDI2VjI1SDI1ek0yNywyNEgyOFYyNUgyN3pNMCwyNUgxVjI2SDB6TTIsMjVIM1YyNkgyek0zLDI1SDRWMjZIM3pNNCwyNUg1VjI2SDR6TTYsMjVIN1YyNkg2ek0xMSwyNUgxMlYyNkgxMXpNMTMsMjVIMTRWMjZIMTN6TTE1LDI1SDE2VjI2SDE1ek0xNiwyNUgxN1YyNkgxNnpNMTcsMjVIMThWMjZIMTd6TTE4LDI1SDE5VjI2SDE4ek0yNywyNUgyOFYyNkgyN3pNMjgsMjVIMjlWMjZIMjh6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNOSwyNkgxMFYyN0g5ek0xMSwyNkgxMlYyN0gxMXpNMTIsMjZIMTNWMjdIMTJ6TTEzLDI2SDE0VjI3SDEzek0xNSwyNkgxNlYyN0gxNXpNMTYsMjZIMTdWMjdIMTZ6TTE3LDI2SDE4VjI3SDE3ek0xOCwyNkgxOVYyN0gxOHpNMTksMjZIMjBWMjdIMTl6TTIxLDI2SDIyVjI3SDIxek0yNSwyNkgyNlYyN0gyNXpNMjYsMjZIMjdWMjdIMjZ6TTI3LDI2SDI4VjI3SDI3ek0yOCwyNkgyOVYyN0gyOHpNMCwyN0gxVjI4SDB6TTYsMjdIN1YyOEg2ek04LDI3SDlWMjhIOHpNOSwyN0gxMFYyOEg5ek0xMCwyN0gxMVYyOEgxMHpNMTEsMjdIMTJWMjhIMTF6TTEyLDI3SDEzVjI4SDEyek0xNiwyN0gxN1YyOEgxNnpNMTcsMjdIMThWMjhIMTd6TTE4LDI3SDE5VjI4SDE4ek0yMCwyN0gyMVYyOEgyMHpNMjUsMjdIMjZWMjhIMjV6TTI3LDI3SDI4VjI4SDI3ek0yOCwyN0gyOVYyOEgyOHpNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek05LDI4SDEwVjI5SDl6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

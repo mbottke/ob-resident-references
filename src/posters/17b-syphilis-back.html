@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Maternal syphilis to newborn: serology (back)</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  /* desk card 17 BACK (17b) · clinical text >= 10 pt printed */
+  .sheet { --accent: var(--inf); --fb: calc(11.5pt / var(--k)); --gap: 0.2in; padding: calc(0.38in / var(--k)) calc(0.5in / var(--k)) calc(0.25in / var(--k)); }
+  .masthead { padding-bottom: 0.06in; }
+  .masthead h1 { font-size: calc(31pt / var(--k)); padding-bottom: 0.02in; }
+  .masthead .kicker { margin-bottom: 0.05in; }
+  .masthead .kicker .side { color: var(--ink); font-weight: 800; }
+  .masthead .sub { margin-top: 30pt; padding-bottom: 0.02in; max-width: calc(7.4in / var(--k)); }
+  .panel { gap: 0.07in; padding-top: 0.08in; }
+  .grid2 { display: grid; grid-template-columns: 1.04fr 1fr; gap: var(--gap); flex: 1; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: var(--gap); min-height: 0; }
+  .small { font-size: var(--fb); line-height: 1.26; }
+  ul.ls.small { gap: 4pt; }
+  .foot { font-size: calc(7pt / var(--k)); }
+  /* front/back identity: turn-over tab at the end of the legend row, clear of the footer QR */
+  .foot .legend > .turn { position: static; margin-left: auto; flex: 0 1 auto; max-width: 100%; white-space: normal; padding: calc(3pt / var(--k)) calc(8pt / var(--k)); background: var(--inf); color: #fff;
+    font: 600 calc(10pt / var(--k))/1.1 "Inter"; border-radius: 2pt; }
+  .foot .turn b { color: #fff; font-weight: 800; }
+
+  /* label → content rows (01, 04) */
+  .sx { display: grid; grid-template-columns: calc(1.7in / var(--k)) 1fr; font-size: var(--fb); line-height: 1.26; }
+  .sx > dt { font-weight: 800; padding: 5pt 12pt 5pt 0; border-top: 0.75pt solid var(--rule); }
+  .sx > dt small { display: block; font-size: var(--fb); font-weight: 500; color: var(--ink-3); margin-top: 1pt; }
+  .sx > dt .who { display: block; font: 800 calc(10pt / var(--k))/1.1 "Inter"; letter-spacing: .08em; text-transform: uppercase; color: var(--c); margin-bottom: 1pt; }
+  .sx > dd { margin: 0; padding: 5pt 0; border-top: 0.75pt solid var(--rule); }
+  .sx > :nth-child(1), .sx > :nth-child(2) { border-top: 2pt solid var(--c); }
+  .sx .act { display: block; font-weight: 800; margin-bottom: 3pt; }
+  .sx.urgent { grid-template-columns: calc(2.1in / var(--k)) minmax(0, 1fr); }
+  .sx.urgent > dd:first-of-type { border-left: 3pt solid var(--stop); padding-left: 8pt; }
+  .sx.urgent > dd:first-of-type .act { color: var(--stop); }
+  .sx .contra { display: block; margin-top: calc(3pt / var(--k)); border-left: 2pt solid var(--stop); padding-left: 5pt; }
+  .sx .contra b { color: var(--stop); }
+
+  /* 02 · maternal serology: one column per test */
+  .ser { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: var(--fb); line-height: 1.24; }
+  .ser th { font: 800 calc(10pt / var(--k))/1.1 "Inter"; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); text-align: left; vertical-align: bottom; padding: 0 6pt 4pt 0; border-bottom: 1.4pt solid var(--ink); }
+  .ser th.r { text-align: center; white-space: nowrap; letter-spacing: 0; padding-top: 3pt; }
+  .ser thead tr.who th { color: var(--c); border-bottom: 0.75pt solid var(--c); padding-bottom: 2pt; text-align: left; }
+  .ser td { padding: 6pt 8pt 6pt 0; border-bottom: 0.75pt solid var(--rule); vertical-align: top; }
+  .ser td.r { text-align: center; font: 800 calc(15pt / var(--k))/1 "Inter"; padding-right: 6pt; padding-top: 5pt; }
+  .ser tr:last-child td { border-bottom: none; }
+  .ser .pos { color: var(--ink); } .ser .neg { color: var(--ink-2); font-weight: 600; }
+  .ser td.r + td.r, .ser th.r + th.r { border-left: 0.75pt solid var(--rule); }
+  .ser td.na { color: var(--ink-3); }
+  .ser .then { display: block; margin-top: 2pt; }
+  /* symbols and their explanation share a first baseline; action column gets its own gutter */
+  .ser tbody td { vertical-align: baseline; }
+  .ser tbody td.r { padding-block: 6pt; line-height: 1; }
+  .ser :is(th, td):last-child { padding-left: calc(8pt / var(--k)); }
+
+  /* 03 · titer demo: one maternal baseline, two independent infant comparisons */
+  .tdemo { display: grid; grid-template-columns: minmax(0, 0.9fr) calc(26pt / var(--k)) minmax(0, 2fr); grid-template-rows: auto auto; gap: 5pt 0; font-size: var(--fb); line-height: 1.2; }
+  .tdemo .lbl { grid-column: 1 / -1; font: 800 calc(10pt / var(--k))/1.1 "Inter"; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .tdemo .lbl b { color: var(--ink); }
+  .tdemo .mother { grid-column: 1; grid-row: 2 / span 2; align-self: center; padding: 6pt 8pt 7pt; border: 0.75pt solid var(--rule); border-top: 2pt solid var(--ink); background: var(--paper); }
+  .tdemo .inf { grid-column: 3; padding: 5pt 8pt 6pt; border-top: 2pt solid var(--c); background: color-mix(in srgb, var(--c) 12%, white); }
+  .tdemo .inf.ok { background: var(--paper); border: 0.75pt solid var(--rule); border-top: 2pt solid var(--ink-3); }
+  .box.local.local-fields { display: flex; flex-wrap: wrap; column-gap: calc(14pt / var(--k)); row-gap: 0; }
+  .box.local.local-fields > span { white-space: nowrap; }
+  .tdemo .tt { display: block; font: 800 calc(14pt / var(--k))/1.1 "Inter"; font-variant-numeric: tabular-nums; }
+  .tdemo .tt small { font: 700 var(--fb)/1 "Inter"; color: var(--ink-3); }
+  /* fork: stub from the mother's block, a spine, and one arrow to each infant example */
+  .tdemo .fork { grid-column: 2; grid-row: 2 / span 2; position: relative; }
+  .tdemo .fork::before { content: ""; position: absolute; left: 0; width: 40%; top: 50%; border-top: 2pt solid var(--ink-2); }
+  .tdemo .fork::after { content: ""; position: absolute; left: 40%; top: 25%; bottom: 25%; border-left: 2pt solid var(--ink-2); margin-top: -1pt; margin-bottom: -1pt; }
+  .tdemo .fork i { position: absolute; left: 40%; right: 7pt; height: 0; border-top: 2pt solid var(--ink-2); }
+  .tdemo .fork i::after { content: ""; position: absolute; right: -7pt; top: -5pt; border-top: 4pt solid transparent; border-bottom: 4pt solid transparent; border-left: 7pt solid var(--ink-2); }
+  .tdemo .fork i.a { top: 25%; } .tdemo .fork i.b { top: 75%; }
+  .tdemo .inf:not(.ok) .tt { font-size: calc(16pt / var(--k)); color: var(--c); }
+  .tdemo .inf:not(.ok) .tt small { color: var(--ink-3); }
+  .tdemo .ratio { font-weight: 800; color: var(--c); }
+  .tcap { font-size: var(--fb); line-height: 1.26; color: var(--ink-2); }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="17-syphilis-newborn.html" title="Maternal syphilis → newborn">‹ 17</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html" selected="">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="18-nursery.html" title="Nursery card">18 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/17b-syphilis-back.pdf">PDF</a></nav>
+<div class="sheet landscape-17x11 c-inf" style="--k:0.74">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Nursery&nbsp;· L&amp;D&nbsp;· desk card <span class="side">17&nbsp;· back</span></div>
+      <h1><span class="sid">17b<small>back</small></span>Syphilis serology patterns</h1>
+    </div>
+    <div class="sub">Maternal reverse-sequence (treponemal-first) and discordant results at delivery, titer and CSF pitfalls, penicillin allergy and shortage. Send at birth and four scenarios on the front <a href="17-syphilis-newborn.html#p-01" class="xlink"><span class="xref c-inf">17&nbsp;· 01</span></a> <a href="17-syphilis-newborn.html#p-02" class="xlink"><span class="xref c-inf">17&nbsp;· 02</span></a>. Maternal staging and treatment <a href="08-infections.html#p-B" class="xlink"><span class="xref c-inf">8&nbsp;· B</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="08-infections.html" class="xlink"><span><b>8</b>Infections</span></a><a href="05-newborn.html" class="xlink"><span><b>5</b>Newborn</span></a><a href="18-nursery.html" class="xlink"><span><b>18</b>Nursery card</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-17.svg)"></div>
+
+  <div class="grid2">
+    <div class="col">
+      <section class="panel c-inf" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>Maternal discordant results → newborn action</h2><span class="src">CDC 2021&nbsp;· reverse-sequence screening situations&nbsp;· results below are the mother’s</span></div>
+        <dl class="sx urgent">
+          <dt><span class="who">Mother</span>Rapid treponemal + at delivery<small>late or no prenatal care</small></dt>
+          <dd><span class="act">Don’t wait: evaluate and treat the infant 10&nbsp;d as Scenario 1 <a href="17-syphilis-newborn.html#p-02" class="xlink"><span class="xref c-inf">17&nbsp;· 02</span></a></span>Send maternal lab RPR and treponemal test; specialist consult.</dd>
+          <dt><span class="who">Mother</span>Treponemal +, <span class="nowrap">RPR −</span><small>after documented adequate maternal treatment</small></dt>
+          <dd>Maternal RPR still nonreactive at delivery, infant exam normal <b>and</b> infant RPR nonreactive → manage the infant as <b>Scenario 4</b>: no further congenital-syphilis evaluation or treatment. <b>Benzathine × 1</b> if exposure possible within 1 mo of delivery and follow-up uncertain.</dd>
+          <dt><span class="who">Mother</span>Isolated treponemal +<small>e.g., EIA +, RPR −, <span class="nowrap">TP-PA −</span></small></dt>
+          <dd>Usually false positive. Normal infant, low maternal risk → <b>no evaluation, no treatment</b>. Exposure possible → <b>repeat maternal serology within 4&nbsp;wk</b>.</dd>
+        </dl>
+        <div class="box stop small"><b>Treponemal tests on the infant are uninterpretable</b> (maternal IgG crosses the placenta). Infant decisions use quantitative RPR/VDRL on infant serum, never cord blood.</div>
+      </section>
+
+      <section class="panel c-wf grow" id="p-04">
+        <div class="ph"><span class="num">04</span><h2>Penicillin allergy&nbsp;· shortage&nbsp;· peds ID</h2><span class="src">CDC 2021 congenital syphilis&nbsp;· special considerations</span></div>
+        <dl class="sx c-wf">
+          <dt>Penicillin allergy</dt>
+          <dd>Desensitize, then penicillin G. No neonatal skin testing.</dd>
+          <dt>Shortage<small>Scenario 1</small></dt>
+          <dd>Check penicillin G supplies; notify CDC/FDA. Aqueous penicillin G unavailable → use procaine penicillin G. Neither available → peds ID: ceftriaxone <span class="dose">50–75&nbsp;mg/kg IV q24h over 60&nbsp;min</span>. <span class="contra"><b>Contraindicated</b> with hyperbilirubinemia, prematurity through 41&nbsp;wk postmenstrual age, or IV calcium in an infant ≤ 28&nbsp;d old.</span></dd>
+          <dt>Shortage<small>Scenarios 2–3</small></dt>
+          <dd>Procaine × 10&nbsp;d or benzathine × 1: apply the scenario’s single-dose criteria <a href="17-syphilis-newborn.html#p-02" class="xlink"><span class="xref c-inf">17&nbsp;· 02</span></a> (procaine if evaluation abnormal or incomplete). Single-dose ceftriaxone is inadequate.</dd>
+          <dt>Call peds ID</dt>
+          <dd>Any non-penicillin agent&nbsp;· maternal rapid treponemal + at delivery&nbsp;· persistent titers or abnormal CSF at 6–12 mo&nbsp;· desensitization.</dd>
+        </dl>
+        <div class="box local small local-fields"><span>Peds ID: <span class="lfv" data-local="peds_id_contact">____</span></span><span>Health-department report: <span class="lfv" data-local="syphilis_health_dept_report">____</span></span><span>Procaine / benzathine penicillin G in pharmacy: <span class="lfv" data-local="penicillin_g_pharmacy">____</span></span><span>Our lab screens: traditional / reverse sequence <span class="lfv" data-local="syphilis_screen_sequence">____</span></span><span>2nd treponemal test: <span class="lfv" data-local="second_treponemal_test">____</span></span><span>RPR titer turnaround: <span class="lfv" data-local="rpr_titer_turnaround">____</span></span></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="panel c-inf" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>Reading maternal results</h2><span class="src">CDC 2021&nbsp;· syphilis serologic testing</span></div>
+        <table class="ser">
+          <colgroup><col style="width:12%"><col style="width:14%"><col style="width:14%"><col></colgroup>
+          <thead>
+            <tr class="who"><th colspan="3">Mother’s tests</th><th></th></tr>
+            <tr><th class="r">RPR / VDRL</th><th class="r">Treponemal</th><th class="r">2nd<br>treponemal</th><th>Usual meaning → action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="r pos">+</td><td class="r pos">+</td><td class="r na"></td><td>Current or past syphilis. Stage, check treatment history and titer trend <a href="08-infections.html#p-B" class="xlink"><span class="xref c-inf">8&nbsp;· B</span></a><span class="then">Newborn: send at birth <a href="17-syphilis-newborn.html#p-01" class="xlink"><span class="xref c-inf">17&nbsp;· 01</span></a>, then scenario <a href="17-syphilis-newborn.html#p-02" class="xlink"><span class="xref c-inf">17&nbsp;· 02</span></a></span></td></tr>
+            <tr><td class="r neg">−</td><td class="r pos">+</td><td class="r pos">+</td><td>Past treated syphilis, or untreated latent. Treatment undocumented → determine the maternal stage. Stage unknown → treat the mother as late latent.</td></tr>
+            <tr><td class="r neg">−</td><td class="r pos">+</td><td class="r neg">−</td><td>Likely false-positive screen. Low risk, asymptomatic, uninfected partner and reliable follow-up → consider repeat serology within 4&nbsp;wk; RPR and TP-PA stay negative → no treatment. Follow-up unlikely and no documented prior treatment → treat by stage.</td></tr>
+            <tr><td class="r pos">+</td><td class="r neg">−</td><td class="r na"></td><td>Biologic false-positive nontreponemal (pregnancy, autoimmune disease, HIV, injection drug use). Repeat treponemal if exposure recent.</td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="panel c-inf grow" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Titer and CSF pitfalls</h2><span class="src">CDC 2021</span></div>
+        <div class="tdemo">
+          <div class="lbl"><b>Two separate examples</b>&nbsp;· each infant titer compared with the same maternal titer</div>
+          <div class="mother"><span class="tt">Mother 1:8</span>at delivery&nbsp;· the baseline</div>
+          <div class="fork" aria-hidden="true"><i class="a"></i><i class="b"></i></div>
+          <div class="inf ok"><span class="tt">Infant 1:16 <small>example A</small></span>1 dilution&nbsp;· 2×&nbsp;· test variability</div>
+          <div class="inf"><span class="tt">Infant 1:32 <small>example B</small></span><span class="ratio">2 dilutions&nbsp;· 4×</span>&nbsp;· meets the Scenario 1 titer criterion</div>
+        </div>
+        <div class="tcap"><b>Fourfold = 2 dilutions</b> (1:4 → 1:16), same test. One dilution is test variability.</div>
+        <ul class="ls small">
+          <li><b>RPR and VDRL titers aren’t interchangeable</b>: compare mother and infant on the same test, ideally same lab.</li>
+          <li><b>Neonatal CSF</b> needs a clean tap; 95% of healthy neonates have ≤ 16–19 WBC/mm³ or protein ≤ 115–118&nbsp;mg/dL.</li>
+          <li><b>Treponemal tests stay positive for life</b> in most treated adults; never use them to judge response.</li>
+          <li><b>Very high titers</b> (secondary syphilis) can read falsely negative (prozone): ask the lab to dilute when suspicion is high.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> Workowski KA et al. CDC Sexually Transmitted Infections Treatment Guidelines, 2021, MMWR Recomm Rep 2021;70(RR-4)&nbsp;— Syphilis (Diagnostic Considerations), Syphilis During Pregnancy, Congenital Syphilis (reverse-sequence screening situations; CSF values; Special Considerations&nbsp;— penicillin allergy, shortages); Papp JR et al. CDC laboratory recommendations for syphilis testing, United States, 2024, MMWR Recomm Rep 2024;73(RR-1). Back of card 17.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span><span class="turn"><b>Turn over ↻ 17 front</b>&nbsp;· send at birth&nbsp;· four scenarios&nbsp;· regimens&nbsp;· follow-up titers</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTksMEgxMFYxSDl6TTEyLDBIMTNWMUgxMnpNMTMsMEgxNFYxSDEzek0xOCwwSDE5VjFIMTh6TTIwLDBIMjFWMUgyMHpNMjIsMEgyM1YxSDIyek0yMywwSDI0VjFIMjN6TTI0LDBIMjVWMUgyNHpNMjUsMEgyNlYxSDI1ek0yNiwwSDI3VjFIMjZ6TTI3LDBIMjhWMUgyN3pNMjgsMEgyOVYxSDI4ek0wLDFIMVYySDB6TTYsMUg3VjJINnpNOCwxSDlWMkg4ek05LDFIMTBWMkg5ek0xMCwxSDExVjJIMTB6TTEyLDFIMTNWMkgxMnpNMTQsMUgxNVYySDE0ek0xNywxSDE4VjJIMTd6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek05LDJIMTBWM0g5ek0xMSwySDEyVjNIMTF6TTEyLDJIMTNWM0gxMnpNMTMsMkgxNFYzSDEzek0xNCwySDE1VjNIMTR6TTE3LDJIMThWM0gxN3pNMTgsMkgxOVYzSDE4ek0yMCwySDIxVjNIMjB6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNOSwzSDEwVjRIOXpNMTAsM0gxMVY0SDEwek0xMiwzSDEzVjRIMTJ6TTEzLDNIMTRWNEgxM3pNMTUsM0gxNlY0SDE1ek0xNywzSDE4VjRIMTd6TTE4LDNIMTlWNEgxOHpNMjIsM0gyM1Y0SDIyek0yNCwzSDI1VjRIMjR6TTI1LDNIMjZWNEgyNXpNMjYsM0gyN1Y0SDI2ek0yOCwzSDI5VjRIMjh6TTAsNEgxVjVIMHpNMiw0SDNWNUgyek0zLDRINFY1SDN6TTQsNEg1VjVINHpNNiw0SDdWNUg2ek04LDRIOVY1SDh6TTksNEgxMFY1SDl6TTEwLDRIMTFWNUgxMHpNMTIsNEgxM1Y1SDEyek0xNCw0SDE1VjVIMTR6TTE4LDRIMTlWNUgxOHpNMjIsNEgyM1Y1SDIyek0yNCw0SDI1VjVIMjR6TTI1LDRIMjZWNUgyNXpNMjYsNEgyN1Y1SDI2ek0yOCw0SDI5VjVIMjh6TTAsNUgxVjZIMHpNNiw1SDdWNkg2ek04LDVIOVY2SDh6TTksNUgxMFY2SDl6TTEyLDVIMTNWNkgxMnpNMTQsNUgxNVY2SDE0ek0xNiw1SDE3VjZIMTZ6TTIwLDVIMjFWNkgyMHpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTgsN0g5VjhIOHpNMTEsN0gxMlY4SDExek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTYsN0gxN1Y4SDE2ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTIsOEgzVjlIMnpNNSw4SDZWOUg1ek02LDhIN1Y5SDZ6TTgsOEg5VjlIOHpNMTAsOEgxMVY5SDEwek0xMiw4SDEzVjlIMTJ6TTE1LDhIMTZWOUgxNXpNMTYsOEgxN1Y5SDE2ek0xOSw4SDIwVjlIMTl6TTIxLDhIMjJWOUgyMXpNMjIsOEgyM1Y5SDIyek0yMyw4SDI0VjlIMjN6TTI0LDhIMjVWOUgyNHpNMjcsOEgyOFY5SDI3ek0yOCw4SDI5VjlIMjh6TTMsOUg0VjEwSDN6TTQsOUg1VjEwSDR6TTksOUgxMFYxMEg5ek0xMSw5SDEyVjEwSDExek0xNCw5SDE1VjEwSDE0ek0xNSw5SDE2VjEwSDE1ek0xNiw5SDE3VjEwSDE2ek0xNyw5SDE4VjEwSDE3ek0xOSw5SDIwVjEwSDE5ek0yMCw5SDIxVjEwSDIwek0yMSw5SDIyVjEwSDIxek0yMiw5SDIzVjEwSDIyek0yMyw5SDI0VjEwSDIzek0yNyw5SDI4VjEwSDI3ek0yOCw5SDI5VjEwSDI4ek0wLDEwSDFWMTFIMHpNMSwxMEgyVjExSDF6TTIsMTBIM1YxMUgyek00LDEwSDVWMTFINHpNNSwxMEg2VjExSDV6TTYsMTBIN1YxMUg2ek04LDEwSDlWMTFIOHpNMTEsMTBIMTJWMTFIMTF6TTE0LDEwSDE1VjExSDE0ek0xNSwxMEgxNlYxMUgxNXpNMTYsMTBIMTdWMTFIMTZ6TTE5LDEwSDIwVjExSDE5ek0yMCwxMEgyMVYxMUgyMHpNMjIsMTBIMjNWMTFIMjJ6TTIzLDEwSDI0VjExSDIzek0yNCwxMEgyNVYxMUgyNHpNMjUsMTBIMjZWMTFIMjV6TTI2LDEwSDI3VjExSDI2ek0yOCwxMEgyOVYxMUgyOHpNMSwxMUgyVjEySDF6TTIsMTFIM1YxMkgyek01LDExSDZWMTJINXpNNywxMUg4VjEySDd6TTgsMTFIOVYxMkg4ek0xMCwxMUgxMVYxMkgxMHpNMTEsMTFIMTJWMTJIMTF6TTE2LDExSDE3VjEySDE2ek0xOCwxMUgxOVYxMkgxOHpNMjMsMTFIMjRWMTJIMjN6TTI1LDExSDI2VjEySDI1ek0wLDEySDFWMTNIMHpNMSwxMkgyVjEzSDF6TTMsMTJINFYxM0gzek02LDEySDdWMTNINnpNNywxMkg4VjEzSDd6TTgsMTJIOVYxM0g4ek05LDEySDEwVjEzSDl6TTEwLDEySDExVjEzSDEwek0xMSwxMkgxMlYxM0gxMXpNMTUsMTJIMTZWMTNIMTV6TTE2LDEySDE3VjEzSDE2ek0xOCwxMkgxOVYxM0gxOHpNMjAsMTJIMjFWMTNIMjB6TTIyLDEySDIzVjEzSDIyek0yOCwxMkgyOVYxM0gyOHpNMCwxM0gxVjE0SDB6TTEsMTNIMlYxNEgxek03LDEzSDhWMTRIN3pNOCwxM0g5VjE0SDh6TTExLDEzSDEyVjE0SDExek0xMiwxM0gxM1YxNEgxMnpNMTUsMTNIMTZWMTRIMTV6TTE2LDEzSDE3VjE0SDE2ek0xNywxM0gxOFYxNEgxN3pNMTksMTNIMjBWMTRIMTl6TTIwLDEzSDIxVjE0SDIwek0yMiwxM0gyM1YxNEgyMnpNMjMsMTNIMjRWMTRIMjN6TTI3LDEzSDI4VjE0SDI3ek0yOCwxM0gyOVYxNEgyOHpNMiwxNEgzVjE1SDJ6TTMsMTRINFYxNUgzek01LDE0SDZWMTVINXpNNiwxNEg3VjE1SDZ6TTksMTRIMTBWMTVIOXpNMTAsMTRIMTFWMTVIMTB6TTExLDE0SDEyVjE1SDExek0xMywxNEgxNFYxNUgxM3pNMTUsMTRIMTZWMTVIMTV6TTE5LDE0SDIwVjE1SDE5ek0yMCwxNEgyMVYxNUgyMHpNMjEsMTRIMjJWMTVIMjF6TTI4LDE0SDI5VjE1SDI4ek0wLDE1SDFWMTZIMHpNMSwxNUgyVjE2SDF6TTMsMTVINFYxNkgzek05LDE1SDEwVjE2SDl6TTEwLDE1SDExVjE2SDEwek0xMiwxNUgxM1YxNkgxMnpNMTQsMTVIMTVWMTZIMTR6TTE4LDE1SDE5VjE2SDE4ek0yMCwxNUgyMVYxNkgyMHpNMjEsMTVIMjJWMTZIMjF6TTIyLDE1SDIzVjE2SDIyek0yMywxNUgyNFYxNkgyM3pNMjQsMTVIMjVWMTZIMjR6TTEsMTZIMlYxN0gxek0yLDE2SDNWMTdIMnpNNCwxNkg1VjE3SDR6TTUsMTZINlYxN0g1ek02LDE2SDdWMTdINnpNNywxNkg4VjE3SDd6TTgsMTZIOVYxN0g4ek0xMCwxNkgxMVYxN0gxMHpNMTEsMTZIMTJWMTdIMTF6TTEyLDE2SDEzVjE3SDEyek0xNiwxNkgxN1YxN0gxNnpNMTksMTZIMjBWMTdIMTl6TTIyLDE2SDIzVjE3SDIyek0yMywxNkgyNFYxN0gyM3pNMjgsMTZIMjlWMTdIMjh6TTEsMTdIMlYxOEgxek0yLDE3SDNWMThIMnpNOCwxN0g5VjE4SDh6TTExLDE3SDEyVjE4SDExek0xMiwxN0gxM1YxOEgxMnpNMTUsMTdIMTZWMThIMTV6TTE2LDE3SDE3VjE4SDE2ek0xNywxN0gxOFYxOEgxN3pNMTksMTdIMjBWMThIMTl6TTIwLDE3SDIxVjE4SDIwek0yMiwxN0gyM1YxOEgyMnpNMjMsMTdIMjRWMThIMjN6TTI2LDE3SDI3VjE4SDI2ek0yNywxN0gyOFYxOEgyN3pNMjgsMTdIMjlWMThIMjh6TTAsMThIMVYxOUgwek0xLDE4SDJWMTlIMXpNMiwxOEgzVjE5SDJ6TTMsMThINFYxOUgzek01LDE4SDZWMTlINXpNNiwxOEg3VjE5SDZ6TTcsMThIOFYxOUg3ek04LDE4SDlWMTlIOHpNOSwxOEgxMFYxOUg5ek0xMSwxOEgxMlYxOUgxMXpNMTUsMThIMTZWMTlIMTV6TTE5LDE4SDIwVjE5SDE5ek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI1LDE4SDI2VjE5SDI1ek0yOCwxOEgyOVYxOUgyOHpNMiwxOUgzVjIwSDJ6TTgsMTlIOVYyMEg4ek05LDE5SDEwVjIwSDl6TTEwLDE5SDExVjIwSDEwek0xMSwxOUgxMlYyMEgxMXpNMTUsMTlIMTZWMjBIMTV6TTE4LDE5SDE5VjIwSDE4ek0yMSwxOUgyMlYyMEgyMXpNMCwyMEgxVjIxSDB6TTEsMjBIMlYyMUgxek0yLDIwSDNWMjFIMnpNNCwyMEg1VjIxSDR6TTUsMjBINlYyMUg1ek02LDIwSDdWMjFINnpNNywyMEg4VjIxSDd6TTEwLDIwSDExVjIxSDEwek0xMSwyMEgxMlYyMUgxMXpNMTIsMjBIMTNWMjFIMTJ6TTE1LDIwSDE2VjIxSDE1ek0yMCwyMEgyMVYyMUgyMHpNMjEsMjBIMjJWMjFIMjF6TTIyLDIwSDIzVjIxSDIyek0yMywyMEgyNFYyMUgyM3pNMjQsMjBIMjVWMjFIMjR6TTI1LDIwSDI2VjIxSDI1ek0yNywyMEgyOFYyMUgyN3pNOCwyMUg5VjIySDh6TTksMjFIMTBWMjJIOXpNMTEsMjFIMTJWMjJIMTF6TTEyLDIxSDEzVjIySDEyek0xNSwyMUgxNlYyMkgxNXpNMTYsMjFIMTdWMjJIMTZ6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjUsMjFIMjZWMjJIMjV6TTI2LDIxSDI3VjIySDI2ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTksMjJIMTBWMjNIOXpNMTEsMjJIMTJWMjNIMTF6TTEyLDIySDEzVjIzSDEyek0xMywyMkgxNFYyM0gxM3pNMTUsMjJIMTZWMjNIMTV6TTE4LDIySDE5VjIzSDE4ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNMTEsMjNIMTJWMjRIMTF6TTEyLDIzSDEzVjI0SDEyek0xNCwyM0gxNVYyNEgxNHpNMTYsMjNIMTdWMjRIMTZ6TTE5LDIzSDIwVjI0SDE5ek0yMCwyM0gyMVYyNEgyMHpNMjQsMjNIMjVWMjRIMjR6TTI3LDIzSDI4VjI0SDI3ek0wLDI0SDFWMjVIMHpNMiwyNEgzVjI1SDJ6TTMsMjRINFYyNUgzek00LDI0SDVWMjVINHpNNiwyNEg3VjI1SDZ6TTEyLDI0SDEzVjI1SDEyek0xNSwyNEgxNlYyNUgxNXpNMTYsMjRIMTdWMjVIMTZ6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjgsMjRIMjlWMjVIMjh6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNMTAsMjVIMTFWMjZIMTB6TTExLDI1SDEyVjI2SDExek0xMiwyNUgxM1YyNkgxMnpNMTQsMjVIMTVWMjZIMTR6TTE1LDI1SDE2VjI2SDE1ek0xNiwyNUgxN1YyNkgxNnpNMTcsMjVIMThWMjZIMTd6TTE5LDI1SDIwVjI2SDE5ek0yMCwyNUgyMVYyNkgyMHpNMjQsMjVIMjVWMjZIMjR6TTI1LDI1SDI2VjI2SDI1ek0yNiwyNUgyN1YyNkgyNnpNMjcsMjVIMjhWMjZIMjd6TTI4LDI1SDI5VjI2SDI4ek0wLDI2SDFWMjdIMHpNMiwyNkgzVjI3SDJ6TTMsMjZINFYyN0gzek00LDI2SDVWMjdINHpNNiwyNkg3VjI3SDZ6TTgsMjZIOVYyN0g4ek05LDI2SDEwVjI3SDl6TTExLDI2SDEyVjI3SDExek0xNCwyNkgxNVYyN0gxNHpNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMjAsMjZIMjFWMjdIMjB6TTIxLDI2SDIyVjI3SDIxek0yNCwyNkgyNVYyN0gyNHpNMjcsMjZIMjhWMjdIMjd6TTI4LDI2SDI5VjI3SDI4ek0wLDI3SDFWMjhIMHpNNiwyN0g3VjI4SDZ6TTgsMjdIOVYyOEg4ek05LDI3SDEwVjI4SDl6TTEyLDI3SDEzVjI4SDEyek0xNSwyN0gxNlYyOEgxNXpNMTgsMjdIMTlWMjhIMTh6TTIwLDI3SDIxVjI4SDIwek0yMSwyN0gyMlYyOEgyMXpNMjIsMjdIMjNWMjhIMjJ6TTIzLDI3SDI0VjI4SDIzek0yNSwyN0gyNlYyOEgyNXpNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek0xMCwyOEgxMVYyOUgxMHpNMTEsMjhIMTJWMjlIMTF6TTEyLDI4SDEzVjI5SDEyek0xNSwyOEgxNlYyOUgxNXpNMjAsMjhIMjFWMjlIMjB6TTIxLDI4SDIyVjI5SDIxek0yNSwyOEgyNlYyOUgyNXpNMjgsMjhIMjlWMjlIMjh6IiBpZD0icXItcGF0aCIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIxIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZT0ibm9uZSIvPjwvc3ZnPg=="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

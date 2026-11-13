@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Postpartum headache</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); }
+  .masthead h1 { font-size: calc(72pt / var(--k)); }
+  .masthead .sub { max-width: 7.4in; font-size: calc(14pt / var(--k)); line-height: 1.28; }
+  .sheet .col { gap: .16in; }
+  .sheet .panel { gap: .08in; }
+  .sheet table.img, .sheet table.lac { --cell-y: 4pt; --table-leading: 1.26; }
+
+  /* ===== page: routing strip · entry row · two branch columns · shared reassessment ===== */
+  .page { display: flex; flex-direction: column; gap: 0; flex: 1; min-height: 0; }
+  /* named spacing: compact after the router, standard between page rows */
+  .page > * + * { margin-top: calc(12pt / var(--k)); }
+  .page > .rline + .entry { margin-top: calc(7.2pt / var(--k)); }
+  /* panel citation lines: quieter than the heading above them */
+  .sheet .ph .src { font-weight: 400; }
+  .page > .entry { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: var(--gap); }
+  .page > .cols { flex: 1; grid-template-columns: 1fr 1fr; }
+
+  /* ===== routing: one shared assessment, then sibling finding → panel routes (not a sequence); one return path ===== */
+  .rline { display: grid; grid-template-columns: 0.8fr 1fr 1.42fr 0.78fr; gap: 4pt 6pt; font-size: 10.6pt; line-height: 1.15; font-weight: 700; }
+  .rline .start { grid-column: 1 / span 3; border: 2pt solid var(--ink); border-radius: var(--radius); padding: 2pt 9pt; font-weight: 600; display: flex; align-items: center; gap: 8pt; }
+  .rline .start .k { flex: none; font: 800 9.6pt/1 "Inter"; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+  .rline .start b { font-weight: 800; }
+  .rline .ex { display: flex; align-items: center; justify-content: space-between; gap: 5pt; padding: 2pt 7pt; border-left: 4pt solid var(--c); background: color-mix(in srgb, var(--c) var(--tint-1), white); }
+  .rline .ex.back { --c: var(--stop); background: var(--paper); border: 1.2pt solid var(--stop); border-left: 4pt solid var(--stop); }
+  /* same-sheet panel address: outlined (filled chips = another sheet) */
+  .sec { display: inline-flex; align-items: center; gap: 2pt; flex: none; font: 800 max(9.5pt, calc(11pt / var(--k)))/1 "Inter"; padding: 1.5pt 4pt; border: 1pt solid var(--ink); border-radius: 2pt; color: var(--ink); background: var(--paper); white-space: nowrap; }
+  .sec::before { content: "→"; font-weight: 700; }
+  /* red-flag list */
+  .flags { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14pt; }
+  .flags ul.ls { gap: 2.5pt; }
+  .flags ul.ls > li::before { background: var(--stop); }
+  .callout-stop .act { display: block; font: 800 14pt/1.2 "Inter"; margin-bottom: 2pt; }
+  .callout-stop .stroke { display: block; margin-bottom: 2pt; }
+
+  /* BP: severe gate first (with first doses, so this sheet stands alone), then the lower threshold */
+  .bp2 { display: grid; grid-template-columns: 2.05fr 1fr; gap: 0.12in; }
+  .bp2 > div { border-top: 4pt solid var(--htn); background: color-mix(in srgb, var(--htn) var(--tint-1), white); padding: 6pt 10pt 8pt; font-size: 11.2pt; line-height: 1.28; }
+  .bp2 > div.sev { background: color-mix(in srgb, var(--htn) var(--tint-2), white); }
+  .bp2 .hero { display: block; font-size: calc(17pt / var(--k)); color: var(--htn); margin-bottom: 2pt; white-space: normal; }
+  .bp2 .hero.sm { font-size: calc(13pt / var(--k)); }
+  .bp2 .hero.sm i { font-size: .85em; }
+  .bp2 .hero i { font-style: normal; font-size: .72em; font-weight: 700; }
+  .bp2 .cond { display: block; font-weight: 800; margin-bottom: 4pt; }
+  .bp2 .cond .deadline { background: var(--htn); margin-left: 4pt; }
+  .bp2 .lb { margin-left: 8pt; font-weight: 700; color: var(--ink-2); }
+  .bp2 ul.fd { list-style: none; margin: 1pt 0 3pt; }
+  .bp2 ul.fd > li { padding: 1.5pt 0; border-bottom: .75pt solid color-mix(in srgb, var(--htn) 30%, white); }
+  .bp2 ul.fd b { color: var(--htn); }
+  .bp2 .then { display: block; font-weight: 700; }
+  .bp2 .av { font-weight: 400; color: var(--ink-2); }
+  /* contacts: compact full-width rail */
+  .call .ph h2 { font-size: calc(22pt / var(--k)); }
+  .call-grid { display: grid; grid-template-columns: 1.45in 2.25fr 1fr; gap: 0.2in; align-items: start; }
+  .call .ph .src { grid-column: 1; }
+  .call .reas { grid-template-columns: auto minmax(0, 1fr); }
+  .call .box.local { margin-top: 0; }
+  /* imaging table: suspect | clue | study → then */
+  table.img { table-layout: fixed; }
+  table.img td { font-size: 11pt; line-height: var(--table-leading); }
+  table.img td.k { white-space: normal; }
+  table.img td.st { font-weight: 700; background: color-mix(in srgb, var(--wf) 12%, white); padding-left: 6pt; }
+  table.img th:last-child { color: var(--wf); border-bottom-color: var(--wf); padding-left: 6pt; }
+  table.img .then { display: block; font-weight: 400; }
+  .terms { font-size: 10.6pt; line-height: 1.25; color: var(--ink-2); }
+
+  /* primary headache: prerequisite first */
+  .prereq { border-left: 3pt solid var(--stop); padding: 2pt 0 2pt 8pt; font-size: 11.2pt; line-height: 1.26; font-weight: 700; }
+  table.lac td { font-size: 11pt; line-height: var(--table-leading); }
+  table.lac td.k { width: 1.3in; white-space: normal; }
+  table.lac .dose { white-space: nowrap; }
+  table.lac .rx { display: block; }
+  table.lac .rx + .rx, table.lac .rx + .note { margin-top: 3pt; }
+  table.lac .rx .nt { color: var(--ink-3); }
+  table.lac .note { display: block; margin-top: 3pt; }
+  table.lac .note .x { font-weight: 700; color: var(--stop); }
+  table.lac tr.no td { background: var(--t-stop); }
+  table.lac tr.no td.k { color: var(--stop); padding-left: 4pt; }
+
+  /* PDPH phenotype */
+  .ph-grid { grid-template-columns: 0.9in minmax(0, 1fr); gap: 3pt 10pt; font-size: 11.2pt; line-height: 1.28; }
+  .ph-grid dt { font-weight: 800; color: var(--c); white-space: normal; }
+  .ph-grid .act { display: block; font-weight: 800; margin-top: 2pt; }
+  /* PDPH treatment: urgent patch pathway first (tinted, not reversed), then supportive care */
+  .patch { border-top: 4pt solid var(--c); background: color-mix(in srgb, var(--c) 24%, white); padding: 6pt 10pt 8pt; font-size: 11.2pt; line-height: 1.28; }
+  .patch .k { font: 800 15pt/1.15 "Inter"; display: block; margin-bottom: 3pt; color: var(--c); }
+  .patch .lead { display: block; font-weight: 800; font-size: 12.5pt; margin-bottom: 2pt; }
+  .ladder { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.1in; }
+  .ladder > div { background: var(--paper); border-left: 2pt solid var(--c); padding: 3pt 8pt 4pt; font-size: 11pt; line-height: 1.26; }
+  .ladder .k { font: 700 calc(12.5pt / var(--k))/1.2 "Inter"; display: block; margin-bottom: 3pt; color: var(--c); }
+  .ladder .bf-limit { display: block; border-bottom: .75pt solid color-mix(in srgb, var(--c) 40%, white); margin-bottom: 3pt; padding-bottom: 3pt; font-weight: 800; }
+  .supp { font: 800 9.6pt/1.1 "Inter"; letter-spacing: .09em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--ink-3); }
+
+  /* who to call */
+  .reas { gap: 3pt 10pt; font-size: 11.2pt; line-height: 1.28; }
+  .reas dt { font-weight: 800; color: var(--c); }
+  .lf { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6pt 14pt; }
+  .lf > span { display: flex; align-items: baseline; gap: 4pt; white-space: nowrap; }
+  .lf > span.w { grid-column: 1 / -1; }
+  .lf .fl { flex: 1; min-width: 0.5in; border-bottom: 0.75pt solid var(--wf); height: 1em; }
+
+  /* reassessment: governs every branch; trigger → action */
+  .reopen .when { font-weight: 700; }
+  .reopen .do { font-weight: 800; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="13-sepsis.html" title="Maternal sepsis">‹ 13</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html" selected="">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="15-sick-newborn.html" title="The sick newborn">15 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/14-pp-headache.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-wf" style="--k:1.11">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Postpartum unit&nbsp;· triage&nbsp;· ED</div>
+      <h1><span class="sid">14</span>Postpartum headache</h1>
+    </div>
+    <div class="sub">Red flags, preeclampsia, imaging, post-dural-puncture headache, treatment while breastfeeding.<br><span class="muted">Through 6&nbsp;weeks postpartum. Adult doses.</span></div>
+    <nav class="setnav rel"><em>See also</em><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="02-emergencies.html" class="xlink"><span><b>2</b>Emergencies</span></a><a href="11-bp-meds.html" class="xlink"><span><b>11</b>BP meds</span></a><a href="20-neuraxial.html" class="xlink"><span><b>20</b>Neuraxial</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-14.svg)"></div>
+
+  <div class="page">
+    <!-- ROUTING: one shared assessment; sibling routes (more than one can apply); one return path -->
+    <div class="rline">
+      <div class="start"><span class="k">Every headache</span><span>Check BP, neurologic exam, fundi and red flags now. <b>Follow every matching branch.</b></span></div>
+      <div class="ex back"><span>↺ Any change: reopen</span><span class="sec">07</span></div>
+      <div class="ex" style="--c:var(--stop)"><span>Any red flag</span><span class="sec">01</span></div>
+      <div class="ex" style="--c:var(--htn)"><span>SBP ≥ 140 or DBP ≥ 90</span><span class="sec">02</span></div>
+      <div class="ex" style="--c:var(--wf)"><span>Positional headache ≤ 5&nbsp;d after neuraxial procedure</span><span class="sec">05</span></div>
+      <div class="ex" style="--c:var(--wf)"><span>None of these</span><span class="sec">04</span></div>
+    </div>
+
+    <div class="entry">
+      <section class="panel c-stop" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>Red flags <small>secondary headache</small></h2><span class="src">ACOG CPG 3 (2022)&nbsp;· ACR Appropriateness Criteria Headache (2022)</span></div>
+        <div class="flags">
+          <ul class="ls small">
+            <li><b>Sudden severe headache:</b> peak intensity ≤ 1&nbsp;h after onset</li>
+            <li><b>Focal deficit</b>, diplopia, field cut</li>
+            <li><b>Seizure</b></li>
+            <li><b>Altered mental status</b>, confusion</li>
+            <li><b>Fever</b> or neck stiffness</li>
+          </ul>
+          <ul class="ls small">
+            <li><b>Papilledema</b>, visual change</li>
+            <li><b>Positional change</b>: orthostatic headache stops being orthostatic</li>
+            <li><b>SBP ≥ 140 or DBP ≥ 90</b>&nbsp;· abnormal labs (platelets, AST/ALT, Cr)</li>
+            <li>New pattern, different from usual headaches</li>
+          </ul>
+        </div>
+        <div class="callout-stop small"><div class="ico">!</div><div><span class="act">Any red flag → examine now</span><span class="stroke"><b>Acute focal deficit → stroke alert now</b>; note last known well.</span>BP, neuro exam, fundi; image the same day (panel 03). MRI availability must not delay assessment&nbsp;— use CT (ACOG).</div></div>
+        <div class="xs muted">Imaging finds a secondary cause in ≥ 25% of acute headaches in pregnancy and postpartum (ACOG); musculoskeletal and primary headaches remain the most common postpartum.</div>
+      </section>
+
+      <section class="panel c-htn" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>Check BP first</h2><span class="src">ACOG PB 222 (reaff. 2026)&nbsp;· PB 203&nbsp;· CPG 3&nbsp;· Severe HTN Bundle 2025</span></div>
+        <div class="bp2">
+          <div class="sev">
+            <span class="hero">SBP ≥ 160 <i>or</i> DBP ≥ 110</span>
+            <span class="cond">persistent ≥ 15&nbsp;min <span class="deadline">Treat within 30–60&nbsp;min</span><span class="lb">First dose, pick one:</span></span>
+            <ul class="fd">
+              <li><b>Labetalol</b> <span class="dose">20&nbsp;mg IV</span> over 2&nbsp;min&nbsp;· recheck 10&nbsp;min</li>
+              <li><b>Hydralazine</b> <span class="dose">5–10&nbsp;mg IV</span> over 2&nbsp;min&nbsp;· recheck 20&nbsp;min</li>
+              <li><b>Nifedipine IR</b> <span class="dose">10&nbsp;mg PO</span>, swallow whole&nbsp;· recheck 20&nbsp;min</li>
+            </ul>
+            <span class="then">Still SBP ≥ 160 or DBP ≥ 110 at recheck → later doses, maximums, rescue <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a>. Target SBP 140–150 and DBP 90–100. <span class="av">Labetalol: avoid with asthma, heart block, bradycardia, decompensated cardiac disease.</span></span>
+          </div>
+          <div>
+            <span class="hero sm">SBP ≥ 140 <i>or</i> DBP ≥ 90</span>
+            Up to 6&nbsp;wk postpartum, headache + raised BP = <b>preeclampsia until proved otherwise</b>. CBC/platelets, Cr, AST/ALT, urine protein/Cr. New headache unresponsive to medication and not explained by another diagnosis = <b>severe feature</b>.
+          </div>
+        </div>
+        <ul class="ls small">
+          <li><b>Magnesium sulfate</b> (seizure prophylaxis): preeclampsia with severe features or eclampsia → give; new postpartum HTN with headache or blurred vision → consider <a href="06-postpartum.html#p-B" class="xlink"><span class="xref c-htn">6&nbsp;· B</span></a>. Load <span class="dose">4–6&nbsp;g IV</span> over 20–30&nbsp;min, then <span class="dose">1–2&nbsp;g/h</span>; toxicity, renal dosing <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a>. Seizure → eclampsia until proved otherwise.</li>
+          <li>Altered consciousness, vomiting, fever or seizure with HTN → image for <b>PRES or RCVS</b> (03).</li>
+          <li>Postpartum preeclampsia peaks days 3–6. Maintenance antihypertensives <a href="11-bp-meds.html#p-02" class="xlink"><span class="xref c-htn">11&nbsp;· 02</span></a></li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- CONTACTS: right after the entry checks -->
+    <section class="panel c-wf call">
+      <div class="call-grid">
+        <div class="ph"><h2>Who to call</h2><span class="src">ASA PDPH statement (2021)&nbsp;· ACOG CPG 3</span></div>
+        <dl class="kv reas c-wf">
+          <dt>Stroke team</dt><dd>Acute focal deficit: activate now; note last known well.</dd>
+          <dt>Anesthesia</dt><dd>Headache after neuraxial anesthesia: contact anesthesia. Suspected post-dural-puncture headache (PDPH): anesthesia assessment <b>within 24&nbsp;h</b>; daily review until resolved.</dd>
+          <dt>Neurology</dt><dd>Red flag, abnormal imaging, seizure without HTN.</dd>
+          <dt>MFM</dt><dd>Preeclampsia with severe features, refractory BP, eclampsia. Higher-level care / handoff <a href="27-ob-consult.html#p-E" class="xlink"><span class="xref c-wf">27&nbsp;· E / F</span></a></dd>
+        </dl>
+        <div class="box local small lf">
+          <span>Stroke alert <i class="fl" data-local="stroke_alert"></i></span>
+          <span>Anesthesia <i class="fl" data-local="anesthesia_contact"></i></span>
+          <span>Neurology <i class="fl" data-local="neurology_contact"></i></span>
+          <span>MFM <i class="fl" data-local="mfm_transfer_center"></i></span>
+          <span class="w">Postpartum HTN readmission <i class="fl" data-local="pp_htn_readmission"></i></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="cols">
+      <!-- LEFT: imaging, primary headache -->
+      <div class="col">
+        <section class="panel c-wf" id="p-03">
+          <div class="ph"><span class="num">03</span><h2>Imaging by suspected cause</h2><span class="src">ACR AC Headache 2022 (variants 1, 5, 6)&nbsp;· ACOG CPG 3&nbsp;· ACR Manual on Contrast Media</span></div>
+          <table class="t img">
+            <colgroup><col style="width:17%"><col style="width:37%"><col style="width:46%"></colgroup>
+            <thead><tr><th>Suspect</th><th>Clue</th><th>Study → then</th></tr></thead>
+            <tbody>
+              <tr><td class="k">Any red flag</td><td>Any item in panel 01</td><td class="st">MRI head w/o contrast or CT head w/o<span class="then">both “usually appropriate” (ACR variant 6, new peripartum headache)</span></td></tr>
+              <tr><td class="k">SAH&nbsp;· stroke</td><td>Sudden severe headache or focal deficit</td><td class="st">CT head w/o now ± CTA head<span class="then">→ stroke alert</span></td></tr>
+              <tr><td class="k">RCVS</td><td>Recurrent thunderclap, wk 1–2</td><td class="st">CTA or MRA head; repeat if normal<span class="then">→ stop triptans, SSRIs, decongestants</span></td></tr>
+              <tr><td class="k">CVT</td><td>Constant, worsening; seizure, papilledema</td><td class="st">MRI + MRV, or CT + CTV<span class="then">→ LMWH, neurology</span></td></tr>
+              <tr><td class="k">PRES</td><td>HTN, visual change, seizure, encephalopathy</td><td class="st">MRI (FLAIR)<span class="then">→ BP control, magnesium sulfate</span></td></tr>
+              <tr><td class="k">Pituitary apoplexy</td><td>Sudden headache, field loss, low BP or Na</td><td class="st">MRI pituitary<span class="then">→ stress-dose hydrocortisone</span></td></tr>
+            </tbody>
+          </table>
+          <div class="terms"><b>SAH</b> subarachnoid hemorrhage&nbsp;· <b>RCVS</b> reversible cerebral vasoconstriction syndrome&nbsp;· <b>CVT</b> cerebral venous thrombosis&nbsp;· <b>PRES</b> posterior reversible encephalopathy syndrome</div>
+          <div class="small"><b>Postpartum contrast:</b> gadolinium and iodinated contrast are fine&nbsp;— no need to interrupt breastfeeding (ACR). Classic post-dural-puncture headache (PDPH) needs no imaging before a blood patch (ASA).</div>
+        </section>
+
+        <section class="panel c-wf grow" id="p-04">
+          <div class="ph"><span class="num">04</span><h2>Primary headache <small>breastfeeding</small></h2><span class="src">ACOG CPG 3&nbsp;· LactMed (NLM, 2026)&nbsp;· FDA labels</span></div>
+          <div class="prereq">Complete BP, neurologic examination and red-flag assessment first → panels 01–02.</div>
+          <table class="t lac">
+            <tbody>
+              <tr><td class="k">Step 1</td><td>
+                  <span class="rx"><b>Acetaminophen</b> <span class="dose">1,000&nbsp;mg PO</span> + caffeine <span class="dose">130&nbsp;mg</span> <span class="nt">(acetaminophen max <span class="nowrap">3–4&nbsp;g/day</span>)</span></span>
+                  <span class="rx"><b>or</b> NSAID: ibuprofen <span class="dose">400–600&nbsp;mg PO q6h</span> <span class="nt">(preferred NSAID in lactation)</span></span>
+                  <span class="note">Ketorolac <span class="dose">15–30&nbsp;mg IV</span> × 1 is acceptable in the first 24–72&nbsp;h; after that use another NSAID (label: contraindicated in breastfeeding).</span>
+              </td></tr>
+              <tr><td class="k">No relief at 60&nbsp;min</td><td>
+                  <span class="rx"><b>Metoclopramide</b> <span class="dose">10&nbsp;mg IV</span> + diphenhydramine <span class="dose">25&nbsp;mg IV</span> <span class="nt">· may repeat after 6&nbsp;h</span></span>
+                  <span class="rx"><b>or</b> prochlorperazine <span class="dose">10&nbsp;mg IV</span> slowly <span class="nt">(≤ 5&nbsp;mg/min; no bolus)</span></span>
+                  <span class="note">Compatible short term.</span>
+              </td></tr>
+              <tr><td class="k">Migraine</td><td>
+                  <span class="rx"><b>Sumatriptan</b> <span class="dose">6&nbsp;mg SUBQ</span> <span class="nt">· may repeat after ≥ 1&nbsp;h; max 12&nbsp;mg/day</span></span>
+                  <span class="rx"><b>or</b> sumatriptan <span class="dose">50–100&nbsp;mg PO</span> <span class="nt">· if partial response, may repeat after ≥ 2&nbsp;h; max 200&nbsp;mg/24&nbsp;h</span></span>
+                  <span class="note">Compatible (LactMed); no routine pumping-and-discarding. <span class="x">Not with</span> uncontrolled HTN, preeclampsia, CAD or suspected RCVS.</span>
+              </td></tr>
+              <tr class="no"><td class="k">Avoid</td><td><b>Opioids</b> (codeine, hydrocodone, oxycodone: infant sedation, rebound)&nbsp;· <b>butalbital</b> combinations&nbsp;· ergots (ergotamine, DHE).</td></tr>
+            </tbody>
+          </table>
+          <div class="xs muted">ACOG cites expert opinion to pause breastfeeding 9–12&nbsp;h after sumatriptan; LactMed: low milk levels, poor infant absorption, pausing only in extreme cases (e.g., preterm infant).</div>
+        </section>
+      </div>
+
+      <!-- RIGHT: post-neuraxial branch, then reassessment for every branch -->
+      <div class="col">
+        <section class="panel c-wf" id="p-05">
+          <div class="ph"><span class="num">05</span><h2>Post-dural-puncture headache</h2><span class="src">Uppal et al., JAMA Netw Open 2023 (multisociety PDPH consensus)&nbsp;· ASA 2021&nbsp;· ICHD-3</span></div>
+          <dl class="kv ph-grid c-wf">
+            <dt>Setting</dt><dd>Any neuraxial (epidural, spinal, CSE)&nbsp;— a recognized dural puncture is <b>not</b> required.</dd>
+            <dt>Onset</dt><dd><b>≤ 5&nbsp;d</b> after the procedure (consensus: suspect PDPH in any headache or neuro symptoms in this window).</dd>
+            <dt>Positional</dt><dd>Worse upright, often within ~15&nbsp;min; eased lying flat. Frontal-occipital, neck stiffness.</dd>
+            <dt>With</dt><dd>Tinnitus or muffled hearing, photophobia, nausea.<span class="act">Diplopia (CN VI) → urgent patch.</span></dd>
+            <dt>Atypical</dt><dd><b>Investigate:</b> onset &gt; 5&nbsp;d, nonorthostatic, fever, focal signs, high BP → work up as secondary (panels 01–03).</dd>
+          </dl>
+        </section>
+
+        <section class="panel c-wf" id="p-06">
+          <div class="ph"><span class="num">06</span><h2>Treat PDPH</h2><span class="src">PDPH consensus 2023 (USPSTF grades)&nbsp;· ASA 2021</span></div>
+          <div class="patch">
+            <span class="k">Epidural blood patch</span>
+            <span class="lead">Severe, disabling, limits infant care, or refractory → don’t delay.</span>
+            Within 48&nbsp;h of puncture: more likely to need a repeat. <span class="dose">15–20&nbsp;mL</span>, stop for back pain.
+          </div>
+          <ul class="ls small">
+            <li><b>Before a patch, confirm all:</b> no fever or sepsis; no local infection; acceptable coagulation status; and anticoagulant timing that permits the procedure <a href="20-neuraxial.html#p-02" class="xlink"><span class="xref c-wf">20&nbsp;· 02</span></a> <a href="06-postpartum.html#p-E" class="xlink"><span class="xref c-wf">6&nbsp;· E</span></a></li>
+            <li><b>Second patch</b> only after rethinking the diagnosis; <b>before a third</b>, neurology and imaging (ASA).</li>
+          </ul>
+          <div class="supp">Supportive care</div>
+          <div class="ladder">
+            <div>
+              <span class="k">Conservative&nbsp;· 24–48&nbsp;h</span>
+              Oral fluids (IV if not drinking). <b>Scheduled</b> acetaminophen + NSAID. Short opioid course only if these fail. No prolonged bed rest (VTE).
+            </div>
+            <div>
+              <span class="k">Caffeine&nbsp;· first 24&nbsp;h</span>
+              <span class="bf-limit">Breastfeeding: ≤ 200&nbsp;mg/day (ASA; consensus 200–300).</span>
+              Symptom relief only; oral; <span class="dose">≤ 300&nbsp;mg/dose</span>, <span class="dose">max 900&nbsp;mg/day</span>. Count all caffeine sources.
+            </div>
+          </div>
+          <ul class="ls small">
+            <li>Not recommended: prophylactic patch, abdominal binders, routine triptans, theophylline or hydrocortisone.</li>
+            <li>Follow until resolved; tell the patient whom to call if it returns. Inform primary care.</li>
+          </ul>
+        </section>
+
+        <section class="panel c-stop grow" id="p-07">
+          <div class="ph"><span class="num">07</span><h2>Reopen the diagnosis <small>every branch</small></h2><span class="src">PDPH consensus 2023&nbsp;· ASA 2021&nbsp;· ACOG CPG 3</span></div>
+          <ul class="ls small reopen">
+            <li><span class="when">PDPH loses its positional quality or worsens after a patch</span> → <span class="do">urgent imaging: subdural hematoma, CVT</span></li>
+            <li><span class="when">New focal deficit, seizure, confusion or fever</span> → <span class="do">panels 01 and 03; post-neuraxial fever with headache → think meningitis</span></li>
+            <li><span class="when">SBP ≥ 140 or DBP ≥ 90 on any recheck</span> → <span class="do">back to panel 02</span></li>
+            <li><span class="when">“Migraine” that is the first ever, unlike the usual headache, or not settling with first-line treatment</span> → <span class="do">reassess for a secondary cause (panels 01–03)</span></li>
+            <li>“Tension”, “sleep deprivation” or “caffeine withdrawal” only after BP, neuro exam and red flags are all clear.</li>
+            <li><span class="when">Two failed blood patches, or headache beyond 1–2&nbsp;wk</span> → <span class="do">reassess the diagnosis (06)</span></li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG Clinical Practice Guideline No. 3, Headaches in Pregnancy and Postpartum, Obstet Gynecol 2022;139(5):944–72 (correction 2024); ACOG Practice Bulletin 222, Gestational Hypertension and Preeclampsia (reaff. 2026); ACOG Practice Bulletin 203, Chronic Hypertension in Pregnancy (Boxes 4–6, first-line order sets); ACOG Severe Hypertension in Pregnancy Bundle (2025); American College of Radiology Appropriateness Criteria Headache, 2022 update (variants 1, 5, 6) and ACR Manual on Contrast Media; Uppal V et al., Consensus practice guidelines on postdural puncture headache from a multisociety, international working group: a summary report, JAMA Netw Open 2023;6(8):e2325387; American Society of Anesthesiologists Statement on Post-Dural Puncture Headache Management (Oct 2021); International Classification of Headache Disorders, 3rd ed. (ICHD-3, 2018) 7.2.1; NLM Drugs and Lactation Database (LactMed), 2026 records for sumatriptan, metoclopramide, prochlorperazine, caffeine, butalbital, ibuprofen, ketorolac, acetaminophen; FDA labels (sumatriptan, ketorolac). Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTksMEgxMFYxSDl6TTEyLDBIMTNWMUgxMnpNMTMsMEgxNFYxSDEzek0xOCwwSDE5VjFIMTh6TTIwLDBIMjFWMUgyMHpNMjIsMEgyM1YxSDIyek0yMywwSDI0VjFIMjN6TTI0LDBIMjVWMUgyNHpNMjUsMEgyNlYxSDI1ek0yNiwwSDI3VjFIMjZ6TTI3LDBIMjhWMUgyN3pNMjgsMEgyOVYxSDI4ek0wLDFIMVYySDB6TTYsMUg3VjJINnpNOCwxSDlWMkg4ek0xMCwxSDExVjJIMTB6TTEyLDFIMTNWMkgxMnpNMTQsMUgxNVYySDE0ek0xNywxSDE4VjJIMTd6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek05LDJIMTBWM0g5ek0xMCwySDExVjNIMTB6TTExLDJIMTJWM0gxMXpNMTIsMkgxM1YzSDEyek0xMywySDE0VjNIMTN6TTE0LDJIMTVWM0gxNHpNMTcsMkgxOFYzSDE3ek0xOCwySDE5VjNIMTh6TTIwLDJIMjFWM0gyMHpNMjIsMkgyM1YzSDIyek0yNCwySDI1VjNIMjR6TTI1LDJIMjZWM0gyNXpNMjYsMkgyN1YzSDI2ek0yOCwySDI5VjNIMjh6TTAsM0gxVjRIMHpNMiwzSDNWNEgyek0zLDNINFY0SDN6TTQsM0g1VjRINHpNNiwzSDdWNEg2ek05LDNIMTBWNEg5ek0xMiwzSDEzVjRIMTJ6TTEzLDNIMTRWNEgxM3pNMTUsM0gxNlY0SDE1ek0xNywzSDE4VjRIMTd6TTE4LDNIMTlWNEgxOHpNMjIsM0gyM1Y0SDIyek0yNCwzSDI1VjRIMjR6TTI1LDNIMjZWNEgyNXpNMjYsM0gyN1Y0SDI2ek0yOCwzSDI5VjRIMjh6TTAsNEgxVjVIMHpNMiw0SDNWNUgyek0zLDRINFY1SDN6TTQsNEg1VjVINHpNNiw0SDdWNUg2ek04LDRIOVY1SDh6TTEwLDRIMTFWNUgxMHpNMTIsNEgxM1Y1SDEyek0xNCw0SDE1VjVIMTR6TTE4LDRIMTlWNUgxOHpNMjIsNEgyM1Y1SDIyek0yNCw0SDI1VjVIMjR6TTI1LDRIMjZWNUgyNXpNMjYsNEgyN1Y1SDI2ek0yOCw0SDI5VjVIMjh6TTAsNUgxVjZIMHpNNiw1SDdWNkg2ek04LDVIOVY2SDh6TTksNUgxMFY2SDl6TTEwLDVIMTFWNkgxMHpNMTIsNUgxM1Y2SDEyek0xNCw1SDE1VjZIMTR6TTE2LDVIMTdWNkgxNnpNMjAsNUgyMVY2SDIwek0yMiw1SDIzVjZIMjJ6TTI4LDVIMjlWNkgyOHpNMCw2SDFWN0gwek0xLDZIMlY3SDF6TTIsNkgzVjdIMnpNMyw2SDRWN0gzek00LDZINVY3SDR6TTUsNkg2VjdINXpNNiw2SDdWN0g2ek04LDZIOVY3SDh6TTEwLDZIMTFWN0gxMHpNMTIsNkgxM1Y3SDEyek0xNCw2SDE1VjdIMTR6TTE2LDZIMTdWN0gxNnpNMTgsNkgxOVY3SDE4ek0yMCw2SDIxVjdIMjB6TTIyLDZIMjNWN0gyMnpNMjMsNkgyNFY3SDIzek0yNCw2SDI1VjdIMjR6TTI1LDZIMjZWN0gyNXpNMjYsNkgyN1Y3SDI2ek0yNyw2SDI4VjdIMjd6TTI4LDZIMjlWN0gyOHpNOCw3SDlWOEg4ek0xMCw3SDExVjhIMTB6TTExLDdIMTJWOEgxMXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE2LDdIMTdWOEgxNnpNMTgsN0gxOVY4SDE4ek0yMCw3SDIxVjhIMjB6TTAsOEgxVjlIMHpNMSw4SDJWOUgxek0yLDhIM1Y5SDJ6TTUsOEg2VjlINXpNNiw4SDdWOUg2ek04LDhIOVY5SDh6TTksOEgxMFY5SDl6TTEwLDhIMTFWOUgxMHpNMTIsOEgxM1Y5SDEyek0xNSw4SDE2VjlIMTV6TTE2LDhIMTdWOUgxNnpNMTksOEgyMFY5SDE5ek0yMSw4SDIyVjlIMjF6TTIyLDhIMjNWOUgyMnpNMjMsOEgyNFY5SDIzek0yNCw4SDI1VjlIMjR6TTI3LDhIMjhWOUgyN3pNMjgsOEgyOVY5SDI4ek0wLDlIMVYxMEgwek0yLDlIM1YxMEgyek00LDlINVYxMEg0ek04LDlIOVYxMEg4ek05LDlIMTBWMTBIOXpNMTEsOUgxMlYxMEgxMXpNMTQsOUgxNVYxMEgxNHpNMTUsOUgxNlYxMEgxNXpNMTYsOUgxN1YxMEgxNnpNMTcsOUgxOFYxMEgxN3pNMTksOUgyMFYxMEgxOXpNMjAsOUgyMVYxMEgyMHpNMjEsOUgyMlYxMEgyMXpNMjIsOUgyM1YxMEgyMnpNMjMsOUgyNFYxMEgyM3pNMjcsOUgyOFYxMEgyN3pNMjgsOUgyOVYxMEgyOHpNMSwxMEgyVjExSDF6TTIsMTBIM1YxMUgyek0zLDEwSDRWMTFIM3pNNSwxMEg2VjExSDV6TTYsMTBIN1YxMUg2ek03LDEwSDhWMTFIN3pNMTEsMTBIMTJWMTFIMTF6TTE0LDEwSDE1VjExSDE0ek0xNSwxMEgxNlYxMUgxNXpNMTYsMTBIMTdWMTFIMTZ6TTE5LDEwSDIwVjExSDE5ek0yMCwxMEgyMVYxMUgyMHpNMjIsMTBIMjNWMTFIMjJ6TTIzLDEwSDI0VjExSDIzek0yNCwxMEgyNVYxMUgyNHpNMjUsMTBIMjZWMTFIMjV6TTI2LDEwSDI3VjExSDI2ek0yOCwxMEgyOVYxMUgyOHpNMywxMUg0VjEySDN6TTQsMTFINVYxMkg0ek05LDExSDEwVjEySDl6TTExLDExSDEyVjEySDExek0xNiwxMUgxN1YxMkgxNnpNMTgsMTFIMTlWMTJIMTh6TTIzLDExSDI0VjEySDIzek0yNSwxMUgyNlYxMkgyNXpNMywxMkg0VjEzSDN6TTQsMTJINVYxM0g0ek01LDEySDZWMTNINXpNNiwxMkg3VjEzSDZ6TTcsMTJIOFYxM0g3ek04LDEySDlWMTNIOHpNOSwxMkgxMFYxM0g5ek0xMSwxMkgxMlYxM0gxMXpNMTUsMTJIMTZWMTNIMTV6TTE2LDEySDE3VjEzSDE2ek0xOCwxMkgxOVYxM0gxOHpNMjAsMTJIMjFWMTNIMjB6TTIyLDEySDIzVjEzSDIyek0yOCwxMkgyOVYxM0gyOHpNMSwxM0gyVjE0SDF6TTQsMTNINVYxNEg0ek0xMSwxM0gxMlYxNEgxMXpNMTIsMTNIMTNWMTRIMTJ6TTE1LDEzSDE2VjE0SDE1ek0xNiwxM0gxN1YxNEgxNnpNMTcsMTNIMThWMTRIMTd6TTE5LDEzSDIwVjE0SDE5ek0yMCwxM0gyMVYxNEgyMHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTAsMTRIMVYxNUgwek01LDE0SDZWMTVINXpNNiwxNEg3VjE1SDZ6TTcsMTRIOFYxNUg3ek05LDE0SDEwVjE1SDl6TTEwLDE0SDExVjE1SDEwek0xMSwxNEgxMlYxNUgxMXpNMTMsMTRIMTRWMTVIMTN6TTE1LDE0SDE2VjE1SDE1ek0xOSwxNEgyMFYxNUgxOXpNMjAsMTRIMjFWMTVIMjB6TTIxLDE0SDIyVjE1SDIxek0yOCwxNEgyOVYxNUgyOHpNMCwxNUgxVjE2SDB6TTEsMTVIMlYxNkgxek0zLDE1SDRWMTZIM3pNNCwxNUg1VjE2SDR6TTcsMTVIOFYxNkg3ek04LDE1SDlWMTZIOHpNMTIsMTVIMTNWMTZIMTJ6TTE0LDE1SDE1VjE2SDE0ek0xOCwxNUgxOVYxNkgxOHpNMjAsMTVIMjFWMTZIMjB6TTIxLDE1SDIyVjE2SDIxek0yMiwxNUgyM1YxNkgyMnpNMjMsMTVIMjRWMTZIMjN6TTI0LDE1SDI1VjE2SDI0ek0xLDE2SDJWMTdIMXpNMiwxNkgzVjE3SDJ6TTMsMTZINFYxN0gzek00LDE2SDVWMTdINHpNNSwxNkg2VjE3SDV6TTYsMTZIN1YxN0g2ek03LDE2SDhWMTdIN3pNOSwxNkgxMFYxN0g5ek0xMSwxNkgxMlYxN0gxMXpNMTIsMTZIMTNWMTdIMTJ6TTE2LDE2SDE3VjE3SDE2ek0xOSwxNkgyMFYxN0gxOXpNMjIsMTZIMjNWMTdIMjJ6TTIzLDE2SDI0VjE3SDIzek0yOCwxNkgyOVYxN0gyOHpNMywxN0g0VjE4SDN6TTQsMTdINVYxOEg0ek03LDE3SDhWMThIN3pNOCwxN0g5VjE4SDh6TTksMTdIMTBWMThIOXpNMTAsMTdIMTFWMThIMTB6TTExLDE3SDEyVjE4SDExek0xMiwxN0gxM1YxOEgxMnpNMTUsMTdIMTZWMThIMTV6TTE2LDE3SDE3VjE4SDE2ek0xNywxN0gxOFYxOEgxN3pNMTksMTdIMjBWMThIMTl6TTIwLDE3SDIxVjE4SDIwek0yMiwxN0gyM1YxOEgyMnpNMjMsMTdIMjRWMThIMjN6TTI2LDE3SDI3VjE4SDI2ek0yNywxN0gyOFYxOEgyN3pNMjgsMTdIMjlWMThIMjh6TTAsMThIMVYxOUgwek0xLDE4SDJWMTlIMXpNMiwxOEgzVjE5SDJ6TTQsMThINVYxOUg0ek01LDE4SDZWMTlINXpNNiwxOEg3VjE5SDZ6TTExLDE4SDEyVjE5SDExek0xNSwxOEgxNlYxOUgxNXpNMTksMThIMjBWMTlIMTl6TTIyLDE4SDIzVjE5SDIyek0yMywxOEgyNFYxOUgyM3pNMjUsMThIMjZWMTlIMjV6TTI4LDE4SDI5VjE5SDI4ek0zLDE5SDRWMjBIM3pNNSwxOUg2VjIwSDV6TTcsMTlIOFYyMEg3ek04LDE5SDlWMjBIOHpNMTAsMTlIMTFWMjBIMTB6TTExLDE5SDEyVjIwSDExek0xNSwxOUgxNlYyMEgxNXpNMTgsMTlIMTlWMjBIMTh6TTIxLDE5SDIyVjIwSDIxek0wLDIwSDFWMjFIMHpNMSwyMEgyVjIxSDF6TTIsMjBIM1YyMUgyek0zLDIwSDRWMjFIM3pNNCwyMEg1VjIxSDR6TTYsMjBIN1YyMUg2ek04LDIwSDlWMjFIOHpNMTEsMjBIMTJWMjFIMTF6TTEyLDIwSDEzVjIxSDEyek0xNSwyMEgxNlYyMUgxNXpNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNSwyMEgyNlYyMUgyNXpNMjcsMjBIMjhWMjFIMjd6TTgsMjFIOVYyMkg4ek05LDIxSDEwVjIySDl6TTExLDIxSDEyVjIySDExek0xMiwyMUgxM1YyMkgxMnpNMTUsMjFIMTZWMjJIMTV6TTE2LDIxSDE3VjIySDE2ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI1LDIxSDI2VjIySDI1ek0yNiwyMUgyN1YyMkgyNnpNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek0xMCwyMkgxMVYyM0gxMHpNMTEsMjJIMTJWMjNIMTF6TTEyLDIySDEzVjIzSDEyek0xMywyMkgxNFYyM0gxM3pNMTUsMjJIMTZWMjNIMTV6TTE4LDIySDE5VjIzSDE4ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNMTAsMjNIMTFWMjRIMTB6TTExLDIzSDEyVjI0SDExek0xMiwyM0gxM1YyNEgxMnpNMTQsMjNIMTVWMjRIMTR6TTE2LDIzSDE3VjI0SDE2ek0xOSwyM0gyMFYyNEgxOXpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0wLDI0SDFWMjVIMHpNMiwyNEgzVjI1SDJ6TTMsMjRINFYyNUgzek00LDI0SDVWMjVINHpNNiwyNEg3VjI1SDZ6TTksMjRIMTBWMjVIOXpNMTAsMjRIMTFWMjVIMTB6TTEyLDI0SDEzVjI1SDEyek0xNSwyNEgxNlYyNUgxNXpNMTYsMjRIMTdWMjVIMTZ6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjgsMjRIMjlWMjVIMjh6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNOSwyNUgxMFYyNkg5ek0xMCwyNUgxMVYyNkgxMHpNMTEsMjVIMTJWMjZIMTF6TTEyLDI1SDEzVjI2SDEyek0xNCwyNUgxNVYyNkgxNHpNMTUsMjVIMTZWMjZIMTV6TTE2LDI1SDE3VjI2SDE2ek0xNywyNUgxOFYyNkgxN3pNMTksMjVIMjBWMjZIMTl6TTIwLDI1SDIxVjI2SDIwek0yNCwyNUgyNVYyNkgyNHpNMjUsMjVIMjZWMjZIMjV6TTI2LDI1SDI3VjI2SDI2ek0yNywyNUgyOFYyNkgyN3pNMjgsMjVIMjlWMjZIMjh6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNOCwyNkg5VjI3SDh6TTksMjZIMTBWMjdIOXpNMTEsMjZIMTJWMjdIMTF6TTE0LDI2SDE1VjI3SDE0ek0xNSwyNkgxNlYyN0gxNXpNMTYsMjZIMTdWMjdIMTZ6TTE3LDI2SDE4VjI3SDE3ek0yMCwyNkgyMVYyN0gyMHpNMjEsMjZIMjJWMjdIMjF6TTI0LDI2SDI1VjI3SDI0ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTEyLDI3SDEzVjI4SDEyek0xNSwyN0gxNlYyOEgxNXpNMTgsMjdIMTlWMjhIMTh6TTIwLDI3SDIxVjI4SDIwek0yMSwyN0gyMlYyOEgyMXpNMjIsMjdIMjNWMjhIMjJ6TTIzLDI3SDI0VjI4SDIzek0yNSwyN0gyNlYyOEgyNXpNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek05LDI4SDEwVjI5SDl6TTEwLDI4SDExVjI5SDEwek0xMSwyOEgxMlYyOUgxMXpNMTIsMjhIMTNWMjlIMTJ6TTE1LDI4SDE2VjI5SDE1ek0yMCwyOEgyMVYyOUgyMHpNMjEsMjhIMjJWMjlIMjF6TTI1LDI4SDI2VjI5SDI1ek0yOCwyOEgyOVYyOUgyOHoiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

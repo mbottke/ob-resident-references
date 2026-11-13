@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Newborn Feeding and Weight</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--nb); }
+  table.t.tight { --cell-y: 5pt; }
+  /* glance numerals (printed size): volume range labels 22 pt (plot), output 24 pt, weight triggers 22 pt */
+  table.t.out { table-layout: fixed; }
+  table.t.out td.num, table.t.out th.right { text-align: center; }
+  table.t.out td.num { font: 800 calc(24pt / var(--k))/1.1 "Inter Display"; font-variant-numeric: tabular-nums; }
+  .wt td.k { white-space: normal; }
+  .wt .trig { display: block; font: 800 calc(22pt / var(--k))/1.05 "Inter"; color: var(--ink); white-space: nowrap; }
+  /* ranked alternatives, not successive steps (v2): no arrows, ordinal labels */
+  .tier { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8pt; align-items: stretch; }
+  .tier .node { font-size: 11pt; }
+  .tier .node .lbl { margin-bottom: 2pt; }
+  /* ranked tint: 1st 24% · 2nd 18% · 3rd 12% (vis8 #17); explanatory note below, not inside the 1st card (place1 #13) */
+  .tier .node { background: color-mix(in srgb, var(--c) 12%, white); }
+  .tier .node:first-child { background: color-mix(in srgb, var(--c) 24%, white); }
+  .tier .node:nth-child(2) { background: color-mix(in srgb, var(--c) 18%, white); }
+  .tier .node > b { display: block; }
+  .tier-note { margin-top: calc(4pt / var(--k)); }
+  /* supporting prohibition: red rail + STOP badge, not a solid emergency field (c3) */
+  .box.prohibition { background: var(--t-stop); color: var(--ink); border-top: 0; border-left: 4pt solid var(--stop); }
+  .box.prohibition .tag { margin-right: 5pt; }
+  /* feeding → sick-newborn exit (r2) */
+  .urgent-head.exit { display: block; font-size: 11.5pt; line-height: 1.3; }
+  .exit .xref { margin-left: 2pt; }
+  /* weight-loss scope note (w3) */
+  .wt th .scope-note { float: right; font: 700 calc(11pt / var(--k))/1.18 "Inter"; letter-spacing: 0; text-transform: none; color: var(--c); }
+  /* NEWT bullets with the QR beside them (w3) */
+  .newt { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12pt; align-items: center; }
+  .newt .txt { display: flex; flex-direction: column; gap: calc(7pt / var(--k)); }
+  .newt .qr { flex-direction: column; gap: 3pt; align-items: center; text-align: center; align-self: end; }
+  .newt .txt > .xs { border-top: .75pt solid var(--rule); padding-top: calc(5pt / var(--k)); }
+  /* reference-range plot (e2): capped lines, unfilled = reference intake, not a recommendation */
+  .ga2.feed-volumes { --ga2-topic: var(--nb); }
+  .ga2.feed-volumes .rr { fill: none; stroke: var(--ga2-topic); stroke-width: 3; stroke-linecap: butt; }
+  .ga2.feed-volumes .cap { fill: none; stroke: var(--ga2-topic); stroke-width: 2; }
+  .ga2.feed-volumes .facet { font-weight: 700; }
+  .ga2.feed-volumes .mut { font-weight: 600; fill: var(--ink-3); }
+  .ga2.feed-volumes .rl { font-weight: 700; }
+  .ga2.feed-volumes .val { font-weight: 800; }
+  .ga2.feed-volumes .ax { font-weight: 600; fill: var(--ink-3); }
+  /* indications: one list per row (fewer wrapped fragments); infant / mother labels in a left rail */
+  .ind { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6pt 12pt; align-items: start; }
+  .ind > div { display: contents; }
+  .ind h3 { padding-top: 3pt; border-top: 0; margin-top: 0; }
+  .ind > div + div > h3, .ind > div + div > ul { border-top: .75pt solid var(--rule); padding-top: 6pt; }
+  .ind > div + div > h3 { padding-top: 9pt; }
+  .ind h3 { font: 800 calc(11pt / var(--k))/1 "Inter"; letter-spacing: .08em; text-transform: uppercase; color: var(--c); margin-bottom: 4pt; font-feature-settings: "case" 1, "ss04" 1; }
+  .order { border-left: 3pt solid var(--c); padding-left: 8pt; }
+  /* LOCAL blanks and handoff: discrete labelled fields; each field stays together */
+  .lf { display: flex; flex-wrap: wrap; gap: 5pt 20pt; align-items: baseline; }
+  .lf .fld { white-space: nowrap; }
+  .lf .fld > b { font-weight: 700; margin-right: 3pt; }
+  .lf .f { display: inline-block; min-width: 3em; border-bottom: .75pt solid var(--ink-3); height: .95em; vertical-align: -0.12em; }
+  .lf .f.w { min-width: 7em; }
+  /* p15 */
+  .masthead .kicker { font-size: calc(12pt / var(--k)); letter-spacing: .1em; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="09-early-pregnancy.html" title="Early pregnancy">‹ 09</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html" selected="">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="11-bp-meds.html" title="BP maintenance">11 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/10-feeding.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-nb" style="--k:1.215">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Nursery&nbsp;· postpartum&nbsp;· newborn clinic</div>
+      <h1><span class="sid">10</span>Feeding</h1>
+    </div>
+    <div class="sub">Newborn feeding &amp; weight: assess the feed, act on weight loss and output, supplement without losing milk supply. Breastfed term infants; late preterm and early term in 07.</div>
+    <nav class="setnav rel"><em>See also</em><a href="05-newborn.html" class="xlink"><span><b>5</b>Newborn</span></a><a href="18-nursery.html" class="xlink"><span><b>18</b>Nursery card</span></a><a href="24-substance-dyad.html" class="xlink"><span><b>24</b>Opioid&nbsp;· THC dyad</span></a><a href="25-dyad-discharge.html" class="xlink"><span><b>25</b>Dyad → home</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-10.svg)"></div>
+
+  <div class="cols" style="grid-template-columns: 1fr 1fr;">
+    <!-- LEFT -->
+    <div class="col">
+      <section class="panel c-nb" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>Assess a whole feed</h2><span class="src">ABM #2 (2022)&nbsp;· ABM #3 (2017)&nbsp;· AAP 2022</span></div>
+        <div class="urgent-head exit">Lethargy, hard to wake or other illness red flags → escalate now <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a></div>
+        <ul class="ls small">
+          <li><b>Watch an entire feed</b> before any supplement order: position, latch (<b>mouth wide, chin to breast, nose clear</b>), <b>audible swallowing</b> (= milk transfer), maternal nipple pain.</li>
+          <li><b>8–12 feeds / 24&nbsp;h</b> on cues. Sleepy after the first ≈ 2&nbsp;h alert period and cluster feeding at night are normal&nbsp;— skin-to-skin, rouse for feeds, hand-express colostrum.</li>
+          <li>Every exam: <b>% weight change + NEWT percentile</b>, jaundice, voids and stools (count, color, urate crystals). <span class="nowrap">Opioid exposure: ESC <a href="24-substance-dyad.html#p-H" class="xlink"><span class="xref c-wf">24&nbsp;· H</span></a></span></li>
+        </ul>
+        <div class="box small"><b>10% loss is not an automatic order for formula:</b> evaluate the infant and the feed.</div>
+      </section>
+
+      <section class="panel c-nb" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>Weight loss: when to act</h2><span class="src">NEWT (Flaherman, Pediatrics 2015)&nbsp;· ABM #2&nbsp;· ABM #3&nbsp;· Paul 2016</span></div>
+        <table class="t tight small wt">
+          <colgroup><col style="width:36%"><col></colgroup>
+          <thead><tr><th>Finding</th><th>Action <span class="scope-note">Late preterm / early term: use 07</span></th></tr></thead>
+          <tbody>
+            <tr><td class="k">Dehydration</td><td>↑ Na, lethargy, poor feeding not better with skilled help → <b>supplement</b>&nbsp;· <span class="nowrap">deteriorating <a href="23-nicu-transfer.html#p-A" class="xlink"><span class="xref c-nb">23&nbsp;· A</span></a></span></td></tr>
+            <tr><td class="k"><span class="trig">&gt; 10% loss</span>or &gt; 75th %ile on NEWT</td><td><b>Careful breastfeeding assessment</b> (ABM #2)</td></tr>
+            <tr><td class="k"><span class="trig">≥ 8–10%</span>at age ≥ 5&nbsp;d (120&nbsp;h)</td><td>Supplement may be indicated after evaluation (ABM #3)</td></tr>
+          </tbody>
+        </table>
+        <div class="newt">
+          <div class="txt"><ul class="ls tight small">
+            <li><b>NEWT</b> (Newborn Weight Tool): plot by <b>hour of age and delivery mode</b>. Its percentile is not the percent lost.</li>
+          <li>Not back to birth weight by 14&nbsp;d: <b>reassess, don’t assume failure.</b></li>
+          <li>Positive maternal IV fluid balance in labor inflates early loss.</li>
+        </ul>
+          <div class="xs muted">Context: lost ≥ 10% by 48&nbsp;h&nbsp;— ≈ 5% of vaginal births, &gt; 10% of cesarean; by 72&nbsp;h &gt; 25% of cesarean. Half are back to birth weight by day 9 (vaginal) / day 10 (cesarean); not back by 14&nbsp;d&nbsp;— 14% vaginal, 24% cesarean.</div></div>
+          <div class="qr"><img src="../../assets/svg/qr-newt.svg" alt="QR: Newborn Weight Tool" style="width:0.8in;height:0.8in"><div class="qt xs"><b>newbornweight.org</b><br>NEWT percentiles</div></div>
+        </div>
+      </section>
+
+      <section class="panel c-nb" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Output per 24&nbsp;h, by day of life</h2><span class="src">ABM #2 (2022)&nbsp;· ABM #3 (2017)&nbsp;· ABM #10 (2016)</span></div>
+        <table class="t tight small out">
+          <colgroup><col style="width:24%"><col style="width:15.2%"><col style="width:15.2%"><col style="width:15.2%"><col style="width:15.2%"><col style="width:15.2%"></colgroup>
+          <thead><tr><th>Day of life</th><th class="right">1</th><th class="right">2</th><th class="right">3</th><th class="right">4</th><th class="right">5+</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Voids / 24&nbsp;h ≥</td><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">4</td><td class="num">6</td></tr>
+            <tr><td class="k">Stools / 24&nbsp;h ≥</td><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">4</td><td class="num">3–4</td></tr>
+            <tr><td class="k">Stool color</td><td colspan="2" class="center">meconium</td><td colspan="1" class="center">changing</td><td colspan="2" class="center">yellow, seedy</td></tr>
+          </tbody>
+        </table>
+        <div class="box small"><b>Assess intake:</b> voids or stools fewer than day of life&nbsp;· &lt; 4 stools on day 4&nbsp;· <b>meconium on day 5</b>&nbsp;· urate crystals with few stools and ongoing loss.</div>
+      </section>
+
+      <section class="panel c-nb grow" id="p-04">
+        <div class="ph"><span class="num">04</span><h2>Supplement? Indications</h2><span class="src">ABM #3 Table 1 (2017&nbsp;— still current Nov 2026)</span></div>
+        <div class="ind small">
+          <div>
+            <h3>Infant</h3>
+            <ul class="ls tight">
+              <li><b>Asymptomatic hypoglycemia</b> confirmed by <b>laboratory</b> glucose that persists despite frequent breastfeeding <a href="05-newborn.html#p-B" class="xlink"><span class="xref c-met">5&nbsp;· B</span></a></li>
+              <li><b>Inadequate intake:</b> dehydration&nbsp;· weight-loss triggers in 02&nbsp;· <span class="nowrap">stool triggers in 03</span></li>
+              <li><b>Jaundice</b> from suboptimal intake (day 2–5, ongoing loss, few stools) <a href="05-newborn.html#p-C" class="xlink"><span class="xref c-nb">5&nbsp;· C</span></a></li>
+              <li><b>Inborn error of metabolism</b> requiring specific macronutrients</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Mother</h3>
+            <ul class="ls tight">
+              <li><b>Delayed secretory activation</b> (72–120&nbsp;h) <b>with</b> inadequate infant intake</li>
+              <li><b>Glandular insufficiency</b> (&lt; 5%)&nbsp;· breast surgery or pathology</li>
+              <li><b>Maternal medication</b> requiring interruption of breastfeeding</li>
+              <li>Mother–infant <b>separation</b> without available expressed milk</li>
+              <li><b>Intolerable pain</b> despite help</li>
+            </ul>
+          </div>
+        </div>
+        <div class="box ink small"><b>Not indicated:</b> feeding well with expected output and weight loss&nbsp;· sleepiness or cluster feeding alone&nbsp;· maternal fatigue alone (rooming out doesn’t add sleep).</div>
+        <div class="small order"><b>Order:</b> indication&nbsp;· content&nbsp;· volume&nbsp;· method; consent if not medically indicated.</div>
+      </section>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col">
+      <section class="panel c-nb" id="p-05">
+        <div class="ph"><span class="num">05</span><h2>How much to give</h2><span class="src">ABM #3 Table 2 (reference ranges)&nbsp;· ABM #10</span></div>
+        <figure class="ga2 feed-volumes"><svg viewBox="0 0 586 228" role="img" aria-label="Reference feed volumes in mL per feed by age: healthy term breastfed 2–10, 5–15, 15–30, 30–60 mL; late preterm day 1 5–10, after day 1 10–30 mL"><text class="facet" x="0" y="14" font-size="14">Healthy term, breastfed&nbsp;· mL/feed<tspan class="mut">&nbsp;— reference, not a prescription</tspan></text><line class="ga2-grid-major" x1="96.0" y1="24" x2="96.0" y2="116"></line><line class="ga2-grid" x1="156.0" y1="24" x2="156.0" y2="116"></line><line class="ga2-grid" x1="216.0" y1="24" x2="216.0" y2="116"></line><line class="ga2-grid" x1="276.0" y1="24" x2="276.0" y2="116"></line><line class="ga2-grid" x1="336.0" y1="24" x2="336.0" y2="116"></line><line class="ga2-grid" x1="396.0" y1="24" x2="396.0" y2="116"></line><line class="ga2-grid" x1="456.0" y1="24" x2="456.0" y2="116"></line><text class="rl" x="0" y="38.5" font-size="13">0–24&nbsp;h</text><line class="rr" x1="108.0" y1="34" x2="156.0" y2="34"></line><line class="cap" x1="108.0" y1="28" x2="108.0" y2="40"></line><line class="cap" x1="156.0" y1="28" x2="156.0" y2="40"></line><text class="val" x="586" y="42" font-size="22" text-anchor="end">2–10</text><text class="rl" x="0" y="62.5" font-size="13">24–48&nbsp;h</text><line class="rr" x1="126.0" y1="58" x2="186.0" y2="58"></line><line class="cap" x1="126.0" y1="52" x2="126.0" y2="64"></line><line class="cap" x1="186.0" y1="52" x2="186.0" y2="64"></line><text class="val" x="586" y="66" font-size="22" text-anchor="end">5–15</text><text class="rl" x="0" y="86.5" font-size="13">48–72&nbsp;h</text><line class="rr" x1="186.0" y1="82" x2="276.0" y2="82"></line><line class="cap" x1="186.0" y1="76" x2="186.0" y2="88"></line><line class="cap" x1="276.0" y1="76" x2="276.0" y2="88"></line><text class="val" x="586" y="90" font-size="22" text-anchor="end">15–30</text><text class="rl" x="0" y="110.5" font-size="13">72–96&nbsp;h</text><line class="rr" x1="276.0" y1="106" x2="456.0" y2="106"></line><line class="cap" x1="276.0" y1="100" x2="276.0" y2="112"></line><line class="cap" x1="456.0" y1="100" x2="456.0" y2="112"></line><text class="val" x="586" y="114" font-size="22" text-anchor="end">30–60</text><text class="ax" x="96.0" y="129" font-size="10.5" text-anchor="middle">0</text><text class="ax" x="156.0" y="129" font-size="10.5" text-anchor="middle">10</text><text class="ax" x="216.0" y="129" font-size="10.5" text-anchor="middle">20</text><text class="ax" x="276.0" y="129" font-size="10.5" text-anchor="middle">30</text><text class="ax" x="336.0" y="129" font-size="10.5" text-anchor="middle">40</text><text class="ax" x="396.0" y="129" font-size="10.5" text-anchor="middle">50</text><text class="ax" x="456.0" y="129" font-size="10.5" text-anchor="middle">60</text><text class="ax" x="586" y="129" font-size="10.5" text-anchor="end">mL per feed</text><g transform="translate(0 12)"><text class="facet" x="0" y="142" font-size="14">Late preterm&nbsp;· mL/feed<tspan class="mut"> (ABM #10)</tspan></text><line class="ga2-grid-major" x1="96.0" y1="150" x2="96.0" y2="194"></line><line class="ga2-grid" x1="156.0" y1="150" x2="156.0" y2="194"></line><line class="ga2-grid" x1="216.0" y1="150" x2="216.0" y2="194"></line><line class="ga2-grid" x1="276.0" y1="150" x2="276.0" y2="194"></line><line class="ga2-grid" x1="336.0" y1="150" x2="336.0" y2="194"></line><line class="ga2-grid" x1="396.0" y1="150" x2="396.0" y2="194"></line><line class="ga2-grid" x1="456.0" y1="150" x2="456.0" y2="194"></line><text class="rl" x="0" y="164.5" font-size="13">Day 1</text><line class="rr" x1="126.0" y1="160" x2="156.0" y2="160"></line><line class="cap" x1="126.0" y1="154" x2="126.0" y2="166"></line><line class="cap" x1="156.0" y1="154" x2="156.0" y2="166"></line><text class="val" x="586" y="168" font-size="22" text-anchor="end">5–10</text><text class="rl" x="0" y="188.5" font-size="13">After day 1</text><line class="rr" x1="156.0" y1="184" x2="276.0" y2="184"></line><line class="cap" x1="156.0" y1="178" x2="156.0" y2="190"></line><line class="cap" x1="276.0" y1="178" x2="276.0" y2="190"></line><text class="val" x="586" y="192" font-size="22" text-anchor="end">10–30</text><text class="ax" x="96.0" y="210" font-size="10.5" text-anchor="middle">0</text><text class="ax" x="156.0" y="210" font-size="10.5" text-anchor="middle">10</text><text class="ax" x="216.0" y="210" font-size="10.5" text-anchor="middle">20</text><text class="ax" x="276.0" y="210" font-size="10.5" text-anchor="middle">30</text><text class="ax" x="336.0" y="210" font-size="10.5" text-anchor="middle">40</text><text class="ax" x="396.0" y="210" font-size="10.5" text-anchor="middle">50</text><text class="ax" x="456.0" y="210" font-size="10.5" text-anchor="middle">60</text><text class="ax" x="586" y="210" font-size="10.5" text-anchor="end">mL per feed</text></g></svg></figure>
+        <div class="small">Term values: average colostrum intake of healthy term breastfed infants. Feed to cues; limit to physiologic volume.</div>
+        <div class="xs muted">Method: cup, spoon, syringe, finger, at-breast supplementer or paced bottle&nbsp;— no method proven best; choose one that feeds the volume in 20–30&nbsp;min.</div>
+      </section>
+
+      <section class="panel c-nb" id="p-06">
+        <div class="ph"><span class="num">06</span><h2>What to give&nbsp;· protect supply</h2><span class="src">ABM #2 (2022)&nbsp;· ABM #3 (2017)&nbsp;· ABM #10</span></div>
+        <div class="tier">
+          <div class="node tint"><span class="lbl">1st choice</span><b>Mother’s expressed milk</b></div>
+          <div class="node tint"><span class="lbl">2nd choice</span><b>Pasteurized donor milk</b></div>
+          <div class="node tint"><span class="lbl">3rd choice</span><b>Formula</b></div>
+        </div>
+        <div class="small muted tier-note">Hand expression often yields more milk in the first days&nbsp;· hydrolysate formula may be preferable.</div>
+        <dl class="kv small" style="gap:4pt 10pt">
+          <dt>Express</dt><dd><b>Once per supplement</b>&nbsp;— to maintain milk removal; <b>≥ 8× / 24&nbsp;h</b> if the baby isn’t feeding at the breast. Match expression to the baby’s needs; no extra pumping just to empty the breasts. Pain or swelling → lactation help.</dd>
+          <dt>Late preterm</dt><dd>Express after breastfeeding ≥ 6× / 24&nbsp;h while supplementing</dd>
+          <dt>Stopping</dt><dd>Set stopping criteria when supplementation starts; address latch and milk supply; arrange close follow-up</dd>
+        </dl>
+        <div class="box stop prohibition small"><span class="tag stop">Stop</span>No glucose water or water: no nutrition, doesn’t lower bilirubin, risks hyponatremia.</div>
+        <div class="box local small"><div class="lf"><span class="fld"><b>Donor milk: criteria / consent</b> <i class="f w" data-local="donor_milk_criteria"></i></span><span class="fld"><b>Lactation consult</b> <i class="f w" data-local="lactation_inpatient"></i></span></div></div>
+        <div class="xs muted">Mastitis&nbsp;· medications in milk (LactMed) <a href="06-postpartum.html#p-F" class="xlink"><span class="xref c-wf">6&nbsp;· F</span></a>&nbsp;· <span class="nowrap">substance-specific milk decision <a href="24-substance-dyad.html#p-E" class="xlink"><span class="xref c-wf">24&nbsp;· E</span></a></span></div>
+      </section>
+
+      <section class="panel c-nb" id="p-07">
+        <div class="ph"><span class="num">07</span><h2>Late preterm &amp; early term</h2><span class="src">ABM #10 (2016)&nbsp;· 34w0d–36w6d and 37w0d–38w6d</span></div>
+        <div class="box small"><b>Evaluate if loss &gt; 3% by 24&nbsp;h or &gt; 7% by day 3</b> (not the term 10%)</div>
+        <ul class="ls tight small">
+          <li>Hand-express colostrum within 1&nbsp;h of birth and ≈ q3h if small, sleepy or not latching</li>
+          <li><b>8–12 feeds / 24&nbsp;h; wake if no cues by 4&nbsp;h.</b> Watch 12–24&nbsp;h for instability; <span class="nowrap">glucose <a href="05-newborn.html#p-B" class="xlink"><span class="xref c-met">5&nbsp;· B</span></a></span>&nbsp;· <span class="nowrap">nursery GA / weight limits <a href="23-nicu-transfer.html#p-B" class="xlink"><span class="xref c-nb">23&nbsp;· B</span></a></span></li>
+          <li><b>Discharge:</b> temp stable ≥ 24&nbsp;h, normal RR, ideally ≤ 7% below birth weight, written plan</li>
+          <li>Check weight weekly until 40&nbsp;wk postmenstrual age (PMA); gain 20–30&nbsp;g/day (&lt; 20&nbsp;g/day = inadequate intake)&nbsp;· routine iron if breastfed&nbsp;· low threshold for bilirubin</li>
+        </ul>
+      </section>
+
+      <section class="panel c-nb grow" id="p-08">
+        <div class="ph"><span class="num">08</span><h2>After discharge</h2><span class="src">ABM #2 (2022)&nbsp;· ABM #10 (2016)&nbsp;· AAP 2022 hyperbilirubinemia</span></div>
+        <table class="t tight small">
+          <tbody>
+            <tr><td class="k">Discharged &lt; 48&nbsp;h</td><td>Seen <b>within 24–48&nbsp;h after discharge</b></td></tr>
+            <tr><td class="k">Late preterm / early term</td><td>Seen <b>1–2&nbsp;d after discharge</b></td></tr>
+            <tr><td class="k">Bilirubin</td><td>Follow-up time from BiliTool <a href="05-newborn.html#p-C" class="xlink"><span class="xref c-nb">5&nbsp;· C</span></a></td></tr>
+          </tbody>
+        </table>
+        <div class="small"><b>Visit:</b> naked weight, % change from birth <b>and</b> from discharge, NEWT&nbsp;· TcB&nbsp;· output history&nbsp;· watch a feed&nbsp;· maternal breasts and mood. Connect to community lactation support. <span class="nowrap">Dyad follow-up <a href="25-dyad-discharge.html#p-H" class="xlink"><span class="xref c-wf">25&nbsp;· H</span></a></span></div>
+        <div class="box local small" style="margin-top:6pt"><div class="lf"><span class="fld"><b>Weight-check / lactation clinic</b> <i class="f w" data-local="weight_check_clinic"></i></span><span class="fld"><b>Result owner</b> <i class="f w" data-local="pending_result_owner"></i></span></div></div>
+      </section>
+    </div>
+  </div>
+
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> Kellams A et al., ABM Clinical Protocol #3: Supplementary Feedings in the Healthy Term Breastfed Neonate, Revised 2017, Breastfeed Med 2017;12:188 (Tables 1–2; no later revision listed by ABM, Nov 2026); Hoyt-Austin AE et al., ABM Clinical Protocol #2: Birth Hospitalization Discharge of Breastfeeding Dyads, Revised 2022, Breastfeed Med 2022;17:197; Boies EG, Vaucher YE, ABM Clinical Protocol #10: Late Preterm and Early Term Infants, Second Revision 2016, Breastfeed Med 2016;11:494; Meek JY, Noble L, AAP Policy Statement: Breastfeeding and the Use of Human Milk, Pediatrics 2022;150:e2022057988; Flaherman VJ et al., Early weight loss nomograms for exclusively breastfed newborns (NEWT), Pediatrics 2015;135:e16; Paul IM et al., Weight change nomograms for the first month after birth, Pediatrics 2016;138:e20162625; Kemper AR et al., AAP Hyperbilirubinemia CPG, Pediatrics 2022;150:e2022058859. <div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTMsMUgxNFYySDEzek0xNywxSDE4VjJIMTd6TTE5LDFIMjBWMkgxOXpNMjAsMUgyMVYySDIwek0yMiwxSDIzVjJIMjJ6TTI4LDFIMjlWMkgyOHpNMCwySDFWM0gwek0yLDJIM1YzSDJ6TTMsMkg0VjNIM3pNNCwySDVWM0g0ek02LDJIN1YzSDZ6TTgsMkg5VjNIOHpNOSwySDEwVjNIOXpNMTAsMkgxMVYzSDEwek0xMSwySDEyVjNIMTF6TTE3LDJIMThWM0gxN3pNMTksMkgyMFYzSDE5ek0yMiwySDIzVjNIMjJ6TTI0LDJIMjVWM0gyNHpNMjUsMkgyNlYzSDI1ek0yNiwySDI3VjNIMjZ6TTI4LDJIMjlWM0gyOHpNMCwzSDFWNEgwek0yLDNIM1Y0SDJ6TTMsM0g0VjRIM3pNNCwzSDVWNEg0ek02LDNIN1Y0SDZ6TTgsM0g5VjRIOHpNMTAsM0gxMVY0SDEwek0xMSwzSDEyVjRIMTF6TTEyLDNIMTNWNEgxMnpNMTMsM0gxNFY0SDEzek0xNiwzSDE3VjRIMTZ6TTE4LDNIMTlWNEgxOHpNMjIsM0gyM1Y0SDIyek0yNCwzSDI1VjRIMjR6TTI1LDNIMjZWNEgyNXpNMjYsM0gyN1Y0SDI2ek0yOCwzSDI5VjRIMjh6TTAsNEgxVjVIMHpNMiw0SDNWNUgyek0zLDRINFY1SDN6TTQsNEg1VjVINHpNNiw0SDdWNUg2ek05LDRIMTBWNUg5ek0xMSw0SDEyVjVIMTF6TTEyLDRIMTNWNUgxMnpNMTQsNEgxNVY1SDE0ek0xNSw0SDE2VjVIMTV6TTE2LDRIMTdWNUgxNnpNMTcsNEgxOFY1SDE3ek0xOCw0SDE5VjVIMTh6TTIyLDRIMjNWNUgyMnpNMjQsNEgyNVY1SDI0ek0yNSw0SDI2VjVIMjV6TTI2LDRIMjdWNUgyNnpNMjgsNEgyOVY1SDI4ek0wLDVIMVY2SDB6TTYsNUg3VjZINnpNOCw1SDlWNkg4ek05LDVIMTBWNkg5ek0xMCw1SDExVjZIMTB6TTEzLDVIMTRWNkgxM3pNMTYsNUgxN1Y2SDE2ek0xOCw1SDE5VjZIMTh6TTE5LDVIMjBWNkgxOXpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTksN0gxMFY4SDl6TTEyLDdIMTNWOEgxMnpNMTQsN0gxNVY4SDE0ek0xNSw3SDE2VjhIMTV6TTE3LDdIMThWOEgxN3pNMTgsN0gxOVY4SDE4ek0yMCw3SDIxVjhIMjB6TTAsOEgxVjlIMHpNMSw4SDJWOUgxek00LDhINVY5SDR6TTUsOEg2VjlINXpNNiw4SDdWOUg2ek0xMSw4SDEyVjlIMTF6TTEyLDhIMTNWOUgxMnpNMTcsOEgxOFY5SDE3ek0xOSw4SDIwVjlIMTl6TTIzLDhIMjRWOUgyM3pNMjUsOEgyNlY5SDI1ek0yNiw4SDI3VjlIMjZ6TTI3LDhIMjhWOUgyN3pNMjgsOEgyOVY5SDI4ek0wLDlIMVYxMEgwek0yLDlIM1YxMEgyek0zLDlINFYxMEgzek00LDlINVYxMEg0ek03LDlIOFYxMEg3ek04LDlIOVYxMEg4ek05LDlIMTBWMTBIOXpNMTEsOUgxMlYxMEgxMXpNMTIsOUgxM1YxMEgxMnpNMTMsOUgxNFYxMEgxM3pNMTUsOUgxNlYxMEgxNXpNMTYsOUgxN1YxMEgxNnpNMTcsOUgxOFYxMEgxN3pNMTgsOUgxOVYxMEgxOHpNMjEsOUgyMlYxMEgyMXpNMjIsOUgyM1YxMEgyMnpNMjMsOUgyNFYxMEgyM3pNMjQsOUgyNVYxMEgyNHpNMjUsOUgyNlYxMEgyNXpNMjYsOUgyN1YxMEgyNnpNMjcsOUgyOFYxMEgyN3pNMjgsOUgyOVYxMEgyOHpNMCwxMEgxVjExSDB6TTEsMTBIMlYxMUgxek0yLDEwSDNWMTFIMnpNMywxMEg0VjExSDN6TTQsMTBINVYxMUg0ek02LDEwSDdWMTFINnpNNywxMEg4VjExSDd6TTExLDEwSDEyVjExSDExek0xMiwxMEgxM1YxMUgxMnpNMTMsMTBIMTRWMTFIMTN6TTE1LDEwSDE2VjExSDE1ek0xNiwxMEgxN1YxMUgxNnpNMTgsMTBIMTlWMTFIMTh6TTIyLDEwSDIzVjExSDIyek0yMywxMEgyNFYxMUgyM3pNMjgsMTBIMjlWMTFIMjh6TTIsMTFIM1YxMkgyek0zLDExSDRWMTJIM3pNNSwxMUg2VjEySDV6TTgsMTFIOVYxMkg4ek0xMCwxMUgxMVYxMkgxMHpNMTUsMTFIMTZWMTJIMTV6TTE3LDExSDE4VjEySDE3ek0xOCwxMUgxOVYxMkgxOHpNMjEsMTFIMjJWMTJIMjF6TTIyLDExSDIzVjEySDIyek0yNSwxMUgyNlYxMkgyNXpNMjcsMTFIMjhWMTJIMjd6TTI4LDExSDI5VjEySDI4ek0wLDEySDFWMTNIMHpNMiwxMkgzVjEzSDJ6TTMsMTJINFYxM0gzek00LDEySDVWMTNINHpNNSwxMkg2VjEzSDV6TTYsMTJIN1YxM0g2ek0xMCwxMkgxMVYxM0gxMHpNMTcsMTJIMThWMTNIMTd6TTE4LDEySDE5VjEzSDE4ek0yMCwxMkgyMVYxM0gyMHpNMjEsMTJIMjJWMTNIMjF6TTIzLDEySDI0VjEzSDIzek0yNywxMkgyOFYxM0gyN3pNNCwxM0g1VjE0SDR6TTgsMTNIOVYxNEg4ek05LDEzSDEwVjE0SDl6TTExLDEzSDEyVjE0SDExek0xMywxM0gxNFYxNEgxM3pNMTQsMTNIMTVWMTRIMTR6TTE1LDEzSDE2VjE0SDE1ek0xNiwxM0gxN1YxNEgxNnpNMTcsMTNIMThWMTRIMTd6TTE4LDEzSDE5VjE0SDE4ek0yMiwxM0gyM1YxNEgyMnpNMjMsMTNIMjRWMTRIMjN6TTI0LDEzSDI1VjE0SDI0ek0yNSwxM0gyNlYxNEgyNXpNMjYsMTNIMjdWMTRIMjZ6TTI3LDEzSDI4VjE0SDI3ek0yOCwxM0gyOVYxNEgyOHpNMCwxNEgxVjE1SDB6TTIsMTRIM1YxNUgyek0zLDE0SDRWMTVIM3pNNCwxNEg1VjE1SDR6TTUsMTRINlYxNUg1ek02LDE0SDdWMTVINnpNNywxNEg4VjE1SDd6TTEwLDE0SDExVjE1SDEwek0xMSwxNEgxMlYxNUgxMXpNMTIsMTRIMTNWMTVIMTJ6TTE0LDE0SDE1VjE1SDE0ek0xNSwxNEgxNlYxNUgxNXpNMTgsMTRIMTlWMTVIMTh6TTIxLDE0SDIyVjE1SDIxek0yNCwxNEgyNVYxNUgyNHpNMjUsMTRIMjZWMTVIMjV6TTI2LDE0SDI3VjE1SDI2ek0yOCwxNEgyOVYxNUgyOHpNMiwxNUgzVjE2SDJ6TTQsMTVINVYxNkg0ek05LDE1SDEwVjE2SDl6TTEwLDE1SDExVjE2SDEwek0xMSwxNUgxMlYxNkgxMXpNMTIsMTVIMTNWMTZIMTJ6TTE0LDE1SDE1VjE2SDE0ek0xNSwxNUgxNlYxNkgxNXpNMTYsMTVIMTdWMTZIMTZ6TTE3LDE1SDE4VjE2SDE3ek0xOCwxNUgxOVYxNkgxOHpNMjAsMTVIMjFWMTZIMjB6TTI0LDE1SDI1VjE2SDI0ek0yNywxNUgyOFYxNkgyN3pNMjgsMTVIMjlWMTZIMjh6TTEsMTZIMlYxN0gxek0zLDE2SDRWMTdIM3pNNSwxNkg2VjE3SDV6TTYsMTZIN1YxN0g2ek03LDE2SDhWMTdIN3pNOCwxNkg5VjE3SDh6TTksMTZIMTBWMTdIOXpNMTAsMTZIMTFWMTdIMTB6TTEyLDE2SDEzVjE3SDEyek0xNSwxNkgxNlYxN0gxNXpNMTcsMTZIMThWMTdIMTd6TTE5LDE2SDIwVjE3SDE5ek0yMSwxNkgyMlYxN0gyMXpNMjcsMTZIMjhWMTdIMjd6TTAsMTdIMVYxOEgwek04LDE3SDlWMThIOHpNMTAsMTdIMTFWMThIMTB6TTExLDE3SDEyVjE4SDExek0xMywxN0gxNFYxOEgxM3pNMTQsMTdIMTVWMThIMTR6TTE1LDE3SDE2VjE4SDE1ek0xNiwxN0gxN1YxOEgxNnpNMTcsMTdIMThWMThIMTd6TTE4LDE3SDE5VjE4SDE4ek0yMiwxN0gyM1YxOEgyMnpNMjMsMTdIMjRWMThIMjN6TTI0LDE3SDI1VjE4SDI0ek0yNSwxN0gyNlYxOEgyNXpNMjcsMTdIMjhWMThIMjd6TTI4LDE3SDI5VjE4SDI4ek0yLDE4SDNWMTlIMnpNMywxOEg0VjE5SDN6TTUsMThINlYxOUg1ek02LDE4SDdWMTlINnpNOCwxOEg5VjE5SDh6TTksMThIMTBWMTlIOXpNMTAsMThIMTFWMTlIMTB6TTExLDE4SDEyVjE5SDExek0xMiwxOEgxM1YxOUgxMnpNMTMsMThIMTRWMTlIMTN6TTE0LDE4SDE1VjE5SDE0ek0xNSwxOEgxNlYxOUgxNXpNMTgsMThIMTlWMTlIMTh6TTIwLDE4SDIxVjE5SDIwek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI0LDE4SDI1VjE5SDI0ek0yNiwxOEgyN1YxOUgyNnpNMjgsMThIMjlWMTlIMjh6TTIsMTlIM1YyMEgyek0zLDE5SDRWMjBIM3pNNCwxOUg1VjIwSDR6TTUsMTlINlYyMEg1ek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTEsMjBIMlYyMUgxek02LDIwSDdWMjFINnpNNywyMEg4VjIxSDd6TTgsMjBIOVYyMUg4ek0xMCwyMEgxMVYyMUgxMHpNMTIsMjBIMTNWMjFIMTJ6TTE2LDIwSDE3VjIxSDE2ek0xNywyMEgxOFYyMUgxN3pNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNSwyMEgyNlYyMUgyNXpNMjgsMjBIMjlWMjFIMjh6TTgsMjFIOVYyMkg4ek0xMSwyMUgxMlYyMkgxMXpNMTMsMjFIMTRWMjJIMTN6TTE0LDIxSDE1VjIySDE0ek0xNSwyMUgxNlYyMkgxNXpNMTYsMjFIMTdWMjJIMTZ6TTE4LDIxSDE5VjIySDE4ek0xOSwyMUgyMFYyMkgxOXpNMjAsMjFIMjFWMjJIMjB6TTI0LDIxSDI1VjIySDI0ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTEwLDIySDExVjIzSDEwek0xMSwyMkgxMlYyM0gxMXpNMTQsMjJIMTVWMjNIMTR6TTE1LDIySDE2VjIzSDE1ek0xOSwyMkgyMFYyM0gxOXpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjUsMjJIMjZWMjNIMjV6TTI2LDIySDI3VjIzSDI2ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNMTAsMjNIMTFWMjRIMTB6TTEyLDIzSDEzVjI0SDEyek0xNCwyM0gxNVYyNEgxNHpNMTUsMjNIMTZWMjRIMTV6TTE3LDIzSDE4VjI0SDE3ek0xOSwyM0gyMFYyNEgxOXpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0yNywyM0gyOFYyNEgyN3pNMjgsMjNIMjlWMjRIMjh6TTAsMjRIMVYyNUgwek0yLDI0SDNWMjVIMnpNMywyNEg0VjI1SDN6TTQsMjRINVYyNUg0ek02LDI0SDdWMjVINnpNOCwyNEg5VjI1SDh6TTEwLDI0SDExVjI1SDEwek0xMSwyNEgxMlYyNUgxMXpNMTIsMjRIMTNWMjVIMTJ6TTE3LDI0SDE4VjI1SDE3ek0xOCwyNEgxOVYyNUgxOHpNMTksMjRIMjBWMjVIMTl6TTIwLDI0SDIxVjI1SDIwek0yMSwyNEgyMlYyNUgyMXpNMjIsMjRIMjNWMjVIMjJ6TTIzLDI0SDI0VjI1SDIzek0yNCwyNEgyNVYyNUgyNHpNMjUsMjRIMjZWMjVIMjV6TTI3LDI0SDI4VjI1SDI3ek0wLDI1SDFWMjZIMHpNMiwyNUgzVjI2SDJ6TTMsMjVINFYyNkgzek00LDI1SDVWMjZINHpNNiwyNUg3VjI2SDZ6TTEwLDI1SDExVjI2SDEwek0xMSwyNUgxMlYyNkgxMXpNMTMsMjVIMTRWMjZIMTN6TTE1LDI1SDE2VjI2SDE1ek0xNiwyNUgxN1YyNkgxNnpNMTcsMjVIMThWMjZIMTd6TTE4LDI1SDE5VjI2SDE4ek0yNywyNUgyOFYyNkgyN3pNMjgsMjVIMjlWMjZIMjh6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNMTEsMjZIMTJWMjdIMTF6TTEyLDI2SDEzVjI3SDEyek0xMywyNkgxNFYyN0gxM3pNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTgsMjZIMTlWMjdIMTh6TTE5LDI2SDIwVjI3SDE5ek0yMSwyNkgyMlYyN0gyMXpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTEwLDI3SDExVjI4SDEwek0xMSwyN0gxMlYyOEgxMXpNMTIsMjdIMTNWMjhIMTJ6TTE2LDI3SDE3VjI4SDE2ek0xNywyN0gxOFYyOEgxN3pNMTgsMjdIMTlWMjhIMTh6TTIwLDI3SDIxVjI4SDIwek0yNSwyN0gyNlYyOEgyNXpNMjcsMjdIMjhWMjhIMjd6TTI4LDI3SDI5VjI4SDI4ek0wLDI4SDFWMjlIMHpNMSwyOEgyVjI5SDF6TTIsMjhIM1YyOUgyek0zLDI4SDRWMjlIM3pNNCwyOEg1VjI5SDR6TTUsMjhINlYyOUg1ek02LDI4SDdWMjlINnpNOCwyOEg5VjI5SDh6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

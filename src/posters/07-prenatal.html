@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Prenatal Care and Timing</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); }
+  .tlband { margin-bottom: var(--gap); }
+  table.t.tight { --cell-y: 4.5pt; --table-leading: 1.32; }
+  /* one gutter for headers and cells; first column flush (css2 #7) */
+  table.t.tight :is(td, th) { padding-left: 5pt; padding-right: 5pt; }
+  table.t.tight :is(td, th):first-child { padding-left: 0; }
+  table.t.tight td.when { white-space: nowrap; font-weight: 600; }
+  /* 08 Delivery timing: two fixed stacks, identical condition / timing columns in every table */
+  .dt-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--gap); align-items: start; }
+  .dt-stack { display: flex; flex-direction: column; gap: 4pt; }
+  table.t.dt { table-layout: fixed; --cell-y: 4pt; }
+  table.t.dt th:first-child { width: 62%; }   /* condition / timing split shared by all six tables (cd2 #6) */
+  table.t.dt td.when .when-note { display: block; white-space: normal; font-weight: 400; color: var(--ink-2); }
+  /* round 3: topic shown in each timing table's first header (c1); scan groups in 07 (v1/w1/o2) */
+  table.t.dt[class*="c-"] th:first-child, table.t.testing tbody.lead td:first-child { color: var(--c); }
+  table.t.testing tbody + tbody tr:first-child > td { border-top: 1.5pt solid var(--fet); }
+  table.t.testing tbody.lead td { font-weight: 700; }
+  table.t.testing th:nth-child(1) { width: 41%; } table.t.testing th:nth-child(2) { width: 27%; }
+  /* 03: diagnostic GTT matrix, values in columns by sampling time (w2/l1/n4) */
+  table.t.gdm th:not(:first-child), table.t.gdm td:not(:first-child) { text-align: right; }
+  table.t.gdm td.v { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  table.t.gdm td.pos { color: var(--ink-2); font-weight: 600; }
+  table.t.gdm th:last-child, table.t.gdm td.pos { text-align: left; white-space: normal; }
+  .unit { white-space: nowrap; }
+  /* fo1 #8: weight-gain values right-aligned with units in the headers */
+  table.t.weight-gain th:first-child, table.t.weight-gain td:first-child { text-align: right; font-variant-numeric: tabular-nums; padding-right: 12pt; }
+  table.t.gdm tr.alt > td { border-top: 1.2pt solid var(--ink-3); }
+  .gdm-step { display: flex; flex-wrap: wrap; gap: 2pt 6pt; align-items: baseline; }
+  .gen-pair { display: block; }
+  .gen-pair + .gen-pair { margin-top: 3pt; }
+  .gen-pair .lbl { white-space: nowrap; }
+  /* place1 #15: schedule and qualifier on deliberate lines */
+  .syph-schedule, .syph-note { display: block; }
+  table.t.first-visit { --cell-y: 3.5pt; }
+  /* vis7 #20: aspirin entry labels on their own line, ruled columns */
+  .aspirin-risk > div > b:first-child { display: block; margin-bottom: 2pt; }
+  .aspirin-risk > div { flex: 1 1 0; min-width: 0; }
+  .aspirin-risk > div + div { flex-grow: 1.6; border-left: .75pt solid var(--rule); padding-left: 9pt; }
+  /* vis7 #12: delivery-table topic headings above row text; tabular dates */
+  table.t.dt thead th { font-size: 11pt; line-height: 1.1; padding-bottom: 4pt; }
+  table.t.dt thead th:first-child { border-bottom-color: var(--c); }
+  table.t.dt td.when { font-variant-numeric: tabular-nums; }
+  .dt-key { font-size: 10pt; line-height: 1.3; color: var(--ink-2); margin-top: 2pt; }
+  .dt-key b { color: var(--ink); }
+  table.t.dt .dt-cond { display: block; font-size: 10.5pt; line-height: 1.3; color: var(--ink-2); margin-top: 2pt; }
+  .fgr-doppler { color: var(--ink); }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="06-postpartum.html" title="Postpartum">‹ 06</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html" selected="">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="08-infections.html" title="Infections">08 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/07-prenatal.pdf">PDF</a></nav>
+<div class="sheet landscape-36x24" style="--k:1.07">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Antepartum&nbsp;· clinic &amp; triage</div>
+      <h1><span class="sid">07</span>Prenatal <span class="thin">&amp;</span> Timing</h1>
+    </div>
+    <div class="sub">What is due at each week, who needs fetal testing and when, and when to deliver. Tables follow ACOG CO 828 and CO 831; individualize.</div>
+    <nav class="setnav rel"><em>See also</em><a href="12-diabetes.html" class="xlink"><span><b>12</b>Diabetes</span></a><a href="08-infections.html" class="xlink"><span><b>8</b>Infections</span></a><a href="09-early-pregnancy.html" class="xlink"><span><b>9</b>Early preg.</span></a><a href="26-induction-labor.html" class="xlink"><span><b>26</b>Induction&nbsp;· labor</span></a><a href="01-triage.html" class="xlink"><span><b>1</b>Triage</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-07.svg)"></div>
+
+  <div class="tlband">
+<!--TL-->
+<figure class="ga2 tl2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2488.32 509" width="2488.32pt" height="509pt" role="img" aria-labelledby="tl-title tl-desc">
+<title id="tl-title">Pregnancy timeline</title>
+<desc id="tl-desc">Read down from gestational age. Ribbons show when a test or start is due; arrow lines continue; diamonds are single actions; brackets are delivery windows. Untimed anchors sit in the separate at-first-visit and at-delivery columns.</desc>
+<rect x="434" y="10" width="94" height="495" style="fill:color-mix(in srgb,var(--ink) 6%,white)"></rect>
+<text x="481.00" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">at 1st visit</text>
+<rect x="2384" y="10" width="102" height="495" style="fill:color-mix(in srgb,var(--ink) 6%,white)"></rect>
+<text x="2435.00" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">at delivery</text>
+<text x="538.00" y="25.00" font-size="12" text-anchor="end" class="">wk</text>
+<path d="M 546.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="546.00" y="25.00" font-size="12" text-anchor="start" class="">4</text>
+<path d="M 592.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="592.67" y="25.00" font-size="12" text-anchor="middle" class="">5</text>
+<path d="M 639.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="639.33" y="25.00" font-size="12" text-anchor="middle" class="">6</text>
+<path d="M 686.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="686.00" y="25.00" font-size="12" text-anchor="middle" class="">7</text>
+<path d="M 732.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="732.67" y="25.00" font-size="12" text-anchor="middle" class="">8</text>
+<path d="M 779.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="779.33" y="25.00" font-size="12" text-anchor="middle" class="">9</text>
+<path d="M 826.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="826.00" y="25.00" font-size="12" text-anchor="middle" class="">10</text>
+<path d="M 872.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="872.67" y="25.00" font-size="12" text-anchor="middle" class="">11</text>
+<path d="M 919.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="919.33" y="25.00" font-size="12" text-anchor="middle" class="">12</text>
+<path d="M 966.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="966.00" y="25.00" font-size="12" text-anchor="middle" class="">13</text>
+<path d="M 1012.67 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="1012.67" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">14</text>
+<path d="M 1059.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1059.33" y="25.00" font-size="12" text-anchor="middle" class="">15</text>
+<path d="M 1106.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1106.00" y="25.00" font-size="12" text-anchor="middle" class="">16</text>
+<path d="M 1152.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1152.67" y="25.00" font-size="12" text-anchor="middle" class="">17</text>
+<path d="M 1199.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1199.33" y="25.00" font-size="12" text-anchor="middle" class="">18</text>
+<path d="M 1246.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1246.00" y="25.00" font-size="12" text-anchor="middle" class="">19</text>
+<path d="M 1292.67 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="1292.67" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">20</text>
+<path d="M 1339.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1339.33" y="25.00" font-size="12" text-anchor="middle" class="">21</text>
+<path d="M 1386.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1386.00" y="25.00" font-size="12" text-anchor="middle" class="">22</text>
+<path d="M 1432.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1432.67" y="25.00" font-size="12" text-anchor="middle" class="">23</text>
+<path d="M 1479.33 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="1479.33" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">24</text>
+<path d="M 1526.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1526.00" y="25.00" font-size="12" text-anchor="middle" class="">25</text>
+<path d="M 1572.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1572.67" y="25.00" font-size="12" text-anchor="middle" class="">26</text>
+<path d="M 1619.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1619.33" y="25.00" font-size="12" text-anchor="middle" class="">27</text>
+<path d="M 1666.00 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="1666.00" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">28</text>
+<path d="M 1712.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1712.67" y="25.00" font-size="12" text-anchor="middle" class="">29</text>
+<path d="M 1759.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1759.33" y="25.00" font-size="12" text-anchor="middle" class="">30</text>
+<path d="M 1806.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1806.00" y="25.00" font-size="12" text-anchor="middle" class="">31</text>
+<path d="M 1852.67 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="1852.67" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">32</text>
+<path d="M 1899.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1899.33" y="25.00" font-size="12" text-anchor="middle" class="">33</text>
+<path d="M 1946.00 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="1946.00" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">34</text>
+<path d="M 1992.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="1992.67" y="25.00" font-size="12" text-anchor="middle" class="">35</text>
+<path d="M 2039.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="2039.33" y="25.00" font-size="12" text-anchor="middle" class="">36</text>
+<path d="M 2086.00 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="2086.00" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">37</text>
+<path d="M 2132.67 30.00 V 505.00" class="ga2-grid"></path>
+<text x="2132.67" y="25.00" font-size="12" text-anchor="middle" class="">38</text>
+<path d="M 2179.33 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="2179.33" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">39</text>
+<path d="M 2226.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="2226.00" y="25.00" font-size="12" text-anchor="middle" class="">40</text>
+<path d="M 2272.67 30.00 V 505.00" class="ga2-grid-major"></path>
+<text x="2272.67" y="25.00" font-size="12" text-anchor="middle" class="ga2-landmark">41</text>
+<path d="M 2319.33 30.00 V 505.00" class="ga2-grid"></path>
+<text x="2319.33" y="25.00" font-size="12" text-anchor="middle" class="">42</text>
+<path d="M 2366.00 30.00 V 505.00" class="ga2-grid"></path>
+<text x="2366.00" y="25.00" font-size="12" text-anchor="end" class="">43</text>
+<text x="0.00" y="24.00" font-size="24" text-anchor="start" class="ga2-name">Pregnancy</text>
+<text x="0.00" y="50.00" font-size="24" text-anchor="start" class="ga2-name">timeline</text>
+<text x="0.00" y="74.00" font-size="12" text-anchor="start" class="">Find GA above; read down.</text>
+<text x="0.00" y="90.00" font-size="12" text-anchor="start" class="">Labels include the last day;</text>
+<text x="0.00" y="106.00" font-size="12" text-anchor="start" class="">right edge = following day.</text>
+<g style="--ga2-topic:var(--ink)">
+<rect x="0.00" y="124.00" width="26.00" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="34.00" y="136.32" font-size="12" text-anchor="start" class="">Recommended / standard</text>
+</g>
+<g style="--ga2-topic:var(--ink)">
+<rect x="0.00" y="145.00" width="26.00" height="16" class="ga2-ribbon ga2-consider"></rect>
+<text x="34.00" y="157.32" font-size="12" text-anchor="start" class="">Acceptable late start</text>
+</g>
+<g style="--ga2-topic:var(--ink)">
+<rect x="0.00" y="166.00" width="26.00" height="16.00" class="ga2-ribbon ga2-selected" style="fill:color-mix(in srgb,var(--ink) 16%,white);stroke:none"></rect><path d="M 0.00 169.71 L 3.71 166.00 M 0.00 178.19 L 12.19 166.00 M 4.68 182.00 L 20.68 166.00 M 13.16 182.00 L 26.00 169.16 M 21.65 182.00 L 26.00 177.65" fill="none" stroke="var(--ink)" stroke-width="1"></path><rect x="0.00" y="166.00" width="26.00" height="16.00" class="ga2-ribbon ga2-selected" style="fill:none"></rect>
+<text x="34.00" y="178.32" font-size="12" text-anchor="start" class="">Selected patients / option</text>
+</g>
+<g style="--ga2-topic:var(--ink)">
+<path d="M 0.00 195.00 H 26.00 m -8 -4.5 l 8 4.5 -8 4.5" class="ga2-cont"></path>
+<text x="34.00" y="199.32" font-size="12" text-anchor="start" class="">Continues</text>
+<path d="M 13.00 209.50 l 6.5 6.5 -6.5 6.5 -6.5 -6.5 z" class="ga2-pt"></path>
+<text x="34.00" y="220.32" font-size="12" text-anchor="start" class="">Single action</text>
+<path d="M 13.00 230.50 l 6.5 6.5 -6.5 6.5 -6.5 -6.5 z" class="ga2-evt"></path>
+<text x="34.00" y="241.32" font-size="12" text-anchor="start" class="">Untimed: 1st visit /</text>
+<text x="34.00" y="256.32" font-size="12" text-anchor="start" class="">delivery (own columns)</text>
+<path d="M 0.00 267.00 V 279.00 H 26.00 V 267.00" class="ga2-bracket"></path>
+<text x="34.00" y="277.32" font-size="12" text-anchor="start" class="">Delivery window</text>
+</g>
+<text x="0.00" y="303.00" font-size="12" text-anchor="start" class="">*Cervical length: serial TVCL</text>
+<text x="0.00" y="319.00" font-size="12" text-anchor="start" class="">after prior spontaneous PTB.</text>
+<text x="0.00" y="345.00" font-size="12" text-anchor="start" class="ga2-name">34w0d = 34&nbsp;weeks, 0&nbsp;days:</text>
+<text x="0.00" y="361.00" font-size="12" text-anchor="start" class="">the day after 33w6d.</text>
+<path d="M 212.00 0.00 V 507.00" class="ga2-grid"></path>
+<rect x="212" y="34" width="2276.32" height="20" class="ga2-group-band" style="fill:#EAEAEA"></rect>
+<text x="222.00" y="49.00" font-size="14" text-anchor="start" class="ga2-name">Screening &amp; diagnosis</text>
+<text x="1012.67" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">14</text>
+<text x="1292.67" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">20</text>
+<text x="1479.33" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">24</text>
+<text x="1666.00" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">28</text>
+<text x="1852.67" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">32</text>
+<text x="1946.00" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">34</text>
+<text x="2086.00" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">37</text>
+<text x="2179.33" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">39</text>
+<text x="2272.67" y="48.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">41</text>
+<g style="--ga2-topic:var(--fet)">
+<text x="420.00" y="69.82" font-size="12" text-anchor="end" class="ga2-name">Dating ultrasound</text>
+<rect x="639.33" y="57.50" width="373.33" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="646.33" y="69.82" font-size="12" text-anchor="start" class="ga2-inverse">CRL&nbsp;— most accurate ≤ 13w6d</text>
+</g>
+<g style="--ga2-topic:var(--fet)">
+<text x="420.00" y="92.82" font-size="12" text-anchor="end" class="ga2-name">cfDNA (Panorama)</text>
+<path d="M 826.00 88.50 H 2366.00 m -8 -4.5 l 8 4.5 -8 4.5" class="ga2-cont"></path>
+<path d="M 826.00 83.50 V 93.50" class="ga2-cont"></path>
+<rect x="831.00" y="75.76" width="239.00" height="10.12" style="fill:var(--paper)"></rect><text x="833.00" y="84.50" font-size="11.5" text-anchor="start" class="ga2-above">offer to all&nbsp;· from 10w0d; no upper GA limit</text>
+</g>
+<g style="--ga2-topic:var(--fet)">
+<text x="420.00" y="115.82" font-size="12" text-anchor="end" class="ga2-name">Diagnostic testing</text>
+<rect x="826.00" y="103.50" width="186.67" height="16.00" class="ga2-ribbon ga2-selected" style="fill:color-mix(in srgb,var(--fet) 16%,white);stroke:none"></rect><path d="M 826.00 107.38 L 829.88 103.50 M 826.00 115.87 L 838.37 103.50 M 830.85 119.50 L 846.85 103.50 M 839.34 119.50 L 855.34 103.50 M 847.82 119.50 L 863.82 103.50 M 856.31 119.50 L 872.31 103.50 M 864.79 119.50 L 880.79 103.50 M 873.28 119.50 L 889.28 103.50 M 881.76 119.50 L 897.76 103.50 M 890.25 119.50 L 906.25 103.50 M 898.73 119.50 L 914.73 103.50 M 907.22 119.50 L 923.22 103.50 M 915.70 119.50 L 931.70 103.50 M 924.19 119.50 L 940.19 103.50 M 932.67 119.50 L 948.67 103.50 M 941.16 119.50 L 957.16 103.50 M 949.65 119.50 L 965.65 103.50 M 958.13 119.50 L 974.13 103.50 M 966.62 119.50 L 982.62 103.50 M 975.10 119.50 L 991.10 103.50 M 983.59 119.50 L 999.59 103.50 M 992.07 119.50 L 1008.07 103.50 M 1000.56 119.50 L 1012.67 107.39 M 1009.04 119.50 L 1012.67 115.88" fill="none" stroke="var(--fet)" stroke-width="1"></path><rect x="826.00" y="103.50" width="186.67" height="16.00" class="ga2-ribbon ga2-selected" style="fill:none"></rect>
+<rect x="831.00" y="106.70" width="84.03" height="10.56" style="fill:var(--paper)"></rect><text x="833.00" y="115.82" font-size="12" text-anchor="start" class="">CVS 10–13&nbsp;wk</text>
+<path d="M 1059.33 111.50 H 2366.00 m -8 -4.5 l 8 4.5 -8 4.5" class="ga2-cont"></path>
+<path d="M 1059.33 106.50 V 116.50" class="ga2-cont"></path>
+<rect x="1064.33" y="98.76" width="134.09" height="10.12" style="fill:var(--paper)"></rect><text x="1066.33" y="107.50" font-size="11.5" text-anchor="start" class="ga2-above">amniocentesis ≥ 15w0d</text>
+</g>
+<g style="--ga2-topic:var(--fet)">
+<text x="420.00" y="138.82" font-size="12" text-anchor="end" class="ga2-name">NT&nbsp;· quad screen</text>
+<rect x="872.67" y="126.50" width="140.00" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="879.67" y="138.82" font-size="12" text-anchor="start" class="ga2-inverse">NT 11w0d–13w6d</text>
+<rect x="1059.33" y="126.50" width="373.33" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="1066.33" y="138.82" font-size="12" text-anchor="start" class="ga2-inverse">quad 15w0d–22w6d</text>
+</g>
+<g style="--ga2-topic:var(--ptl)">
+<text x="420.00" y="161.82" font-size="12" text-anchor="end" class="ga2-name">Cervical length*</text>
+<rect x="1106.00" y="149.50" width="380.00" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="1113.00" y="161.82" font-size="12" text-anchor="start" class="ga2-inverse">serial TVCL 16w0d–24w0d</text>
+</g>
+<g style="--ga2-topic:var(--fet)">
+<text x="420.00" y="184.82" font-size="12" text-anchor="end" class="ga2-name">Anatomy ultrasound</text>
+<rect x="1199.33" y="172.50" width="233.33" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="1206.33" y="184.82" font-size="12" text-anchor="start" class="ga2-inverse">18w0d–22w6d</text>
+</g>
+<rect x="212" y="192" width="2276.32" height="20" class="ga2-group-band" style="fill:#EAEAEA"></rect>
+<text x="222.00" y="207.00" font-size="14" text-anchor="start" class="ga2-name">Labs</text>
+<text x="1012.67" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">14</text>
+<text x="1292.67" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">20</text>
+<text x="1479.33" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">24</text>
+<text x="1666.00" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">28</text>
+<text x="1852.67" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">32</text>
+<text x="1946.00" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">34</text>
+<text x="2086.00" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">37</text>
+<text x="2179.33" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">39</text>
+<text x="2272.67" y="206.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">41</text>
+<g style="--ga2-topic:var(--wf)">
+<text x="420.00" y="227.82" font-size="12" text-anchor="end" class="ga2-name">First-visit labs</text>
+<path d="M 481.00 217.00 l 6.5 6.5 -6.5 6.5 -6.5 -6.5 z" class="ga2-evt"></path>
+<text x="492.00" y="227.82" font-size="12" text-anchor="start" class="">full panel → section 01 below&nbsp;· early diabetes screening if risk factors → section 03 below</text>
+</g>
+<g style="--ga2-topic:var(--inf)">
+<text x="420.00" y="250.82" font-size="12" text-anchor="end" class="ga2-name">Syphilis (ACOG: all)</text>
+<path d="M 481.00 240.00 l 6.5 6.5 -6.5 6.5 -6.5 -6.5 z" class="ga2-evt"></path>
+<path d="M 1666.00 240.00 l 6.5 6.5 -6.5 6.5 -6.5 -6.5 z" class="ga2-pt"></path>
+<text x="1677.00" y="250.82" font-size="12" text-anchor="start" class="">28&nbsp;wk</text>
+<path d="M 2435.00 240.00 l 6.5 6.5 -6.5 6.5 -6.5 -6.5 z" class="ga2-evt"></path>
+</g>
+<g style="--ga2-topic:var(--met)">
+<text x="420.00" y="273.82" font-size="12" text-anchor="end" class="ga2-name">GDM screen&nbsp;· CBC</text>
+<rect x="1479.33" y="261.50" width="233.33" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="1486.33" y="273.82" font-size="12" text-anchor="start" class="ga2-inverse">24w0d–28w6d</text>
+</g>
+<g style="--ga2-topic:var(--wf)">
+<text x="420.00" y="296.82" font-size="12" text-anchor="end" class="ga2-name">Rh D-negative</text>
+<path d="M 1666.00 286.00 l 6.5 6.5 -6.5 6.5 -6.5 -6.5 z" class="ga2-pt"></path>
+<text x="1677.00" y="296.82" font-size="12" text-anchor="start" class="">antibody screen + RhIG 300&nbsp;mcg</text>
+</g>
+<g style="--ga2-topic:var(--inf)">
+<text x="420.00" y="319.82" font-size="12" text-anchor="end" class="ga2-name">GBS culture</text>
+<rect x="2039.33" y="307.50" width="93.33" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<path d="M 2132.67 315.50 H 2139.67" class="ga2-leader"></path>
+<rect x="2141.67" y="310.70" width="90.57" height="10.56" style="fill:var(--paper)"></rect><text x="2143.67" y="319.82" font-size="12" text-anchor="start" class="">36w0d–37w6d</text>
+</g>
+<rect x="212" y="327" width="2276.32" height="20" class="ga2-group-band" style="fill:#EAEAEA"></rect>
+<text x="222.00" y="342.00" font-size="14" text-anchor="start" class="ga2-name">Prevention</text>
+<text x="1012.67" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">14</text>
+<text x="1292.67" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">20</text>
+<text x="1479.33" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">24</text>
+<text x="1666.00" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">28</text>
+<text x="1852.67" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">32</text>
+<text x="1946.00" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">34</text>
+<text x="2086.00" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">37</text>
+<text x="2179.33" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">39</text>
+<text x="2272.67" y="341.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">41</text>
+<g style="--ga2-topic:var(--inf)">
+<text x="420.00" y="362.82" font-size="12" text-anchor="end" class="ga2-name">Influenza&nbsp;· COVID-19</text>
+<path d="M 546.00 358.50 H 2366.00 m -8 -4.5 l 8 4.5 -8 4.5" class="ga2-cont"></path>
+<path d="M 554.00 354.00 l -8 4.5 8 4.5" class="ga2-cont"></path>
+<rect x="556.00" y="345.76" width="518.80" height="10.12" style="fill:var(--paper)"></rect><text x="558.00" y="354.50" font-size="11.5" text-anchor="start" class="ga2-above">influenza any trimester in season&nbsp;· COVID-19: ACOG recommends; check current CDC status</text>
+</g>
+<g style="--ga2-topic:var(--htn)">
+<text x="420.00" y="385.82" font-size="12" text-anchor="end" class="ga2-name">Low-dose aspirin 162&nbsp;mg</text>
+<rect x="919.33" y="373.50" width="186.67" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="926.33" y="385.82" font-size="12" text-anchor="start" class="ga2-inverse">start (ideal &lt; 16)</text>
+<rect x="1106.00" y="373.50" width="560.00" height="16" class="ga2-ribbon ga2-consider"></rect>
+<text x="1113.00" y="385.82" font-size="12" text-anchor="start" class="">late start: by 28&nbsp;wk</text>
+<path d="M 1666.00 381.50 H 2439.00 m -8 -4.5 l 8 4.5 -8 4.5" class="ga2-cont"></path>
+<path d="M 1666.00 376.50 V 386.50" class="ga2-cont"></path>
+<rect x="1671.00" y="368.76" width="114.42" height="10.12" style="fill:var(--paper)"></rect><text x="1673.00" y="377.50" font-size="11.5" text-anchor="start" class="ga2-above">continue to delivery</text>
+</g>
+<g style="--ga2-topic:var(--inf)">
+<text x="420.00" y="408.82" font-size="12" text-anchor="end" class="ga2-name">Tdap</text>
+<rect x="1619.33" y="396.50" width="466.67" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="1626.33" y="408.82" font-size="12" text-anchor="start" class="ga2-inverse">each pregnancy&nbsp;· early in 27–36&nbsp;wk</text>
+</g>
+<g style="--ga2-topic:var(--inf)">
+<text x="420.00" y="431.82" font-size="12" text-anchor="end" class="ga2-name">RSV (Abrysvo)</text>
+<text x="1843.67" y="431.82" font-size="12" text-anchor="end" class="">vaccinated in a prior pregnancy → no repeat dose; arrange infant RSV antibody</text>
+<rect x="1852.67" y="419.50" width="233.33" height="16" class="ga2-ribbon ga2-recommended"></rect>
+<text x="1859.67" y="431.82" font-size="12" text-anchor="start" class="ga2-inverse">32w0d–36w6d&nbsp;· Sep–Jan</text>
+</g>
+<rect x="212" y="439" width="2276.32" height="20" class="ga2-group-band" style="fill:#EAEAEA"></rect>
+<text x="222.00" y="454.00" font-size="14" text-anchor="start" class="ga2-name">Term</text>
+<text x="1012.67" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">14</text>
+<text x="1292.67" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">20</text>
+<text x="1479.33" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">24</text>
+<text x="1666.00" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">28</text>
+<text x="1852.67" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">32</text>
+<text x="1946.00" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">34</text>
+<text x="2086.00" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">37</text>
+<text x="2179.33" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">39</text>
+<text x="2272.67" y="453.50" font-size="11.5" text-anchor="middle" class="ga2-head-week">41</text>
+<g style="--ga2-topic:var(--lab)">
+<text x="420.00" y="474.82" font-size="12" text-anchor="end" class="ga2-name">Elective induction</text>
+<path d="M 2179.33 464.50 V 476.50 H 2212.67 V 464.50" class="ga2-bracket"></path>
+<text x="2172.33" y="474.82" font-size="12" text-anchor="end" class="">low-risk nullipara: 39w0d–39w4d (ARRIVE)</text>
+</g>
+<g style="--ga2-topic:var(--lab)">
+<text x="420.00" y="497.82" font-size="12" text-anchor="end" class="ga2-name">Late / post-term</text>
+<path d="M 2272.67 487.50 V 499.50 H 2366.00 V 487.50" class="ga2-bracket"></path>
+<text x="2265.67" y="497.82" font-size="12" text-anchor="end" class="">from 41w0d: testing 1–2×/wk, consider IOL&nbsp;· IOL by 42w6d</text>
+</g>
+</svg></figure>
+<!--/TL-->
+  </div>
+
+  <div class="cols" style="grid-template-columns: 1.12fr 1.28fr 1.05fr 1.15fr;">
+    <!-- COL 1: first visit -->
+    <div class="col">
+      <section class="panel c-wf" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>First visit</h2><span class="src">ACOG PB 181&nbsp;· PB 233&nbsp;· CDC 2021/2023&nbsp;· ACOG PAs 2021–2025</span></div>
+        <table class="t tight small first-visit">
+          <tbody>
+            <tr><td class="k">CBC</td><td>1st trimester and 24–28&nbsp;wk. Anemia: Hct &lt; 33% (1st/3rd), &lt; 32% (2nd trimester)</td></tr>
+            <tr><td class="k">ABO/Rh, antibody</td><td>1st visit; repeat at 28&nbsp;wk if Rh−. Antibody → identify; anti-D passive vs immune; blood bank + MFM <a href="27-ob-consult.html#p-E" class="xlink"><span class="xref c-wf">27&nbsp;· E</span></a></td></tr>
+            <tr><td class="k">Hemoglobinopathy</td><td>Offer to <b>all</b> (not by ethnicity) if no prior result</td></tr>
+            <tr><td class="k">Rubella, varicella</td><td>Immunity; live vaccines postpartum only</td></tr>
+            <tr><td class="k">HBsAg</td><td><b>Every pregnancy</b>; triple panel if never screened</td></tr>
+            <tr><td class="k">HIV</td><td>Opt-out; repeat in 3rd trimester (&lt; 36&nbsp;wk) if at risk</td></tr>
+            <tr><td class="k">Syphilis</td><td><b class="syph-schedule">1st visit, 3rd trimester (28&nbsp;wk), delivery</b><span class="syph-note">(ACOG 2024; CDC 28&nbsp;wk if high risk) <a href="08-infections.html#p-B" class="xlink"><span class="xref c-inf">8&nbsp;· B</span></a></span></td></tr>
+            <tr><td class="k">HCV</td><td><b>Every pregnancy</b></td></tr>
+            <tr><td class="k">GC/CT</td><td>≤ 24 y or at risk; retest in 3rd trimester if &lt; 25 or at risk</td></tr>
+            <tr><td class="k">Urine culture</td><td>Screen for asymptomatic bacteriuria</td></tr>
+            <tr><td class="k">Pap / HPV</td><td>Only if due by routine interval</td></tr>
+            <tr><td class="k">TSH</td><td>Only if symptoms or risk factors</td></tr>
+            <tr><td class="k">Substance use</td><td>Screening&nbsp;· OUD care <a href="24-substance-dyad.html#p-B" class="xlink"><span class="xref c-wf">24&nbsp;· B</span></a> <a href="24-substance-dyad.html#p-D" class="xlink"><span class="xref c-wf">24&nbsp;· D</span></a></td></tr>
+          </tbody>
+        </table>
+        <div class="box small c-fet">
+          <h3 class="box-heading">Genetic screening</h3>
+          <span class="gen-pair"><span class="lbl"><b>cfDNA</b> <span class="brand" title="local test name">our test: Panorama</span></span>&nbsp;— cell-free DNA screening, offered to all (SMFM #74, ACOG 2026). Microdeletion screening not recommended. No-call result → counsel, ultrasound, offer diagnostic testing. Diagnostic testing is an option for everyone.</span>
+          <span class="gen-pair"><span class="lbl"><b>Carrier screening</b> <span class="brand" title="local test name">our test: Horizon</span></span>&nbsp;— cystic fibrosis + spinal muscular atrophy to all; hemoglobinopathy universal; fragile X by history.</span>
+        </div>
+        <div class="box small c-wf" id="prenatal-rhig">
+          <h3 class="box-heading">Rh D-negative, no immune anti-D <a href="01-triage.html#p-14" class="xlink"><span class="xref c-hem">1&nbsp;· 14</span></a></h3>
+            At 28&nbsp;wk: antibody screen and RhIG 300&nbsp;mcg. Newborn Rh+: RhIG again ≤ 72&nbsp;h after birth. &lt; 12w0d abortion or loss: ACOG suggests forgoing routine RhIG (SMFM disagrees).
+        </div>
+      </section>
+      <section class="panel c-fet grow" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>Dating</h2><span class="src">ACOG CO 700 (2017)</span></div>
+        <table class="t tight small">
+          <thead><tr><th>GA by LMP</th><th>Measure</th><th class="right">Redate if US vs LMP differs by</th></tr></thead>
+          <tbody>
+            <tr><td class="when">≤ 8w6d</td><td>CRL</td><td class="num">&gt; 5&nbsp;days</td></tr>
+            <tr><td class="when">9w0d–13w6d</td><td>CRL</td><td class="num">&gt; 7&nbsp;days</td></tr>
+            <tr><td class="when">14w0d–15w6d</td><td>BPD, HC, AC, FL</td><td class="num">&gt; 7&nbsp;days</td></tr>
+            <tr><td class="when">16w0d–21w6d</td><td>BPD, HC, AC, FL</td><td class="num">&gt; 10&nbsp;days</td></tr>
+            <tr><td class="when">22w0d–27w6d</td><td>BPD, HC, AC, FL</td><td class="num">&gt; 14&nbsp;days</td></tr>
+            <tr><td class="when">≥ 28w0d</td><td>BPD, HC, AC, FL</td><td class="num">&gt; 21&nbsp;days</td></tr>
+          </tbody>
+        </table>
+        <div class="xs muted">Assisted reproductive technology (ART) pregnancy: use ART-derived GA. No ultrasound before 22w0d = suboptimally dated. ≥ 28&nbsp;wk: beware redating a growth-restricted fetus.</div>
+      </section>
+    </div>
+
+    <!-- COL 2: diabetes, aspirin, cervix, weight -->
+    <div class="col">
+      <section class="panel c-met" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Diabetes screening <a href="12-diabetes.html" class="xlink"><span class="xref c-met">12</span></a></h2><span class="src">ACOG PB 190 + CPU 2024&nbsp;· USPSTF 2021</span></div>
+        <div class="box small">
+          <h3 class="box-heading">First visit: screen for overt diabetes, not GDM</h3>
+          BMI ≥ 25 (≥ 23 Asian American) <b>plus</b> ≥ 1: first-degree relative with DM, prior GDM, prediabetes, high-risk ethnicity, HTN, CVD, HDL &lt; 35 or TG &gt; 250, PCOS, inactivity, acanthosis, age ≥ 35, HIV. <b>Overt DM:</b> A1c ≥ 6.5%, FPG ≥ 126 or 75&nbsp;g 2-h ≥ 200; confirm with a 2nd abnormal result unless hyperglycemia is unequivocal. Prediabetes still rescreens at 24–28&nbsp;wk.
+        </div>
+        <div class="small"><b>Universal at 24w0d–28w6d.</b> Two-step preferred by ACOG; one-step acceptable.</div>
+        <div class="small gdm-step"><span><b>Step 1&nbsp;· 50&nbsp;g 1-h GCT</b> positive at <b>≥ 130, 135 or 140</b> <span class="nc">mg/dL</span> <span class="tag local">Local</span> <span class="muted">program sets one cutoff</span></span><span>If Step 1 positive → <b>Step 2:</b> 100&nbsp;g 3-h OGTT</span></div>
+        <table class="t tight small gdm">
+          <thead><tr><th>Diagnostic test (<span class="nc">mg/dL</span>)</th><th>Fasting</th><th><span class="unit">1&nbsp;h</span></th><th><span class="unit">2&nbsp;h</span></th><th><span class="unit">3&nbsp;h</span></th><th>Positive if</th></tr></thead>
+          <tbody>
+            <tr><td class="k">100&nbsp;g 3-h, Carpenter–Coustan</td><td class="v">95</td><td class="v">180</td><td class="v">155</td><td class="v">140</td><td class="pos">≥ 2 values at or above cutoff</td></tr>
+            <tr><td class="k">100&nbsp;g 3-h, NDDG</td><td class="v">105</td><td class="v">190</td><td class="v">165</td><td class="v">145</td><td class="pos">≥ 2 values at or above cutoff</td></tr>
+            <tr class="alt"><td class="k">One-step: 75&nbsp;g 2-h, IADPSG</td><td class="v">92</td><td class="v">180</td><td class="v">153</td><td class="v">—</td><td class="pos">≥ 1 value at or above cutoff</td></tr>
+          </tbody>
+        </table>
+        <div class="small"><b>Postpartum:</b> 75&nbsp;g OGTT at 4–12&nbsp;wk (or before discharge).</div>
+      </section>
+      <section class="panel c-htn" id="p-04">
+        <div class="ph"><span class="num">04</span><h2>Aspirin 162&nbsp;mg</h2><span class="src">Hospital protocol&nbsp;· ACOG/SMFM PA 2021&nbsp;· USPSTF 2021</span></div>
+        <div class="row small aspirin-risk" style="gap:0.16in">
+          <div><b>Give for any 1 high-risk factor:</b> prior preeclampsia&nbsp;· multifetal&nbsp;· chronic HTN&nbsp;· type 1/2 DM&nbsp;· kidney disease&nbsp;· SLE / APS</div>
+          <div><b>Or for &gt; 1 moderate-risk factor:</b> nulliparity&nbsp;· BMI &gt; 30&nbsp;· family hx preeclampsia&nbsp;· Black race&nbsp;· lower income&nbsp;· age ≥ 35&nbsp;· prior LBW/SGA or &gt; 10-yr interval&nbsp;· IVF. <i>Consider</i> aspirin for Black race (proxy for racism) alone or lower income alone.</div>
+        </div>
+        <div class="small"><span class="tag local">Local</span> <b>162&nbsp;mg PO daily</b> (hospital protocol; ACOG/USPSTF cite 81&nbsp;mg). Start 12–28&nbsp;wk (ideally &lt; 16), until delivery.</div>
+      </section>
+      <section class="panel c-ptl" id="p-05">
+        <div class="ph"><span class="num">05</span><h2>Preterm birth prevention</h2><span class="src">ACOG PB 234&nbsp;· PA 2023&nbsp;· SMFM CS #70 (2024)</span></div>
+        <ul class="ls tight small">
+          <li><b>Singleton, prior spontaneous PTB &lt; 37&nbsp;wk:</b> serial transvaginal cervical length (TVCL) 16w0d–24w0d; vaginal progesterone if cervix short. <b>Prior sPTB &lt; 34&nbsp;wk</b> + CL &lt; 25&nbsp;mm before 24&nbsp;wk → consider cerclage.</li>
+          <li><b>Asymptomatic singleton, no prior PTB, TVCL ≤ 20&nbsp;mm before 24w0d:</b> vaginal progesterone. Same population, <b>TVCL 21–25&nbsp;mm</b> before 24w0d → consider vaginal progesterone (shared decision).</li>
+          <li><b>17-OHPC no longer recommended</b> (Makena withdrawn 2023).</li>
+        </ul>
+      </section>
+      <section class="panel c-wf grow" id="p-06">
+        <div class="ph"><span class="num">06</span><h2>Weight gain</h2><span class="src">IOM/NAM 2009</span></div>
+        <table class="t tight small weight-gain">
+          <thead><tr><th>Prepregnancy BMI</th><th class="right">Singleton total <span class="unit nc">(lb)</span></th><th class="right">2nd–3rd trimester <span class="unit nc">(lb/wk)</span></th><th class="right">Twins total <span class="unit nc">(lb)</span></th></tr></thead>
+          <tbody>
+            <tr><td>&lt; 18.5</td><td class="num">28–40</td><td class="num">1.0–1.3</td><td class="num">—</td></tr>
+            <tr><td>18.5–24.9</td><td class="num">25–35</td><td class="num">0.8–1.0</td><td class="num">37–54</td></tr>
+            <tr><td>25.0–29.9</td><td class="num">15–25</td><td class="num">0.5–0.7</td><td class="num">31–50</td></tr>
+            <tr><td>≥ 30</td><td class="num">11–20</td><td class="num">0.4–0.6</td><td class="num">25–42</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- COL 3: surveillance -->
+    <div class="col">
+      <section class="panel c-fet grow" id="p-07">
+        <div class="ph"><span class="num">07</span><h2>Antenatal fetal testing</h2><span class="src">ACOG CO 828 (2021)&nbsp;— suggestions; individualize</span></div>
+        <table class="t tight small stripe testing">
+          <thead><tr><th>Indication</th><th>Start</th><th>How often</th></tr></thead>
+          <tbody class="lead">
+            <tr><td>Decreased fetal movement</td><td class="when">At diagnosis</td><td>Once; repeat if recurs</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td>Chronic HTN, controlled on meds</td><td class="when">32w0d</td><td>Weekly</td></tr>
+            <tr><td>gHTN / preeclampsia, no SF</td><td class="when">At diagnosis</td><td>2×/wk</td></tr>
+            <tr><td>Preeclampsia with SF (inpatient)</td><td class="when">At diagnosis</td><td>Daily</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td>GDM on medication</td><td class="when">32w0d</td><td>1–2×/wk</td></tr>
+            <tr><td>GDM poorly controlled</td><td class="when">32w0d</td><td>2×/wk</td></tr>
+            <tr><td>Pregestational diabetes</td><td class="when">32w0d*</td><td>2×/wk</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td>FGR, normal Doppler / EDF present</td><td class="when">At diagnosis†</td><td>1–2×/wk</td></tr>
+            <tr><td>FGR with AEDV or + oligo/HTN</td><td class="when">At diagnosis†</td><td>2×/wk or inpatient</td></tr>
+            <tr><td>FGR with REDV (MFM)</td><td class="when">Inpatient</td><td>CTG ≥ 1–2×/day&nbsp;· ACS</td></tr>
+            <tr><td>Di-di twins, uncomplicated</td><td class="when">36w0d</td><td>Weekly</td></tr>
+            <tr><td>Mo-di twins, uncomplicated</td><td class="when">32w0d</td><td>Weekly; TTTS US ≥ q2wk from 16w0d</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td>Prior stillbirth ≥ 32&nbsp;wk</td><td class="when">32w0d‡</td><td>1–2×/wk</td></tr>
+            <tr><td>Prior preterm FGR / preeclampsia</td><td class="when">32w0d</td><td>Weekly</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td>SLE, uncomplicated</td><td class="when">By 32w0d</td><td>Weekly</td></tr>
+            <tr><td>APS</td><td class="when">By 32w0d</td><td>2×/wk</td></tr>
+            <tr><td>Sickle cell disease&nbsp;· renal (Cr &gt; 1.4)</td><td class="when">32w0d</td><td>1–2×/wk</td></tr>
+            <tr><td>Cholestasis (ICP)</td><td class="when">At diagnosis†</td><td>1–2×/wk</td></tr>
+            <tr><td>BMI ≥ 40</td><td class="when">34w0d</td><td>Weekly</td></tr>
+            <tr><td>BMI 35.0–39.9</td><td class="when">37w0d</td><td>Weekly</td></tr>
+            <tr><td>IVF&nbsp;· alcohol ≥ 5 drinks/wk</td><td class="when">36w0d</td><td>Weekly</td></tr>
+            <tr><td>Maternal age 35–39</td><td class="when">Individualize</td><td>—</td></tr>
+            <tr><td>Maternal age ≥ 40 (OCC 11)</td><td class="when">Consider from 32–36&nbsp;wk</td><td>Weekly</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td>Polyhydramnios (DVP ≥ 12 / AFI ≥ 30)</td><td class="when">32–34&nbsp;wk</td><td>1–2×/wk</td></tr>
+            <tr><td>Isolated oligohydramnios</td><td class="when">At diagnosis</td><td>1–2×/wk</td></tr>
+            <tr><td>PAPP-A ≤ 0.4 MoM&nbsp;· velamentous cord&nbsp;· SUA</td><td class="when">36w0d</td><td>Weekly</td></tr>
+            <tr><td>Late term</td><td class="when">41w0d</td><td>1–2×/wk</td></tr>
+          </tbody>
+        </table>
+        <div class="xs fgr-doppler"><b>FGR</b> = EFW or AC &lt; 10th %ile. <b>UA Doppler</b> q1–2&nbsp;wk; weekly if &lt; 3rd %ile or ↓ EDF; 2–3×/wk with AEDV.</div>
+        <div class="xs muted">* earlier if poor control or end-organ disease. † or at the GA when delivery would be considered for abnormal results. ‡ or 1–2&nbsp;wk before the prior loss GA. Age-based protocols are local. Abbreviations: key under 08. OB / MFM consultation or transfer <a href="27-ob-consult.html#p-B" class="xlink"><span class="xref c-wf">27&nbsp;· B</span></a> <a href="27-ob-consult.html#p-E" class="xlink"><span class="xref c-wf">27&nbsp;· E</span></a></div>
+      </section>
+    </div>
+
+    <!-- COL 4: delivery timing -->
+    <div class="col">
+      <section class="panel c-wf grow" id="p-08">
+        <div class="ph"><span class="num">08</span><h2>Delivery timing</h2><span class="src">ACOG CO 831 (2021)</span></div>
+        <p class="scope small">The lower end of a range is not automatically better.</p>
+        <div class="dt-grid">
+          <div class="dt-stack">
+            <table class="t tight small dt c-wf">
+              <thead><tr><th>Placenta&nbsp;· uterus&nbsp;· fluid</th><th>Deliver</th></tr></thead>
+              <tbody>
+                <tr><td>Previa, uncomplicated</td><td class="when">36w0d–37w6d</td></tr>
+                <tr><td>Suspected accreta spectrum</td><td class="when">34w0d–35w6d</td></tr>
+                <tr><td>Vasa previa</td><td class="when">34w0d–37w0d</td></tr>
+                <tr><td>Prior classical CS&nbsp;· prior rupture</td><td class="when">36w0d–37w0d</td></tr>
+                <tr><td>Prior myomectomy needing CS</td><td class="when">37w0d–38w6d</td></tr>
+                <tr><td>Isolated oligohydramnios</td><td class="when">36w0d–37w6d</td></tr>
+                <tr><td>Mild idiopathic polyhydramnios</td><td class="when">39w0d–40w6d</td></tr>
+              </tbody>
+            </table>
+            <table class="t tight small dt c-fet">
+              <thead><tr><th>Fetal growth</th><th>Deliver</th></tr></thead>
+              <tbody>
+                <tr><td>FGR 3rd–10th %ile, normal UA Doppler</td><td class="when">38w0d–39w0d</td></tr>
+                <tr><td>FGR &lt; 3rd %ile or UA Doppler &gt; 95th, no AEDV / REDV</td><td class="when">37w0d</td></tr>
+                <tr><td>FGR + oligo or comorbidity</td><td class="when">34w0d–37w6d</td></tr>
+                <tr><td>FGR with AEDV (MFM)</td><td class="when">33w0d–34w0d</td></tr>
+                <tr><td>FGR with REDV (MFM)</td><td class="when">30w0d–32w0d</td></tr>
+              </tbody>
+            </table>
+            <table class="t tight small dt c-htn">
+              <thead><tr><th>Hypertension</th><th>Deliver</th></tr></thead>
+              <tbody>
+                <tr><td>Unstable SF&nbsp;· HELLP</td><td class="when">After stabilization</td></tr>
+                <tr><td>gHTN with severe-range BP, or preeclampsia with SF<span class="dt-cond">&lt; 34w0d: expectant only if selected, stable, with maternal + neonatal resources</span></td><td class="when">34w0d<span class="when-note">or at diagnosis if later</span></td></tr>
+                <tr><td>gHTN / preeclampsia, no SF</td><td class="when">37w0d<span class="when-note">or at diagnosis if later</span></td></tr>
+                <tr><td>Chronic HTN, hard to control</td><td class="when">36w0d–37w6d</td></tr>
+                <tr><td>Chronic HTN, on meds</td><td class="when">37w0d–39w6d</td></tr>
+                <tr><td>Chronic HTN, no meds</td><td class="when">38w0d–39w6d</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dt-stack">
+            <table class="t tight small dt c-met">
+              <thead><tr><th>Diabetes</th><th>Deliver</th></tr></thead>
+              <tbody>
+                <tr><td>GDM A1, diet-controlled</td><td class="when">39w0d–40w6d</td></tr>
+                <tr><td>GDM A2, well controlled</td><td class="when">39w0d–39w6d</td></tr>
+                <tr><td>GDM poorly controlled</td><td class="when">Individualize</td></tr>
+                <tr><td>Pregestational DM, well controlled</td><td class="when">39w0d–39w6d<span class="when-note">ACOG; see note</span></td></tr>
+                <tr><td>Pregestational DM + vasculopathy / poor control / prior IUFD</td><td class="when">36w0d–38w6d</td></tr>
+              </tbody>
+            </table>
+            <table class="t tight small dt c-wf">
+              <thead><tr><th>Other</th><th>Deliver</th></tr></thead>
+              <tbody>
+                <tr><td>ICP, bile acids &lt; 100 µmol/L</td><td class="when">36w0d–39w0d</td></tr>
+                <tr><td>ICP, bile acids not elevated</td><td class="when">Not &lt; 37w0d</td></tr>
+                <tr><td>ICP, bile acids ≥ 100 µmol/L</td><td class="when">36w0d</td></tr>
+                <tr><td>PPROM</td><td class="when">34w0d–36w6d†</td></tr>
+                <tr><td>PROM ≥ 37w0d</td><td class="when">At diagnosis</td></tr>
+                <tr><td>Alloimmunized, fetus at risk, no IUT</td><td class="when">37w0d–38w6d</td></tr>
+                <tr><td>HIV RNA &gt; 1,000 copies/mL or unknown near birth</td><td class="when">CS at 38w0d</td></tr>
+                <tr><td>HIV RNA ≤ 1,000 near birth</td><td class="when">OB indications</td></tr>
+                <tr><td>Prior stillbirth</td><td class="when">39w0d–39w6d<span class="when-note">(37w0d–38w6d after counseling)</span></td></tr>
+                <tr><td>Maternal age ≥ 40 (OCC 11)</td><td class="when">39w0d–39w6d<span class="when-note">if well dated</span></td></tr>
+              </tbody>
+            </table>
+            <table class="t tight small dt c-fet">
+              <thead><tr><th>Multiples</th><th>Deliver</th></tr></thead>
+              <tbody>
+                <tr><td>Di-di, uncomplicated</td><td class="when">38w0d–38w6d</td></tr>
+                <tr><td>Di-di + isolated FGR</td><td class="when">36w0d–37w6d</td></tr>
+                <tr><td>Mo-di, uncomplicated</td><td class="when">34w0d–37w6d</td></tr>
+                <tr><td>Mo-di + isolated FGR</td><td class="when">32w0d–34w6d</td></tr>
+                <tr><td>Mo-mo</td><td class="when">32w0d–34w0d</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="dt-key"><b>FGR</b> fetal growth restriction&nbsp;· <b>UA</b> umbilical artery&nbsp;· <b>EDF</b> end-diastolic flow&nbsp;· <b>AEDV / REDV</b> absent / reversed end-diastolic velocity&nbsp;· <b>Di-di</b> dichorionic–diamniotic&nbsp;· <b>Mo-di</b> monochorionic–diamniotic&nbsp;· <b>Mo-mo</b> monochorionic–monoamniotic</div>
+        <div class="xs muted">Pregestational DM: Endocrine Society 2025 suggests risk-based earlier delivery → MFM. † expectant management not beyond 37w0d. Late-preterm delivery planned: one betamethasone course in selected patients not previously treated. No amniocentesis for lung maturity. Low-risk nullipara: counsel on elective induction at 39w0d–39w4d <a href="26-induction-labor.html#p-A" class="xlink"><span class="xref c-lab">26&nbsp;· A</span></a>. MFM / delivery-site planning <a href="27-ob-consult.html#p-E" class="xlink"><span class="xref c-wf">27&nbsp;· E</span></a> Late term: NST + fluid 1–2×/wk from 41w0d; IOL recommended 42w0d–42w6d.</div>
+      </section>
+    </div>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG CO 700 Methods for Estimating the Due Date (2017); ACOG PB 233 Anemia (2021); ACOG PB 181 + CPU 2024 Rh D; CDC HBV Screening MMWR 2023; ACOG CO 752 HIV (2018); ACOG Practice Advisory Syphilis Screening (2024, reaff. 2025); ACOG PA HCV Screening (2021); USPSTF GC/CT 2021, bacteriuria 2019; ACOG PA Hemoglobinopathy Screening (2022); SMFM Consult #74 + ACOG PA Fetal Chromosomal Screening (2026); ACOG CO 690/691 Carrier Screening; ACOG PB 190 GDM + CPU 2024; USPSTF GDM 2021; ACOG/SMFM PA Low-Dose Aspirin (2021); USPSTF 2021; ACOG PB 234 + PA 2023 Preterm Birth; SMFM Consult #70 (2024); IOM/NAM Weight Gain 2009; ACOG CO 828 Antenatal Fetal Surveillance (2021); SMFM Consults #52, #53, #72; NIH Perinatal HIV Guidelines; Endocrine Society 2025; ADA 2026; ACOG/SMFM OCC 11 Pregnancy at Age 35 Years or Older (2022); ACOG CO 831 Medically Indicated Late-Preterm and Early-Term Deliveries (2021); ACOG CPU Full-Term Nulliparous Without Indication (2025); ACOG PB 146; CDC/ACIP maternal RSV and infant nirsevimab/clesrovimab (2025); ACOG COVID-19 vaccination guidance (2026). <div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTAsMUgxMVYySDEwek0xMiwxSDEzVjJIMTJ6TTEzLDFIMTRWMkgxM3pNMTcsMUgxOFYySDE3ek0xOSwxSDIwVjJIMTl6TTIwLDFIMjFWMkgyMHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTksMkgxMFYzSDl6TTExLDJIMTJWM0gxMXpNMTcsMkgxOFYzSDE3ek0xOSwySDIwVjNIMTl6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNOCwzSDlWNEg4ek0xMCwzSDExVjRIMTB6TTExLDNIMTJWNEgxMXpNMTIsM0gxM1Y0SDEyek0xMywzSDE0VjRIMTN6TTE2LDNIMTdWNEgxNnpNMTgsM0gxOVY0SDE4ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTksNEgxMFY1SDl6TTExLDRIMTJWNUgxMXpNMTIsNEgxM1Y1SDEyek0xNCw0SDE1VjVIMTR6TTE1LDRIMTZWNUgxNXpNMTYsNEgxN1Y1SDE2ek0xNyw0SDE4VjVIMTd6TTE4LDRIMTlWNUgxOHpNMjIsNEgyM1Y1SDIyek0yNCw0SDI1VjVIMjR6TTI1LDRIMjZWNUgyNXpNMjYsNEgyN1Y1SDI2ek0yOCw0SDI5VjVIMjh6TTAsNUgxVjZIMHpNNiw1SDdWNkg2ek04LDVIOVY2SDh6TTksNUgxMFY2SDl6TTEwLDVIMTFWNkgxMHpNMTMsNUgxNFY2SDEzek0xNiw1SDE3VjZIMTZ6TTE4LDVIMTlWNkgxOHpNMTksNUgyMFY2SDE5ek0yMiw1SDIzVjZIMjJ6TTI4LDVIMjlWNkgyOHpNMCw2SDFWN0gwek0xLDZIMlY3SDF6TTIsNkgzVjdIMnpNMyw2SDRWN0gzek00LDZINVY3SDR6TTUsNkg2VjdINXpNNiw2SDdWN0g2ek04LDZIOVY3SDh6TTEwLDZIMTFWN0gxMHpNMTIsNkgxM1Y3SDEyek0xNCw2SDE1VjdIMTR6TTE2LDZIMTdWN0gxNnpNMTgsNkgxOVY3SDE4ek0yMCw2SDIxVjdIMjB6TTIyLDZIMjNWN0gyMnpNMjMsNkgyNFY3SDIzek0yNCw2SDI1VjdIMjR6TTI1LDZIMjZWN0gyNXpNMjYsNkgyN1Y3SDI2ek0yNyw2SDI4VjdIMjd6TTI4LDZIMjlWN0gyOHpNOSw3SDEwVjhIOXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE1LDdIMTZWOEgxNXpNMTcsN0gxOFY4SDE3ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTQsOEg1VjlINHpNNSw4SDZWOUg1ek02LDhIN1Y5SDZ6TTExLDhIMTJWOUgxMXpNMTIsOEgxM1Y5SDEyek0xNyw4SDE4VjlIMTd6TTE5LDhIMjBWOUgxOXpNMjMsOEgyNFY5SDIzek0yNSw4SDI2VjlIMjV6TTI2LDhIMjdWOUgyNnpNMjcsOEgyOFY5SDI3ek0yOCw4SDI5VjlIMjh6TTAsOUgxVjEwSDB6TTEsOUgyVjEwSDF6TTMsOUg0VjEwSDN6TTgsOUg5VjEwSDh6TTksOUgxMFYxMEg5ek0xMSw5SDEyVjEwSDExek0xMiw5SDEzVjEwSDEyek0xMyw5SDE0VjEwSDEzek0xNSw5SDE2VjEwSDE1ek0xNiw5SDE3VjEwSDE2ek0xNyw5SDE4VjEwSDE3ek0xOCw5SDE5VjEwSDE4ek0yMSw5SDIyVjEwSDIxek0yMiw5SDIzVjEwSDIyek0yMyw5SDI0VjEwSDIzek0yNCw5SDI1VjEwSDI0ek0yNSw5SDI2VjEwSDI1ek0yNiw5SDI3VjEwSDI2ek0yNyw5SDI4VjEwSDI3ek0yOCw5SDI5VjEwSDI4ek0yLDEwSDNWMTFIMnpNMywxMEg0VjExSDN6TTYsMTBIN1YxMUg2ek04LDEwSDlWMTFIOHpNMTEsMTBIMTJWMTFIMTF6TTEyLDEwSDEzVjExSDEyek0xMywxMEgxNFYxMUgxM3pNMTUsMTBIMTZWMTFIMTV6TTE2LDEwSDE3VjExSDE2ek0xOCwxMEgxOVYxMUgxOHpNMjIsMTBIMjNWMTFIMjJ6TTIzLDEwSDI0VjExSDIzek0yOCwxMEgyOVYxMUgyOHpNMCwxMUgxVjEySDB6TTMsMTFINFYxMkgzek00LDExSDVWMTJINHpNOCwxMUg5VjEySDh6TTEwLDExSDExVjEySDEwek0xNSwxMUgxNlYxMkgxNXpNMTcsMTFIMThWMTJIMTd6TTE4LDExSDE5VjEySDE4ek0yMSwxMUgyMlYxMkgyMXpNMjIsMTFIMjNWMTJIMjJ6TTI1LDExSDI2VjEySDI1ek0yNywxMUgyOFYxMkgyN3pNMjgsMTFIMjlWMTJIMjh6TTEsMTJIMlYxM0gxek0yLDEySDNWMTNIMnpNNCwxMkg1VjEzSDR6TTUsMTJINlYxM0g1ek02LDEySDdWMTNINnpNMTAsMTJIMTFWMTNIMTB6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMjAsMTJIMjFWMTNIMjB6TTIxLDEySDIyVjEzSDIxek0yMywxMkgyNFYxM0gyM3pNMjcsMTJIMjhWMTNIMjd6TTAsMTNIMVYxNEgwek0zLDEzSDRWMTRIM3pNNCwxM0g1VjE0SDR6TTUsMTNINlYxNEg1ek03LDEzSDhWMTRIN3pNOCwxM0g5VjE0SDh6TTksMTNIMTBWMTRIOXpNMTEsMTNIMTJWMTRIMTF6TTEzLDEzSDE0VjE0SDEzek0xNCwxM0gxNVYxNEgxNHpNMTUsMTNIMTZWMTRIMTV6TTE2LDEzSDE3VjE0SDE2ek0xNywxM0gxOFYxNEgxN3pNMTgsMTNIMTlWMTRIMTh6TTIyLDEzSDIzVjE0SDIyek0yMywxM0gyNFYxNEgyM3pNMjQsMTNIMjVWMTRIMjR6TTI1LDEzSDI2VjE0SDI1ek0yNiwxM0gyN1YxNEgyNnpNMjcsMTNIMjhWMTRIMjd6TTI4LDEzSDI5VjE0SDI4ek0wLDE0SDFWMTVIMHpNMSwxNEgyVjE1SDF6TTMsMTRINFYxNUgzek02LDE0SDdWMTVINnpNNywxNEg4VjE1SDd6TTgsMTRIOVYxNUg4ek0xMCwxNEgxMVYxNUgxMHpNMTEsMTRIMTJWMTVIMTF6TTEyLDE0SDEzVjE1SDEyek0xNCwxNEgxNVYxNUgxNHpNMTUsMTRIMTZWMTVIMTV6TTE4LDE0SDE5VjE1SDE4ek0yMSwxNEgyMlYxNUgyMXpNMjQsMTRIMjVWMTVIMjR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjgsMTRIMjlWMTVIMjh6TTAsMTVIMVYxNkgwek0zLDE1SDRWMTZIM3pNNCwxNUg1VjE2SDR6TTUsMTVINlYxNkg1ek04LDE1SDlWMTZIOHpNMTAsMTVIMTFWMTZIMTB6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTQsMTVIMTVWMTZIMTR6TTE1LDE1SDE2VjE2SDE1ek0xNiwxNUgxN1YxNkgxNnpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0yMCwxNUgyMVYxNkgyMHpNMjQsMTVIMjVWMTZIMjR6TTI3LDE1SDI4VjE2SDI3ek0yOCwxNUgyOVYxNkgyOHpNMSwxNkgyVjE3SDF6TTMsMTZINFYxN0gzek02LDE2SDdWMTdINnpNMTIsMTZIMTNWMTdIMTJ6TTE1LDE2SDE2VjE3SDE1ek0xNywxNkgxOFYxN0gxN3pNMTksMTZIMjBWMTdIMTl6TTIxLDE2SDIyVjE3SDIxek0yNywxNkgyOFYxN0gyN3pNMCwxN0gxVjE4SDB6TTIsMTdIM1YxOEgyek0zLDE3SDRWMThIM3pNNywxN0g4VjE4SDd6TTksMTdIMTBWMThIOXpNMTAsMTdIMTFWMThIMTB6TTExLDE3SDEyVjE4SDExek0xMywxN0gxNFYxOEgxM3pNMTQsMTdIMTVWMThIMTR6TTE1LDE3SDE2VjE4SDE1ek0xNiwxN0gxN1YxOEgxNnpNMTcsMTdIMThWMThIMTd6TTE4LDE3SDE5VjE4SDE4ek0yMiwxN0gyM1YxOEgyMnpNMjMsMTdIMjRWMThIMjN6TTI0LDE3SDI1VjE4SDI0ek0yNSwxN0gyNlYxOEgyNXpNMjcsMTdIMjhWMThIMjd6TTI4LDE3SDI5VjE4SDI4ek0yLDE4SDNWMTlIMnpNMywxOEg0VjE5SDN6TTQsMThINVYxOUg0ek02LDE4SDdWMTlINnpNOCwxOEg5VjE5SDh6TTEwLDE4SDExVjE5SDEwek0xMSwxOEgxMlYxOUgxMXpNMTIsMThIMTNWMTlIMTJ6TTEzLDE4SDE0VjE5SDEzek0xNCwxOEgxNVYxOUgxNHpNMTUsMThIMTZWMTlIMTV6TTE4LDE4SDE5VjE5SDE4ek0yMCwxOEgyMVYxOUgyMHpNMjIsMThIMjNWMTlIMjJ6TTIzLDE4SDI0VjE5SDIzek0yNCwxOEgyNVYxOUgyNHpNMjYsMThIMjdWMTlIMjZ6TTI4LDE4SDI5VjE5SDI4ek0yLDE5SDNWMjBIMnpNNCwxOUg1VjIwSDR6TTUsMTlINlYyMEg1ek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTEsMjBIMlYyMUgxek00LDIwSDVWMjFINHpNNiwyMEg3VjIxSDZ6TTEyLDIwSDEzVjIxSDEyek0xNiwyMEgxN1YyMUgxNnpNMTcsMjBIMThWMjFIMTd6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjUsMjBIMjZWMjFIMjV6TTI4LDIwSDI5VjIxSDI4ek04LDIxSDlWMjJIOHpNMTAsMjFIMTFWMjJIMTB6TTExLDIxSDEyVjIySDExek0xMywyMUgxNFYyMkgxM3pNMTQsMjFIMTVWMjJIMTR6TTE1LDIxSDE2VjIySDE1ek0xNiwyMUgxN1YyMkgxNnpNMTgsMjFIMTlWMjJIMTh6TTE5LDIxSDIwVjIySDE5ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI4LDIxSDI5VjIySDI4ek0wLDIySDFWMjNIMHpNMSwyMkgyVjIzSDF6TTIsMjJIM1YyM0gyek0zLDIySDRWMjNIM3pNNCwyMkg1VjIzSDR6TTUsMjJINlYyM0g1ek02LDIySDdWMjNINnpNMTEsMjJIMTJWMjNIMTF6TTE0LDIySDE1VjIzSDE0ek0xNSwyMkgxNlYyM0gxNXpNMTksMjJIMjBWMjNIMTl6TTIwLDIySDIxVjIzSDIwek0yMiwyMkgyM1YyM0gyMnpNMjQsMjJIMjVWMjNIMjR6TTI1LDIySDI2VjIzSDI1ek0yNiwyMkgyN1YyM0gyNnpNMjgsMjJIMjlWMjNIMjh6TTAsMjNIMVYyNEgwek02LDIzSDdWMjRINnpNOCwyM0g5VjI0SDh6TTksMjNIMTBWMjRIOXpNMTIsMjNIMTNWMjRIMTJ6TTE0LDIzSDE1VjI0SDE0ek0xNSwyM0gxNlYyNEgxNXpNMTcsMjNIMThWMjRIMTd6TTE5LDIzSDIwVjI0SDE5ek0yMCwyM0gyMVYyNEgyMHpNMjQsMjNIMjVWMjRIMjR6TTI3LDIzSDI4VjI0SDI3ek0yOCwyM0gyOVYyNEgyOHpNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek04LDI0SDlWMjVIOHpNMTAsMjRIMTFWMjVIMTB6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTcsMjRIMThWMjVIMTd6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjcsMjRIMjhWMjVIMjd6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNOSwyNUgxMFYyNkg5ek0xMCwyNUgxMVYyNkgxMHpNMTEsMjVIMTJWMjZIMTF6TTEzLDI1SDE0VjI2SDEzek0xNSwyNUgxNlYyNkgxNXpNMTYsMjVIMTdWMjZIMTZ6TTE3LDI1SDE4VjI2SDE3ek0xOCwyNUgxOVYyNkgxOHpNMjcsMjVIMjhWMjZIMjd6TTI4LDI1SDI5VjI2SDI4ek0wLDI2SDFWMjdIMHpNMiwyNkgzVjI3SDJ6TTMsMjZINFYyN0gzek00LDI2SDVWMjdINHpNNiwyNkg3VjI3SDZ6TTEwLDI2SDExVjI3SDEwek0xMSwyNkgxMlYyN0gxMXpNMTIsMjZIMTNWMjdIMTJ6TTEzLDI2SDE0VjI3SDEzek0xNSwyNkgxNlYyN0gxNXpNMTYsMjZIMTdWMjdIMTZ6TTE3LDI2SDE4VjI3SDE3ek0xOCwyNkgxOVYyN0gxOHpNMTksMjZIMjBWMjdIMTl6TTIxLDI2SDIyVjI3SDIxek0yNSwyNkgyNlYyN0gyNXpNMjYsMjZIMjdWMjdIMjZ6TTI3LDI2SDI4VjI3SDI3ek0yOCwyNkgyOVYyN0gyOHpNMCwyN0gxVjI4SDB6TTYsMjdIN1YyOEg2ek04LDI3SDlWMjhIOHpNOSwyN0gxMFYyOEg5ek0xMSwyN0gxMlYyOEgxMXpNMTIsMjdIMTNWMjhIMTJ6TTE2LDI3SDE3VjI4SDE2ek0xNywyN0gxOFYyOEgxN3pNMTgsMjdIMTlWMjhIMTh6TTIwLDI3SDIxVjI4SDIwek0yNSwyN0gyNlYyOEgyNXpNMjcsMjdIMjhWMjhIMjd6TTI4LDI3SDI5VjI4SDI4ek0wLDI4SDFWMjlIMHpNMSwyOEgyVjI5SDF6TTIsMjhIM1YyOUgyek0zLDI4SDRWMjlIM3pNNCwyOEg1VjI5SDR6TTUsMjhINlYyOUg1ek02LDI4SDdWMjlINnpNOCwyOEg5VjI5SDh6TTEwLDI4SDExVjI5SDEwek0xMiwyOEgxM1YyOUgxMnpNMTYsMjhIMTdWMjlIMTZ6TTE3LDI4SDE4VjI5SDE3ek0yMCwyOEgyMVYyOUgyMHpNMjIsMjhIMjNWMjlIMjJ6TTIzLDI4SDI0VjI5SDIzek0yNSwyOEgyNlYyOUgyNXpNMjcsMjhIMjhWMjlIMjd6IiBpZD0icXItcGF0aCIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIxIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZT0ibm9uZSIvPjwvc3ZnPg=="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

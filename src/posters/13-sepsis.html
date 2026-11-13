@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Maternal sepsis: first hour</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--inf); }
+  .masthead .sub { max-width: 7.6in; }
+  .sheet .col { gap: 0.11in; }
+  .sheet .panel { gap: calc(5.5pt / var(--k)); }
+  /* right column carries the spare depth: looser rhythm between and inside its panels */
+  .sheet .col + .col { gap: calc(15pt / var(--k)); }
+  .sheet .col + .col > .panel { gap: calc(7pt / var(--k)); }
+  /* panel citation lines: quieter than the heading above them */
+  .sheet .ph .src { font-weight: 400; }
+  /* screen eligibility: governs the whole panel, read first (white surface; the rail groups it) */
+  .screen-scope { font-size: 11.5pt; line-height: 1.25; border-left: 3pt solid var(--inf); padding: 5pt 8pt; background: var(--paper); }
+  /* two-step screen */
+  .steps2 { display: grid; grid-template-columns: 1fr 1.25fr; gap: 0.14in; }
+  .steps2 > div { display: flex; flex-direction: column; border-top: 4pt solid var(--c); background: color-mix(in srgb, var(--c) 12%, white); padding: 6pt 10pt 8pt; font-size: 11.2pt; line-height: 1.28; }
+  .steps2 .k { font: 800 9.2pt/1.15 "Inter"; letter-spacing: .07em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); display: block; margin-bottom: 4pt; }
+  /* clinical override: read before the screen */
+  .screen-override { border-left: 3pt solid var(--stop); padding: 4pt 8pt; font: 500 11.5pt/1.25 "Inter"; }
+  .screen-override b { font-weight: 700; }
+  .screen-override .xref { margin-left: 3pt; }
+  /* septic-shock definition: reference, outside the Step 2 outcome so both outcome rules align */
+  .shock-definition { border-left: 3pt solid var(--wf); padding: 3pt 8pt; font-size: 11.2pt; line-height: 1.28; }
+  .shock-definition .lb { font: 800 9.2pt/1.15 "Inter"; letter-spacing: .07em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--ink-3); margin-right: 5pt; }
+  .steps2 .out { margin-top: auto; }
+  .steps2 .rule { font-weight: 800; margin-top: 4pt; padding-top: 4pt; border-top: 0.75pt solid color-mix(in srgb, var(--c) 40%, white); }
+  .steps2 .rule .deadline, .steps2 .rule .xref { margin-left: 2pt; }
+  .steps2 .screen-next { display: block; margin-top: 3pt; font-size: 11.2pt; font-weight: 700; color: var(--ink); }
+  .steps2 .screen-next b { font-weight: 800; color: var(--stop); }
+  .steps2 ul.ls { gap: 2pt; }
+  img.flow { display: block; width: 100%; height: auto; margin-top: 0; }
+  /* bundle: parallel start; each deadline bound to its condition, equal weight */
+  .ph.bundle { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .ph.bundle .uh { grid-column: 3; grid-row: 1 / span 2; align-self: center; flex-direction: column; align-items: flex-start; gap: 3pt; font-size: 11pt; line-height: 1.15; padding-right: 8pt; }
+  .fluid-action { color: var(--ink); border-left: 3pt solid var(--wf); padding: 2pt 0 2pt 8pt; line-height: 1.3; }
+  .fluid-action .lb { font-weight: 800; color: var(--wf); text-transform: uppercase; letter-spacing: .06em; font-size: .9em; margin-right: 4pt; }
+  .icu-trigger { border-left: 3pt solid var(--stop); padding: 5pt 7pt; background: var(--t-stop); font-size: 11.2pt; line-height: 1.28; }
+  .icu-trigger > b:first-child { color: var(--stop); }
+  /* antibiotic deadlines by case */
+  .abx-due { display: flex; flex-direction: column; font-size: 11.2pt; line-height: 1.25; }
+  .abx-due .rail { grid-template-columns: 2.7in minmax(0, 1fr); }
+  .abx-due .do { font-weight: 600; }
+  .abx-due .deadline { font-size: calc(11pt / var(--k)); margin-right: 4pt; }
+  .allergy > .when { color: var(--stop); font-weight: 800; }
+  .allergy > .do { font-weight: 400; }
+  .iv-note { font-size: 10.6pt; color: var(--ink-3); font-weight: 600; margin-top: 3pt; }
+  /* regimen table: one line per regimen; OR = alternative, + = addition, ( ) = choose one inside a combination */
+  table.abx td { font-size: 11pt; line-height: 1.3; }
+  table.abx td.k { white-space: normal; width: 1.3in; padding-left: 4pt; }
+  table.abx .dose { font-size: 1.04em; white-space: nowrap; }
+  table.abx .rg { display: block; }
+  table.abx .rg + .rg { margin-top: 3pt; }
+  table.abx { --cell-y: 4pt; }
+  table.abx .kx { display: block; font-weight: 600; color: var(--ink-3); margin-top: 2pt; }
+  table.abx .rg:has(.op) { padding-left: 1.6em; text-indent: -1.6em; }
+  table.abx .rg:has(.op) :is(.op, .xref, .dose) { text-indent: 0; }
+  table.abx .op { display: inline-block; min-width: 1.6em; font-weight: 800; color: var(--c); }
+  table.abx .sub { display: block; color: var(--ink-3); padding-left: 1.6em; }
+  table.abx .with { font-weight: 800; }
+  /* add-ons: condition → addition */
+  .addons { display: flex; flex-direction: column; font-size: 11pt; line-height: 1.28; }
+  .addons .rail { grid-template-columns: 2.05in minmax(0, 1fr); }
+  .addons .rail + .rail, .abx-due .rail + .rail { border-top: 0; padding-top: 0; margin-top: 2pt; }
+  /* allergy selects the regimen: read before the table (declared after the reset above, so it wins by order) */
+  .abx-due .rail.allergy { border-top: 0.75pt solid var(--rule); padding-top: 3pt; margin-top: 3pt; }
+  .addons .do { font-weight: 400; }
+  .addons .hd { font-weight: 800; margin-bottom: 3pt; }
+  /* source control: badge is a header sibling on the title row, not nudged inside the h2 */
+  .ph.source-control { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .ph.source-control > .deadline.par { grid-column: 3; grid-row: 1; align-self: center; justify-self: end; background: var(--inf); margin-left: 0; }
+  .reas { gap: 3pt 10pt; font-size: 11.2pt; line-height: 1.28; }
+  .reas dt { font-weight: 800; color: var(--c); }
+  /* LOCAL configuration fields */
+  .lf { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3pt 14pt; }
+  .lf > span { display: flex; align-items: baseline; gap: 4pt; white-space: nowrap; }
+  .lf > span.w { grid-column: 1 / -1; }
+  .lf .fl { flex: 1; min-width: 0.7in; border-bottom: 0.75pt solid var(--wf); height: 1em; }
+  .lf .fl.s { flex: none; min-width: 0; width: 0.45in; }
+  .lf .fl.xs { flex: none; min-width: 0; width: 0.3in; }
+  .lf .ne { font-weight: 800; }
+  .lf .ne-h { font-weight: 700; }
+  /* both unit rows share one set of tracks so start / step / max align vertically */
+  .lf .ne-grid { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1.12in auto auto auto; justify-content: space-between; gap: 3pt 5pt; }
+  .lf .ne-grid > .ne-row { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: baseline; }
+  .lf .ne-row .fl.s { width: 0.32in; } .lf .ne-row .fl.xs { width: 0.22in; }
+  .lf .ne-row > span { display: flex; align-items: baseline; gap: 3pt; }
+  .lf .ck { flex: none; width: 0.9em; height: 0.9em; border: 1pt solid var(--wf); align-self: center; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="12-diabetes.html" title="Diabetes">‹ 12</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html" selected="">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="14-pp-headache.html" title="Postpartum headache">14 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/13-sepsis.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-inf" style="--k:1.11">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Antepartum&nbsp;· intrapartum&nbsp;· postpartum</div>
+      <h1><span class="sid">13</span>Maternal sepsis</h1>
+    </div>
+    <div class="sub">First hour: screen, cultures and lactate, antibiotics, fluids, norepinephrine, source control.<br><span class="muted">Adult doses, IV, normal renal function.</span></div>
+    <nav class="setnav rel"><em>See also</em><a href="08-infections.html" class="xlink"><span><b>8</b>Infections</span></a><a href="02-emergencies.html" class="xlink"><span><b>2</b>Emergencies</span></a><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="19-med-card.html" class="xlink"><span><b>19</b>Meds card</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-13.svg)"></div>
+
+  <div class="cols" style="grid-template-columns: 1fr 1fr;">
+    <!-- LEFT -->
+    <div class="col">
+      <section class="panel c-inf" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>Recognize</h2><span class="src">CMQCC Obstetric Sepsis Toolkit v2.0 (2025)&nbsp;· SMFM Consult #67 (2023)&nbsp;· SSC 2026</span></div>
+        <div class="screen-scope"><b>Pregnancy-adjusted screen applies ≥ 20&nbsp;wk to ≤ 72&nbsp;h postpartum.</b> Outside that window use the standard adult screen; unmodified SIRS fires in most intraamniotic infections.</div>
+        <div class="screen-override">Fever is neither necessary nor sufficient. <b>Unexplained organ dysfunction + possible infection = sepsis until proved otherwise</b> (SMFM). <a href="13-sepsis.html#p-02" class="xlink"><span class="xref c-stop">13&nbsp;· 02</span></a></div>
+        <div class="steps2">
+          <div>
+            <span class="k">Step 1&nbsp;· serious-infection screen</span>
+            <ul class="ls small">
+              <li>Oral temp &lt; 36&nbsp;°C or ≥ 38&nbsp;°C</li>
+              <li>HR &gt; 110; recheck within 20&nbsp;min and count if still &gt; 110</li>
+              <li>RR &gt; 24</li>
+              <li>WBC &gt; 15,000 or &lt; 4,000/µL, or &gt; 10% bands <span class="muted">(within 24&nbsp;h)</span></li>
+            </ul>
+            <div class="out">
+              <div class="rule">Possible infection + ≥ 2 criteria above → bedside evaluation <span class="deadline">≤ 30&nbsp;min</span><span class="screen-next"><b>Serious infection → antibiotics + modest fluid challenge now</b>; Step 2 labs in parallel</span></div>
+            </div>
+          </div>
+          <div style="--c:var(--stop); background:var(--t-stop)">
+            <span class="k">Step 2&nbsp;· possible infection + any 1 → sepsis</span>
+            <ul class="ls small">
+              <li>SBP &lt; 85, MAP &lt; 65, or SBP fall &gt; 40</li>
+              <li>New CPAP / BiPAP or ventilation; SpO₂ &lt; 92% or new O₂ need</li>
+              <li>Urine output &lt; 60&nbsp;mL over 2&nbsp;h</li>
+              <li>Appears toxic, confused or agitated</li>
+              <li>Cr ≥ 1.2&nbsp;mg/dL or bilirubin &gt; 2&nbsp;mg/dL</li>
+              <li>Platelets &lt; 100,000 or INR &gt; 1.5 or aPTT &gt; 60&nbsp;s</li>
+            </ul>
+            <div class="out">
+              <div class="rule">Sepsis → first-hour bundle now <a href="13-sepsis.html#p-02" class="xlink"><span class="xref c-stop">13&nbsp;· 02</span></a></div>
+            </div>
+          </div>
+        </div>
+        <div class="shock-definition"><span class="lb">Septic shock</span>after fluids, vasopressors needed to keep MAP ≥ 65 <b>and</b> lactate &gt; 2&nbsp;mmol/L.</div>
+        <ul class="ls small">
+          <li><b>Lactate:</b> &gt; 2&nbsp;mmol/L abnormal outside labor; in labor &gt; 4 is concerning. Don’t draw in 2nd stage or ≤ 1&nbsp;h after birth <b>unless very ill</b>. Marks severity, not organ injury.</li>
+          <li><b>qSOFA</b> (SBP ≤ 100, RR ≥ 22, altered mentation): sensitivity ≈ 50% in maternal sepsis, not validated in pregnancy&nbsp;— never the only screen.</li>
+          <li><b>Mimics:</b> hemorrhage, preeclampsia, PE, amniotic fluid embolism, cardiomyopathy, DKA, adrenal crisis, pancreatitis, anaphylaxis. Use <a href="06-postpartum.html#p-A" class="xlink"><span class="xref c-wf">6&nbsp;· A</span></a> early-warning triggers postpartum.</li>
+        </ul>
+      </section>
+
+      <section class="panel c-inf grow" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Empiric antibiotics by source</h2><span class="src">SMFM #67 Table 4&nbsp;· CMQCC 2020 Tables 9–10 and v2.0 (2025)&nbsp;· IDSA</span></div>
+        <div class="abx-due">
+          <div class="rail"><span class="when">Septic shock or probable sepsis</span><span class="do"><span class="deadline">≤ 1&nbsp;h</span>from recognition</span></div>
+          <div class="rail"><span class="when">Possible sepsis, no shock</span><span class="do"><span class="deadline ink">≤ 3&nbsp;h</span>if infection likely</span></div>
+        <div class="rail allergy"><span class="when">Severe β-lactam allergy</span><span class="do">aztreonam <span class="dose">2&nbsp;g q8h</span> + metronidazole <span class="dose">500&nbsp;mg q8h</span> + vancomycin <span class="muted">(pharmacy dosing)</span></span></div>
+          <div class="iv-note">IV unless stated&nbsp;· <b>or</b> = alternative&nbsp;· <b>+</b> = add&nbsp;· ( ) = choose one within the combination</div>
+        </div>
+        <table class="t abx stripe">
+          <tbody>
+            <tr><td class="k">Unknown source or septic shock</td><td>
+              <span class="rg"><span class="with">Choose one:</span> <b>piperacillin-tazobactam</b> <span class="dose">4.5&nbsp;g q6h</span><span class="sub">or 3.375&nbsp;g q8h extended infusion after a load</span></span>
+              <span class="rg"><span class="op">or</span><b>meropenem</b> <span class="dose">1&nbsp;g q8h</span> (MDRO risk, recent admission)</span>
+              <span class="rg"><span class="op">+</span><span class="with">With either, add</span> <b>vancomycin</b> <span class="dose">25–30&nbsp;mg/kg load</span> (actual weight; max 3&nbsp;g)</span>
+            </td></tr>
+            <tr><td class="k">Intraamniotic infection</td><td>
+              <span class="rg">Standard: ampicillin <span class="dose">2&nbsp;g q6h</span> + gentamicin <span class="dose">5&nbsp;mg/kg q24h</span> <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a></span>
+              <span class="rg">With end-organ injury, broaden and <b>deliver</b> (CMQCC 2025): ceftriaxone <span class="dose">2&nbsp;g q24h</span> + metronidazole <span class="dose">500&nbsp;mg q8h</span></span>
+              <span class="rg"><span class="op">or</span>piperacillin-tazobactam <span class="dose">4.5&nbsp;g q6h</span></span>
+            </td></tr>
+            <tr><td class="k">Endometritis<span class="kx">routine <a href="08-infections.html#p-E" class="xlink"><span class="xref c-inf">8&nbsp;· E</span></a></span></td><td>
+              <span class="rg">Septic: ampicillin <span class="dose">2&nbsp;g q6h</span> + gentamicin <span class="dose">5&nbsp;mg/kg q24h</span> + (clindamycin <span class="dose">900&nbsp;mg q8h</span> <b>or</b> metronidazole <span class="dose">500&nbsp;mg q8h</span>)</span>
+              <span class="rg"><span class="op">or</span>ceftriaxone <span class="dose">2&nbsp;g q24h</span> + metronidazole <span class="dose">500&nbsp;mg q8h</span></span>
+            </td></tr>
+            <tr><td class="k">Septic abortion&nbsp;· retained tissue</td><td>
+              <span class="rg">Cefoxitin <span class="dose">2&nbsp;g q6h</span> + doxycycline <span class="dose">100&nbsp;mg q12h</span></span>
+              <span class="rg"><span class="op">or</span>clindamycin <span class="dose">900&nbsp;mg q8h</span> + gentamicin <span class="dose">5&nbsp;mg/kg q24h</span>&nbsp;— <span class="with">with either regimen: evacuate.</span></span>
+            </td></tr>
+            <tr><td class="k">Wound&nbsp;· necrotizing soft tissue</td><td>
+              <span class="rg">Vancomycin <span class="muted">(load above)</span> + piperacillin-tazobactam <span class="dose">4.5&nbsp;g q6h</span> + clindamycin <span class="dose">900&nbsp;mg q8h</span>; <b>surgery now</b>.</span>
+              <span class="rg">GAS or <i>Clostridium</i>: penicillin G <span class="dose">4 million units q4h</span> + clindamycin <span class="dose">900&nbsp;mg q8h</span>.</span>
+            </td></tr>
+            <tr><td class="k">Urinary</td><td>
+              <span class="rg">Cefepime <span class="dose">sepsis dose per pharmacy</span> <b>or</b> (ampicillin <span class="dose">2&nbsp;g q6h</span> + gentamicin <span class="dose">5&nbsp;mg/kg q24h</span>) <span class="muted">· pyelonephritis regimens</span> <a href="08-infections.html#p-A" class="xlink"><span class="xref c-inf">8&nbsp;· A</span></a></span>
+              <span class="rg">MDRO risk → carbapenem or piperacillin-tazobactam alone.</span>
+            </td></tr>
+            <tr><td class="k">Pneumonia</td><td>
+              <span class="rg">Ceftriaxone <span class="dose">2&nbsp;g q24h</span> + azithromycin <span class="dose">500&nbsp;mg q24h</span></span>
+              <span class="rg"><span class="op">+</span>flu: oseltamivir <span class="dose">75&nbsp;mg PO BID</span> <a href="08-infections.html#p-F" class="xlink"><span class="xref c-inf">8&nbsp;· F</span></a></span>
+            </td></tr>
+          </tbody>
+        </table>
+        <div class="addons">
+          <div class="hd">Add-ons</div>
+          <div class="rail"><span class="when">MRSA risk</span><span class="do"><b>+ vancomycin</b> <span class="muted">(colonized, prior MRSA, wound)</span></span></div>
+          <div class="rail"><span class="when"><i>Pseudomonas</i> risk</span><span class="do"><b>+</b> one active antipseudomonal agent</span></div>
+          <div class="rail"><span class="when">High MDR risk only</span><span class="do">Dual gram-negative coverage; de-escalate early <span class="muted">(prior cultures, antibiogram)</span></span></div>
+          <div class="rail"><span class="when">GAS toxic shock</span><span class="do"><b>+ clindamycin or linezolid</b> for toxin suppression</span></div>
+          <div class="rail"><span class="when">Pathogen or source known</span><span class="do"><b>Review daily and narrow antibiotics</b></span></div>
+        </div>
+        <div class="small"><b>Dosing:</b> gentamicin and vancomycin by pharmacy (weight, renal function, levels); β-lactams by prolonged infusion after the first dose (SSC 2021). <b>Lactation:</b> sepsis regimens are compatible, metronidazole included (CMQCC 2025).</div>
+        <div class="box local small lf">
+          <span>Antibiogram <i class="fl" data-local="antibiogram"></i></span>
+          <span>ID / pharmacy pager <i class="fl" data-local="id_pharmacy_pager"></i></span>
+          <span class="w">First-line sepsis regimen on the order set <i class="fl" data-local="sepsis_first_line_regimen"></i></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col">
+      <section class="panel c-stop" id="p-02">
+        <div class="ph bundle"><span class="num">02</span><h2>First-hour bundle</h2><span class="src">SMFM #67 recs 6–15&nbsp;· CMQCC v2.0&nbsp;· <span class="nowrap">SSC 2021 / 2026</span></span>
+          <div class="urgent-head uh"><span>Every lane starts at time zero, in parallel</span><span class="deadline">Shock / probable sepsis: antibiotics ≤ 1&nbsp;h</span><a href="13-sepsis.html#p-04" class="xlink"><span class="xref c-inf">13&nbsp;· 04 Source control, from time zero</span></a></div></div>
+        <div class="icu-trigger"><b>Call ICU:</b> septic shock / pressor need, MAP &lt; 65 after 1–2&nbsp;L, new CPAP / BiPAP or ventilation, altered mentation, rising lactate. Consult MFM, critical care, anesthesia, ID / pharmacy.</div>
+        <img class="flow" src="../../assets/svg/flow-sepsis-bundle.svg" alt="First-hour bundle: parallel lanes from time zero — cultures and lactate, antibiotics within 1 h, 1–2 L crystalloid within 3 h, reassessment q30 min; if MAP &lt; 65 after fluids, norepinephrine; pressor ≥ 4 h, hydrocortisone">
+        <div class="small fluid-action"><span class="lb">Fluids</span>3rd-trimester passive leg raise is unreliable: <b>give a 250–500&nbsp;mL test bolus.</b> <span class="muted">SSC 2026 still suggests ≥ 30&nbsp;mL/kg; SMFM: may be too much in pregnancy (lower oncotic pressure)&nbsp;— give 1–2&nbsp;L and use dynamic measures.</span></div>
+        <div class="box local small lf">
+          <span>Code Sepsis / OB rapid response <i class="fl" data-local="ob_rapid_response"></i></span>
+          <span>Order set <i class="fl" data-local="sepsis_order_set"></i></span>
+          <span>Peripheral pressor policy <i class="fl" data-local="peripheral_pressor_policy"></i></span>
+          <span>Norepinephrine concentration <i class="fl s" data-local="norepi_concentration"></i> mcg/mL</span>
+          <span class="w ne-h">Norepinephrine dosing: tick one row; every field in that row’s unit</span>
+          <span class="ne-grid"><span class="ne-row"><i class="ck"></i><span class="ne">mcg/min</span><span>start <i class="fl s" data-local="norepi_mcgmin_start"></i> mcg/min</span><span>step <i class="fl s" data-local="norepi_mcgmin_step"></i> mcg/min q <i class="fl xs" data-local="norepi_mcgmin_interval"></i> min</span><span>max <i class="fl s" data-local="norepi_mcgmin_max"></i> mcg/min</span></span>
+          <span class="ne-row"><i class="ck"></i><span class="ne">mcg/kg/min</span><span>start <i class="fl s" data-local="norepi_mcgkgmin_start"></i> mcg/kg/min</span><span>step <i class="fl s" data-local="norepi_mcgkgmin_step"></i> mcg/kg/min q <i class="fl xs" data-local="norepi_mcgkgmin_interval"></i> min</span><span>max <i class="fl s" data-local="norepi_mcgkgmin_max"></i> mcg/kg/min</span></span></span>
+        </div>
+      </section>
+
+      <section class="panel c-inf" id="p-04">
+        <div class="ph source-control"><span class="num">04</span><h2>Source control</h2><span class="deadline par">In parallel from time zero</span><span class="src">SMFM #67 recs 9, 18</span></div>
+        <ul class="ls small">
+          <li><b>Uterus is the source → deliver or evacuate promptly, at any gestational age</b> (intraamniotic infection, septic abortion, retained tissue, previable PPROM with infection).</li>
+          <li>Otherwise sepsis alone is not an indication for delivery&nbsp;— deliver for obstetric indications once the mother is stabilizing.</li>
+          <li>Image early: abscess → drain (percutaneous first); necrotizing infection → debridement, hysterectomy if myometrial necrosis; remove infected lines. Higher-level care <a href="27-ob-consult.html#p-E" class="xlink"><span class="xref c-wf">27&nbsp;· E / F</span></a></li>
+        </ul>
+      </section>
+
+      <section class="panel c-fet" id="p-05">
+        <div class="ph"><span class="num">05</span><h2>The fetus</h2><span class="src">SMFM #67&nbsp;· ACOG CPG 10 (2025)</span></div>
+        <ul class="ls small">
+          <li><b>Resuscitate the mother first</b>&nbsp;— restoring maternal perfusion is intrauterine resuscitation. Monitor once she is stabilizing, if viable (at the limit of viability, per family wishes).</li>
+          <li>Fetal tachycardia, minimal variability, late decelerations usually reflect maternal fever, hypoxemia, hypotension or acidosis: correct those, then re-read the strip <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> <a href="29-fm-response.html#p-D" class="xlink"><span class="xref c-fet">29&nbsp;· D</span></a> before deciding on delivery.</li>
+          <li>Antenatal steroids are not contraindicated by sepsis or hydrocortisone. Call neonatology early.</li>
+        </ul>
+      </section>
+
+      <section class="panel c-wf grow" id="p-06">
+        <div class="ph"><span class="num">06</span><h2>Reassess &amp; follow up</h2><span class="src">SMFM #67 recs 13, 16, 17&nbsp;· CMQCC v2.0&nbsp;· SSC 2021</span></div>
+        <dl class="kv reas c-wf">
+          <dt>Each bolus</dt><dd>Response by dynamic measures (passive leg raise, pulse-pressure variation, POCUS), lungs, SpO₂.</dd>
+          <dt>Daily</dt><dd>Cultures, source, antibiotic de-escalation&nbsp;· VTE pharmacologic prophylaxis in shock&nbsp;· insulin if glucose &gt; 180&nbsp;mg/dL.</dd>
+          <dt>Discharge</dt><dd>Survivor follow-up: physical, cognitive, mood; postpartum review <a href="06-postpartum.html#p-A" class="xlink"><span class="xref c-wf">6&nbsp;· A</span></a></dd>
+        </dl>
+      </section>
+    </div>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> Society for Maternal-Fetal Medicine Consult Series #67: Maternal sepsis, Am J Obstet Gynecol 2023;229(3):B2–B19 (ACOG-endorsed; replaces #47), recommendations 1–19, Figure 2, Tables 4–5; CMQCC Improving Diagnosis and Treatment of Obstetric Sepsis, V2.0 Toolkit (2025), Obstetric Serious Infection/Sepsis Evaluation Flow Chart and V2.0 launch webinar Q&amp;A (Sep 2025); CMQCC Improving Diagnosis and Treatment of Maternal Sepsis toolkit (2020), Tables 9–10 (antibiotic doses); Evans L et al., Surviving Sepsis Campaign 2021 (Crit Care Med 2021;49:e1063–143); Surviving Sepsis Campaign Adult Guidelines 2026 (Crit Care Med, Mar 2026); Main EK et al., Obstet Gynecol 2024;143:326–35 (screening tool performance); ACOG CPG 10 Intrapartum Fetal Heart Rate Monitoring (2025). Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTMsMUgxNFYySDEzek0xNywxSDE4VjJIMTd6TTE5LDFIMjBWMkgxOXpNMjAsMUgyMVYySDIwek0yMiwxSDIzVjJIMjJ6TTI4LDFIMjlWMkgyOHpNMCwySDFWM0gwek0yLDJIM1YzSDJ6TTMsMkg0VjNIM3pNNCwySDVWM0g0ek02LDJIN1YzSDZ6TTgsMkg5VjNIOHpNOSwySDEwVjNIOXpNMTEsMkgxMlYzSDExek0xNywySDE4VjNIMTd6TTE5LDJIMjBWM0gxOXpNMjIsMkgyM1YzSDIyek0yNCwySDI1VjNIMjR6TTI1LDJIMjZWM0gyNXpNMjYsMkgyN1YzSDI2ek0yOCwySDI5VjNIMjh6TTAsM0gxVjRIMHpNMiwzSDNWNEgyek0zLDNINFY0SDN6TTQsM0g1VjRINHpNNiwzSDdWNEg2ek04LDNIOVY0SDh6TTEwLDNIMTFWNEgxMHpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTEzLDNIMTRWNEgxM3pNMTYsM0gxN1Y0SDE2ek0xOCwzSDE5VjRIMTh6TTIyLDNIMjNWNEgyMnpNMjQsM0gyNVY0SDI0ek0yNSwzSDI2VjRIMjV6TTI2LDNIMjdWNEgyNnpNMjgsM0gyOVY0SDI4ek0wLDRIMVY1SDB6TTIsNEgzVjVIMnpNMyw0SDRWNUgzek00LDRINVY1SDR6TTYsNEg3VjVINnpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNOSw1SDEwVjZIOXpNMTAsNUgxMVY2SDEwek0xMyw1SDE0VjZIMTN6TTE2LDVIMTdWNkgxNnpNMTgsNUgxOVY2SDE4ek0xOSw1SDIwVjZIMTl6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek05LDdIMTBWOEg5ek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTUsN0gxNlY4SDE1ek0xNyw3SDE4VjhIMTd6TTE4LDdIMTlWOEgxOHpNMjAsN0gyMVY4SDIwek0wLDhIMVY5SDB6TTEsOEgyVjlIMXpNNCw4SDVWOUg0ek01LDhINlY5SDV6TTYsOEg3VjlINnpNMTEsOEgxMlY5SDExek0xMiw4SDEzVjlIMTJ6TTE3LDhIMThWOUgxN3pNMTksOEgyMFY5SDE5ek0yMyw4SDI0VjlIMjN6TTI1LDhIMjZWOUgyNXpNMjYsOEgyN1Y5SDI2ek0yNyw4SDI4VjlIMjd6TTI4LDhIMjlWOUgyOHpNMSw5SDJWMTBIMXpNMyw5SDRWMTBIM3pNNSw5SDZWMTBINXpNNyw5SDhWMTBIN3pNOCw5SDlWMTBIOHpNOSw5SDEwVjEwSDl6TTExLDlIMTJWMTBIMTF6TTEyLDlIMTNWMTBIMTJ6TTEzLDlIMTRWMTBIMTN6TTE1LDlIMTZWMTBIMTV6TTE2LDlIMTdWMTBIMTZ6TTE3LDlIMThWMTBIMTd6TTE4LDlIMTlWMTBIMTh6TTIxLDlIMjJWMTBIMjF6TTIyLDlIMjNWMTBIMjJ6TTIzLDlIMjRWMTBIMjN6TTI0LDlIMjVWMTBIMjR6TTI1LDlIMjZWMTBIMjV6TTI2LDlIMjdWMTBIMjZ6TTI3LDlIMjhWMTBIMjd6TTI4LDlIMjlWMTBIMjh6TTAsMTBIMVYxMUgwek0zLDEwSDRWMTFIM3pNNiwxMEg3VjExSDZ6TTgsMTBIOVYxMUg4ek0xMSwxMEgxMlYxMUgxMXpNMTIsMTBIMTNWMTFIMTJ6TTEzLDEwSDE0VjExSDEzek0xNSwxMEgxNlYxMUgxNXpNMTYsMTBIMTdWMTFIMTZ6TTE4LDEwSDE5VjExSDE4ek0yMiwxMEgyM1YxMUgyMnpNMjMsMTBIMjRWMTFIMjN6TTI4LDEwSDI5VjExSDI4ek0wLDExSDFWMTJIMHpNMSwxMUgyVjEySDF6TTIsMTFIM1YxMkgyek0zLDExSDRWMTJIM3pNNSwxMUg2VjEySDV6TTEwLDExSDExVjEySDEwek0xNSwxMUgxNlYxMkgxNXpNMTcsMTFIMThWMTJIMTd6TTE4LDExSDE5VjEySDE4ek0yMSwxMUgyMlYxMkgyMXpNMjIsMTFIMjNWMTJIMjJ6TTI1LDExSDI2VjEySDI1ek0yNywxMUgyOFYxMkgyN3pNMjgsMTFIMjlWMTJIMjh6TTEsMTJIMlYxM0gxek0yLDEySDNWMTNIMnpNMywxMkg0VjEzSDN6TTQsMTJINVYxM0g0ek02LDEySDdWMTNINnpNMTAsMTJIMTFWMTNIMTB6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMjAsMTJIMjFWMTNIMjB6TTIxLDEySDIyVjEzSDIxek0yMywxMkgyNFYxM0gyM3pNMjcsMTJIMjhWMTNIMjd6TTAsMTNIMVYxNEgwek0xLDEzSDJWMTRIMXpNMiwxM0gzVjE0SDJ6TTQsMTNINVYxNEg0ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTAsMTRIMVYxNUgwek0yLDE0SDNWMTVIMnpNNCwxNEg1VjE1SDR6TTUsMTRINlYxNUg1ek02LDE0SDdWMTVINnpNNywxNEg4VjE1SDd6TTksMTRIMTBWMTVIOXpNMTEsMTRIMTJWMTVIMTF6TTEyLDE0SDEzVjE1SDEyek0xNCwxNEgxNVYxNUgxNHpNMTUsMTRIMTZWMTVIMTV6TTE4LDE0SDE5VjE1SDE4ek0yMSwxNEgyMlYxNUgyMXpNMjQsMTRIMjVWMTVIMjR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjgsMTRIMjlWMTVIMjh6TTAsMTVIMVYxNkgwek00LDE1SDVWMTZINHpNNSwxNUg2VjE2SDV6TTcsMTVIOFYxNkg3ek04LDE1SDlWMTZIOHpNOSwxNUgxMFYxNkg5ek0xMSwxNUgxMlYxNkgxMXpNMTIsMTVIMTNWMTZIMTJ6TTE0LDE1SDE1VjE2SDE0ek0xNSwxNUgxNlYxNkgxNXpNMTYsMTVIMTdWMTZIMTZ6TTE3LDE1SDE4VjE2SDE3ek0xOCwxNUgxOVYxNkgxOHpNMjAsMTVIMjFWMTZIMjB6TTI0LDE1SDI1VjE2SDI0ek0yNywxNUgyOFYxNkgyN3pNMjgsMTVIMjlWMTZIMjh6TTAsMTZIMVYxN0gwek0xLDE2SDJWMTdIMXpNNSwxNkg2VjE3SDV6TTYsMTZIN1YxN0g2ek03LDE2SDhWMTdIN3pNOCwxNkg5VjE3SDh6TTEyLDE2SDEzVjE3SDEyek0xNSwxNkgxNlYxN0gxNXpNMTcsMTZIMThWMTdIMTd6TTE5LDE2SDIwVjE3SDE5ek0yMSwxNkgyMlYxN0gyMXpNMjcsMTZIMjhWMTdIMjd6TTAsMTdIMVYxOEgwek0xLDE3SDJWMThIMXpNMiwxN0gzVjE4SDJ6TTMsMTdINFYxOEgzek01LDE3SDZWMThINXpNOSwxN0gxMFYxOEg5ek0xMSwxN0gxMlYxOEgxMXpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNSwxN0gxNlYxOEgxNXpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0xOCwxN0gxOVYxOEgxOHpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNCwxN0gyNVYxOEgyNHpNMjUsMTdIMjZWMThIMjV6TTI3LDE3SDI4VjE4SDI3ek0yOCwxN0gyOVYxOEgyOHpNMiwxOEgzVjE5SDJ6TTMsMThINFYxOUgzek00LDE4SDVWMTlINHpNNiwxOEg3VjE5SDZ6TTgsMThIOVYxOUg4ek05LDE4SDEwVjE5SDl6TTExLDE4SDEyVjE5SDExek0xMiwxOEgxM1YxOUgxMnpNMTMsMThIMTRWMTlIMTN6TTE0LDE4SDE1VjE5SDE0ek0xNSwxOEgxNlYxOUgxNXpNMTgsMThIMTlWMTlIMTh6TTIwLDE4SDIxVjE5SDIwek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI0LDE4SDI1VjE5SDI0ek0yNiwxOEgyN1YxOUgyNnpNMjgsMThIMjlWMTlIMjh6TTIsMTlIM1YyMEgyek0zLDE5SDRWMjBIM3pNNCwxOUg1VjIwSDR6TTE2LDE5SDE3VjIwSDE2ek0xNywxOUgxOFYyMEgxN3pNMTgsMTlIMTlWMjBIMTh6TTIyLDE5SDIzVjIwSDIyek0yMywxOUgyNFYyMEgyM3pNMjcsMTlIMjhWMjBIMjd6TTI4LDE5SDI5VjIwSDI4ek0wLDIwSDFWMjFIMHpNMSwyMEgyVjIxSDF6TTMsMjBINFYyMUgzek00LDIwSDVWMjFINHpNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek04LDIwSDlWMjFIOHpNMTAsMjBIMTFWMjFIMTB6TTEyLDIwSDEzVjIxSDEyek0xNiwyMEgxN1YyMUgxNnpNMTcsMjBIMThWMjFIMTd6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjUsMjBIMjZWMjFIMjV6TTI4LDIwSDI5VjIxSDI4ek04LDIxSDlWMjJIOHpNMTAsMjFIMTFWMjJIMTB6TTExLDIxSDEyVjIySDExek0xMywyMUgxNFYyMkgxM3pNMTQsMjFIMTVWMjJIMTR6TTE1LDIxSDE2VjIySDE1ek0xNiwyMUgxN1YyMkgxNnpNMTgsMjFIMTlWMjJIMTh6TTE5LDIxSDIwVjIySDE5ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI4LDIxSDI5VjIySDI4ek0wLDIySDFWMjNIMHpNMSwyMkgyVjIzSDF6TTIsMjJIM1YyM0gyek0zLDIySDRWMjNIM3pNNCwyMkg1VjIzSDR6TTUsMjJINlYyM0g1ek02LDIySDdWMjNINnpNOSwyMkgxMFYyM0g5ek0xMSwyMkgxMlYyM0gxMXpNMTQsMjJIMTVWMjNIMTR6TTE1LDIySDE2VjIzSDE1ek0xOSwyMkgyMFYyM0gxOXpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjUsMjJIMjZWMjNIMjV6TTI2LDIySDI3VjIzSDI2ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNOSwyM0gxMFYyNEg5ek0xMCwyM0gxMVYyNEgxMHpNMTIsMjNIMTNWMjRIMTJ6TTE0LDIzSDE1VjI0SDE0ek0xNSwyM0gxNlYyNEgxNXpNMTcsMjNIMThWMjRIMTd6TTE5LDIzSDIwVjI0SDE5ek0yMCwyM0gyMVYyNEgyMHpNMjQsMjNIMjVWMjRIMjR6TTI3LDIzSDI4VjI0SDI3ek0yOCwyM0gyOVYyNEgyOHpNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek04LDI0SDlWMjVIOHpNMTAsMjRIMTFWMjVIMTB6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTcsMjRIMThWMjVIMTd6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjcsMjRIMjhWMjVIMjd6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNMTEsMjVIMTJWMjZIMTF6TTEzLDI1SDE0VjI2SDEzek0xNSwyNUgxNlYyNkgxNXpNMTYsMjVIMTdWMjZIMTZ6TTE3LDI1SDE4VjI2SDE3ek0xOCwyNUgxOVYyNkgxOHpNMjcsMjVIMjhWMjZIMjd6TTI4LDI1SDI5VjI2SDI4ek0wLDI2SDFWMjdIMHpNMiwyNkgzVjI3SDJ6TTMsMjZINFYyN0gzek00LDI2SDVWMjdINHpNNiwyNkg3VjI3SDZ6TTksMjZIMTBWMjdIOXpNMTAsMjZIMTFWMjdIMTB6TTExLDI2SDEyVjI3SDExek0xMiwyNkgxM1YyN0gxMnpNMTMsMjZIMTRWMjdIMTN6TTE1LDI2SDE2VjI3SDE1ek0xNiwyNkgxN1YyN0gxNnpNMTcsMjZIMThWMjdIMTd6TTE4LDI2SDE5VjI3SDE4ek0xOSwyNkgyMFYyN0gxOXpNMjEsMjZIMjJWMjdIMjF6TTI1LDI2SDI2VjI3SDI1ek0yNiwyNkgyN1YyN0gyNnpNMjcsMjZIMjhWMjdIMjd6TTI4LDI2SDI5VjI3SDI4ek0wLDI3SDFWMjhIMHpNNiwyN0g3VjI4SDZ6TTgsMjdIOVYyOEg4ek05LDI3SDEwVjI4SDl6TTExLDI3SDEyVjI4SDExek0xMiwyN0gxM1YyOEgxMnpNMTYsMjdIMTdWMjhIMTZ6TTE3LDI3SDE4VjI4SDE3ek0xOCwyN0gxOVYyOEgxOHpNMjAsMjdIMjFWMjhIMjB6TTI1LDI3SDI2VjI4SDI1ek0yNywyN0gyOFYyOEgyN3pNMjgsMjdIMjlWMjhIMjh6TTAsMjhIMVYyOUgwek0xLDI4SDJWMjlIMXpNMiwyOEgzVjI5SDJ6TTMsMjhINFYyOUgzek00LDI4SDVWMjlINHpNNSwyOEg2VjI5SDV6TTYsMjhIN1YyOUg2ek04LDI4SDlWMjlIOHpNOSwyOEgxMFYyOUg5ek0xMCwyOEgxMVYyOUgxMHpNMTIsMjhIMTNWMjlIMTJ6TTE2LDI4SDE3VjI5SDE2ek0xNywyOEgxOFYyOUgxN3pNMjAsMjhIMjFWMjlIMjB6TTIyLDI4SDIzVjI5SDIyek0yMywyOEgyNFYyOUgyM3pNMjUsMjhIMjZWMjlIMjV6TTI3LDI4SDI4VjI5SDI3eiIgaWQ9InFyLXBhdGgiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIiBzdHJva2U9Im5vbmUiLz48L3N2Zz4="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

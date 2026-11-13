@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Induction &amp; stages of labor</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--lab); --body: 10.6pt; --gap: 0.11in; }
+  .sheet > .foot { font-size: calc(7.4pt / var(--k)); }   /* citations stay tiny */
+  .masthead h1 { font-size: calc(54pt / var(--k)); }
+  .masthead .sub { max-width: none; font-size: 13pt; margin-top: 19pt; padding-bottom: 0.02in; }
+  .sheet .small { font-size: var(--body); line-height: 1.28; }
+  .sheet .xs { font-size: 10.6pt; line-height: 1.25; }
+  .sheet .panel { gap: 4pt; }
+  .ph h2 { font-size: 22pt; font-family: "Inter", sans-serif; }   /* < 24 pt printed: text face (css2 #9) */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  .sheet h3 { font-size: 12.5pt; margin-top: 2pt; }
+  .sheet > .row3, .sheet > .row2, .sheet > .panel, .sheet > .urgent-head { flex: none; }
+  .sheet > * + :is(.row3, .row2, .panel) { margin-top: var(--gap); }
+  .sheet > .strip + * { margin-top: 0; }
+  .masthead .urgent-head.mh { font-size: 11.4pt; line-height: 1.22; font-weight: 600; margin-bottom: 5pt; }
+  .masthead .urgent-head.mh b { font-weight: 800; }
+  .masthead .scope { font-size: 12pt; line-height: 1.28; }
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap); align-items: stretch; }
+  .row2.end { grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr); }
+  .row2.top { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+  .flow26 .arm > .yn { font-size: 10.6pt; }
+  .row2.de { grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr); }
+  .ripgrid { display: grid; grid-template-columns: minmax(0, 3.3fr) minmax(0, 1fr); gap: 0.2in; align-items: start; }
+  .ripgrid > .side { border-left: 0.75pt solid var(--rule); padding-left: 0.16in; gap: 4.5pt; }
+  .ripfoot { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.16in; align-items: center; }
+  .ripfoot .box.local { margin-top: 4pt; }
+  .duo2.oxyd { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr); }
+  .duo2 { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 0.16in; align-items: start; }
+  .row2.top > .panel:first-child .duo2 { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr); }
+  .duo2.bsh { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+  .stack { display: flex; flex-direction: column; gap: 6pt; min-width: 0; }
+  .ph.inl.src-right .src { padding-left: 0.2in; }
+  .panel > .box.local:last-child { margin-top: auto; }
+  .lfx { white-space: nowrap; }
+  .lc26 { color: var(--wf); font-weight: 600; }
+  table.rip tr.all td { border-top: 1.2pt solid var(--c); }
+  .sheet table.t th { font-size: 10.6pt; }
+  .stopt { color: var(--stop); }
+
+  /* condition → action rails */
+  .rail.r26 { grid-template-columns: 1.05in minmax(0, 1fr); font-size: var(--body); line-height: 1.28; }
+  .rail.r26 > .when { color: var(--c); }
+  .rail.r26 > .do { font-weight: 400; }
+  .rail.r26 + .rail.r26 { margin-top: 5pt; padding-top: 5pt; }
+  .rail.r26 .hero { display: block; font-size: calc(16pt / var(--k)); margin-bottom: 1pt; }
+  .rail.r26 .when small { display: block; font: 600 10.6pt/1.2 "Inter"; color: var(--ink-3); margin-top: 2pt; }
+
+  /* checklists */
+  ul.ls.check.pre { display: grid; grid-template-columns: 1fr 1fr; gap: 3pt 10pt; font-size: var(--body); line-height: 1.24; }
+  ul.ls.check.pre > li { padding-left: 16pt; }
+  ul.ls.check.pre > li::before { width: 9.5pt; height: 9.5pt; top: .16em; border-width: 1.5pt; }
+
+  /* prohibition (stop red only here) */
+  .prohib { border-left: 4pt solid var(--stop); background: var(--t-stop); padding: 4pt 8pt 5pt; font-size: var(--body); line-height: 1.27; }
+  .prohib .tag.stop { margin-right: 3pt; }
+  .prohib b.x { color: var(--stop); }
+
+  /* Bishop */
+  table.bishop { table-layout: fixed; --cell-y: 3.5pt; font-size: 11pt; }
+  table.bishop col.f { width: 34%; }
+  table.bishop td, table.bishop th { text-align: center; }
+  table.bishop td:first-child, table.bishop th:first-child { text-align: left; }
+  table.bishop thead th:not(:first-child) { font: 800 13pt/1 "Inter"; letter-spacing: 0; color: var(--ink); }
+  .bish-key { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2pt 8pt; align-items: baseline; font-size: var(--body); line-height: 1.26; }
+  .bish-key .hero { font-size: calc(17pt / var(--k)); }
+
+  /* ripening methods */
+  table.rip { table-layout: fixed; --cell-y: 3.5pt; font-size: 10.6pt; line-height: 1.25; }
+  table.rip col.h { width: 9%; }
+  table.rip tr.dz td { background: color-mix(in srgb, var(--lab) 8%, white); }
+  table.rip th { color: var(--ink); text-transform: none; letter-spacing: 0; font: 800 10.8pt/1.2 "Inter"; }
+  table.rip th .nc { font-weight: 600; color: var(--ink-3); }
+  table.rip td.k { white-space: normal; color: var(--ink); }
+  table.rip td.k small { display: block; font: 600 10.6pt/1.2 "Inter"; color: var(--ink-3); }
+  table.rip .dose { font-size: 1.08em; white-space: nowrap; }
+  table.rip .lc { color: var(--wf); font-weight: 600; }
+  table.rip .method-start { border-inline-start: .75pt solid var(--rule); padding-inline-start: 8pt; }   /* method families (fo1 #10) */
+  .rip-note { font-size: var(--body); line-height: 1.27; }
+  .out { border-top: 1.5pt solid var(--c); padding-top: 4pt; font-size: var(--body); line-height: 1.27; }
+
+  /* oxytocin */
+  .tag.med-alert { border: 1pt solid var(--ink); background: var(--t-ink); color: var(--ink); vertical-align: .14em; margin-left: .3em; }
+  table.oxy { font-size: 11.5pt; }
+  table.oxy th.right { text-align: right; }
+  table.oxy td.num { font-size: 13pt; font-weight: 800; }
+  table.oxy th .nc { font-weight: 600; }
+
+  /* tachysystole */
+  .tachy { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2pt 10pt; align-items: center; }
+  .tachy .hero { font-size: calc(26pt / var(--k)); font-family: "Inter Display", sans-serif; font-weight: 800; color: var(--lab); }
+  .tachy .def { font-size: var(--body); line-height: 1.26; }
+  ol.steps.s26 { font-size: var(--body); line-height: 1.27; gap: 4pt; }
+  ol.steps.s26 > li { padding-left: calc(24pt / var(--k)); }
+  ol.steps.s26 > li::before { width: calc(16pt / var(--k)); height: calc(16pt / var(--k)); top: calc(1pt / var(--k)); font-size: calc(10pt / var(--k)); line-height: calc(16pt / var(--k)); }   /* counter ≥ 10 pt printed (ax1 #8) */
+
+  /* centerpiece chart */
+  .lp { margin: 0; line-height: 0; break-inside: avoid; }
+  .lp > svg { display: block; width: 100%; height: auto; }
+  .lp text { font-family: "Inter", sans-serif; font-weight: 500; fill: var(--ink); }
+  .lp .b { font-weight: 700; } .lp .xb { font-weight: 800; }
+  .lp .mut { fill: var(--ink-3); }
+  .lp .lab { fill: var(--lab); } .lp .lab3 { fill: var(--lab-3); }
+  .lp .inv { fill: #fff; }
+  .lp .stopt { fill: var(--stop); }
+  .lp .grid { fill: none; stroke: var(--rule-2); stroke-width: .7; }
+  .lp .axis { fill: none; stroke: var(--ink-3); stroke-width: 1; }
+  .lp .six { fill: none; stroke: var(--lab); stroke-width: 2.2; }
+  .lp .hist { fill: none; stroke: var(--ink-3); stroke-width: 1.3; stroke-dasharray: 2 3; }
+  .lp .band-lat { fill: color-mix(in srgb, var(--lab-1) 30%, white); }
+  .lp .band-act { fill: color-mix(in srgb, var(--lab) 18%, white); }
+  .lp .stage-1 { fill: var(--lab); } .lp .stage-2 { fill: var(--lab-3); } .lp .stage-3 { fill: color-mix(in srgb, var(--lab-3) 70%, white); }
+  .lp .rib { fill: color-mix(in srgb, var(--lab) 30%, white); stroke: var(--lab); stroke-width: .8; }
+  .lp .rib-soft { fill: color-mix(in srgb, var(--lab-1) 45%, white); stroke: var(--lab); stroke-width: .8; }
+  .lp .crit { fill: none; stroke: var(--lab); stroke-width: 3; stroke-linejoin: miter; }
+  .lp .crit.alt { stroke-dasharray: 7 4; }
+  .lp .cont { fill: none; stroke: var(--lab); stroke-width: 1.6; }
+  .lp .ref { fill: none; stroke: var(--lab-3); stroke-width: 2.2; }
+  .lp .pt { fill: var(--lab); }
+  .lp .evt { fill: var(--paper); stroke: var(--lab); stroke-width: 1.6; }
+  .lp .sep { fill: none; stroke: var(--ink); stroke-width: .9; }
+  .lp-key { display: flex; flex-wrap: wrap; gap: 4pt 16pt; font-size: 10.6pt; line-height: 1.2; color: var(--ink-2); align-items: center; margin-top: 4pt; }
+  .lp-key > span { display: inline-flex; align-items: center; gap: 5pt; white-space: nowrap; }
+  .lp-key svg { width: 26pt; height: 12pt; flex: none; }
+  .lp-cap { font-size: var(--body); line-height: 1.27; display: grid; grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.4fr) minmax(0, 1.63fr); gap: 0.16in; margin-top: 2pt; align-items: start; }
+  .lp-cap > .box.local { margin-top: 6pt; }
+  .lp-cap > .t3c { order: 3; border-top: 1.5pt solid var(--c); padding-top: 4pt; } .lp-cap .t3c .box.local { margin-top: 8pt; }
+  .lp-cap > div:not(.box) { border-top: 1.5pt solid var(--c); padding-top: 4pt; }
+
+  /* arrest branches */
+  .flow26 .split { padding-top: 26pt; }
+  .flow26 .split > .arm::before { top: -26pt; height: 20pt; }
+  .flow26 .node { font-size: 10.6pt; line-height: 1.27; padding: 5pt 8pt 6pt; }
+  .flow26 .node.q { font-size: var(--body); }
+  .flow26 .node .act { display: block; margin-top: 4pt; padding-top: 4pt; border-top: .75pt solid color-mix(in srgb, var(--c) 45%, white); font-weight: 800; }
+  .flow26 .node .crit26 { display: block; font: 800 13pt/1.15 "Inter"; color: var(--lab); margin: 2pt 0 3pt; }
+  .flow26 .node .crit26 .or { font: italic 700 10.5pt/1 "Inter"; color: var(--ink-3); padding: 0 3pt; }
+  .flow26 .arm > .yn { top: -21pt; }
+  .flow26 .arrow { height: 12pt; }
+  .g3 { display: grid; grid-template-columns: minmax(0, 0.74fr) minmax(0, 1.02fr) minmax(0, 1.3fr); gap: 0.16in; align-items: stretch; }
+  .flow26 .node .lbl { font-size: 10.6pt; letter-spacing: .07em; }
+  .doc26 { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 0.16in; align-items: stretch; }
+  .doc26 > .box.local { margin-top: 6pt; }
+
+  /* third stage */
+  table.t3 { font-size: var(--body); --cell-y: 4pt; }
+  table.t3 td.k { font: 800 13pt/1.2 "Inter"; color: var(--lab); white-space: nowrap; }
+  .panel > .urgent-head { font-size: 11pt; line-height: 1.25; font-weight: 600; }
+  .panel > .urgent-head b { font-weight: 800; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="25-dyad-discharge.html" title="Mother-baby discharge">‹ 25</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html" selected="">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="27-ob-consult.html" title="When to call OB/GYN">27 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/26-induction-labor.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-lab" style="--k:0.9">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>L&amp;D&nbsp;· term induction&nbsp;· intrapartum</div>
+      <h1><span class="sid">26</span>Induction &amp; stages of labor</h1>
+    </div>
+    <div class="sub"><div class="urgent-head mh"><span><b>Maternal / fetal deterioration, Category III or high-risk II, bleeding, instability → act now; do not wait for a labor clock</b> <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a></span></div><div class="scope"><span class="muted">Term, live singleton, cephalic; ripening assumes intact membranes. PROM / PPROM</span> <a href="01-triage.html#p-04" class="xlink"><span class="xref c-ptl">1&nbsp;· 04</span></a> <span class="muted">TOLAC needs its own approved plan</span> <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a></div></div>
+    <nav class="setnav rel"><em>See also</em><a href="03-labor-efm.html" class="xlink"><span><b>3</b>Labor &amp; EFM</span></a><a href="27-ob-consult.html" class="xlink"><span><b>27</b>OB/GYN consult</span></a><a href="07-prenatal.html" class="xlink"><span><b>7</b>Prenatal</span></a><a href="20-neuraxial.html" class="xlink"><span><b>20</b>Neuraxial</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-03.svg)"></div>
+
+
+  <!-- A · B -->
+  <div class="row2 top">
+    <section class="panel c-lab" id="p-A">
+      <div class="ph inl src-right"><span class="num">A</span><h2>Induce today?</h2><span class="src">SMFM ARRIVE statement (2019, reaff. 2024)&nbsp;· ARRIVE (NICHD MFMU 2018)&nbsp;· ACOG/SMFM CO 831 (2021)&nbsp;· ACOG FAQ154</span></div>
+      <div class="duo2">
+        <div class="stack">
+          <div class="rail r26"><span class="when">Medical indication</span><span class="do">Hypertension, diabetes, growth restriction, oligohydramnios, infection, ROM or prolonged pregnancy. <b>Condition-specific timing</b> <a href="07-prenatal.html#p-08" class="xlink"><span class="xref c-wf">7&nbsp;· 08</span></a> Do not defer an earlier indication to 39&nbsp;wk only to reach an elective threshold.</span></div>
+          <div class="rail r26"><span class="when"><span class="hero">≥ 39w0d</span>Elective</span><span class="do">Reasonable for a well-dated, low-risk <b>nulliparous</b> patient after shared decision-making. <b>ARRIVE</b> (scheduled IOL 39w0d–39w4d): cesarean <b>18.6% vs 22.2%</b> expectant; primary adverse neonatal composite <b>not significantly reduced</b>. Discuss ripening, L&amp;D time, monitoring, alternatives, preference; ensure staffing + delivery resources.</span></div>
+        </div>
+        <div class="stack">
+          <h3 class="mt0">Before starting</h3>
+          <ul class="ls check pre">
+            <li>Indication + dating</li><li>Presentation</li>
+            <li>Placental location</li><li>Uterine operative history</li>
+            <li>Maternal status + vitals</li><li>Membrane status</li>
+            <li>Baseline fetal assessment</li><li>Contractions + cervical exam</li>
+            <li>GBS plan</li><li>Consent</li>
+          </ul>
+          <div class="prohib"><span class="tag stop">Stop</span><b class="x">Not the routine IOL pathway:</b> any contraindication to vaginal birth, including previa / vasa previa; transverse lie; cord prolapse; active genital HSV lesions / prodrome; prior classical incision, rupture or another scar requiring cesarean; compromise requiring immediate delivery → <b>call FM attending; involve OB/GYN.</b></div>
+          <div class="box local small"><span class="lfx">Order set <span class="lfv" data-local="induction_order_set">____</span></span>&nbsp;· <span class="lfx">attending notification / OB backup <span class="lfv" data-local="induction_attending_notification">____</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel c-lab" id="p-B">
+      <div class="ph inl src-right"><span class="num">B</span><h2>Assess readiness</h2><span class="src">ACOG CPG 9 (2025) Table 1&nbsp;· NICHD/SMFM/ACOG workshop (2012)&nbsp;· NICE NG207 (2021) §1.3</span></div>
+      <div class="duo2 bsh">
+        <div class="stack">
+          <table class="t tight bishop">
+            <colgroup><col class="f"><col><col><col><col></colgroup>
+            <thead><tr><th>Bishop</th><th>0</th><th>1</th><th>2</th><th>3</th></tr></thead>
+            <tbody>
+              <tr><td class="k">Dilation, cm</td><td>Closed</td><td>1–2</td><td>3–4</td><td>5–6</td></tr>
+              <tr><td class="k">Effacement, %</td><td>0–30</td><td>40–50</td><td>60–70</td><td>≥ 80</td></tr>
+              <tr><td class="k">Station</td><td>−3</td><td>−2</td><td>−1, 0</td><td>+1, +2</td></tr>
+              <tr><td class="k">Consistency</td><td>Firm</td><td>Medium</td><td>Soft</td><td>—</td></tr>
+              <tr><td class="k">Position</td><td>Posterior</td><td>Mid</td><td>Anterior</td><td>—</td></tr>
+            </tbody>
+          </table>
+          <div class="small"><b>Add all five factors; total 0–13.</b> Higher = more favorable.</div>
+        </div>
+        <div class="stack">
+          <div class="bish-key">
+            <span class="hero">&gt; 8</span><span>favorable (traditional teaching)</span>
+            <span class="hero">≤ 6</span><span>often unfavorable</span>
+          </div>
+          <div class="xs muted">CPG 9 sets no universal cutoff; incorporate parity and clinical findings.</div>
+          <div class="box decision small"><b>Unfavorable → ripen (C). Favorable → amniotomy / oxytocin (D).</b> Readiness guides the method; a low score alone does not cancel a medically indicated delivery.</div>
+          <div class="box local small"><span class="lfx">Ripening threshold <span class="lfv" data-local="ripening_threshold">____</span></span></div>
+        </div>
+      </div>
+      <div class="out"><b>Membrane sweep:</b> discuss from <b>39w0d</b>; consent; check placental location. Separate membranes digitally through the cervix. May promote spontaneous labor and reduce formal induction; discomfort, spotting and ROM can occur.</div>
+    </section>
+  </div>
+
+  <!-- C -->
+  <section class="panel c-lab" id="p-C">
+    <div class="ph inl src-right"><span class="num">C</span><h2>Ripen when needed</h2><span class="src">ACOG CPG 9 (2025) Box 1, Pharmacologic / Mechanical / Outpatient, pp.151–156&nbsp;· Cervidil PI (Ferring, 2020) §§2, 4, 5, 7.1&nbsp;· Prepidil PI (Pfizer, 2025)&nbsp;· Cytotec label (Pfizer, 2026)</span></div>
+    <div class="prohib"><span class="tag stop">Stop</span><b class="x">Prior cesarean or uterine surgery affecting wall integrity: no misoprostol / dinoprostone, and no misoprostol combination.</b> Confirm labor eligibility; balloon ± oxytocin may be options <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a></div>
+    <div class="ripgrid">
+      <div class="stack">
+        <table class="t rip">
+          <colgroup><col class="h"><col><col><col><col><col></colgroup>
+          <thead><tr><th>Method</th><th>miSOPROStol PO</th><th>miSOPROStol PV</th><th class="method-start">Dinoprostone insert <span class="nc">(Cervidil)</span></th><th>Dinoprostone gel <span class="nc">(Prepidil, endocervical)</span></th><th class="method-start">Balloon / Foley</th></tr></thead>
+          <tbody>
+            <tr class="dz"><td class="k">Dose / use</td><td><span class="dose">25&nbsp;mcg q2h</span><br>selected starting regimen</td><td><span class="dose">25&nbsp;mcg q3–6h</span></td><td class="method-start"><span class="dose">10&nbsp;mg PV</span> once; <b>≤ 12&nbsp;h</b>; hospital use</td><td><span class="dose">0.5&nbsp;mg</span> below internal os; repeat <b>q6h</b> if needed; <b>max 1.5&nbsp;mg/24&nbsp;h</b>; hospital use</td><td class="method-start">Single or double balloon; studied fills <b>30–80&nbsp;mL</b></td></tr>
+            <tr><td class="k">Key limits</td><td>Pharmacy preparation + maximum doses <span class="lc"><span class="tag local">Local</span> <span class="lfv" data-local="miso_po_prep_max">____</span></span></td><td>Schedule / maximum doses <span class="lc"><span class="tag local">Local</span> <span class="lfv" data-local="miso_pv_schedule_max">____</span></span> Not removable after administration.</td><td class="method-start">Remove when labor commences; for tachysystole, hypertonicity or concerning FHR; with ROM; before amniotomy; by 12&nbsp;h. <b>≥ 6 previous term pregnancies: contraindicated.</b></td><td><b>≥ 6 previous term pregnancies: not recommended.</b> Check formulation-specific contraindications, incl. unexplained vaginal bleeding.</td><td class="method-start">Follow device limits. <span class="lc"><span class="tag local">Local</span> <span class="lfx">device <span class="lfv" data-local="balloon_device">____</span></span>&nbsp;· <span class="lfx">fill <span class="lfv" data-local="balloon_fill">____</span> mL</span>&nbsp;· <span class="lfx">dwell <span class="lfv" data-local="balloon_dwell">____</span> h</span>&nbsp;· <span class="lfx">removal <span class="lfv" data-local="balloon_removal">____</span></span></span></td></tr>
+            <tr><td class="k">→ Oxytocin</td><td colspan="2"><b>Never coadminister.</b> Oxytocin <b>≥ 4&nbsp;h after last misoprostol</b> (label-based; not set by CPG 9) with acceptable FHR / uterine activity. <span class="lc"><span class="tag local">Local</span> longer unit interval <span class="lfv" data-local="miso_oxytocin_interval">____</span></span></td><td class="method-start"><b>≥ 30&nbsp;min after removal</b></td><td><b>6–12&nbsp;h after administration</b></td><td class="method-start">Balloon + oxytocin or balloon + misoprostol may shorten induction in appropriate candidates.</td></tr>
+            <tr class="all"><td class="k">All</td><td colspan="5"><b>Monitor fetal status + uterine activity during pharmacologic ripening; reassess before repeat dosing.</b> Tachysystole or concerning FHR → hold further prostaglandin (E).</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stack side">
+        <div class="small"><b>Choose the method</b> by clinical findings, history, preference and setting.</div>
+        <div class="box local small"><span class="lfx">Monitoring schedule <span class="lfv" data-local="ripening_monitoring_schedule">____</span></span>&nbsp;· <span class="lfx">reassessment <span class="lfv" data-local="ripening_reassessment">____</span></span></div>
+        <div class="small"><b>Outpatient ripening:</b> selected low-risk patients without an indication for ongoing monitoring; <b>approved pathway required</b>; proposed local option balloon. Cervidil + Prepidil require hospital use; Cytotec labeling specifies hospital use for obstetric administration. Return for ROM, bleeding, reduced movement, painful regular contractions, severe pain or concern <a href="21-before-discharge.html" class="xlink"><span class="xref c-wf">21</span></a></div>
+        <div class="box local small"><span class="lfx">Eligibility / method <span class="lfv" data-local="outpatient_ripening_eligibility">____</span></span>&nbsp;· <span class="lfx">fetal assessment / observation <span class="lfv" data-local="outpatient_ripening_fetal_assessment">____</span></span>&nbsp;· <span class="lfx">return time / contact / access <span class="lfv" data-local="outpatient_ripening_return">____</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- D · E -->
+  <div class="row2 de">
+    <section class="panel c-lab" id="p-D">
+      <div class="ph inl src-right"><span class="num">D</span><h2>Amniotomy + oxytocin</h2><span class="src">ACOG CPG 8 (2024) pp.152–154, Table 3&nbsp;· AHRQ Labor Dystocia (2020) Table 67&nbsp;· NICE NG207 §1.7.5&nbsp;· CRICO OB Guideline 15 (2026)&nbsp;· AHRQ Safe Oxytocin tool (2023)</span></div>
+      <div class="duo2 oxyd">
+        <div class="stack">
+          <div class="small"><b>Amniotomy</b> shortens induced / augmented labor. Confirm presentation and a stable, well-applied presenting part; assess cord / placental risk. <b>FHR before and immediately after</b> (sudden fall <a href="29-fm-response.html#p-A" class="xlink"><span class="xref c-fet">29&nbsp;· A</span></a>); document ROM time + fluid. <b>High / mobile head → attending assessment before proceeding.</b></div>
+          <div class="small out"><b>On oxytocin, also assess</b> maternal vital signs, fluid intake / output, resting tone, pain and bleeding; escalate signs of uterine rupture or water intoxication. Intervals <span class="tag local">Local</span></div>
+        </div>
+        <div class="stack">
+          <table class="t tight oxy">
+            <thead><tr><th>Oxytocin <span class="tag med-alert">High alert&nbsp;· IV pump</span><br><span class="nc">milliunits/min</span></th><th class="right">Start</th><th class="right">Increase</th><th class="right">Interval</th></tr></thead>
+            <tbody>
+              <tr><td class="k">Low-dose</td><td class="num">0.5–2</td><td class="num">1–2</td><td class="num">15–40&nbsp;min</td></tr>
+              <tr><td class="k">High-dose</td><td class="num">≥ 4</td><td class="num">3–6</td><td class="num">15–40&nbsp;min</td></tr>
+            </tbody>
+          </table>
+          <div class="small">Published regimen categories; <b>use one approved unit order</b>. Either is reasonable; high-dose is not an individualized starting order. <b>Monitor FHR + uterine activity continuously</b>; validate the signals <a href="28-fm-signal.html#p-A" class="xlink"><span class="xref c-fet">28&nbsp;· A</span></a> <a href="28-fm-signal.html#p-D" class="xlink"><span class="xref c-fet">28&nbsp;· D</span></a>. Titrate to clinical response.</div>
+        </div>
+      </div>
+      <div class="box local small"><span class="lfx">Bag concentration <span class="lfv" data-local="oxytocin_concentration">____</span></span>&nbsp;· <span class="lfx">start / increment / interval <span class="lfv" data-local="oxytocin_start_increment_interval">____</span></span>&nbsp;· <span class="lfx"><b>maximum rate <span class="lfv" data-local="oxytocin_max_rate">____</span></b></span>&nbsp;· <span class="lfx">escalation threshold <span class="lfv" data-local="oxytocin_escalation_threshold">____</span></span>&nbsp;· <span class="lfx">restart rules / who authorizes <span class="lfv" data-local="oxytocin_restart_rules">____</span></span>&nbsp;· <span class="lfx">RN standing-order actions <span class="lfv" data-local="oxytocin_rn_standing_orders">____</span></span></div>
+    </section>
+
+    <section class="panel c-lab" id="p-E">
+      <div class="ph inl src-right"><span class="num">E</span><h2>Too many contractions?</h2><span class="src">ACOG CPG 10 (2025) Tables 1–2, pp.589–590, 594–595</span></div>
+      <div class="tachy"><span class="hero">&gt; 5 / 10&nbsp;min</span><span class="def"><b>Tachysystole</b>, averaged over 30&nbsp;min. Assess FHR, resting time, context <a href="28-fm-signal.html#p-E" class="xlink"><span class="xref c-fet">28&nbsp;· E</span></a> Also assess prolonged contractions and incomplete relaxation. <b>Concerning FHR → respond now</b>; do not wait to complete the 30‑min average.</span></div>
+      <ol class="steps s26">
+        <li><b>Reduce / stop induction agents</b>; withhold further misoprostol; remove dinoprostone insert when indicated.</li>
+        <li><b>Call FM attending</b>; resuscitation + tracing classification <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> Hypertonus after neuraxial <a href="29-fm-response.html#p-B" class="xlink"><span class="xref c-fet">29&nbsp;· B</span></a></li>
+        <li>Persistent with <b>Category III or high-risk Category II</b> despite stopping oxytocin → <b>rapid-acting uterine relaxant</b>. Persistent Category III despite initial resuscitation → <b>expedite delivery</b>; treating tachysystole must not delay it.</li>
+        <li>Resume only after tachysystole resolves and FHR is reassuring; approved restart orders.</li>
+      </ol>
+      <div class="box local small"><span class="lfx">Notification / hold criteria <span class="lfv" data-local="uterine_activity_hold_criteria">____</span></span>&nbsp;· <span class="lfx">uterine relaxant / dose / repeat limits <span class="lfv" data-local="uterine_relaxant_protocol">____</span></span></div>
+    </section>
+  </div>
+
+  <!-- F: centerpiece -->
+  <section class="panel c-lab" data-tile-keep="" id="p-F">
+    <div class="ph inl src-right"><span class="num">F</span><h2>Stages of labor&nbsp;— name the stage, use the right clock</h2><span class="src">ACOG CPG 8 (2024) Normal / Latent / Active Labor, Second Stage, pp.149–158&nbsp;· NICHD Consortium on Safe Labor (Zhang 2010)&nbsp;· WHO/FIGO/ICM PPH (2025) Rec. 30–31</span></div>
+    <figure class="lp" aria-label="Stages of labor chart">
+<!--LP-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1192.32 346" role="img" aria-labelledby="lp26-t lp26-d"><title id="lp26-t">Stages of labor: dilation bands, clocks, descriptive durations and decision criteria</title><desc id="lp26-d">First stage: latent phase from labor onset to under 6&nbsp;cm (more than 16&nbsp;h may be called prolonged; no validated arrest cutoff); active phase 6 to 10&nbsp;cm with a 1&nbsp;cm per 2&nbsp;h protraction reference. Failed induction: oxytocin at least 12 to 18&nbsp;h after ROM. Active-phase arrest: at least 6&nbsp;cm with ROM and no change for 4&nbsp;h with adequate or 6&nbsp;h with inadequate contractions on oxytocin. Second stage: prolonged pushing more than 3&nbsp;h nulliparous, more than 2&nbsp;h multiparous. Third stage: action points at 15&nbsp;min (reassess) and 30&nbsp;min (prepare manual removal).</desc><rect x="66.0" y="0.0" width="646.0" height="22.0" class="stage-1"></rect><text x="74.0" y="15.5" font-size="12" text-anchor="start" class="xb inv">FIRST STAGE</text><rect x="752.0" y="0.0" width="214.0" height="22.0" class="stage-2"></rect><text x="760.0" y="15.5" font-size="12" text-anchor="start" class="xb inv">SECOND STAGE</text><rect x="1000.0" y="0.0" width="192.3" height="22.0" class="stage-3"></rect><text x="1008.0" y="15.5" font-size="12" text-anchor="start" class="xb inv">THIRD STAGE</text><text x="172.0" y="15.5" font-size="12" text-anchor="start" class="inv">onset → complete (10&nbsp;cm)</text><text x="868.0" y="15.5" font-size="12" text-anchor="start" class="inv">→ birth</text><text x="1106.0" y="15.5" font-size="12" text-anchor="start" class="inv">→ placenta</text><text x="66.0" y="44.0" font-size="16" text-anchor="start" class="xb">Latent phase</text><text x="176.0" y="44.0" font-size="12.5" text-anchor="start" class="b lab3">labor onset → &lt; 6&nbsp;cm</text><text x="428.0" y="44.0" font-size="16" text-anchor="start" class="xb">Active phase</text><text x="540.0" y="44.0" font-size="12.5" text-anchor="start" class="b lab3">6&nbsp;cm → complete, 10&nbsp;cm</text><text x="752.0" y="44.0" font-size="16" text-anchor="start" class="xb">Complete → birth</text><text x="1000.0" y="44.0" font-size="16" text-anchor="start" class="xb">Birth → placenta</text><rect x="66.0" y="130.8" width="338.0" height="91.2" class="band-lat"></rect><rect x="428.0" y="70.0" width="284.0" height="60.8" class="band-act"></rect><path d="M66 222.0H404 M428 222.0H712" class="grid"></path><text x="52.0" y="226.0" font-size="12" text-anchor="end" class="mut">0</text><path d="M66 191.6H404 M428 191.6H712" class="grid"></path><text x="52.0" y="195.6" font-size="12" text-anchor="end" class="mut">2</text><path d="M66 161.2H404 M428 161.2H712" class="grid"></path><text x="52.0" y="165.2" font-size="12" text-anchor="end" class="mut">4</text><path d="M66 130.8H404 M428 130.8H712" class="grid"></path><path d="M66 100.4H404 M428 100.4H712" class="grid"></path><text x="52.0" y="104.4" font-size="12" text-anchor="end" class="mut">8</text><path d="M66 70.0H404 M428 70.0H712" class="grid"></path><text x="52.0" y="74.0" font-size="12" text-anchor="end" class="mut">10</text><text x="52.0" y="135.8" font-size="15" text-anchor="end" class="xb lab">6</text><text x="0.0" y="58.0" font-size="11.5" text-anchor="start" class="b mut">cm dilated</text><path d="M66 130.8H712" class="six"></path><path d="M66 161.2H404" class="hist"></path><text x="74.0" y="90.0" font-size="12" text-anchor="start" class="b">Ripening before labor is not</text><text x="74.0" y="104.0" font-size="12" text-anchor="start" class="b">itself latent labor.</text><text x="74.0" y="155.2" font-size="11.5" text-anchor="start" class="mut">≈ 4&nbsp;cm: historical active-phase start (Friedman)</text><text x="74.0" y="122.8" font-size="13" text-anchor="start" class="xb lab3">6&nbsp;cm: active phase begins (Zhang; CPG 8)</text><path d="M66 70V222H404 M428 70V222H712" class="axis"></path><path d="M66.0 222v5" class="axis"></path><text x="66.0" y="239.0" font-size="12" text-anchor="start">0</text><path d="M133.6 222v5" class="axis"></path><text x="133.6" y="239.0" font-size="12" text-anchor="middle">4</text><path d="M201.2 222v5" class="axis"></path><text x="201.2" y="239.0" font-size="12" text-anchor="middle">8</text><path d="M268.8 222v5" class="axis"></path><text x="268.8" y="239.0" font-size="12" text-anchor="middle">12</text><path d="M336.4 222v5" class="axis"></path><text x="336.4" y="239.0" font-size="12" text-anchor="middle">16</text><path d="M404.0 222v5" class="axis"></path><text x="404.0" y="239.0" font-size="12" text-anchor="end">20</text><text x="66.0" y="254.0" font-size="11.5" text-anchor="start" class="mut">hours from labor onset</text><text x="74.0" y="179.2" font-size="12" text-anchor="start" class="b">Progress before 6&nbsp;cm can be slow.</text><path d="M336.4 134.8V222" class="grid"></path><rect x="336.4" y="206.0" width="67.6" height="11.0" class="rib"></rect><text x="330.4" y="202.0" font-size="12" text-anchor="end" class="b">&gt; 16&nbsp;h may be called prolonged</text><text x="330.4" y="216.0" font-size="12" text-anchor="end">no validated latent-arrest cutoff</text><path d="M428.0 222v5" class="axis"></path><text x="428.0" y="239.0" font-size="12" text-anchor="start">0</text><path d="M499.0 222v5" class="axis"></path><text x="499.0" y="239.0" font-size="12" text-anchor="middle">2</text><path d="M570.0 222v5" class="axis"></path><text x="570.0" y="239.0" font-size="12" text-anchor="middle">4</text><path d="M641.0 222v5" class="axis"></path><text x="641.0" y="239.0" font-size="12" text-anchor="middle">6</text><path d="M712.0 222v5" class="axis"></path><text x="712.0" y="239.0" font-size="12" text-anchor="end">8</text><text x="428.0" y="254.0" font-size="11.5" text-anchor="start" class="mut">hours in active phase</text><path d="M450 108H521V92.8" class="ref"></path><text x="436.0" y="88.0" font-size="15" text-anchor="start" class="xb lab3">1&nbsp;cm / 2&nbsp;h</text><text x="485.5" y="123.0" font-size="12" text-anchor="middle" class="b lab3">2&nbsp;h</text><text x="527.0" y="104.0" font-size="12" text-anchor="start" class="b lab3">1&nbsp;cm</text><text x="704.0" y="104.8" font-size="12" text-anchor="end" class="b">slower = protraction</text><text x="704.0" y="119.8" font-size="12" text-anchor="end">→ assess (G)</text><text x="436.0" y="150.8" font-size="12" text-anchor="start" class="b">Active-phase rules apply only</text><text x="436.0" y="164.8" font-size="12" text-anchor="start">from 6&nbsp;cm. Slow-but-progressing</text><text x="436.0" y="178.8" font-size="12" text-anchor="start">labor with reassuring status is</text><text x="436.0" y="192.8" font-size="12" text-anchor="start">not a cesarean indication.</text><text x="66.0" y="270.0" font-size="12.5" text-anchor="start" class="xb">Induced, not yet active</text><text x="218.0" y="270.0" font-size="12" text-anchor="start" class="mut">· clock = oxytocin after ROM</text><path d="M66 324H404" class="axis"></path><path d="M66.0 324v5" class="axis"></path><text x="66.0" y="341.0" font-size="12" text-anchor="start">0</text><path d="M133.6 324v5" class="axis"></path><text x="133.6" y="341.0" font-size="12" text-anchor="middle">6</text><path d="M201.2 324v5" class="axis"></path><text x="201.2" y="341.0" font-size="12" text-anchor="middle">12</text><path d="M268.8 324v5" class="axis"></path><text x="268.8" y="341.0" font-size="12" text-anchor="middle">18</text><path d="M336.4 324v5" class="axis"></path><text x="336.4" y="341.0" font-size="12" text-anchor="middle">24</text><path d="M404.0 324v5" class="axis"></path><text x="404.0" y="341.0" font-size="12" text-anchor="end">30&nbsp;h</text><path d="M73.0 281.0l7 7 -7 7 -7 -7z" class="evt"></path><text x="86.0" y="292.0" font-size="12" text-anchor="start">ROM + oxytocin</text><path d="M201.2 304.0V313.0H268.8V304.0" class="crit"></path><text x="235.0" y="300.0" font-size="13" text-anchor="middle" class="xb lab3">≥ 12–18&nbsp;h</text><text x="195.2" y="312.0" font-size="12" text-anchor="end" class="b">before failed induction</text><text x="274.8" y="312.0" font-size="12" text-anchor="start">&gt; 18&nbsp;h: individualize</text><text x="428.0" y="270.0" font-size="12.5" text-anchor="start" class="xb">≥ 6&nbsp;cm + ROM</text><text x="518.0" y="270.0" font-size="12" text-anchor="start" class="mut">· clock = no cervical change</text><path d="M428 324H712" class="axis"></path><path d="M428.0 324v5" class="axis"></path><text x="428.0" y="341.0" font-size="12" text-anchor="start">0</text><path d="M471.0 324v5" class="axis"></path><text x="471.0" y="341.0" font-size="12" text-anchor="middle">1</text><path d="M514.1 324v5" class="axis"></path><text x="514.1" y="341.0" font-size="12" text-anchor="middle">2</text><path d="M557.1 324v5" class="axis"></path><text x="557.1" y="341.0" font-size="12" text-anchor="middle">3</text><path d="M600.1 324v5" class="axis"></path><text x="600.1" y="341.0" font-size="12" text-anchor="middle">4</text><path d="M643.2 324v5" class="axis"></path><text x="643.2" y="341.0" font-size="12" text-anchor="middle">5</text><path d="M686.2 324v5" class="axis"></path><text x="686.2" y="341.0" font-size="12" text-anchor="middle">6&nbsp;h</text><path d="M428.0 283.0V292.0H600.1V283.0" class="crit"></path><text x="435.0" y="288.0" font-size="12" text-anchor="start" class="xb">4&nbsp;h adequate activity</text><path d="M428.0 304.0V313.0H686.2V304.0" class="crit alt"></path><text x="435.0" y="309.0" font-size="12" text-anchor="start" class="xb">6&nbsp;h inadequate activity + oxytocin</text><path d="M614.1 281.0l7 7 -7 7 -7 -7z" class="pt"></path><text x="626.1" y="292.0" font-size="12" text-anchor="start" class="b">arrest</text><path d="M698.2 302.0l7 7 -7 7 -7 -7z" class="pt"></path><path d="M759.0 67.0l7 7 -7 7 -7 -7z" class="evt"></path><text x="772.0" y="78.0" font-size="12" text-anchor="start">record complete time</text><text x="772.0" y="92.0" font-size="12" text-anchor="start">+ pushing start</text><text x="752.0" y="111.0" font-size="12.5" text-anchor="start" class="xb">Nulliparous</text><rect x="752.0" y="118.0" width="160.5" height="11.0" class="rib"></rect><path d="M912.5 112.0V135.0" class="crit"></path><path d="M916.5 123.5H964.0m-8 -4.5l8 4.5 -8 4.5" class="cont"></path><text x="918.5" y="111.0" font-size="13" text-anchor="start" class="xb lab3">&gt; 3&nbsp;h</text><text x="752.0" y="153.0" font-size="12.5" text-anchor="start" class="xb">Multiparous</text><rect x="752.0" y="160.0" width="107.0" height="11.0" class="rib"></rect><path d="M859.0 154.0V177.0" class="crit"></path><path d="M863.0 165.5H964.0m-8 -4.5l8 4.5 -8 4.5" class="cont"></path><text x="865.0" y="153.0" font-size="13" text-anchor="start" class="xb lab3">&gt; 2&nbsp;h</text><text x="752.0" y="192.0" font-size="12" text-anchor="start" class="b">with or without epidural:</text><text x="752.0" y="206.0" font-size="12" text-anchor="start">prolonged → individualized review</text><path d="M752 222H966" class="axis"></path><path d="M752.0 222v5" class="axis"></path><text x="752.0" y="239.0" font-size="12" text-anchor="start">0</text><path d="M805.5 222v5" class="axis"></path><text x="805.5" y="239.0" font-size="12" text-anchor="middle">1</text><path d="M859.0 222v5" class="axis"></path><text x="859.0" y="239.0" font-size="12" text-anchor="middle">2</text><path d="M912.5 222v5" class="axis"></path><text x="912.5" y="239.0" font-size="12" text-anchor="middle">3</text><path d="M966.0 222v5" class="axis"></path><text x="966.0" y="239.0" font-size="12" text-anchor="end">4&nbsp;h</text><text x="752.0" y="254.0" font-size="11.5" text-anchor="start" class="mut">hours of pushing</text><text x="752.0" y="270.0" font-size="12.5" text-anchor="start" class="xb">Earlier arrest</text><text x="752.0" y="285.0" font-size="12" text-anchor="start">no rotation / descent despite</text><text x="752.0" y="299.0" font-size="12" text-anchor="start">adequate contractions, effort</text><text x="752.0" y="313.0" font-size="12" text-anchor="start">and time → attending review</text><text x="752.0" y="327.0" font-size="12" text-anchor="start" class="b">→ operative vaginal before CS</text><path d="M1007.0 67.0l7 7 -7 7 -7 -7z" class="pt"></path><text x="1020.0" y="78.0" font-size="12" text-anchor="start">uterotonic per birth orders</text><text x="1020.0" y="92.0" font-size="12" text-anchor="start">QBL&nbsp;· tone</text><text x="1000.0" y="111.0" font-size="12.5" text-anchor="start" class="xb">No PPH, placenta pending</text><path d="M1070.6 116.5l7 7 -7 7 -7 -7z" class="pt"></path><text x="1058.6" y="128.0" font-size="13" text-anchor="end" class="xb lab3">15&nbsp;min</text><text x="1000.0" y="146.0" font-size="12" text-anchor="start">reassess&nbsp;· empty bladder&nbsp;· assist</text><text x="1000.0" y="160.0" font-size="12" text-anchor="start">(trained controlled cord traction)</text><path d="M1141.2 170.5l7 7 -7 7 -7 -7z" class="pt"></path><text x="1129.2" y="182.0" font-size="13" text-anchor="end" class="xb lab3">30&nbsp;min</text><text x="1000.0" y="200.0" font-size="12" text-anchor="start">prepare manual removal with</text><text x="1000.0" y="214.0" font-size="12" text-anchor="start">attending / OB + anesthesia</text><path d="M1000 222H1188.32" class="axis"></path><path d="M1000.0 222v5" class="axis"></path><text x="1000.0" y="239.0" font-size="12" text-anchor="start">0</text><path d="M1070.6 222v5" class="axis"></path><text x="1070.6" y="239.0" font-size="12" text-anchor="middle">15</text><path d="M1141.2 222v5" class="axis"></path><text x="1141.2" y="239.0" font-size="12" text-anchor="middle">30</text><text x="1188.3" y="239.0" font-size="12" text-anchor="end" class="mut">min</text><text x="1000.0" y="254.0" font-size="11.5" text-anchor="start" class="mut">minutes after birth</text><text x="1000.0" y="270.0" font-size="12.5" text-anchor="start" class="xb stopt">Bleeding / instability</text><text x="1000.0" y="285.0" font-size="12" text-anchor="start">→ immediate response (2&nbsp;· A)</text><text x="1000.0" y="299.0" font-size="12" text-anchor="start">No placental time cutoff;</text><text x="1000.0" y="313.0" font-size="12" text-anchor="start">removal timing individualized.</text><path d="M732.0 30V346" class="grid"></path><path d="M983.0 30V346" class="grid"></path></svg>
+<!--/LP-->
+    </figure>
+    <div class="lp-key">
+      <span><svg viewBox="0 0 26 12" aria-hidden="true" focusable="false"><rect x="0" y="1" width="26" height="10" style="fill:color-mix(in srgb,var(--lab-1) 30%,white)"></rect><rect x="13" y="1" width="13" height="10" style="fill:color-mix(in srgb,var(--lab) 18%,white)"></rect></svg>Phase by dilation</span>
+      <span><svg viewBox="0 0 26 12" aria-hidden="true" focusable="false"><rect x="0" y="2" width="26" height="8" style="fill:color-mix(in srgb,var(--lab) 30%,white);stroke:var(--lab);stroke-width:.8"></rect></svg>Descriptive duration&nbsp;— no decision</span>
+      <span><svg viewBox="0 0 26 12" aria-hidden="true" focusable="false"><path d="M1 2V10H25V2" style="fill:none;stroke:var(--lab);stroke-width:3"></path></svg>Decision criterion</span>
+      <span><svg viewBox="0 0 26 12" aria-hidden="true" focusable="false"><path d="M1 2V10H25V2" style="fill:none;stroke:var(--lab);stroke-width:3;stroke-dasharray:6 3"></path></svg>Alternative condition</span>
+      <span><svg viewBox="0 0 26 12" aria-hidden="true" focusable="false"><path d="M13 1l5 5-5 5-5-5z" style="fill:var(--lab)"></path></svg>Action</span>
+      <span><svg viewBox="0 0 26 12" aria-hidden="true" focusable="false"><path d="M13 1l5 5-5 5-5-5z" style="fill:#fff;stroke:var(--lab);stroke-width:1.5"></path></svg>Clock starts&nbsp;— record the time</span>
+      <span><svg viewBox="0 0 26 12" aria-hidden="true" focusable="false"><path d="M1 6H25" style="stroke:var(--ink-3);stroke-width:1.3;stroke-dasharray:2 3"></path></svg>Historical</span>
+    </div>
+    <div class="lp-cap">
+      <div><b>Timing criteria, not a dilation trajectory.</b> Population curves describe patterns; they do not prescribe an individual cesarean deadline.</div>
+      <div class="t3c"><b>Manual removal: antibiotic prophylaxis recommended</b> (WHO). No extra uterotonic solely for retained placenta without PPH. <b>No separation plane → suspect PAS: stop forceful removal;</b> surgeon, anesthesia, blood bank <a href="27-ob-consult.html#p-B" class="xlink"><span class="xref c-wf">27&nbsp;· B</span></a> <span class="tag local">Local</span> <span class="lc26">agent / dose / allergy alternative <span class="lfv" data-local="manual_removal_antibiotic">____</span>&nbsp;· retained-placenta pathway <span class="lfv" data-local="retained_placenta_pathway">____</span></span></div>
+      <div><b>Support throughout:</b> continuous support person; explain progress + next assessment; mobility / position changes as feasible; clear fluids when appropriate; hydration, bladder, coping. Offer pain relief; <b>neuraxial may be offered at any dilation</b> <a href="20-neuraxial.html" class="xlink"><span class="xref c-wf">20</span></a> Home coping <a href="21-before-discharge.html" class="xlink"><span class="xref c-wf">21</span></a></div>
+    </div>
+  </section>
+
+  <!-- G -->
+  <section class="panel c-lab" id="p-G">
+    <div class="ph inl src-right"><span class="num">G</span><h2>Slow progress, arrest or failed induction?</h2><span class="src">ACOG CPG 8 (2024) Protraction / Arrest pp.149–150&nbsp;· Induced Labor pp.151–152&nbsp;· Second Stage pp.150–151, 155–158</span></div>
+    <div class="flow flow26">
+      <div class="g3">
+        <div class="node tint"><span class="lbl">Induced&nbsp;· not yet active</span><b>Failed induction?</b> Reassuring status → allow oxytocin
+            <span class="crit26">≥ 12–18&nbsp;h after ROM</span>
+            before declaring failure; beyond 18&nbsp;h individualize. Ripening time excluded. Latent phase &gt; 16&nbsp;h is not latent arrest.
+            <span class="act">Criteria not met → continue; reassess</span></div>
+        <div class="node tint"><span class="lbl">Active&nbsp;· ≥ 6&nbsp;cm</span><b>Protraction &lt; 1&nbsp;cm / 2&nbsp;h</b> → assess; optimize amniotomy / oxytocin; ROM + protraction or unclear contractions → IUPC <a href="28-fm-signal.html#p-E" class="xlink"><span class="xref c-fet">28&nbsp;· E</span></a> <b>Arrest:</b> ≥ 6&nbsp;cm + ROM, no change despite
+            <span class="crit26">4&nbsp;h adequate <span class="or">or</span> 6&nbsp;h inadequate + oxytocin</span>
+            Adequacy convention <b>&gt; 200&nbsp;MVU / 10&nbsp;min</b> by IUPC <a href="28-fm-signal.html#p-F" class="xlink"><span class="xref c-fet">28&nbsp;· F</span></a>; interpret clinically.
+            <span class="act">Confirm with attending / OB/GYN → cesarean</span></div>
+        <div class="node tint"><span class="lbl">Second stage</span><b>Push from complete.</b> Decelerations with pushing <a href="29-fm-response.html#p-C" class="xlink"><span class="xref c-fet">29&nbsp;· C</span></a> Prolonged pushing
+            <span class="crit26">Nulliparous: &gt; 3&nbsp;h <span class="or">·</span> Multiparous: &gt; 2&nbsp;h</span>
+            with or without epidural → individualized review; no automatic extra epidural hour. Earlier arrest: absent rotation / descent despite adequate contractions, effort and time. Persistent OP / OT → confirm position; consider manual rotation (trained operator).
+            <span class="act">Attending review → assess operative vaginal birth before cesarean <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a></span></div>
+      </div>
+    </div>
+    <div class="doc26">
+      <div class="box decision small"><b>First confirm maternal / fetal status, contractions, position, bladder and support.</b> Document ROM time, oxytocin start, interruptions and each cervical change; record complete time and pushing start.</div>
+      <div class="box local small"><span class="lfx">FM attending → OB/GYN consult trigger <span class="lfv" data-local="obgyn_consult_trigger">____</span></span>&nbsp;· <span class="lfx">contact / backup <span class="lfv" data-local="obgyn_first_call">____</span></span></div>
+    </div>
+  </section>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> SMFM Statement on Elective IOL in Low-Risk Nulliparous Women at Term&nbsp;— ARRIVE (2019, reaff. 2024); Grobman et al., NICHD MFMU ARRIVE, NEJM 2018; ACOG/SMFM CO 831 Medically Indicated Late-Preterm and Early-Term Deliveries (2021); ACOG FAQ154 Labor Induction (2022, rev. 2025); ACOG CPG 9 Cervical Ripening in Pregnancy (2025); NICHD/SMFM/ACOG Workshop, Preventing the First Cesarean (2012); NICE NG207 Inducing Labour (2021); Cervidil PI (Ferring, rev. 2020); Prepidil PI (Pfizer, rev. 2025); Cytotec labeling (Pfizer, 2026); ACOG CPG 8 First and Second Stage Labor Management (2024; correction 2025); AHRQ Labor Dystocia (2020); AHRQ Safe Medication Administration: Oxytocin (reviewed 2023); CRICO OB Guideline 15 (2026); ACOG CPG 10 Intrapartum FHR Monitoring (2025); Zhang et al., Consortium on Safe Labor, Obstet Gynecol 2010; ACOG CO 766 Limiting Intervention During Labor (2019); WHO/FIGO/ICM Consolidated PPH Guidelines (2025). Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTksMEgxMFYxSDl6TTEyLDBIMTNWMUgxMnpNMTMsMEgxNFYxSDEzek0xOCwwSDE5VjFIMTh6TTIwLDBIMjFWMUgyMHpNMjIsMEgyM1YxSDIyek0yMywwSDI0VjFIMjN6TTI0LDBIMjVWMUgyNHpNMjUsMEgyNlYxSDI1ek0yNiwwSDI3VjFIMjZ6TTI3LDBIMjhWMUgyN3pNMjgsMEgyOVYxSDI4ek0wLDFIMVYySDB6TTYsMUg3VjJINnpNOCwxSDlWMkg4ek05LDFIMTBWMkg5ek0xMCwxSDExVjJIMTB6TTE0LDFIMTVWMkgxNHpNMTcsMUgxOFYySDE3ek0xOCwxSDE5VjJIMTh6TTIyLDFIMjNWMkgyMnpNMjgsMUgyOVYySDI4ek0wLDJIMVYzSDB6TTIsMkgzVjNIMnpNMywySDRWM0gzek00LDJINVYzSDR6TTYsMkg3VjNINnpNOSwySDEwVjNIOXpNMTAsMkgxMVYzSDEwek0xMiwySDEzVjNIMTJ6TTEzLDJIMTRWM0gxM3pNMTQsMkgxNVYzSDE0ek0xNywySDE4VjNIMTd6TTE4LDJIMTlWM0gxOHpNMjAsMkgyMVYzSDIwek0yMiwySDIzVjNIMjJ6TTI0LDJIMjVWM0gyNHpNMjUsMkgyNlYzSDI1ek0yNiwySDI3VjNIMjZ6TTI4LDJIMjlWM0gyOHpNMCwzSDFWNEgwek0yLDNIM1Y0SDJ6TTMsM0g0VjRIM3pNNCwzSDVWNEg0ek02LDNIN1Y0SDZ6TTksM0gxMFY0SDl6TTEyLDNIMTNWNEgxMnpNMTMsM0gxNFY0SDEzek0xNSwzSDE2VjRIMTV6TTE3LDNIMThWNEgxN3pNMTgsM0gxOVY0SDE4ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTgsNEg5VjVIOHpNMTAsNEgxMVY1SDEwek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNOSw1SDEwVjZIOXpNMTAsNUgxMVY2SDEwek0xMiw1SDEzVjZIMTJ6TTE0LDVIMTVWNkgxNHpNMTYsNUgxN1Y2SDE2ek0yMCw1SDIxVjZIMjB6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek04LDdIOVY4SDh6TTEwLDdIMTFWOEgxMHpNMTEsN0gxMlY4SDExek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTYsN0gxN1Y4SDE2ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTIsOEgzVjlIMnpNNSw4SDZWOUg1ek02LDhIN1Y5SDZ6TTgsOEg5VjlIOHpNOSw4SDEwVjlIOXpNMTAsOEgxMVY5SDEwek0xMiw4SDEzVjlIMTJ6TTE1LDhIMTZWOUgxNXpNMTYsOEgxN1Y5SDE2ek0xOSw4SDIwVjlIMTl6TTIxLDhIMjJWOUgyMXpNMjIsOEgyM1Y5SDIyek0yMyw4SDI0VjlIMjN6TTI0LDhIMjVWOUgyNHpNMjcsOEgyOFY5SDI3ek0yOCw4SDI5VjlIMjh6TTEsOUgyVjEwSDF6TTIsOUgzVjEwSDJ6TTMsOUg0VjEwSDN6TTcsOUg4VjEwSDd6TTgsOUg5VjEwSDh6TTksOUgxMFYxMEg5ek0xMSw5SDEyVjEwSDExek0xNCw5SDE1VjEwSDE0ek0xNSw5SDE2VjEwSDE1ek0xNiw5SDE3VjEwSDE2ek0xNyw5SDE4VjEwSDE3ek0xOSw5SDIwVjEwSDE5ek0yMCw5SDIxVjEwSDIwek0yMSw5SDIyVjEwSDIxek0yMiw5SDIzVjEwSDIyek0yMyw5SDI0VjEwSDIzek0yNyw5SDI4VjEwSDI3ek0yOCw5SDI5VjEwSDI4ek0wLDEwSDFWMTFIMHpNMywxMEg0VjExSDN6TTQsMTBINVYxMUg0ek01LDEwSDZWMTFINXpNNiwxMEg3VjExSDZ6TTcsMTBIOFYxMUg3ek04LDEwSDlWMTFIOHpNMTEsMTBIMTJWMTFIMTF6TTE0LDEwSDE1VjExSDE0ek0xNSwxMEgxNlYxMUgxNXpNMTYsMTBIMTdWMTFIMTZ6TTE5LDEwSDIwVjExSDE5ek0yMCwxMEgyMVYxMUgyMHpNMjIsMTBIMjNWMTFIMjJ6TTIzLDEwSDI0VjExSDIzek0yNCwxMEgyNVYxMUgyNHpNMjUsMTBIMjZWMTFIMjV6TTI2LDEwSDI3VjExSDI2ek0yOCwxMEgyOVYxMUgyOHpNMSwxMUgyVjEySDF6TTIsMTFIM1YxMkgyek0zLDExSDRWMTJIM3pNNSwxMUg2VjEySDV6TTgsMTFIOVYxMkg4ek05LDExSDEwVjEySDl6TTExLDExSDEyVjEySDExek0xNiwxMUgxN1YxMkgxNnpNMTgsMTFIMTlWMTJIMTh6TTIzLDExSDI0VjEySDIzek0yNSwxMUgyNlYxMkgyNXpNMSwxMkgyVjEzSDF6TTIsMTJIM1YxM0gyek0zLDEySDRWMTNIM3pNNiwxMkg3VjEzSDZ6TTksMTJIMTBWMTNIOXpNMTEsMTJIMTJWMTNIMTF6TTE1LDEySDE2VjEzSDE1ek0xNiwxMkgxN1YxM0gxNnpNMTgsMTJIMTlWMTNIMTh6TTIwLDEySDIxVjEzSDIwek0yMiwxMkgyM1YxM0gyMnpNMjgsMTJIMjlWMTNIMjh6TTEsMTNIMlYxNEgxek0yLDEzSDNWMTRIMnpNMywxM0g0VjE0SDN6TTksMTNIMTBWMTRIOXpNMTEsMTNIMTJWMTRIMTF6TTEyLDEzSDEzVjE0SDEyek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOSwxM0gyMFYxNEgxOXpNMjAsMTNIMjFWMTRIMjB6TTIyLDEzSDIzVjE0SDIyek0yMywxM0gyNFYxNEgyM3pNMjcsMTNIMjhWMTRIMjd6TTI4LDEzSDI5VjE0SDI4ek0yLDE0SDNWMTVIMnpNMywxNEg0VjE1SDN6TTQsMTRINVYxNUg0ek02LDE0SDdWMTVINnpNOCwxNEg5VjE1SDh6TTEwLDE0SDExVjE1SDEwek0xMSwxNEgxMlYxNUgxMXpNMTMsMTRIMTRWMTVIMTN6TTE1LDE0SDE2VjE1SDE1ek0xOSwxNEgyMFYxNUgxOXpNMjAsMTRIMjFWMTVIMjB6TTIxLDE0SDIyVjE1SDIxek0yOCwxNEgyOVYxNUgyOHpNMCwxNUgxVjE2SDB6TTEsMTVIMlYxNkgxek0yLDE1SDNWMTZIMnpNNCwxNUg1VjE2SDR6TTUsMTVINlYxNkg1ek05LDE1SDEwVjE2SDl6TTEwLDE1SDExVjE2SDEwek0xMiwxNUgxM1YxNkgxMnpNMTQsMTVIMTVWMTZIMTR6TTE4LDE1SDE5VjE2SDE4ek0yMCwxNUgyMVYxNkgyMHpNMjEsMTVIMjJWMTZIMjF6TTIyLDE1SDIzVjE2SDIyek0yMywxNUgyNFYxNkgyM3pNMjQsMTVIMjVWMTZIMjR6TTEsMTZIMlYxN0gxek0zLDE2SDRWMTdIM3pNNCwxNkg1VjE3SDR6TTYsMTZIN1YxN0g2ek04LDE2SDlWMTdIOHpNOSwxNkgxMFYxN0g5ek0xMCwxNkgxMVYxN0gxMHpNMTEsMTZIMTJWMTdIMTF6TTEyLDE2SDEzVjE3SDEyek0xNiwxNkgxN1YxN0gxNnpNMTksMTZIMjBWMTdIMTl6TTIyLDE2SDIzVjE3SDIyek0yMywxNkgyNFYxN0gyM3pNMjgsMTZIMjlWMTdIMjh6TTEsMTdIMlYxOEgxek0yLDE3SDNWMThIMnpNNSwxN0g2VjE4SDV6TTEwLDE3SDExVjE4SDEwek0xMSwxN0gxMlYxOEgxMXpNMTIsMTdIMTNWMThIMTJ6TTE1LDE3SDE2VjE4SDE1ek0xNiwxN0gxN1YxOEgxNnpNMTcsMTdIMThWMThIMTd6TTE5LDE3SDIwVjE4SDE5ek0yMCwxN0gyMVYxOEgyMHpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNiwxN0gyN1YxOEgyNnpNMjcsMTdIMjhWMThIMjd6TTI4LDE3SDI5VjE4SDI4ek0wLDE4SDFWMTlIMHpNMSwxOEgyVjE5SDF6TTUsMThINlYxOUg1ek02LDE4SDdWMTlINnpNOCwxOEg5VjE5SDh6TTksMThIMTBWMTlIOXpNMTAsMThIMTFWMTlIMTB6TTExLDE4SDEyVjE5SDExek0xNSwxOEgxNlYxOUgxNXpNMTksMThIMjBWMTlIMTl6TTIyLDE4SDIzVjE5SDIyek0yMywxOEgyNFYxOUgyM3pNMjUsMThIMjZWMTlIMjV6TTI4LDE4SDI5VjE5SDI4ek0yLDE5SDNWMjBIMnpNMywxOUg0VjIwSDN6TTUsMTlINlYyMEg1ek03LDE5SDhWMjBIN3pNOSwxOUgxMFYyMEg5ek0xMSwxOUgxMlYyMEgxMXpNMTUsMTlIMTZWMjBIMTV6TTE4LDE5SDE5VjIwSDE4ek0yMSwxOUgyMlYyMEgyMXpNMCwyMEgxVjIxSDB6TTEsMjBIMlYyMUgxek0yLDIwSDNWMjFIMnpNMywyMEg0VjIxSDN6TTQsMjBINVYyMUg0ek01LDIwSDZWMjFINXpNNiwyMEg3VjIxSDZ6TTcsMjBIOFYyMUg3ek05LDIwSDEwVjIxSDl6TTExLDIwSDEyVjIxSDExek0xMiwyMEgxM1YyMUgxMnpNMTUsMjBIMTZWMjFIMTV6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjUsMjBIMjZWMjFIMjV6TTI3LDIwSDI4VjIxSDI3ek04LDIxSDlWMjJIOHpNMTEsMjFIMTJWMjJIMTF6TTEyLDIxSDEzVjIySDEyek0xNSwyMUgxNlYyMkgxNXpNMTYsMjFIMTdWMjJIMTZ6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjUsMjFIMjZWMjJIMjV6TTI2LDIxSDI3VjIySDI2ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTksMjJIMTBWMjNIOXpNMTAsMjJIMTFWMjNIMTB6TTExLDIySDEyVjIzSDExek0xMiwyMkgxM1YyM0gxMnpNMTMsMjJIMTRWMjNIMTN6TTE1LDIySDE2VjIzSDE1ek0xOCwyMkgxOVYyM0gxOHpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjgsMjJIMjlWMjNIMjh6TTAsMjNIMVYyNEgwek02LDIzSDdWMjRINnpNOCwyM0g5VjI0SDh6TTEwLDIzSDExVjI0SDEwek0xMSwyM0gxMlYyNEgxMXpNMTIsMjNIMTNWMjRIMTJ6TTE0LDIzSDE1VjI0SDE0ek0xNiwyM0gxN1YyNEgxNnpNMTksMjNIMjBWMjRIMTl6TTIwLDIzSDIxVjI0SDIwek0yNCwyM0gyNVYyNEgyNHpNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek05LDI0SDEwVjI1SDl6TTEyLDI0SDEzVjI1SDEyek0xNSwyNEgxNlYyNUgxNXpNMTYsMjRIMTdWMjVIMTZ6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjgsMjRIMjlWMjVIMjh6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNOSwyNUgxMFYyNkg5ek0xMCwyNUgxMVYyNkgxMHpNMTEsMjVIMTJWMjZIMTF6TTEyLDI1SDEzVjI2SDEyek0xNCwyNUgxNVYyNkgxNHpNMTUsMjVIMTZWMjZIMTV6TTE2LDI1SDE3VjI2SDE2ek0xNywyNUgxOFYyNkgxN3pNMTksMjVIMjBWMjZIMTl6TTIwLDI1SDIxVjI2SDIwek0yNCwyNUgyNVYyNkgyNHpNMjUsMjVIMjZWMjZIMjV6TTI2LDI1SDI3VjI2SDI2ek0yNywyNUgyOFYyNkgyN3pNMjgsMjVIMjlWMjZIMjh6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNOCwyNkg5VjI3SDh6TTksMjZIMTBWMjdIOXpNMTAsMjZIMTFWMjdIMTB6TTExLDI2SDEyVjI3SDExek0xNCwyNkgxNVYyN0gxNHpNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMjAsMjZIMjFWMjdIMjB6TTIxLDI2SDIyVjI3SDIxek0yNCwyNkgyNVYyN0gyNHpNMjcsMjZIMjhWMjdIMjd6TTI4LDI2SDI5VjI3SDI4ek0wLDI3SDFWMjhIMHpNNiwyN0g3VjI4SDZ6TTgsMjdIOVYyOEg4ek05LDI3SDEwVjI4SDl6TTEyLDI3SDEzVjI4SDEyek0xNSwyN0gxNlYyOEgxNXpNMTgsMjdIMTlWMjhIMTh6TTIwLDI3SDIxVjI4SDIwek0yMSwyN0gyMlYyOEgyMXpNMjIsMjdIMjNWMjhIMjJ6TTIzLDI3SDI0VjI4SDIzek0yNSwyN0gyNlYyOEgyNXpNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek05LDI4SDEwVjI5SDl6TTEwLDI4SDExVjI5SDEwek0xMSwyOEgxMlYyOUgxMXpNMTIsMjhIMTNWMjlIMTJ6TTE1LDI4SDE2VjI5SDE1ek0yMCwyOEgyMVYyOUgyMHpNMjEsMjhIMjJWMjlIMjF6TTI1LDI4SDI2VjI5SDI1ek0yOCwyOEgyOVYyOUgyOHoiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

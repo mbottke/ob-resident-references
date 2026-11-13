@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Fetal monitoring: response</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--fet); --body: 10.6pt; --gap: 0.16in; }
+  .sheet > .foot { font-size: calc(7.4pt / var(--k)); }   /* citations stay tiny */
+  .masthead h1 { font-size: calc(50pt / var(--k)); }
+  .masthead .sub { max-width: none; font-size: 13pt; margin-top: 22pt; padding-bottom: 0.02in; }
+  .masthead .sub .muted { font-size: 12pt; }
+  .sheet .small { font-size: var(--body); line-height: 1.27; }
+  .sheet .xs { font-size: 10.6pt; line-height: 1.25; }
+  .sheet .panel { gap: 5pt; }
+  .ph h2 { font-size: 22pt; font-family: "Inter", sans-serif; }   /* < 24 pt printed: text face (css2 #9) */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  .ph.inl { grid-template-columns: auto auto minmax(0, 1fr); }
+  .ph.inl .num { grid-row: 1; }
+  .ph.inl .src { grid-column: 3; grid-row: 1; text-align: right; align-self: baseline; padding-left: 0.2in; }
+  .sheet h3 { font-size: 12.5pt; margin-top: 2pt; }
+  .sheet > .panel, .sheet > .row2 { flex: none; }
+  .sheet > * + :is(.row2, .panel) { margin-top: var(--gap); }
+  .sheet > .strip + * { margin-top: 0; }
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap); align-items: stretch; }
+  .row2.cd { grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); }
+  .row2 > .panel > .box.local:last-child { margin-top: auto; }
+  .row2 > .panel > :nth-last-child(2):has(+ .box.local) { margin-bottom: 5pt; }
+  .lfx { white-space: nowrap; }
+  .lc29 { color: var(--wf); font-weight: 600; }
+  .stack { display: flex; flex-direction: column; gap: 5pt; min-width: 0; }
+  .sheet table.t th { font-size: 10.6pt; }
+  .panel > .urgent-head, .stack > .urgent-head { font-size: 11.6pt; line-height: 1.24; font-weight: 600; }
+  .urgent-head b { font-weight: 800; }
+  .urgent-head .deadline { flex: none; }
+  .urgent-head > span:first-child { flex: 1; }
+  .fet-head { --c: var(--fet); }
+
+  /* A: acute fall */
+  .acute { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.5fr); gap: 0.2in; align-items: start; }
+  ol.steps.s29 { font-size: var(--body); line-height: 1.26; gap: 3.5pt; }
+  ol.steps.s29 > li { padding-left: 22pt; }
+  ol.steps.s29 > li::before { width: 16pt; height: 16pt; font-size: calc(10pt / var(--k)); line-height: 16pt; }
+  table.ctx { table-layout: fixed; --cell-y: 3.6pt; font-size: var(--body); line-height: 1.25; }
+  table.ctx col.c1 { width: 25%; } table.ctx col.c2 { width: 15%; }
+  table.ctx td.k { white-space: normal; color: var(--ink); }
+  table.ctx td.th { font-weight: 800; color: var(--fet); }
+  table.ctx tr.em td.th { color: var(--stop); }
+  .rule29 { border-left: 4pt solid var(--c); padding: 2pt 0 2pt 8pt; font-size: var(--body); line-height: 1.26; }
+  .lost { font-size: var(--body); line-height: 1.26; }
+
+  /* B: neuraxial */
+  .nx-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.2in; align-items: stretch; }
+  .nx-top .box { font-size: var(--body); line-height: 1.26; }
+  .kv29 { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2pt 9pt; align-items: baseline; }
+  .kv29 > dt { font-weight: 800; white-space: nowrap; }
+  .kv29 > dd { margin: 0; }
+  .nx { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.2in; align-items: start; }
+  .nx > .stack > h3 { margin-top: 0; }
+  .nx .small b.lead { color: var(--fet); }
+  figure.s29 { margin: 0; break-inside: avoid; }
+  figure.s29 img { display: block; width: 100%; height: auto; }
+  figure.s29 figcaption { font-size: 10.6pt; line-height: 1.22; color: var(--ink-2); margin-top: 1pt; }
+  .press { border: 1pt solid var(--rule); border-top: 2pt solid var(--wf); padding: 4pt 7pt 5pt; font-size: var(--body); line-height: 1.26; }
+  .nx-foot { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0.2in; align-items: end; }
+  .nx-foot .box.local { margin-top: 0; }
+
+  /* C–D: cause rows */
+  .why { display: grid; grid-template-columns: 0.86in minmax(0, 1fr); column-gap: 8pt; row-gap: 2pt; font-size: var(--body); line-height: 1.26; align-items: baseline; }
+  .why > dt { font: 800 10.6pt/1.2 "Inter"; color: var(--fet); text-transform: uppercase; letter-spacing: .05em; font-feature-settings: "case" 1, "ss04" 1; }
+  .why > dd { margin: 0; }
+  .why > dt.esc { color: var(--ink); }
+  .blk { border-top: 1.5pt solid var(--c); padding-top: 3pt; display: flex; flex-direction: column; gap: 3pt; }
+  .blk > h4 { font: 800 13pt/1.15 "Inter"; color: var(--ink); display: flex; gap: 6pt; align-items: baseline; flex-wrap: wrap; }
+  .blk > h4 .hero { font-size: calc(15pt / var(--k)); color: var(--fet); }
+  .cat3 { font-weight: 800; color: var(--stop); }
+  table.med { table-layout: fixed; --cell-y: 3pt; font-size: var(--body); line-height: 1.23; }
+  table.med col.m1 { width: 24%; } table.med col.m2 { width: 36%; }
+  table.med td.k { white-space: normal; }
+  .rhythm { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6pt; }
+  .rhythm > div { font-size: var(--body); line-height: 1.25; border-left: 3pt solid var(--fet); padding: 1pt 0 1pt 7pt; }
+
+  /* E–F */
+  .sin2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.14in; }
+  .sin2 > div { font-size: var(--body); line-height: 1.26; }
+  .sin2 h4 { font: 800 12pt/1.2 "Inter"; margin-bottom: 2pt; }
+  .sb29 .L { font: 900 13.5pt/1 "Inter Display"; color: var(--fet); margin-right: 2pt; }
+  .sbar29 { display: grid; grid-template-columns: 1fr; }
+  .sbar29 > div { display: grid; grid-template-columns: 0.3in minmax(0, 1fr); gap: 0 6pt; border-top: 0.75pt solid var(--rule); padding: 2.5pt 0; font-size: var(--body); line-height: 1.25; }
+  .sbar29 > div:first-child { border-top: none; padding-top: 0; }
+  .sbar29 .L { font: 900 15pt/1 "Inter Display"; color: var(--fet); }
+  .rec { font-size: var(--body); line-height: 1.26; border-top: 1.5pt solid var(--c); padding-top: 3pt; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="28-fm-signal.html" title="Fetal monitoring: signal">‹ 28</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html" selected="">29 · Fetal monitoring: response</option></select>
+    <a href="01-triage.html" title="OB triage">01 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/29-fm-response.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-fet" style="--k:0.9">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>L&amp;D&nbsp;· intrapartum&nbsp;· fetal heart rate</div>
+      <h1><span class="sid">29</span>Fetal monitoring: response</h1>
+    </div>
+    <div class="sub">Verified trace → bedside cause → targeted action → reassess.<br><span class="muted">Definitions&nbsp;· Categories&nbsp;· resuscitation bundle</span> <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> <span class="muted">· signal, sensors, IUPC</span> <a href="28-fm-signal.html" class="xlink"><span class="xref c-fet">28</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="03-labor-efm.html" class="xlink"><span><b>3</b>Labor &amp; EFM</span></a><a href="28-fm-signal.html" class="xlink"><span><b>28</b>FHR&nbsp;· signal</span></a><a href="27-ob-consult.html" class="xlink"><span><b>27</b>OB/GYN consult</span></a><a href="02-emergencies.html" class="xlink"><span><b>2</b>Emergencies</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-02.svg)"></div>
+
+  <!-- A -->
+  <section class="panel c-fet" id="fm29-a"><span id="p-A" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+    <div class="ph inl"><span class="num">A</span><h2>Sudden sustained fall: act and find the cause</h2><span class="src">ACOG CPG 10 (2025) Table 2, pp.593–594&nbsp;· RCOG GTG 50 (2014)&nbsp;· GTG 63 (2011)&nbsp;· FIGO VBAC (2025) §§7.2–7.3&nbsp;· RCOG GTG 55 (2024)&nbsp;· Ambia 2022</span></div>
+    <div class="urgent-head"><span><b>New sustained fall in FHR → bedside now.</b> Call FM attending + OB/GYN to the bedside; notify the bedside RN. Category III, cord prolapse, suspected abruption or rupture → <b>activate the emergency response</b>; prepare for urgent birth while finding the cause. <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> <a href="27-ob-consult.html#p-A" class="xlink"><span class="xref c-wf">27&nbsp;· A</span></a></span><span class="deadline">Now</span></div>
+    <div class="acute">
+      <div class="stack">
+        <ol class="steps s29">
+          <li><b>Record onset</b>; review the prior tracing. <b>Fetal, not maternal, rate?</b> <a href="28-fm-signal.html#p-A" class="xlink"><span class="xref c-fet">28&nbsp;· A</span></a></li>
+          <li><b>Mother:</b> BP, pulse, SpO₂, pain, bleeding, tone between contractions.</li>
+          <li><b>Vaginal exam:</b> cord, dilation, station.</li>
+          <li><b>Resuscitate</b> <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> O₂ only for maternal hypoxemia.</li>
+          <li><b>Prepare birth:</b> OB/GYN, anesthesia, neonatal team, room.</li>
+        </ol>
+        <div class="rule29"><b>Do not wait for a duration label:</b> 2&nbsp;min and 10&nbsp;min are definitions, not waiting periods. <b>Category III unresolved after initial measures → expedited delivery</b>, vaginal, operative vaginal or cesarean.</div>
+        <div class="box decision lost"><b>No reliable FHR? Bedside ultrasound now.</b> Lost trace ≠ demise; Doppler, CTG, FSE cannot confirm or exclude it (FSE can record maternal ECG <a href="28-fm-signal.html#p-C" class="xlink"><span class="xref c-fet">28&nbsp;· C</span></a>). No cardiac activity → experienced confirmation + second opinion; assess bleeding, abruption, sepsis. <span class="lc29"><span class="tag local">Local</span> <span class="lfv" data-local="fetal_life_ultrasound">____</span></span></div>
+        <div class="box local small"><span class="lfx">Emergency activation <span class="lfv" data-local="ob_rapid_response">____</span></span>&nbsp;· <span class="lfx">OB/GYN first call <span class="lfv" data-local="obgyn_first_call">____</span></span>&nbsp;· <span class="lfx">neonatal team <span class="lfv" data-local="neonatal_code">____</span></span></div>
+      </div>
+      <div class="stack">
+        <table class="t ctx stripe">
+          <colgroup><col class="c1"><col class="c2"><col></colgroup>
+          <thead><tr><th>Context&nbsp;· clue</th><th>Think</th><th>Act now</th></tr></thead>
+          <tbody>
+            <tr class="em"><td class="k">After ROM / amniotomy; high presenting part</td><td class="th">Cord prolapse</td><td>Examine now. Cord felt → elevate the presenting part; do not replace the cord; fastest safe birth <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a></td></tr>
+            <tr class="em"><td class="k">Pain; tender or firm uterus ± bleeding</td><td class="th">Abruption</td><td>Maternal resuscitation, hemorrhage response <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a> Bleeding may be concealed; <b>normal ultrasound does not exclude it.</b></td></tr>
+            <tr class="em"><td class="k">TOLAC or other uterine scar</td><td class="th">Uterine rupture</td><td><b>Abnormal FHR is often the first sign</b>; loss of station, pain, scar tenderness, bleeding, shock may be absent. Suspected → <b>emergency operative delivery.</b></td></tr>
+            <tr><td class="k">Minutes after neuraxial dose / CSE</td><td class="th">Low BP&nbsp;· hypertonus</td><td>Check BP <b>and</b> uterine relaxation together → <b>B</b></td></tr>
+            <tr><td class="k">Excess or sustained contraction</td><td class="th">Tachysystole</td><td>Oxytocin off; remove dinoprostone; uterine relaxant <a href="26-induction-labor.html#p-E" class="xlink"><span class="xref c-lab">26&nbsp;· E</span></a> Never delays emergent birth.</td></tr>
+            <tr><td class="k">Rapid descent, pushing</td><td class="th">Head / cord compression</td><td>Station, position; fastest safe birth; modify pushing → <b>C</b>. Near birth ≠ benign.</td></tr>
+            <tr><td class="k">Seizure, hypoxemia, collapse</td><td class="th">Maternal cause</td><td><b>Stabilize the mother first</b> <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a> <a href="02-emergencies.html#p-D" class="xlink"><span class="xref c-stop">2&nbsp;· D</span></a> FHR often recovers after an eclamptic seizure; persistent → abruption? delivery?</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="panel c-fet" id="fm29-b"><span id="p-B" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+    <div class="ph inl"><span class="num">B</span><h2>After neuraxial: check BP and uterine activity</h2><span class="src">ASA Neuraxial Statement (2021) V&nbsp;· ASA/SOAP (2016)&nbsp;· CPG 10 (2025) Table 2&nbsp;· Abrão 2009&nbsp;· PB 116 (2010)</span></div>
+    <div class="nx-top">
+      <div class="box reference framed"><dl class="kv29">
+        <dt>Before dosing</dt><dd>BP, pulse, SpO₂; FHR by a qualified individual; IV access. Mark dose and top-up times.</dd>
+        <dt>After first dose</dt><dd>Direct observation <b>≥ 20&nbsp;min</b>; continuous maternal HR + SpO₂; <b>BP at least q5&nbsp;min</b>, q2&nbsp;min for the first 10&nbsp;min when feasible. Significant provider bolus → same.</dd>
+      </dl></div>
+      <div class="urgent-head stack fet-head"><span><b>FHR falls → call anesthesia + FM attending at onset.</b> Check together: BP vs pre-dose&nbsp;· pulse&nbsp;· SpO₂&nbsp;· <b>uterine relaxation by palpation</b>&nbsp;· fetal vs maternal rate.</span><span>Lateral&nbsp;· oxytocin off&nbsp;· vaginal exam when indicated <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a></span></div>
+    </div>
+    <div class="nx">
+      <div class="stack">
+        <h3>BP below pre-dose → restore placental perfusion</h3>
+        <div class="small">Sympathectomy → hypotension → less placental perfusion. <b>IV crystalloid bolus</b> (less with preeclampsia / pulmonary-edema risk) + <b>prompt IV vasopressor, agent chosen by anesthesia:</b> phenylephrine or ephedrine; no maternal bradycardia → consider phenylephrine (better fetal acid–base; mainly cesarean data). Recurrent → lower basal epidural rate.</div>
+        <figure class="s29"><img src="../../assets/svg/s29-neuraxial-bp.svg" alt="Ten-minute strip: neuraxial dose at 2 minutes, maternal BP falls from 120/75 to 80/45, FHR falls from 140 to about 80 bpm for about 3 minutes and recovers as BP is restored; contractions normal with relaxation between"></figure>
+      </div>
+      <div class="stack">
+        <h3>BP held&nbsp;· uterus not relaxing → relax the uterus</h3>
+        <div class="small">Rapid analgesia, especially CSE / intrathecal opioid, can bring <b>uterine hypertonus</b> and prolonged slowing without hypotension. Stop stimulation; palpate (toco height is not pressure <a href="28-fm-signal.html#p-D" class="xlink"><span class="xref c-fet">28&nbsp;· D</span></a> <a href="28-fm-signal.html#p-E" class="xlink"><span class="xref c-fet">28&nbsp;· E</span></a>). <b>Rapid-acting uterine relaxant</b> per approved order, e.g. terbutaline <span class="dose">0.25&nbsp;mg SUBQ</span>; expect maternal tachycardia. Can matter without &gt; 5 contractions / 10&nbsp;min.</div>
+        <figure class="s29"><img src="../../assets/svg/s29-neuraxial-tone.svg" alt="Ten-minute strip: combined spinal-epidural dose at 2 minutes, maternal BP stays near 120/75, IUPC shows a sustained contraction at about 60 mmHg from 2.25 to 4.75 minutes, and FHR falls to about 80 bpm for about 3 minutes, recovering as the uterus relaxes"></figure>
+      </div>
+    </div>
+    <div class="nx-foot">
+      <div class="small"><b>Severe decel persists → prepare birth while treating.</b> Category III not responding → expedited delivery; do not wait for a drug to wear off. <b>Maternal respiratory or neurologic deterioration → anesthesia emergency.</b> Later fever → <b>D</b>. Eligibility, anticoagulation <a href="20-neuraxial.html" class="xlink"><span class="xref c-wf">20</span></a> <span class="muted">Strips: schematic, US paper scale; recovery not guaranteed.</span></div>
+      <div class="box local small"><span class="lfx">Anesthesia <span class="lfv" data-local="anesthesia_contact">____</span></span>&nbsp;· <span class="lfx">fluid bolus <span class="lfv" data-local="neuraxial_fluid_bolus">____</span></span>&nbsp;· <span class="lfx">pressor dose / repeat / max <span class="lfv" data-local="neuraxial_pressor_orders">____</span></span>&nbsp;· <span class="lfx">relaxant repeat limits <span class="lfv" data-local="uterine_relaxant_protocol">____</span></span></div>
+    </div>
+  </section>
+
+  <!-- C · D -->
+  <div class="row2 cd">
+    <section class="panel c-fet" id="fm29-c"><span id="p-C" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="ph"><span class="num">C</span><h2>Recurrent decelerations: target the cause</h2><span class="src">ACOG CPG 10 (2025) Table 2, Box 3&nbsp;· CPG 8 (2024) p.156&nbsp;· Hofmeyr, Cochrane 2012&nbsp;· Lemos, Cochrane 2017</span></div>
+      <div class="blk">
+        <h4>Recurrent late</h4>
+        <dl class="why">
+          <dt>Think</dt><dd>Less uteroplacental O₂ transfer: hypotension, excess contractions, low placental reserve (preeclampsia, growth restriction); abruption (A).</dd>
+          <dt>Act</dt><dd>BP, contractions, bleeding. Lateral; reduce / stop oxytocin; IV bolus tailored to the mother.</dd>
+          <dt class="esc">Escalate</dt><dd>Persistent, falling variability, worse recovery → OB/GYN bedside, delivery assessment <a href="27-ob-consult.html#p-B" class="xlink"><span class="xref c-wf">27&nbsp;· B</span></a> <span class="cat3">Absent variability + recurrent lates = Category III.</span></dd>
+        </dl>
+      </div>
+      <div class="blk">
+        <h4>Recurrent variable</h4>
+        <dl class="why">
+          <dt>Think</dt><dd>Cord compression. Sudden severe or prolonged fall after ROM → examine for prolapse (A).</dd>
+          <dt>Act</dt><dd>Reposition. Persistent → consider <b>transcervical amnioinfusion</b> (attending + unit protocol); watch tone, volume in / out <a href="28-fm-signal.html#p-E" class="xlink"><span class="xref c-fet">28&nbsp;· E</span></a></dd>
+          <dt class="esc">Escalate</dt><dd>Longer events, slow recovery, rising baseline, falling variability → OB/GYN bedside; never delay birth. <span class="cat3">Absent variability + recurrent variables = Category III.</span></dd>
+        </dl>
+      </div>
+      <div class="blk">
+        <h4>With pushing&nbsp;· second stage</h4>
+        <dl class="why">
+          <dt>Check</dt><dd>Fetal source: pushing can record maternal “accelerations” <a href="28-fm-signal.html#p-A" class="xlink"><span class="xref c-fet">28&nbsp;· A</span></a> Recovery, variability, descent.</dd>
+          <dt>Act</dt><dd>Change position; <b>push every other contraction</b>; brief pause if recovery is poor. Open-glottis pushing is not a proven rescue.</dd>
+          <dt class="esc">Escalate</dt><dd>Poor recovery or worsening → operative vaginal birth now? <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a> <a href="27-ob-consult.html#p-B" class="xlink"><span class="xref c-wf">27&nbsp;· B</span></a> A brief pause ≠ planned delayed pushing; fetal status overrides labor clocks.</dd>
+        </dl>
+      </div>
+      <div class="box local small">Amnioinfusion: eligibility, fluid, bolus / rate / maximum, stop criteria <span class="lfv" data-local="amnioinfusion_protocol">____</span></div>
+    </section>
+
+    <section class="panel c-fet" id="fm29-d"><span id="p-D" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="ph"><span class="num">D</span><h2>Changed baseline or variability: assess the context</h2><span class="src">CPG 10 Tables 1–2, Box 3&nbsp;· ACOG IAI update (2024), CO 712&nbsp;· ISUOG (2022)&nbsp;· ASE (2023)&nbsp;· FIGO (2015) §4.1&nbsp;· ATA (2026)&nbsp;· labels, trials in footer</span></div>
+      <div class="blk">
+        <h4><span class="hero">&gt; 160&nbsp;bpm</span> Tachycardia: mother first</h4>
+        <dl class="why">
+          <dt>Think</dt><dd>Fever / IAI, dehydration, hyperthyroidism, DKA <a href="12-diabetes.html#p-07" class="xlink"><span class="xref c-met">12&nbsp;· 07</span></a> β-agonist; fetal anemia, evolving hypoxia (F), arrhythmia. Graves, even treated → fetal hyperthyroidism?</dd>
+          <dt>Act</dt><dd>Temperature, pulse, BP, hydration; treat the cause. <b>Fever → evaluate for IAI</b> <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-inf">3&nbsp;· B</span></a> sepsis <a href="13-sepsis.html#p-02" class="xlink"><span class="xref c-stop">13&nbsp;· 02</span></a> <b>Time since epidural does not make fever noninfectious.</b> IAI → antibiotics, antipyretic; tell neonatal team.</dd>
+          <dt class="esc">Escalate</dt><dd>New unexplained tachycardia = high-risk Category II → attending. Tachycardia or IAI alone does not mandate cesarean.</dd>
+        </dl>
+        <div class="rhythm">
+          <div><b>Abrupt on / off, fixed rate often &gt; 200</b> → tachyarrhythmia? Verify; fetal echo; urgent OB/MFM + fetal cardiology.</div>
+          <div><b>Fixed slow rate from the start, often 50–80</b> → heart block? Fetal echo. <b>A new acute fall still follows A.</b></div>
+        </div>
+      </div>
+      <div class="blk">
+        <h4>Minimal / absent variability: do not assume sleep</h4>
+        <dl class="why">
+          <dt>Think</dt><dd>Sleep, drugs, prematurity, maternal dehydration / acidemia, fetal hypoxia / acidemia, prior injury. Sleep usually leaves low-normal variability; &lt; 5&nbsp;bpm is uncommon even in deep sleep.</dd>
+          <dt>Act</dt><dd>Verify signal; mother, contractions; IV bolus. <b>Scalp or vibroacoustic stimulation:</b> an acceleration supports well-being; none does not prove acidemia.</dd>
+          <dt class="esc">Escalate</dt><dd><b>No automatic sleep-cycle wait:</b> attending sets review time + trigger. Absent = high-risk II; <span class="cat3">+ recurrent decels or bradycardia = III.</span></dd>
+        </dl>
+      </div>
+      <table class="t med stripe">
+        <colgroup><col class="m1"><col class="m2"><col></colgroup>
+        <thead><tr><th>Drug: record dose + time</th><th>May see</th><th>Assess&nbsp;· act <span class="nc">(Category unchanged)</span></th></tr></thead>
+        <tbody>
+          <tr><td class="k"><b>Systemic opioid</b></td><td>↓ variability, ↓ accels</td><td>Maternal breathing, sedation, SpO₂; other causes.</td></tr>
+          <tr><td class="k"><b>Nalbuphine</b>, butorphanol</td><td>Sinusoidal-like; <b>nalbuphine: severe, prolonged bradycardia</b></td><td>New slowing or odd waveform → urgent review (A, E).</td></tr>
+          <tr><td class="k"><b>Magnesium</b></td><td>Small ↓ baseline, variability, accels</td><td>Does not explain Category III or recurrent decels <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a></td></tr>
+          <tr><td class="k"><b>Betamethasone</b></td><td>Transient ↓ variability, accels; often days 2–3</td><td>Note timing; new decels need their own work-up.</td></tr>
+          <tr><td class="k"><b>Cocaine</b>, methamphetamine</td><td>No diagnostic pattern</td><td>BP, bleeding, uterine pain / tone → abruption?</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- E · F -->
+  <div class="row2">
+    <section class="panel c-fet" id="fm29-e"><span id="p-E" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="ph"><span class="num">E</span><h2>Smooth cycling: sinusoidal or a mimic?</h2><span class="src">NICHD (2008)&nbsp;· CPG 10 Table 1, p.594&nbsp;· FIGO (2015) §4.1&nbsp;· SMFM CG 8, Consult 75&nbsp;· Oyelese 2023</span></div>
+      <div class="urgent-head"><span><b>Suspected true sinusoidal → FM attending + OB/GYN to the bedside;</b> assess bleeding, anemia; prepare delivery; alert neonatal team <a href="27-ob-consult.html#p-A" class="xlink"><span class="xref c-wf">27&nbsp;· A</span></a></span><span class="deadline">Now</span></div>
+      <figure class="s29"><img src="../../assets/svg/s29-sinusoidal.svg" alt="Two 3-minute strips. Left: true sinusoidal, a smooth regular sine wave around 140 bpm at 4 cycles per minute without irregular variability. Right: possible pseudo-sinusoidal, jagged irregular cycles with normal variability before and after"></figure>
+      <div class="sin2">
+        <div><h4>True&nbsp;· Category III</h4>Smooth, regular, <b>3–5 cycles/min, ≥ 20&nbsp;min</b>; no normal variability or accels. <b>Think fetal anemia:</b> fetomaternal hemorrhage, alloimmunization, ruptured vasa previa; also severe hypoxia. <b>ACOG: &gt; 30&nbsp;min → no resuscitative benefit → expeditious operative delivery.</b> Neither time is a wait.</div>
+        <div><h4>Pseudo&nbsp;· possible</h4>Jagged, irregular, usually transient; normal before and after; opioids, fetal sucking. <b>Drug, jaggedness or brevity alone does not reassure</b>; unsure → urgent review.</div>
+      </div>
+      <div class="small"><b>ROM + bleeding + bradycardia or sinusoidal → ruptured vasa previa: immediate cesarean</b>, neonatal transfusion ready <a href="01-triage.html#p-01" class="xlink"><span class="xref c-hem">1&nbsp;· 01</span></a> Suspected FMH → maternal Kleihauer–Betke / flow cytometry, any Rh type (RhIG <a href="01-triage.html#p-14" class="xlink"><span class="xref c-hem">1&nbsp;· 14</span></a>). Results never delay birth.</div>
+      <div class="box local small"><span class="lfx">FMH test + turnaround <span class="lfv" data-local="fmh_test">____</span></span>&nbsp;· <span class="lfx">emergency neonatal blood <span class="lfv" data-local="neonatal_emergency_blood">____</span></span></div>
+    </section>
+
+    <section class="panel c-fet" id="fm29-f"><span id="p-F" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="ph"><span class="num">F</span><h2>Reassess response; agree who owns care</h2><span class="src">ACOG CPG 10 (2025) pp.592–594, Box 3, Fig. 1&nbsp;· Descourvieres 2022&nbsp;· AHRQ EFM tool (2023)&nbsp;· AWHONN (2024)</span></div>
+      <figure class="s29"><img src="../../assets/svg/s29-evolving.svg" alt="Three 3-minute excerpts from one labor at 0, 25 and 55 minutes: baseline rises from 135 to 150 to 165 bpm, an acceleration and moderate variability give way to recurrent late decelerations and then minimal variability with longer lates; a dashed line marks the first baseline"><figcaption>Dashed: first baseline. One possible course; order and timing vary, decels often come first. <b>At every review compare with the earlier tracing:</b> baseline vs this fetus’s own level, accels, decel length / frequency, variability, recovery.</figcaption></figure>
+      <div class="small"><b>Category II: name the findings and their direction</b>: protective (moderate variability, accels) + high-risk features + trend + response. Moderate variability does not cancel recurrent lates. <b>No ACOG time limit for Category II:</b> individualize by features, progress, nearness to birth.</div>
+      <div class="small sb29"><b class="L">S</b> room, urgency, Category, what changed, when&nbsp;· <b class="L">B</b> GA, parity, cervix / station, risks, ROM, oxytocin, neuraxial timing, vitals&nbsp;· <b class="L">A</b> B-V-A-D-T, signal confidence, trend, actions + response&nbsp;· <b class="L">R</b> bedside review / delivery assessment; who comes, next review, trigger, owner; <b>read back.</b></div>
+      <div class="rec"><b>Record:</b> time&nbsp;· verified source&nbsp;· B-V-A-D-T + Category&nbsp;· comparison&nbsp;· cause&nbsp;· actions + times&nbsp;· response&nbsp;· who was called&nbsp;· next review + trigger&nbsp;· birth decision, urgency, route. Handoff <a href="27-ob-consult.html#p-F" class="xlink"><span class="xref c-wf">27&nbsp;· F</span></a></div>
+      <div class="box local small"><span class="lfx">Review frequency <span class="lfv" data-local="efm_review_frequency">____</span></span>&nbsp;· <span class="lfx">chain of command <span class="lfv" data-local="efm_escalation_chain">____</span></span>&nbsp;· <span class="lfx">FM attending <span class="lfv" data-local="fm_attending_contact">____</span></span>&nbsp;· <span class="lfx">backup after <span class="lfv" data-local="escalate_backup_after">____</span> min</span></div>
+    </section>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG CPG 10 Intrapartum FHR Monitoring (2025); NICHD Workshop, Macones 2008; ACOG CPG 8 Labor Management (2024); ACOG PB 116 (2010; terbutaline dose); RCOG Green-top 50 Cord Prolapse (2014), 63 Antepartum Haemorrhage (2011), 55 Late IUFD (2024); FIGO VBAC (2025); FIGO CTG consensus (2015); ASA Neuraxial Statement (2021); ASA/SOAP Obstetric Anesthesia Guidelines (2016); Abrão, Obstet Gynecol 2009; Ambia, AJOG 2022; Cochrane (Hofmeyr 2012, Lemos 2017, Murphy 2023); ACOG IAI update (2024), CO 712; ISUOG VISUOG Fetal Tachycardia (2022); ASE Fetal Echo (2023); ATA Thyroid in Pregnancy (2026); NUBAIN label (2025); butorphanol label (2026); terbutaline PI (2022); Hallak 1999, Nensi 2014; Subtil 2003, Rotmensch 1999; Chazotte 1991, Hayer 2024; Rogers, Anesthesiology 2025; SMFM CG 8 (2015, reaff. 2025); SMFM Consult 75 (2026); Oyelese, Obstet Gynecol 2023; Descourvieres, AOGS 2022; AHRQ EFM (2023); AWHONN (2024). Strips: synthetic, US paper scale; values illustrative. <b>LOCAL</b> = program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTksMEgxMFYxSDl6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTIsMUgxM1YySDEyek0xMywxSDE0VjJIMTN6TTE3LDFIMThWMkgxN3pNMTksMUgyMFYySDE5ek0yMCwxSDIxVjJIMjB6TTIyLDFIMjNWMkgyMnpNMjgsMUgyOVYySDI4ek0wLDJIMVYzSDB6TTIsMkgzVjNIMnpNMywySDRWM0gzek00LDJINVYzSDR6TTYsMkg3VjNINnpNOCwySDlWM0g4ek05LDJIMTBWM0g5ek0xNywySDE4VjNIMTd6TTE5LDJIMjBWM0gxOXpNMjIsMkgyM1YzSDIyek0yNCwySDI1VjNIMjR6TTI1LDJIMjZWM0gyNXpNMjYsMkgyN1YzSDI2ek0yOCwySDI5VjNIMjh6TTAsM0gxVjRIMHpNMiwzSDNWNEgyek0zLDNINFY0SDN6TTQsM0g1VjRINHpNNiwzSDdWNEg2ek04LDNIOVY0SDh6TTEwLDNIMTFWNEgxMHpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTEzLDNIMTRWNEgxM3pNMTYsM0gxN1Y0SDE2ek0xOCwzSDE5VjRIMTh6TTIyLDNIMjNWNEgyMnpNMjQsM0gyNVY0SDI0ek0yNSwzSDI2VjRIMjV6TTI2LDNIMjdWNEgyNnpNMjgsM0gyOVY0SDI4ek0wLDRIMVY1SDB6TTIsNEgzVjVIMnpNMyw0SDRWNUgzek00LDRINVY1SDR6TTYsNEg3VjVINnpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNOSw1SDEwVjZIOXpNMTAsNUgxMVY2SDEwek0xMyw1SDE0VjZIMTN6TTE2LDVIMTdWNkgxNnpNMTgsNUgxOVY2SDE4ek0xOSw1SDIwVjZIMTl6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek05LDdIMTBWOEg5ek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTUsN0gxNlY4SDE1ek0xNyw3SDE4VjhIMTd6TTE4LDdIMTlWOEgxOHpNMjAsN0gyMVY4SDIwek0wLDhIMVY5SDB6TTEsOEgyVjlIMXpNNCw4SDVWOUg0ek01LDhINlY5SDV6TTYsOEg3VjlINnpNMTEsOEgxMlY5SDExek0xMiw4SDEzVjlIMTJ6TTE3LDhIMThWOUgxN3pNMTksOEgyMFY5SDE5ek0yMyw4SDI0VjlIMjN6TTI1LDhIMjZWOUgyNXpNMjYsOEgyN1Y5SDI2ek0yNyw4SDI4VjlIMjd6TTI4LDhIMjlWOUgyOHpNMSw5SDJWMTBIMXpNMiw5SDNWMTBIMnpNOSw5SDEwVjEwSDl6TTExLDlIMTJWMTBIMTF6TTEyLDlIMTNWMTBIMTJ6TTEzLDlIMTRWMTBIMTN6TTE1LDlIMTZWMTBIMTV6TTE2LDlIMTdWMTBIMTZ6TTE3LDlIMThWMTBIMTd6TTE4LDlIMTlWMTBIMTh6TTIxLDlIMjJWMTBIMjF6TTIyLDlIMjNWMTBIMjJ6TTIzLDlIMjRWMTBIMjN6TTI0LDlIMjVWMTBIMjR6TTI1LDlIMjZWMTBIMjV6TTI2LDlIMjdWMTBIMjZ6TTI3LDlIMjhWMTBIMjd6TTI4LDlIMjlWMTBIMjh6TTEsMTBIMlYxMUgxek0yLDEwSDNWMTFIMnpNMywxMEg0VjExSDN6TTQsMTBINVYxMUg0ek01LDEwSDZWMTFINXpNNiwxMEg3VjExSDZ6TTExLDEwSDEyVjExSDExek0xMiwxMEgxM1YxMUgxMnpNMTMsMTBIMTRWMTFIMTN6TTE1LDEwSDE2VjExSDE1ek0xNiwxMEgxN1YxMUgxNnpNMTgsMTBIMTlWMTFIMTh6TTIyLDEwSDIzVjExSDIyek0yMywxMEgyNFYxMUgyM3pNMjgsMTBIMjlWMTFIMjh6TTEsMTFIMlYxMkgxek03LDExSDhWMTJIN3pNOCwxMUg5VjEySDh6TTEwLDExSDExVjEySDEwek0xNSwxMUgxNlYxMkgxNXpNMTcsMTFIMThWMTJIMTd6TTE4LDExSDE5VjEySDE4ek0yMSwxMUgyMlYxMkgyMXpNMjIsMTFIMjNWMTJIMjJ6TTI1LDExSDI2VjEySDI1ek0yNywxMUgyOFYxMkgyN3pNMjgsMTFIMjlWMTJIMjh6TTIsMTJIM1YxM0gyek02LDEySDdWMTNINnpNOCwxMkg5VjEzSDh6TTEwLDEySDExVjEzSDEwek0xNywxMkgxOFYxM0gxN3pNMTgsMTJIMTlWMTNIMTh6TTIwLDEySDIxVjEzSDIwek0yMSwxMkgyMlYxM0gyMXpNMjMsMTJIMjRWMTNIMjN6TTI3LDEySDI4VjEzSDI3ek0yLDEzSDNWMTRIMnpNMywxM0g0VjE0SDN6TTcsMTNIOFYxNEg3ek04LDEzSDlWMTRIOHpNOSwxM0gxMFYxNEg5ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTAsMTRIMVYxNUgwek0xLDE0SDJWMTVIMXpNMiwxNEgzVjE1SDJ6TTQsMTRINVYxNUg0ek01LDE0SDZWMTVINXpNNiwxNEg3VjE1SDZ6TTEwLDE0SDExVjE1SDEwek0xMSwxNEgxMlYxNUgxMXpNMTIsMTRIMTNWMTVIMTJ6TTE0LDE0SDE1VjE1SDE0ek0xNSwxNEgxNlYxNUgxNXpNMTgsMTRIMTlWMTVIMTh6TTIxLDE0SDIyVjE1SDIxek0yNCwxNEgyNVYxNUgyNHpNMjUsMTRIMjZWMTVIMjV6TTI2LDE0SDI3VjE1SDI2ek0yOCwxNEgyOVYxNUgyOHpNNSwxNUg2VjE2SDV6TTcsMTVIOFYxNkg3ek04LDE1SDlWMTZIOHpNOSwxNUgxMFYxNkg5ek0xMSwxNUgxMlYxNkgxMXpNMTIsMTVIMTNWMTZIMTJ6TTE0LDE1SDE1VjE2SDE0ek0xNSwxNUgxNlYxNkgxNXpNMTYsMTVIMTdWMTZIMTZ6TTE3LDE1SDE4VjE2SDE3ek0xOCwxNUgxOVYxNkgxOHpNMjAsMTVIMjFWMTZIMjB6TTI0LDE1SDI1VjE2SDI0ek0yNywxNUgyOFYxNkgyN3pNMjgsMTVIMjlWMTZIMjh6TTIsMTZIM1YxN0gyek0zLDE2SDRWMTdIM3pNNiwxNkg3VjE3SDZ6TTcsMTZIOFYxN0g3ek04LDE2SDlWMTdIOHpNMTAsMTZIMTFWMTdIMTB6TTEyLDE2SDEzVjE3SDEyek0xNSwxNkgxNlYxN0gxNXpNMTcsMTZIMThWMTdIMTd6TTE5LDE2SDIwVjE3SDE5ek0yMSwxNkgyMlYxN0gyMXpNMjcsMTZIMjhWMTdIMjd6TTAsMTdIMVYxOEgwek0xLDE3SDJWMThIMXpNMiwxN0gzVjE4SDJ6TTQsMTdINVYxOEg0ek05LDE3SDEwVjE4SDl6TTEwLDE3SDExVjE4SDEwek0xMSwxN0gxMlYxOEgxMXpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNSwxN0gxNlYxOEgxNXpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0xOCwxN0gxOVYxOEgxOHpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNCwxN0gyNVYxOEgyNHpNMjUsMTdIMjZWMThIMjV6TTI3LDE3SDI4VjE4SDI3ek0yOCwxN0gyOVYxOEgyOHpNMywxOEg0VjE5SDN6TTQsMThINVYxOUg0ek01LDE4SDZWMTlINXpNNiwxOEg3VjE5SDZ6TTExLDE4SDEyVjE5SDExek0xMiwxOEgxM1YxOUgxMnpNMTMsMThIMTRWMTlIMTN6TTE0LDE4SDE1VjE5SDE0ek0xNSwxOEgxNlYxOUgxNXpNMTgsMThIMTlWMTlIMTh6TTIwLDE4SDIxVjE5SDIwek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI0LDE4SDI1VjE5SDI0ek0yNiwxOEgyN1YxOUgyNnpNMjgsMThIMjlWMTlIMjh6TTIsMTlIM1YyMEgyek00LDE5SDVWMjBINHpNNSwxOUg2VjIwSDV6TTEwLDE5SDExVjIwSDEwek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTEsMjBIMlYyMUgxek0yLDIwSDNWMjFIMnpNNCwyMEg1VjIxSDR6TTUsMjBINlYyMUg1ek02LDIwSDdWMjFINnpNOCwyMEg5VjIxSDh6TTksMjBIMTBWMjFIOXpNMTAsMjBIMTFWMjFIMTB6TTEyLDIwSDEzVjIxSDEyek0xNiwyMEgxN1YyMUgxNnpNMTcsMjBIMThWMjFIMTd6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjUsMjBIMjZWMjFIMjV6TTI4LDIwSDI5VjIxSDI4ek04LDIxSDlWMjJIOHpNOSwyMUgxMFYyMkg5ek0xMSwyMUgxMlYyMkgxMXpNMTMsMjFIMTRWMjJIMTN6TTE0LDIxSDE1VjIySDE0ek0xNSwyMUgxNlYyMkgxNXpNMTYsMjFIMTdWMjJIMTZ6TTE4LDIxSDE5VjIySDE4ek0xOSwyMUgyMFYyMkgxOXpNMjAsMjFIMjFWMjJIMjB6TTI0LDIxSDI1VjIySDI0ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTksMjJIMTBWMjNIOXpNMTEsMjJIMTJWMjNIMTF6TTE0LDIySDE1VjIzSDE0ek0xNSwyMkgxNlYyM0gxNXpNMTksMjJIMjBWMjNIMTl6TTIwLDIySDIxVjIzSDIwek0yMiwyMkgyM1YyM0gyMnpNMjQsMjJIMjVWMjNIMjR6TTI1LDIySDI2VjIzSDI1ek0yNiwyMkgyN1YyM0gyNnpNMjgsMjJIMjlWMjNIMjh6TTAsMjNIMVYyNEgwek02LDIzSDdWMjRINnpNOCwyM0g5VjI0SDh6TTksMjNIMTBWMjRIOXpNMTAsMjNIMTFWMjRIMTB6TTEyLDIzSDEzVjI0SDEyek0xNCwyM0gxNVYyNEgxNHpNMTUsMjNIMTZWMjRIMTV6TTE3LDIzSDE4VjI0SDE3ek0xOSwyM0gyMFYyNEgxOXpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0yNywyM0gyOFYyNEgyN3pNMjgsMjNIMjlWMjRIMjh6TTAsMjRIMVYyNUgwek0yLDI0SDNWMjVIMnpNMywyNEg0VjI1SDN6TTQsMjRINVYyNUg0ek02LDI0SDdWMjVINnpNOCwyNEg5VjI1SDh6TTEwLDI0SDExVjI1SDEwek0xMSwyNEgxMlYyNUgxMXpNMTIsMjRIMTNWMjVIMTJ6TTE3LDI0SDE4VjI1SDE3ek0xOCwyNEgxOVYyNUgxOHpNMTksMjRIMjBWMjVIMTl6TTIwLDI0SDIxVjI1SDIwek0yMSwyNEgyMlYyNUgyMXpNMjIsMjRIMjNWMjVIMjJ6TTIzLDI0SDI0VjI1SDIzek0yNCwyNEgyNVYyNUgyNHpNMjUsMjRIMjZWMjVIMjV6TTI3LDI0SDI4VjI1SDI3ek0wLDI1SDFWMjZIMHpNMiwyNUgzVjI2SDJ6TTMsMjVINFYyNkgzek00LDI1SDVWMjZINHpNNiwyNUg3VjI2SDZ6TTEwLDI1SDExVjI2SDEwek0xMSwyNUgxMlYyNkgxMXpNMTMsMjVIMTRWMjZIMTN6TTE1LDI1SDE2VjI2SDE1ek0xNiwyNUgxN1YyNkgxNnpNMTcsMjVIMThWMjZIMTd6TTE4LDI1SDE5VjI2SDE4ek0yNywyNUgyOFYyNkgyN3pNMjgsMjVIMjlWMjZIMjh6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNOSwyNkgxMFYyN0g5ek0xMCwyNkgxMVYyN0gxMHpNMTEsMjZIMTJWMjdIMTF6TTEyLDI2SDEzVjI3SDEyek0xMywyNkgxNFYyN0gxM3pNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTgsMjZIMTlWMjdIMTh6TTE5LDI2SDIwVjI3SDE5ek0yMSwyNkgyMlYyN0gyMXpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTksMjdIMTBWMjhIOXpNMTEsMjdIMTJWMjhIMTF6TTEyLDI3SDEzVjI4SDEyek0xNiwyN0gxN1YyOEgxNnpNMTcsMjdIMThWMjhIMTd6TTE4LDI3SDE5VjI4SDE4ek0yMCwyN0gyMVYyOEgyMHpNMjUsMjdIMjZWMjhIMjV6TTI3LDI3SDI4VjI4SDI3ek0yOCwyN0gyOVYyOEgyOHpNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek05LDI4SDEwVjI5SDl6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

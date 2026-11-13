@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Mother-baby discharge</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); --body: 10.6pt; --gap: 0.125in; }
+  .masthead h1 { font-size: calc(62pt / var(--k)); }
+  .masthead .sub { max-width: 9.2in; font-size: 13.5pt; line-height: 1.24; margin-top: 27pt; }
+  .sheet .small { font-size: var(--body); line-height: 1.22; }
+  .sheet .xs { font-size: 10.6pt; line-height: 1.24; }
+  .sheet .panel { gap: 4.5pt; padding-top: 6pt; }
+  .ph h2 { font-size: 22pt; font-family: "Inter", sans-serif; }   /* < 24 pt printed: text face (css2 #9) */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  /* patient label inside a panel title */
+  .ph h2 .who { font: 800 11.5pt/1 "Inter"; letter-spacing: .1em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); }
+  /* patient label sits at the right end of the panel's top rule, leaving the title line clean (pv1 #2, ax1 #7) */
+  .dyad-lanes .panel { position: relative; }
+  .dyad-lanes .ph h2 .who { position: absolute; right: 0; top: calc(-2.5pt / var(--k)); transform: translateY(-50%); margin: 0; padding: 1pt calc(6pt / var(--k)); background: var(--paper); }
+  .sheet h3 { font-size: 12pt; margin-top: 1pt; padding-top: 3pt; }
+  /* checklists (sheet 21 sizes) */
+  .sheet ul.ls.check { gap: 3.5pt; font-size: var(--body); line-height: 1.22; }
+  .sheet ul.ls.check > li { padding-left: 17pt; }
+  .sheet ul.ls.check > li::before { width: 10pt; height: 10pt; top: .12em; border-width: 1.6pt; }
+  b.k { color: var(--c); }
+  .check-key { font-weight: 700; color: var(--ink); }
+  .ref-tail { white-space: nowrap; }
+  /* A: gate — three columns */
+  .gate { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.05fr) minmax(0, 0.9fr); gap: 6pt 0.22in; align-items: start; }
+  .gate .box { font-size: var(--body); line-height: 1.22; }
+  .g3 { display: flex; flex-direction: column; gap: 5pt; }
+  .term { font-size: var(--body); line-height: 1.22; border-left: 4pt solid var(--c); padding: 2pt 0 2pt 7pt; }
+  .term b { color: var(--c); }
+  .uh { font-size: 11.2pt; line-height: 1.24; font-weight: 600; }
+  .uh b { font-weight: 800; }
+  .uh.c-htn { --c: var(--htn); }
+  .uh .hero.sm { font-size: calc(14pt / var(--k)); }
+  /* B–G: patient lanes (mother | newborn) */
+  .dyad-lanes { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: var(--gap); align-items: stretch; flex: none; }
+  .dyad-lane { display: flex; flex-direction: column; gap: var(--gap); min-width: 0; }
+  .dyad-lane > .panel.grow { flex: 1; }
+  .dyad-lane > .panel.grow > .box.local:last-child { margin-top: auto; }
+  .note { font-size: var(--body); line-height: 1.22; }
+  .wtrow { display: grid; grid-template-columns: minmax(0, 1fr) 2.05in; gap: 0.16in; align-items: center; }
+  .wtrow .box.local { margin-top: 3pt; font-weight: 600; line-height: 1.45; }
+  .rail.dcr { grid-template-columns: 0.95in minmax(0, 1fr); font-size: var(--body); line-height: 1.22; }
+  .rail.dcr > .do { font-weight: 400; }
+  .rail.dcr > .when { color: var(--c); }
+  /* E: bilirubin follow-up table */
+  .elig { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2pt 10pt; }
+  .elig .hero { font-size: calc(14pt / var(--k)); white-space: normal; line-height: 1.12; }
+  .bili2 { display: grid; grid-template-columns: minmax(0, 0.74fr) minmax(0, 1fr); gap: 0.18in; align-items: start; }
+  .bl { display: flex; flex-direction: column; gap: 5pt; min-width: 0; }
+  .delta { font-weight: 700; padding: 3pt 7pt; background: color-mix(in srgb, var(--c) 12%, white); border-left: 4pt solid var(--c); }
+  table.bili { table-layout: fixed; --cell-y: 2.6pt; --table-leading: 1.22; }
+  table.bili td { font-size: 10.6pt; }
+  table.bili thead th { font-size: 10.6pt; padding-bottom: 3pt; }
+  table.bili td:first-child { font-weight: 800; color: var(--ink); padding-left: 6pt; border-left: 3pt solid var(--c); white-space: normal; }
+  /* Δ range and its qualifier on separate tracks (fo1 #6) */
+  .bili-key { display: grid; grid-template-columns: 6.2ch minmax(0, 1fr); gap: 5pt; align-items: baseline; }
+  .bili-key > .tn { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.bili .bili-key > small { font: 600 10.6pt/1.2 "Inter"; color: var(--ink-2); margin-left: 0; }
+  /* clinical-judgment rows: a group heading instead of a shading key (ax2 #12) */
+  table.bili tr.cj-key th { text-align: left; font: 800 10.6pt/1.2 "Inter"; letter-spacing: 0; text-transform: none; color: var(--c);
+    border-top: 1.2pt solid var(--nb); padding: 4pt 0 2pt 6pt; }
+  .bili-exits { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 3pt 12pt; font-size: var(--body); line-height: 1.22; }
+  .bili-exits > span { border-left: 3pt solid var(--c); padding-left: 6pt; min-width: 0; }
+  /* shared band */
+  .sheet > .panel, .sheet > .dyad-lanes { flex: none; }
+  .sheet > .panel + .panel, .sheet > .panel + .dyad-lanes, .sheet > .dyad-lanes + .panel { margin-top: var(--gap); }
+  .paired { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 5pt var(--gap); align-items: start; }   /* same mother | newborn axis as B–G (ax1 #2) */
+  .paired > div { min-width: 0; display: flex; flex-direction: column; gap: 4pt; }
+  .pt { font: 800 11.5pt/1.15 "Inter"; letter-spacing: .1em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c);
+    border-bottom: 1.5pt solid var(--c); padding-bottom: 3pt; }
+  .pt small { font: 600 10.6pt/1.2 "Inter"; letter-spacing: 0; text-transform: none; color: var(--ink-2); margin-left: 6pt; }
+  .pt .xref { vertical-align: .05em; }
+  .rail.fu { grid-template-columns: 1.05in minmax(0, 1fr); font-size: var(--body); line-height: 1.22; }
+  .rail.fu > .do { font-weight: 400; }
+  .rail.fu > .when { color: var(--c); }
+  .rail.fu + .rail.fu { margin-top: 3pt; padding-top: 3pt; }
+  /* H: pending results */
+  .pend { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.22in; align-items: center; }
+  .pend .box.local { margin-top: 9pt; }
+  .flow3 { display: flex; align-items: center; gap: 0; }
+  .flow3 .node { font-size: 10.6pt; padding: 4pt 8pt; white-space: nowrap; }
+  .flow3 .to { font: 800 12pt/1 "Inter"; color: var(--c); padding: 0 5pt; }
+  .pend-side { display: flex; flex-direction: column; gap: 5pt; }
+  table.pending { table-layout: fixed; --cell-y: 2.5pt; --table-leading: 1.2; }
+  table.pending td { font-size: 10.6pt; }
+  table.pending thead th { font-size: 10.6pt; padding-bottom: 3pt; }
+  table.pending td:first-child { font-weight: 800; color: var(--c); }
+  table.pending .pending-owner { background: color-mix(in srgb, var(--wf) 10%, white); }
+  /* I: warning signs */
+  .act { display: grid; grid-template-columns: 1.18in minmax(0, 1fr); gap: 3pt 8pt; align-items: baseline; }
+  .act + .act { border-top: 0.75pt solid var(--rule); padding-top: 3pt; }
+  .act > .to { font: 800 10.6pt/1.12 "Inter"; color: #fff; background: var(--stop); padding: 3pt 6pt 3pt; align-self: baseline; }
+  .paired > .nb-signs .act { grid-template-columns: 2.06in minmax(0, 1fr); }   /* newborn action labels on one line */
+  .act > .to.clin { background: var(--t-stop); color: var(--ink); border-left: 4pt solid var(--stop); }
+  .signs { list-style: none; display: flex; flex-wrap: wrap; gap: 2pt 4pt; font: 500 11pt/1.18 "Inter"; }
+  .signs > li { padding: 1pt 0; }   /* neutral separators; red stays on the action labels (pv1 #6, ax6 #4, ax1 #12) */
+  .signs > li:not(:last-child)::after { content: "·"; color: var(--ink-3); font-weight: 800; margin-inline: .45em .1em; }
+  .signs > li b { font-weight: 800; }
+  .help .box.local { font-size: 11pt; font-weight: 600; margin-top: 7pt; }
+  .say { font: 600 10.8pt/1.25 "Inter"; color: var(--ink); }
+  .say b { font-weight: 800; }
+  /* J: teach-back + documentation */
+  .tbj { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 0.3in; align-items: start; }
+  .tbj > div { display: flex; flex-direction: column; gap: 4pt; min-width: 0; }
+  .tb { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 3pt 10pt; font: 600 10.8pt/1.24 "Inter"; }
+  .tb > li { border-left: 3pt solid var(--c); padding-left: 7pt; }
+  .tb > li.wide { grid-column: 1 / -1; }
+  .lfx { white-space: nowrap; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="24-substance-dyad.html" title="Opioid- or THC-exposed dyad">‹ 24</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html" selected="">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="26-induction-labor.html" title="Induction &amp; stages of labor">26 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/25-dyad-discharge.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-wf" style="--k:0.9">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>After delivery&nbsp;· mother + newborn → home</div>
+      <h1><span class="sid">25</span>Mother-baby discharge</h1>
+    </div>
+    <div class="sub">Mother B–C + newborn E–G → both D → appointments H → warning signs I → teach-back J.<br><span class="muted"><span class="lfx">Still pregnant, leaving triage <a href="21-before-discharge.html" class="xlink"><span class="xref c-wf">21</span></a></span></span></div>
+    <nav class="setnav rel"><em>See also</em><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="18-nursery.html" class="xlink"><span><b>18</b>Nursery card</span></a><a href="10-feeding.html" class="xlink"><span><b>10</b>Feeding</span></a><a href="22-hearing-cmv.html" class="xlink"><span><b>22</b>Hearing&nbsp;· cCMV</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-21.svg)"></div>
+
+  <!-- A: two patients, two decisions -->
+  <section class="panel c-wf" id="p-A">
+    <div class="ph inl src-right"><span class="num">A</span><h2>Two patients&nbsp;— two discharge decisions</h2><span class="src">WHO Positive Postnatal Experience (2022) Rec 46&nbsp;· ABM #2 (rev. 2022) Rec 8&nbsp;· management stays on <b>6&nbsp;· A</b> and <b>18&nbsp;· 07</b></span></div>
+    <div class="gate">
+      <ul class="ls check">
+        <li><b class="k">Separate assessment:</b> mother and newborn assessed separately; each has a discharge clinician and order.</li>
+        <li><b class="k">Clinically ready:</b> examination, course and required observation support home care; unresolved findings addressed.</li>
+      </ul>
+      <div class="g3">
+        <ul class="ls check">
+          <li><b class="k">Plan agreed:</b> family agrees with the plan; home support and follow-up are achievable.</li>
+        </ul>
+        <div class="box decision"><b>Both ready → coordinated discharge.</b> One still needs hospital care → <b>separate disposition plans</b>; preserve rooming-in / milk access where feasible.</div>
+      </div>
+      <div class="g3">
+        <div class="box local small"><span class="lfx">Maternal clinician <span class="lfv" data-local="maternal_disposition_clinician">____</span></span>&nbsp;· <span class="lfx">newborn clinician <span class="lfv" data-local="newborn_disposition_clinician">____</span></span>&nbsp;· <span class="lfx">required attending review <span class="lfv" data-local="required_attending_review">____</span></span>&nbsp;· <span class="lfx">boarding / separation pathway <span class="lfv" data-local="boarding_separation_pathway">____</span></span></div>
+        <div class="term c-nb"><b>Routine term-newborn criteria (E–G): 37w0d–41w6d.</b> Preterm / NICU course or active complications → condition-specific clearance.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B–G: patient lanes (B–D mother / both · E–G newborn) -->
+  <div class="dyad-lanes">
+    <div class="dyad-lane">
+      <section class="panel c-wf" id="p-B">
+        <div class="ph"><span class="num">B</span><h2><span class="who">Mother</span>Recovery + blood pressure</h2><span class="src">WHO (2022)&nbsp;· CMQCC&nbsp;· ACC (2026)&nbsp;· SMFM HDP checklist (2020, reaff. 2025)&nbsp;· drugs / cuff on <b>6</b>, <b>11</b></span></div>
+        <ul class="ls check">
+          <li><span class="check-key">Vitals / symptoms reviewed;</span> bleeding and uterine findings appropriate. No evolving hemorrhage, infection or cardiopulmonary concern.</li>
+          <li><span class="check-key">Incision / perineum assessed;</span> pain manageable with an obtainable oral regimen.</li>
+          <li><span class="check-key">Eating / drinking, mobility and bladder function</span> support home care. Retention → explicit catheter / void-trial plan.</li>
+          <li><span class="check-key">Medicines reconciled;</span> VTE, anemia and diabetes plans completed <span class="ref-tail">when indicated <a href="06-postpartum.html#p-E" class="xlink"><span class="xref c-wf">6&nbsp;· E</span></a> <a href="12-diabetes.html#p-08" class="xlink"><span class="xref c-met">12&nbsp;· 08</span></a></span></li>
+        </ul>
+        <h3 class="c-htn">Hypertensive disorder of pregnancy (HDP)</h3>
+        <ul class="ls check c-htn">
+          <li><span class="check-key">BP trend, symptoms and indicated laboratory results reviewed;</span> oral regimen and monitoring plan achievable.</li>
+          <li><b class="k">Treatment goal before discharge: SBP &lt; 140 AND DBP &lt; 90&nbsp;mm Hg</b> <span class="tag new">ACC 2026</span> A goal, not an automatic admission rule for every higher reading. <span class="tag local">Local</span> individualized clearance / observation interval <span class="lfv" data-local="pp_bp_clearance_interval">____</span></li>
+          <li><span class="check-key">Cuff fits;</span> patient demonstrates use; doses, monitoring and call instructions written <a href="11-bp-meds.html#p-06" class="xlink"><span class="xref c-htn">11&nbsp;· 06</span></a></li>
+        </ul>
+        <div class="urgent-head uh c-htn"><span><b><span class="hero sm">SBP ≥ 160 OR DBP ≥ 110</span> → pause discharge; acute assessment</b> <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a><br>Persistent headache, visual symptoms, upper abdominal pain or dyspnea → <b>urgent assessment regardless of BP.</b></span></div>
+      </section>
+
+      <section class="panel c-wf" id="p-C">
+        <div class="ph"><span class="num">C</span><h2><span class="who">Mother</span>Prevention + emotional health</h2><span class="src">ACOG PB 181 (2017)&nbsp;· CDC (2024)&nbsp;· ACOG schedule (2026)&nbsp;· CPG 4 (2023)&nbsp;· AIM (2021)&nbsp;· details on <b>6</b></span></div>
+        <ul class="ls check">
+          <li><b class="k">Rh:</b> maternal antibody / RhD and newborn RhD results reconciled. Unsensitized RhD− mother + RhD+ newborn → <b>RhIG within 72&nbsp;h of birth</b>; dose / fetomaternal hemorrhage testing <a href="06-postpartum.html#p-F" class="xlink"><span class="xref c-wf">6&nbsp;· F</span></a></li>
+          <li><b class="k">Rubella / varicella:</b> indicated postpartum vaccination completed; remaining doses arranged. <b>RhIG does not delay indicated MMR / varicella vaccination.</b> MMR given with RhIG / blood products → rubella immunity test <b>≥ 3 mo</b> later when possible.</li>
+          <li><b class="k">Tdap:</b> pregnancy dose missed <b>and never previously received Tdap</b> → postpartum dose; otherwise review routine catch-up indications. Other indicated vaccines <a href="06-postpartum.html#p-F" class="xlink"><span class="xref c-wf">6&nbsp;· F</span></a></li>
+          <li><b class="k">Contraception:</b> preference, chosen method / start date and access addressed <a href="06-postpartum.html#p-C" class="xlink"><span class="xref c-wf">6&nbsp;· C</span></a></li>
+          <li><b class="k">Validated depression / anxiety screen reviewed.</b> Positive → assessment, with treatment / referral and follow-up arranged. Self-harm response → <b>immediate risk assessment</b>; psychosis → <b>emergency assessment</b> <a href="06-postpartum.html#p-D" class="xlink"><span class="xref c-wf">6&nbsp;· D</span></a></li>
+        </ul>
+        <div class="box local small"><span class="lfx">Outstanding prevention ____</span>&nbsp;· <span class="lfx">responsible clinician <span class="lfv" data-local="prevention_responsible_clinician">____</span></span>&nbsp;· <span class="lfx">completion date ____</span></div>
+      </section>
+
+      <section class="panel c-wf grow" id="p-D">
+        <div class="ph"><span class="num">D</span><h2><span class="who">Both</span>Home plan works for both</h2><span class="src">AAP safe sleep (2022)&nbsp;· car seats (2018 / 2009, reaff. 2025)&nbsp;· AHRQ RED Tool 3 (2013)</span></div>
+        <ul class="ls check">
+          <li>Feeding supplies, medicines, equipment, phone and transport available; barriers have a named solution.</li>
+          <li>Capable support identified; language / accessibility needs addressed.</li>
+        </ul>
+        <ul class="ls check c-nb">
+          <li><b class="k">Safe sleep:</b> supine for every sleep; separate firm, flat sleep surface; fitted sheet only. No loose bedding / soft objects or bed sharing. Room-share <b>at least 6 mo</b>.</li>
+          <li>Appropriate <b>rear-facing car seat</b> present; caregiver demonstrates positioning / use.</li>
+          <li><b class="k">Born &lt; 37&nbsp;wk:</b> car-seat observation <b>90–120&nbsp;min or expected travel duration, whichever is longer</b>.</li>
+        </ul>
+        <div class="box local small"><span class="lfx">Support <span class="lfv" data-local="discharge_home_support">____</span></span>&nbsp;· <span class="lfx">interpreter / accessible instructions <span class="lfv" data-local="interpreter_access">____</span></span>&nbsp;· <span class="lfx">car-seat test pass / fail criteria <span class="lfv" data-local="car_seat_criteria">____</span></span>&nbsp;· <span class="lfx">transport / retest plan <span class="lfv" data-local="car_seat_fail_plan">____</span></span></div>
+      </section>
+    </div>
+
+    <div class="dyad-lane">
+      <section class="panel c-nb" id="p-E">
+        <div class="ph"><span class="num">E</span><h2><span class="who">Newborn</span>Stability + feeding</h2><span class="src">AAP COFN (2015) Rec 1–8&nbsp;· ABM #1 (2021), #2 (2022), #10 (2016)&nbsp;· AAP NOWS (2020)&nbsp;· details on <b>18</b>, <b>10</b></span></div>
+        <ul class="ls check">
+          <li>Exam / course require no further hospital care; EOS assessment / observation complete <a href="04-workflow.html#p-EOS" class="xlink"><span class="xref c-inf">4&nbsp;· EOS</span></a></li>
+          <li>Indicated glucose screening complete; glucose stable on the planned home feeding regimen <a href="05-newborn.html#p-B" class="xlink"><span class="xref c-met">5&nbsp;· B</span></a> <a href="18-nursery.html#p-04" class="xlink"><span class="xref c-met">18&nbsp;· 04</span></a> Required exposure-related observation complete <a href="24-substance-dyad.html" class="xlink"><span class="xref c-wf">24</span></a></li>
+          <li>Normal vitals stable <b>≥ 12&nbsp;h</b> <a href="18-nursery.html#p-03" class="xlink"><span class="xref c-nb">18&nbsp;· 03</span></a>&nbsp;· voiding regularly; <b>≥ 1 spontaneous stool</b>.</li>
+          <li><b>≥ 2 successful feeds</b>; breastfeed observed / documented, or effective bottle-feeding coordination assessed.</li>
+          <li>If circumcised: no excessive bleeding for <b>≥ 2&nbsp;h</b> <a href="18-nursery.html#p-06" class="xlink"><span class="xref c-wf">18&nbsp;· 06</span></a></li>
+        </ul>
+        <div class="wtrow">
+          <div class="rail dcr c-nb"><span class="when">Feeding assessment</span><span class="do"><b>&gt; 10% weight loss, &gt; 75th NEWT percentile, or fewer than 1 void OR fewer than 1 stool per day of life → careful feeding assessment.</b> These findings require assessment; supplementation depends on the findings.</span></div>
+          <div class="box local small"><span class="lfx">Weight ____ g</span><br><span class="lfx">change from birth ____%</span><br><span class="lfx">NEWT ____ percentile</span></div>
+        </div>
+        <ul class="ls check">
+          <li>Written feeding plan, supplies and support arranged <a href="10-feeding.html#p-01" class="xlink"><span class="xref c-nb">10&nbsp;· 01–06</span></a> <b>Late preterm / early term → additional feeding safeguards</b> <a href="10-feeding.html#p-07" class="xlink"><span class="xref c-nb">10&nbsp;· 07</span></a></li>
+        </ul>
+      </section>
+
+      <section class="panel c-nb" id="p-F">
+        <div class="ph"><span class="num">F</span><h2><span class="who">Newborn</span>Bilirubin sets the next deadline</h2><span class="src">AAP Hyperbilirubinemia CPG (2022) KAS 5, 6, 8, 16, 24–25&nbsp;· Figure 7&nbsp;· ABM #2&nbsp;· thresholds, BiliTool on <b>5&nbsp;· C</b></span></div>
+        <div class="elig"><span class="hero sm">≥ 35&nbsp;wk&nbsp;· ≥ 12&nbsp;h old&nbsp;· no prior phototherapy</span></div>
+        <div class="bili-exits">
+          <span><b>At / above threshold</b> → treat <a href="05-newborn.html#p-C" class="xlink"><span class="xref c-nb">5&nbsp;· C</span></a></span>
+          <span><b>Discharge &lt; 12&nbsp;h</b> → bilirubin at <b>24–48&nbsp;h of age</b></span>
+          <span><b>Prior phototherapy</b> → document rebound-test time, location and owner before discharge</span>
+        </div>
+        <div class="bili2">
+        <div class="bl">
+        <div class="note">TcB / TSB at <b>24–48&nbsp;h</b>, or before earlier discharge. Obtain <b>TSB</b> if TcB <b>≥ phototherapy threshold − 3&nbsp;mg/dL</b> OR TcB <b>≥ 15&nbsp;mg/dL</b>.</div>
+        <div class="delta note">Δ = phototherapy threshold − measured bilirubin. Use the bilirubin closest to discharge and the threshold at the sample’s age (correct GA / risk curve).</div>
+        <div class="box local small"><span class="lfx">Result ____ at ____ h</span>&nbsp;· <span class="lfx">threshold ____</span>&nbsp;· <span class="lfx">Δ ____</span>&nbsp;· <span class="lfx">next test / review ____</span>&nbsp;· <span class="lfx">owner <span class="lfv" data-local="pending_result_owner">____</span></span></div>
+        </div>
+        <table class="t bili">
+          <colgroup><col style="width:35%"><col></colgroup>
+          <thead><tr><th>Δ, <span class="nc">mg/dL</span></th><th>Next action</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bili-key"><span class="tn">0.1–1.9</span><small>age &lt; 24&nbsp;h</small></span></td><td>Delay discharge; consider phototherapy; <b>TSB 4–8&nbsp;h</b></td></tr>
+            <tr><td><span class="bili-key"><span class="tn">0.1–1.9</span><small>age ≥ 24&nbsp;h</small></span></td><td><b>TSB 4–24&nbsp;h</b>; explicit discharge / treatment decision</td></tr>
+            <tr><td><span class="bili-key"><span class="tn">2.0–3.4</span></span></td><td><b>TSB / TcB 4–24&nbsp;h</b></td></tr>
+            <tr><td><span class="bili-key"><span class="tn">3.5–5.4</span></span></td><td><b>TSB / TcB 1–2&nbsp;d</b></td></tr>
+          </tbody>
+          <tbody class="cj">
+            <tr class="cj-key"><th colspan="2">Bilirubin testing: clinical judgment</th></tr>
+            <tr><td><span class="bili-key"><span class="tn">5.5–6.9</span><small>discharge &lt; 72&nbsp;h</small></span></td><td>Follow-up <b>within 2&nbsp;d</b></td></tr>
+            <tr><td><span class="bili-key"><span class="tn">≥ 7.0</span><small>discharge &lt; 72&nbsp;h</small></span></td><td>Follow-up <b>within 3&nbsp;d</b></td></tr>
+            <tr><td><span class="bili-key"><span class="tn">≥ 5.5</span><small>discharge ≥ 72&nbsp;h</small></span></td><td>Clinical judgment</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="xs"><b>Required bilirubin testing / feeding follow-up unavailable → reassess disposition; delay discharge when needed.</b></div>
+      </section>
+
+      <section class="panel c-nb grow" id="p-G">
+        <div class="ph"><span class="num">G</span><h2><span class="who">Newborn</span>Screens + birth prevention</h2><span class="src">AAP CCHD (2025)&nbsp;· CDC (2026)&nbsp;· JCIH (2019)&nbsp;· HRSA&nbsp;· CDC STI (2021)&nbsp;· NIH HIV (2025)&nbsp;· CDC HepB&nbsp;· AAP RSV (2026)&nbsp;· CDC CMV</span></div>
+        <ul class="ls check">
+          <li><b class="k">Syphilis:</b> maternal serology documented before either patient leaves; no prenatal care / increased acquisition risk → delivery result available + neonatal plan resolved <a href="17-syphilis-newborn.html" class="xlink"><span class="xref c-inf">17</span></a> <a href="17b-syphilis-back.html" class="xlink"><span class="xref c-inf">17b</span></a></li>
+          <li><b class="k">HIV:</b> undocumented status → <b>expedited testing now</b>; new positive → <b>immediate infant diagnostic, ARV and feeding pathway&nbsp;— do not wait for discharge.</b> <b class="k">HBsAg</b> reviewed; unknown / positive findings acted on before home <a href="18-nursery.html#p-05" class="xlink"><span class="xref c-nb">18&nbsp;· 05</span></a></li>
+          <li><b class="k">CCHD:</b> screen at <b>≥ 24&nbsp;h</b>, or as late as possible before earlier discharge. Pass documented, or failed screen evaluated <a href="05-newborn.html#p-D" class="xlink"><span class="xref c-nb">5&nbsp;· D</span></a></li>
+          <li><b class="k">Hearing:</b> result explained. Not passed / incomplete → appointment booked; screening complete <b>by 1 mo</b>, diagnosis <b>by 3 mo</b>, intervention <b>by 6 mo</b>. Failed screen <a href="22-hearing-cmv.html" class="xlink"><span class="xref c-nb">22</span></a> cCMV test, when indicated, <b>within 3&nbsp;wk of birth</b>. <span class="tag local">Local</span> targeted cCMV rule / owner <span class="lfv" data-local="targeted_ccmv_rule_owner">____</span></li>
+          <li><b class="k">Blood spot:</b> collected <b>24–48&nbsp;h</b>, or before earlier discharge; specimen / accession recorded. <span class="tag local">Local</span> repeat requirements: state rule <span class="lfv" data-local="nbs_repeat_screen_rule">____</span>&nbsp;· date / site ____</li>
+          <li><b class="k">Vitamin K / eye prophylaxis:</b> administration verified. Missed → assess and offer indicated prophylaxis now. Refusal → counsel, document, hand off to receiving clinician <a href="18-nursery.html#p-01" class="xlink"><span class="xref c-nb">18&nbsp;· 01</span></a></li>
+          <li><b class="k">Hep B:</b> maternal HBsAg + birthweight checked; vaccine ± HBIG administered by the applicable deadline <a href="18-nursery.html#p-02" class="xlink"><span class="xref c-inf">18&nbsp;· 02</span></a></li>
+          <li><b class="k">RSV:</b> maternal vaccine date (≥ 14&nbsp;d before birth?) and infant eligibility checked. Indicated + RSV season → antibody during birth stay when feasible, else dated dose <b>within the first week</b>; outside season → document seasonal plan <a href="18-nursery.html#p-01" class="xlink"><span class="xref c-nb">18&nbsp;· 01</span></a> <a href="05-newborn.html#p-E" class="xlink"><span class="xref c-nb">5&nbsp;· E</span></a></li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <!-- H: appointments + pending results -->
+  <section class="panel c-wf" id="p-H">
+    <div class="ph inl src-right"><span class="num">H</span><h2>Appointments + every pending result</h2><span class="src">ACOG CO 736 (2018)&nbsp;· AIM Severe HTN (2022)&nbsp;· SMFM BP metric (2022, reaff. 2025)&nbsp;· AAP first visit (2026)&nbsp;· ABM #2, #10&nbsp;· AHRQ RED&nbsp;· owner fields LOCAL</span></div>
+    <div class="paired">
+      <div class="c-wf">
+        <div class="pt">Mother</div>
+        <div class="rail fu"><span class="when">All</span><span class="do">Maternity contact <b>within 3&nbsp;wk after birth</b>; comprehensive postpartum visit <b>by 12&nbsp;wk</b>. Earlier review for identified concerns.</span></div>
+        <div class="rail fu c-htn"><span class="when">Any HDP</span><span class="do">BP review <b>within 3&nbsp;d after discharge</b>; ensure BP assessment by <b>7–10&nbsp;d after birth</b>.</span></div>
+        <div class="rail fu c-htn"><span class="when">Severe HTN</span><span class="do">During birth stay → follow-up <b>within 72&nbsp;h after discharge</b> <a href="11-bp-meds.html#p-07" class="xlink"><span class="xref c-htn">11&nbsp;· 07</span></a></span></div>
+      </div>
+      <div class="c-nb">
+        <div class="pt">Newborn</div>
+        <div class="rail fu"><span class="when">Routine</span><span class="do">First visit <b>age 3–5&nbsp;d</b>.</span></div>
+        <div class="rail fu"><span class="when">Discharge &lt; 48&nbsp;h old</span><span class="do">Examination <b>24–48&nbsp;h after discharge</b>. Late preterm / early term → <b>1–2&nbsp;d after discharge</b>.</span></div>
+        <div class="rail fu"><span class="when">Earliest wins</span><span class="do"><b>Use the earliest deadline from bilirubin (F), feeding / weight and clinical concerns</b> <a href="10-feeding.html#p-08" class="xlink"><span class="xref c-nb">10&nbsp;· 08</span></a></span></div>
+      </div>
+    </div>
+    <div class="pend">
+      <div class="box local small">
+        <table class="t pending">
+          <colgroup><col style="width:10%"><col style="width:31%"><col style="width:18%"><col style="width:25%"><col></colgroup>
+          <thead><tr><th>Each patient</th><th>Next visit: clinician&nbsp;· date / time&nbsp;· location&nbsp;· telephone</th><th>Every pending result: test&nbsp;· expected date</th><th class="pending-owner">Accepting clinician / backup&nbsp;· review deadline</th><th>Callback route</th></tr></thead>
+          <tbody>
+            <tr><td>Mother</td><td>____&nbsp;· ____&nbsp;· ____&nbsp;· ____</td><td>____&nbsp;· ____</td><td class="pending-owner">____ / ____&nbsp;· ____</td><td>____</td></tr>
+            <tr class="c-nb"><td>Newborn</td><td>____&nbsp;· ____&nbsp;· ____&nbsp;· ____</td><td>____&nbsp;· ____</td><td class="pending-owner">____ / ____&nbsp;· ____</td><td>____</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pend-side">
+        <div class="flow3" data-tile-keep="" role="group" aria-label="Pending-result workflow">
+          <div class="node tint"><b>Result available</b></div><span class="to">→</span>
+          <div class="node tint"><b>Review + act</b></div><span class="to">→</span>
+          <div class="node tint"><b>Contact + document</b></div>
+        </div>
+        <ul class="ls check" style="max-width:4.9in">
+          <li>Receiving clinicians have the discharge summaries, medication / feeding plans, bilirubin details, screens and outstanding-result responsibilities.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- I: warning signs -->
+  <section class="panel c-stop help" id="p-I">
+    <div class="ph inl src-right"><span class="num">I</span><h2>Warning signs&nbsp;— explain the action</h2><span class="src">AWHONN POST-BIRTH (2023)&nbsp;· CDC HEAR HER (2024)&nbsp;· AAP Fever and Your Baby (2025)&nbsp;· AAP Newborn Illness&nbsp;· full maternal display <b>6&nbsp;· A</b>&nbsp;· clinician escalation <b>15&nbsp;· A</b></span></div>
+    <div class="paired">
+      <div>
+        <div class="pt">Mother <small>POST-BIRTH handout reviewed</small> <a href="06-postpartum.html#p-A" class="xlink"><span class="xref c-wf">6&nbsp;· A</span></a></div>
+        <div class="act"><span class="to">Call 911</span><ul class="signs"><li><b>Chest discomfort</b></li><li><b>Difficult breathing</b></li><li><b>Seizure</b></li><li><b>Thoughts of harming</b> self / another</li></ul></div>
+        <div class="act"><span class="to clin">Clinician now</span><ul class="signs"><li><b>Pad soaked in ≤ 1&nbsp;h</b> or clot <b>egg-sized or larger</b></li><li><b>Wound</b> healing concern</li><li><b>Painful / warm / swollen leg</b></li><li><b>Temperature ≥ 38&nbsp;°C / 100.4 °F or ≤ 36&nbsp;°C / 96.8 °F</b></li><li><b>Persistent headache</b> or visual symptoms</li></ul></div>
+        <div class="say">No response → emergency care. <b>Also get care right away</b> (HEAR HER): dizziness / fainting, fast heartbeat, severe belly pain or vomiting, extreme face / hand swelling, unusual vaginal discharge, overwhelming tiredness&nbsp;— up to a year after birth. <b>Tell responders when the birth occurred.</b></div>
+        <div class="box local"><span class="lfx">Maternal 24-h number <span class="lfv" data-local="maternal_24h_number">____</span></span>&nbsp;· <span class="lfx">return site <span class="lfv" data-local="maternal_return_site">____</span></span></div>
+      </div>
+      <div class="nb-signs">
+        <div class="pt">Newborn</div>
+        <div class="act"><span class="to">Call 911</span><ul class="signs"><li><b>Blue / gray</b> lips, tongue or face</li><li><b>Severe breathing difficulty</b></li><li><b>Unresponsiveness</b></li></ul></div>
+        <div class="act"><span class="to">Emergency assessment</span><ul class="signs"><li><b>Green vomit</b></li><li><b>Rectal temperature ≥ 38&nbsp;°C / 100.4 °F</b></li><li><b>Floppy, hard to wake</b>, much less movement or <b>weak suck</b></li></ul></div>
+        <div class="act"><span class="to clin">Urgent assessment</span><ul class="signs"><li><b>Rectal temperature &lt; 36&nbsp;°C / 96.8 °F</b> that does not rise with warming</li></ul></div>
+        <div class="act"><span class="to clin">Baby’s clinician now</span><ul class="signs"><li><b>New poor feeding</b></li><li><b>Unusual sleepiness</b></li><li><b>Increasing jaundice</b></li><li><b>Output below</b> the feeding plan</li></ul></div>
+        <div class="box local"><span class="lfx">Newborn number <span class="lfv" data-local="newborn_24h_number">____</span></span>&nbsp;· <span class="lfx">return site <span class="lfv" data-local="newborn_return_site">____</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- J: teach-back + document -->
+  <section class="panel c-wf" id="p-J">
+    <div class="ph inl src-right"><span class="num">J</span><h2>Teach-back + document departure</h2><span class="src">AHRQ RED Toolkit Tool 3 (2013)&nbsp;· prompts and sign-off fields are proposed implementation</span></div>
+    <div class="tbj">
+      <div>
+        <div class="small"><b>Ask patient / caregiver to explain or demonstrate.</b> Gaps → <b>explain again → repeat teach-back → resolve before departure.</b></div>
+        <ul class="tb">
+          <li>“Show how medicines, BP checks and feeding will work at home.”</li>
+          <li>“Which changes need 911? Which need immediate assessment?”</li>
+          <li>“When and where is each patient’s next visit or test?”</li>
+          <li>“Who will contact you about results that are still pending?”</li>
+          <li class="wide">“What would you do if something felt seriously wrong, even if it is not on this list?”</li>
+        </ul>
+      </div>
+      <div>
+        <ul class="ls check">
+          <li>Both charts document readiness, outstanding issues, discharge plans and receiving clinicians. Written instructions supplied in the preferred language / accessible format.</li>
+        </ul>
+        <div class="box local small"><span class="lfx">Maternal sign-off ____</span>&nbsp;· <span class="lfx">newborn sign-off ____</span>&nbsp;· <span class="lfx">interpreter ID ____</span>&nbsp;· <span class="lfx">handoff accepted ____</span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> WHO Positive Postnatal Experience (2022) Rec 46; ABM Protocols #1 Hypoglycemia (2021), #2 Discharge (rev. 2022), #10 Late Preterm (2016); CMQCC Postpartum Discharge: All Patients; ACC Postpartum ECDP Clinician Takeaways (2026); SMFM HDP discharge checklist (2020, reaff. 2025); ACOG PB 181 Rh D Alloimmunization (2017); CDC Timing and Spacing of Immunobiologics (2024); ACOG Maternal Immunization Schedule (2026); ACOG CPG 4 Perinatal Mental Health (2023); AIM Postpartum Discharge Transition (rev. 2021); AAP COFN Hospital Stay for Healthy Term Newborns, Pediatrics 2015;135:948; AAP Hyperbilirubinemia CPG, Pediatrics 2022;150:e2022058859, KAS 6, 8, 16, 24, Fig 7; AAP NOWS clinical report (2020); AAP CCHD clinical report (2025), CDC CCHD (2026); JCIH 2019 Position Statement; CDC CMV laboratory testing; HRSA Newborn Screening Process; CDC STI Guidelines (2021); NIH/DHHS Perinatal HIV Guidelines (2025); CDC perinatal hepatitis B (2026); AAP RSV prevention (2026), CDC RSV (2025); AAP vitamin K (2022); AAP Sleep-Related Infant Deaths (2022); AAP Child Passenger Safety (2018, reaff. 2025); AAP Preterm / LBW Transportation (2009, reaff. 2025); AHRQ RED Toolkit Tool 3 (2013); ACOG CO 736 Postpartum Care (2018); AIM Severe Hypertension bundle (2022); SMFM postpartum BP follow-up metric (2022, reaff. 2025); AAP First Office Visit, 3–5 Days (2026); AWHONN POST-BIRTH (2023); CDC HEAR HER (2024); AAP HealthyChildren Fever and Your Baby (2025), Newborn Illness. Criteria are a clinical synthesis, not a single national discharge checklist. Items tagged <b>LOCAL</b> are program policy or per-patient fields.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTAsMUgxMVYySDEwek0xMiwxSDEzVjJIMTJ6TTEzLDFIMTRWMkgxM3pNMTcsMUgxOFYySDE3ek0xOSwxSDIwVjJIMTl6TTIwLDFIMjFWMkgyMHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTksMkgxMFYzSDl6TTE3LDJIMThWM0gxN3pNMTksMkgyMFYzSDE5ek0yMiwySDIzVjNIMjJ6TTI0LDJIMjVWM0gyNHpNMjUsMkgyNlYzSDI1ek0yNiwySDI3VjNIMjZ6TTI4LDJIMjlWM0gyOHpNMCwzSDFWNEgwek0yLDNIM1Y0SDJ6TTMsM0g0VjRIM3pNNCwzSDVWNEg0ek02LDNIN1Y0SDZ6TTgsM0g5VjRIOHpNMTAsM0gxMVY0SDEwek0xMSwzSDEyVjRIMTF6TTEyLDNIMTNWNEgxMnpNMTMsM0gxNFY0SDEzek0xNiwzSDE3VjRIMTZ6TTE4LDNIMTlWNEgxOHpNMjIsM0gyM1Y0SDIyek0yNCwzSDI1VjRIMjR6TTI1LDNIMjZWNEgyNXpNMjYsM0gyN1Y0SDI2ek0yOCwzSDI5VjRIMjh6TTAsNEgxVjVIMHpNMiw0SDNWNUgyek0zLDRINFY1SDN6TTQsNEg1VjVINHpNNiw0SDdWNUg2ek05LDRIMTBWNUg5ek0xMSw0SDEyVjVIMTF6TTEyLDRIMTNWNUgxMnpNMTQsNEgxNVY1SDE0ek0xNSw0SDE2VjVIMTV6TTE2LDRIMTdWNUgxNnpNMTcsNEgxOFY1SDE3ek0xOCw0SDE5VjVIMTh6TTIyLDRIMjNWNUgyMnpNMjQsNEgyNVY1SDI0ek0yNSw0SDI2VjVIMjV6TTI2LDRIMjdWNUgyNnpNMjgsNEgyOVY1SDI4ek0wLDVIMVY2SDB6TTYsNUg3VjZINnpNOCw1SDlWNkg4ek05LDVIMTBWNkg5ek0xMCw1SDExVjZIMTB6TTEzLDVIMTRWNkgxM3pNMTYsNUgxN1Y2SDE2ek0xOCw1SDE5VjZIMTh6TTE5LDVIMjBWNkgxOXpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTksN0gxMFY4SDl6TTEyLDdIMTNWOEgxMnpNMTQsN0gxNVY4SDE0ek0xNSw3SDE2VjhIMTV6TTE3LDdIMThWOEgxN3pNMTgsN0gxOVY4SDE4ek0yMCw3SDIxVjhIMjB6TTAsOEgxVjlIMHpNMSw4SDJWOUgxek00LDhINVY5SDR6TTUsOEg2VjlINXpNNiw4SDdWOUg2ek0xMSw4SDEyVjlIMTF6TTEyLDhIMTNWOUgxMnpNMTcsOEgxOFY5SDE3ek0xOSw4SDIwVjlIMTl6TTIzLDhIMjRWOUgyM3pNMjUsOEgyNlY5SDI1ek0yNiw4SDI3VjlIMjZ6TTI3LDhIMjhWOUgyN3pNMjgsOEgyOVY5SDI4ek0xLDlIMlYxMEgxek0yLDlIM1YxMEgyek0zLDlINFYxMEgzek00LDlINVYxMEg0ek01LDlINlYxMEg1ek05LDlIMTBWMTBIOXpNMTEsOUgxMlYxMEgxMXpNMTIsOUgxM1YxMEgxMnpNMTMsOUgxNFYxMEgxM3pNMTUsOUgxNlYxMEgxNXpNMTYsOUgxN1YxMEgxNnpNMTcsOUgxOFYxMEgxN3pNMTgsOUgxOVYxMEgxOHpNMjEsOUgyMlYxMEgyMXpNMjIsOUgyM1YxMEgyMnpNMjMsOUgyNFYxMEgyM3pNMjQsOUgyNVYxMEgyNHpNMjUsOUgyNlYxMEgyNXpNMjYsOUgyN1YxMEgyNnpNMjcsOUgyOFYxMEgyN3pNMjgsOUgyOVYxMEgyOHpNMywxMEg0VjExSDN6TTUsMTBINlYxMUg1ek02LDEwSDdWMTFINnpNNywxMEg4VjExSDd6TTgsMTBIOVYxMUg4ek0xMSwxMEgxMlYxMUgxMXpNMTIsMTBIMTNWMTFIMTJ6TTEzLDEwSDE0VjExSDEzek0xNSwxMEgxNlYxMUgxNXpNMTYsMTBIMTdWMTFIMTZ6TTE4LDEwSDE5VjExSDE4ek0yMiwxMEgyM1YxMUgyMnpNMjMsMTBIMjRWMTFIMjN6TTI4LDEwSDI5VjExSDI4ek0wLDExSDFWMTJIMHpNMiwxMUgzVjEySDJ6TTQsMTFINVYxMkg0ek0xMCwxMUgxMVYxMkgxMHpNMTUsMTFIMTZWMTJIMTV6TTE3LDExSDE4VjEySDE3ek0xOCwxMUgxOVYxMkgxOHpNMjEsMTFIMjJWMTJIMjF6TTIyLDExSDIzVjEySDIyek0yNSwxMUgyNlYxMkgyNXpNMjcsMTFIMjhWMTJIMjd6TTI4LDExSDI5VjEySDI4ek0wLDEySDFWMTNIMHpNMiwxMkgzVjEzSDJ6TTQsMTJINVYxM0g0ek02LDEySDdWMTNINnpNMTAsMTJIMTFWMTNIMTB6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMjAsMTJIMjFWMTNIMjB6TTIxLDEySDIyVjEzSDIxek0yMywxMkgyNFYxM0gyM3pNMjcsMTJIMjhWMTNIMjd6TTEsMTNIMlYxNEgxek0yLDEzSDNWMTRIMnpNMywxM0g0VjE0SDN6TTcsMTNIOFYxNEg3ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTAsMTRIMVYxNUgwek0xLDE0SDJWMTVIMXpNNCwxNEg1VjE1SDR6TTYsMTRIN1YxNUg2ek03LDE0SDhWMTVIN3pNOSwxNEgxMFYxNUg5ek0xMSwxNEgxMlYxNUgxMXpNMTIsMTRIMTNWMTVIMTJ6TTE0LDE0SDE1VjE1SDE0ek0xNSwxNEgxNlYxNUgxNXpNMTgsMTRIMTlWMTVIMTh6TTIxLDE0SDIyVjE1SDIxek0yNCwxNEgyNVYxNUgyNHpNMjUsMTRIMjZWMTVIMjV6TTI2LDE0SDI3VjE1SDI2ek0yOCwxNEgyOVYxNUgyOHpNMSwxNUgyVjE2SDF6TTMsMTVINFYxNkgzek01LDE1SDZWMTZINXpNNywxNUg4VjE2SDd6TTgsMTVIOVYxNkg4ek0xMCwxNUgxMVYxNkgxMHpNMTEsMTVIMTJWMTZIMTF6TTEyLDE1SDEzVjE2SDEyek0xNCwxNUgxNVYxNkgxNHpNMTUsMTVIMTZWMTZIMTV6TTE2LDE1SDE3VjE2SDE2ek0xNywxNUgxOFYxNkgxN3pNMTgsMTVIMTlWMTZIMTh6TTIwLDE1SDIxVjE2SDIwek0yNCwxNUgyNVYxNkgyNHpNMjcsMTVIMjhWMTZIMjd6TTI4LDE1SDI5VjE2SDI4ek0wLDE2SDFWMTdIMHpNMSwxNkgyVjE3SDF6TTMsMTZINFYxN0gzek01LDE2SDZWMTdINXpNNiwxNkg3VjE3SDZ6TTgsMTZIOVYxN0g4ek05LDE2SDEwVjE3SDl6TTEwLDE2SDExVjE3SDEwek0xMiwxNkgxM1YxN0gxMnpNMTUsMTZIMTZWMTdIMTV6TTE3LDE2SDE4VjE3SDE3ek0xOSwxNkgyMFYxN0gxOXpNMjEsMTZIMjJWMTdIMjF6TTI3LDE2SDI4VjE3SDI3ek0wLDE3SDFWMThIMHpNMSwxN0gyVjE4SDF6TTIsMTdIM1YxOEgyek0zLDE3SDRWMThIM3pNNywxN0g4VjE4SDd6TTksMTdIMTBWMThIOXpNMTEsMTdIMTJWMThIMTF6TTEzLDE3SDE0VjE4SDEzek0xNCwxN0gxNVYxOEgxNHpNMTUsMTdIMTZWMThIMTV6TTE2LDE3SDE3VjE4SDE2ek0xNywxN0gxOFYxOEgxN3pNMTgsMTdIMTlWMThIMTh6TTIyLDE3SDIzVjE4SDIyek0yMywxN0gyNFYxOEgyM3pNMjQsMTdIMjVWMThIMjR6TTI1LDE3SDI2VjE4SDI1ek0yNywxN0gyOFYxOEgyN3pNMjgsMTdIMjlWMThIMjh6TTIsMThIM1YxOUgyek00LDE4SDVWMTlINHpNNiwxOEg3VjE5SDZ6TTcsMThIOFYxOUg3ek05LDE4SDEwVjE5SDl6TTExLDE4SDEyVjE5SDExek0xMiwxOEgxM1YxOUgxMnpNMTMsMThIMTRWMTlIMTN6TTE0LDE4SDE1VjE5SDE0ek0xNSwxOEgxNlYxOUgxNXpNMTgsMThIMTlWMTlIMTh6TTIwLDE4SDIxVjE5SDIwek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI0LDE4SDI1VjE5SDI0ek0yNiwxOEgyN1YxOUgyNnpNMjgsMThIMjlWMTlIMjh6TTIsMTlIM1YyMEgyek00LDE5SDVWMjBINHpNNSwxOUg2VjIwSDV6TTcsMTlIOFYyMEg3ek0xMCwxOUgxMVYyMEgxMHpNMTYsMTlIMTdWMjBIMTZ6TTE3LDE5SDE4VjIwSDE3ek0xOCwxOUgxOVYyMEgxOHpNMjIsMTlIMjNWMjBIMjJ6TTIzLDE5SDI0VjIwSDIzek0yNywxOUgyOFYyMEgyN3pNMjgsMTlIMjlWMjBIMjh6TTAsMjBIMVYyMUgwek0xLDIwSDJWMjFIMXpNMiwyMEgzVjIxSDJ6TTMsMjBINFYyMUgzek00LDIwSDVWMjFINHpNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek0xMCwyMEgxMVYyMUgxMHpNMTIsMjBIMTNWMjFIMTJ6TTE2LDIwSDE3VjIxSDE2ek0xNywyMEgxOFYyMUgxN3pNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNSwyMEgyNlYyMUgyNXpNMjgsMjBIMjlWMjFIMjh6TTgsMjFIOVYyMkg4ek0xMCwyMUgxMVYyMkgxMHpNMTEsMjFIMTJWMjJIMTF6TTEzLDIxSDE0VjIySDEzek0xNCwyMUgxNVYyMkgxNHpNMTUsMjFIMTZWMjJIMTV6TTE2LDIxSDE3VjIySDE2ek0xOCwyMUgxOVYyMkgxOHpNMTksMjFIMjBWMjJIMTl6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek0xMSwyMkgxMlYyM0gxMXpNMTQsMjJIMTVWMjNIMTR6TTE1LDIySDE2VjIzSDE1ek0xOSwyMkgyMFYyM0gxOXpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjUsMjJIMjZWMjNIMjV6TTI2LDIySDI3VjIzSDI2ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNMTIsMjNIMTNWMjRIMTJ6TTE0LDIzSDE1VjI0SDE0ek0xNSwyM0gxNlYyNEgxNXpNMTcsMjNIMThWMjRIMTd6TTE5LDIzSDIwVjI0SDE5ek0yMCwyM0gyMVYyNEgyMHpNMjQsMjNIMjVWMjRIMjR6TTI3LDIzSDI4VjI0SDI3ek0yOCwyM0gyOVYyNEgyOHpNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek04LDI0SDlWMjVIOHpNMTAsMjRIMTFWMjVIMTB6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTcsMjRIMThWMjVIMTd6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjcsMjRIMjhWMjVIMjd6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNOSwyNUgxMFYyNkg5ek0xMSwyNUgxMlYyNkgxMXpNMTMsMjVIMTRWMjZIMTN6TTE1LDI1SDE2VjI2SDE1ek0xNiwyNUgxN1YyNkgxNnpNMTcsMjVIMThWMjZIMTd6TTE4LDI1SDE5VjI2SDE4ek0yNywyNUgyOFYyNkgyN3pNMjgsMjVIMjlWMjZIMjh6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNMTEsMjZIMTJWMjdIMTF6TTEyLDI2SDEzVjI3SDEyek0xMywyNkgxNFYyN0gxM3pNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTgsMjZIMTlWMjdIMTh6TTE5LDI2SDIwVjI3SDE5ek0yMSwyNkgyMlYyN0gyMXpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTksMjdIMTBWMjhIOXpNMTEsMjdIMTJWMjhIMTF6TTEyLDI3SDEzVjI4SDEyek0xNiwyN0gxN1YyOEgxNnpNMTcsMjdIMThWMjhIMTd6TTE4LDI3SDE5VjI4SDE4ek0yMCwyN0gyMVYyOEgyMHpNMjUsMjdIMjZWMjhIMjV6TTI3LDI3SDI4VjI4SDI3ek0yOCwyN0gyOVYyOEgyOHpNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek05LDI4SDEwVjI5SDl6TTEwLDI4SDExVjI5SDEwek0xMiwyOEgxM1YyOUgxMnpNMTYsMjhIMTdWMjlIMTZ6TTE3LDI4SDE4VjI5SDE3ek0yMCwyOEgyMVYyOUgyMHpNMjIsMjhIMjNWMjlIMjJ6TTIzLDI4SDI0VjI5SDIzek0yNSwyOEgyNlYyOUgyNXpNMjcsMjhIMjhWMjlIMjd6IiBpZD0icXItcGF0aCIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIxIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZT0ibm9uZSIvPjwvc3ZnPg=="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

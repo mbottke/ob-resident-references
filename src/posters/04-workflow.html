@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>OB Resident Workflow</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); }
+  .ph h2 { font-size: 24pt; }
+  .ph-inline { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6pt 10pt; }
+  .ph-inline .sub { font: 600 12pt/1.2 "Inter"; color: var(--ink-3); }
+  .masthead .sub .tag { vertical-align: 0.15em; margin-left: .3em; }
+  /* address bar: reference, not a heading */
+  .addr {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.22in;
+    border: 1.2pt solid var(--ink); border-left: 4pt solid var(--wf); padding: .05in .16in; margin-bottom: var(--gap);
+  }
+  .addr .k { font: 800 10pt/1.15 "Inter"; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); }
+  .addr .v { font: 700 18pt/1.15 "Inter"; letter-spacing: 0; }
+  .addr .v span { color: var(--ink-3); font-weight: 600; }
+  /* numbered stage rail (sheet-local; not the shared .rail component) */
+  .stages { position: relative; display: flex; flex-direction: column; gap: var(--gap); }
+  .step { display: grid; grid-template-columns: 0.62in 1fr; gap: 0.16in; position: relative; }
+  .step:not(:last-child)::before {
+    content: ""; position: absolute; left: 0.31in; top: 0.62in; bottom: calc(-1 * var(--gap)); width: 2pt; background: var(--rule); transform: translateX(-50%);
+  }
+  .step .bub {
+    width: 0.62in; height: 0.62in; border-radius: 50%; background: var(--c); color: #fff;
+    display: grid; place-items: center; font: 900 26pt/1 "Inter Display"; position: relative; z-index: 1;
+  }
+  .step .body { padding-top: 0.04in; min-width: 0; }
+  .step h2 { font: 800 26pt/1 "Inter Display"; letter-spacing: -0.015em; word-spacing: .04em; }
+  .step h2 small { font: 600 12pt/1 "Inter"; color: var(--ink-3); margin-left: .4em; letter-spacing: 0; word-spacing: 0; }
+  .chk { list-style: none; display: grid; gap: 4pt; margin-top: 7pt; }
+  .chk li { display: grid; grid-template-columns: 14pt 1fr; gap: 8pt; align-items: start; font-size: 13pt; line-height: 1.3; }
+  .chk li::before { content: ""; width: 12pt; height: 12pt; border: 1.6pt solid var(--c); margin-top: 3pt; }
+  .chk .task { font-size: 15.5pt; font-weight: 800; letter-spacing: -0.005em; }
+  .chk li .d { color: var(--ink-3); font-size: 11pt; display: block; }
+  .chk li .d.inl { display: inline; margin-left: 4pt; }
+  .chk .xref { margin-left: 3pt; }
+  /* delivery-note aid, subordinate to the maternal stage */
+  .delivery-note { margin-top: 10pt; border-top: 2pt solid var(--c); padding-top: 6pt; }
+  .delivery-note h3 { font: 800 15pt/1.15 "Inter"; border: 0; padding: 0; margin: 0 0 4pt; }
+  .note-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2pt 14pt; }
+  .note-grid .ls { gap: 3pt; }
+  /* SBAR on a raised action surface (drawn into the surrounding gap, so text width is unchanged) */
+  .action-surface { position: relative; isolation: isolate; }
+  .action-surface::before {
+    content: ""; position: absolute; inset: -5pt 0; z-index: -1; background: #fff;
+    border: .8pt solid #999; border-radius: 0; box-shadow: none;
+  }
+  .sbar { display: grid; grid-template-columns: 0.5in 1fr; gap: 0; align-items: baseline; margin-top: 3pt; padding: 0 2pt; }
+  .sbar .L { font: 900 26pt/1.1 "Inter Display"; color: var(--c); padding: 2pt 0 2pt 4pt; }
+  .sbar p { font-size: 13.5pt; line-height: 1.3; padding: 4pt 4pt 4pt 0; position: relative; }
+  .sbar .w { font: 800 9pt/1 "Inter"; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-right: 3pt; vertical-align: .1em; }
+  .sbar p::after { content: ""; position: absolute; left: -0.5in; right: 0; bottom: 0; border-bottom: 0.75pt solid var(--rule); }
+  .sbar p:last-of-type::after { display: none; }
+  .sbar p.sbar-open { grid-column: 1 / -1; padding-left: 4pt; }
+  .sbar p.sbar-open::after { left: 0; }
+  /* EOS */
+  .eos-entry { font: 700 13pt/1.3 "Inter"; color: var(--ink); margin-bottom: 5pt; }
+  .eos-entry b { font-weight: 800; }
+  .eos-inputs { font-size: 12.5pt; line-height: 1.3; }
+  .eos-override { font-size: 13.5pt; line-height: 1.3; padding: 5pt 8pt; }
+  .eos-override b { font-weight: 800; }
+  table.t.eos-table { font-size: 13pt; }
+  table.t.eos-table th { font-size: 10.5pt; }
+  table.t.eos-table td.k { width: 1%; }
+  table.t.eos-table td.k { font-weight: 800; font-size: 14pt; white-space: nowrap; }
+  .eos-doc { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4pt 8pt; font-size: 11.5pt; color: var(--ink-2); }
+  .eos-doc .lbl { font: 800 10pt/1.3 "Inter"; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .eos-doc code { font-size: 12.5pt; font-weight: 600; background: var(--t-ink); padding: 2pt 6pt; color: var(--ink); }
+  /* how to use this wall */
+  .guide-band { margin-top: var(--gap); gap: calc(4pt / var(--k)); }
+  .guide { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.35fr; gap: 0 .22in; font-size: 10.5pt; line-height: 1.28; }
+  .guide dl { display: flex; flex-direction: column; gap: 1pt; min-width: 0; }
+  .guide dt { font: 800 9pt/1.3 "Inter"; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-top: 3pt; }
+  .guide dt:first-child { margin-top: 0; }
+  .guide dd { margin: 0; }
+  .guide .sref { display: inline-block; font: 800 10pt/1 "Inter"; font-variant-numeric: tabular-nums; border: 1pt solid var(--ink-3); border-radius: 2pt; padding: 1.5pt 3pt; }
+  .guide .grp { display: inline-block; white-space: nowrap; border-right: .75pt solid var(--rule); padding-right: 6pt; margin-right: 6pt; margin-bottom: 2pt; }
+  .guide .grp:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+  .guide .grp b { font-weight: 700; margin-right: 3pt; }
+  .guide .xref, .guide .tag { vertical-align: .05em; }
+  .guide dl.guide-row, .guide dl.colour-row { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 2pt 12pt; margin-top: 4pt; padding-top: 4pt; border-top: .75pt solid var(--rule); }
+  .guide dl:is(.guide-row, .colour-row) dt { margin-top: 0; }
+  .guide dl.colour-row { margin-top: 0; }
+  .swatches { display: flex; flex-wrap: wrap; gap: 2pt 9pt; }
+  .swatches span { white-space: nowrap; }
+  .guide i { display: inline-block; width: 9pt; height: 9pt; background: var(--c); margin-right: 3pt; vertical-align: -.5pt; }
+  /* reference row: dot phrases + coding key */
+  .refs { display: grid; grid-template-columns: minmax(0, 3.3fr) minmax(0, 1fr); gap: var(--gap); margin-top: var(--gap); }
+  .refs .panel { gap: calc(5pt / var(--k)); }
+  /* dot phrases: description above its literal string, one row per phrase */
+  .dp { display: grid; grid-template-columns: minmax(0, 1fr); gap: 5pt; }
+  .dp-row { display: grid; gap: 2pt; padding-bottom: 5pt; border-bottom: .75pt solid var(--rule); }
+  .dp-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .dp-row > span { font-size: 11.5pt; color: var(--ink-2); }
+  .dp code { font-size: 12pt; font-weight: 600; background: var(--t-ink); padding: 2pt 6pt; justify-self: start; }
+  /* consult / transfer routing under SBAR */
+  .consult-route { margin-top: 6pt; font-size: 12pt; line-height: 1.35; }
+  .consult-route b { font-weight: 800; }
+  .chk li .d .xref { margin-left: 2pt; }
+  .xref + .xref { margin-left: 3pt; }
+  .coding-key { display: grid; grid-template-columns: 1.12fr 1fr; gap: .22in; }
+  .coding-key h3 { margin-top: 0; }
+  .codes { margin-top: 3pt; font-size: 11.8pt; line-height: 1.3; }
+  .code-row { display: grid; grid-template-columns: 0.78in minmax(0, 1fr); column-gap: 10pt; align-items: baseline; padding: 3pt 0; border-bottom: .75pt solid var(--rule); }
+  .codes > .code-row:last-child { border-bottom: 0; }
+  .codes code { font-size: 12pt; background: color-mix(in srgb, var(--c) 14%, white); color: var(--ink); font-weight: 600; justify-self: start; }
+  .code-options { display: flex; flex-wrap: wrap; gap: 2pt 8pt; }
+  .code-options > span { white-space: nowrap; }
+  .code-breakdown { display: grid; grid-template-columns: repeat(4, max-content); gap: 2pt 10pt; margin-top: 1pt; }
+  .code-breakdown b, .code-options b { font-weight: 800; }
+  .code-sub { border-left: .75pt solid var(--rule); padding-left: 8pt; }
+  .code-note { font-weight: 700; padding: 3pt 6pt; margin: 3pt 0; background: color-mix(in srgb, var(--c) 9%, white); border-left: 3pt solid var(--c); }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="03-labor-efm.html" title="Labor &amp; fetal monitoring">‹ 03</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html" selected="">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="05-newborn.html" title="Newborn">05 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/04-workflow.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-wf" style="--k:1.14">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>OB service&nbsp;· residents</div>
+      <h1><span class="sid">04</span>Workflow</h1>
+    </div>
+    <div class="sub">Admission → delivery → newborn:<br>what to document, where, and which codes. <span class="tag local">Local program workflow</span></div>
+    <nav class="setnav rel"><em>See also</em><a href="03-labor-efm.html" class="xlink"><span><b>3</b>Labor &amp; EFM</span></a><a href="27-ob-consult.html" class="xlink"><span><b>27</b>OB/GYN consult</span></a><a href="05-newborn.html" class="xlink"><span><b>5</b>Newborn</span></a><a href="25-dyad-discharge.html" class="xlink"><span><b>25</b>Dyad → home</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-04.svg)"></div>
+
+  <div class="addr">
+    <div class="k">OB ED<br>address</div>
+    <div class="v">1215 Woodland Ave <span>· Des Moines, IA 50309</span></div>
+    <span class="tag local">Local</span>
+  </div>
+
+  <div class="cols" style="grid-template-columns: 1.18fr 1fr;">
+    <!-- LEFT: the stage rail (actions only) -->
+    <div class="col">
+      <div class="stages">
+        <section class="step c-wf" data-panel="ADMIT" id="p-ADMIT">
+          <div class="bub">1</div>
+          <div class="body">
+            <h2>Admission <small>every laboring / admitted patient</small></h2>
+            <ul class="chk">
+              <li><span><span class="task">Complete the H&amp;P</span> and update the problem list<span class="d">Substance exposure / toxicology <a href="24-substance-dyad.html#p-B" class="xlink"><span class="xref c-wf">24&nbsp;· B–C</span></a></span></span></li>
+              <li><span><span class="task">Double-check orders</span><span class="d">GBS ppx&nbsp;· Rh/antibody&nbsp;· CBC&nbsp;· T&amp;S&nbsp;· oxytocin/IOL <a href="26-induction-labor.html#p-A" class="xlink"><span class="xref c-lab">26&nbsp;· A</span></a>&nbsp;· diet&nbsp;· analgesia</span></span></li>
+              <li><span><span class="task">Spok message</span> → update the mother’s Epic sticky note <code>.edmOBspokinfo</code></span></li>
+              <li><span><span class="task">Update Teams OB list</span> <span class="d inl">status → assessment, concern → next step + time → if/then</span></span></li>
+              <li><span><span class="task">Start and share</span> the mother’s discharge note</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="step c-wf" data-panel="DELIVERY" id="p-DELIVERY">
+          <div class="bub">2</div>
+          <div class="body">
+            <h2>Delivery&nbsp;— mother <small>chart events now&nbsp;· admin by handoff</small></h2>
+            <ul class="chk">
+              <li><span><span class="task">Update orders</span> (postpartum order set)</span></li>
+              <li><span><span class="task">Write the delivery procedure note</span>&nbsp;— essentials below</span></li>
+              <li><span><span class="task">Update problem list</span> <span class="xref c-wf">Coding key&nbsp;· mother</span></span></li>
+              <li><span><span class="task">Update mother’s discharge note</span> <a href="25-dyad-discharge.html#p-A" class="xlink"><span class="xref c-wf">25&nbsp;· A</span></a></span></li>
+              <li><span><span class="task">Update Teams OB list</span></span></li>
+              <li><span><span class="task">Log the delivery</span> and procedures in MedHub</span></li>
+            </ul>
+            <div class="delivery-note">
+              <h3>Delivery-note essentials</h3>
+              <div class="note-grid small">
+                <ul class="ls tight">
+                  <li>Date/time of birth&nbsp;· GA&nbsp;· G/P</li>
+                  <li><b>Analgesia</b> (epidural / none)</li>
+                  <li><b>Presentation</b>, position (OA/OP)</li>
+                  <li><b>Delivery type</b>; vacuum/forceps: station, pulls, pop-offs, duration</li>
+                  <li><b>Nuchal cord</b> (× __, reduced?)</li>
+                  <li><b>Shoulder dystocia:</b> head-to-body time, maneuvers</li>
+                  <li><b>Weight, sex</b>&nbsp;· supervisor present, role</li>
+                </ul>
+                <ul class="ls tight">
+                  <li><b>Placenta:</b> spontaneous / manual, intact, time</li>
+                  <li><b>Cord:</b> 3-vessel&nbsp;· delayed clamping&nbsp;· gases if sent</li>
+                  <li><b>QBL</b>&nbsp;· uterotonics given</li>
+                  <li><b>Laceration:</b> degree (3a/b/c if 3rd), repair, suture, rectal exam, counts</li>
+                  <li><b>Apgars</b> at 1 and 5&nbsp;min (q5&nbsp;min to 20&nbsp;min if 5‑min &lt; 7)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="step c-wf" data-panel="NEWBORN" id="p-NEWBORN">
+          <div class="bub">3</div>
+          <div class="body">
+            <h2>Newborn <small>baby is a separate patient</small></h2>
+            <ul class="chk">
+              <li><span><span class="task">Complete the baby’s H&amp;P</span><span class="d">Ill newborn / transfer <a href="23-nicu-transfer.html#p-A" class="xlink"><span class="xref c-nb">23&nbsp;· A</span></a><a href="23-nicu-transfer.html#p-E" class="xlink"><span class="xref c-nb">23&nbsp;· E</span></a>&nbsp;· substance exposure: observation <a href="24-substance-dyad.html#p-F" class="xlink"><span class="xref c-wf">24&nbsp;· F</span></a></span></span></li>
+              <li><span><span class="task">Calculate and document EOS risk</span> <span class="xref c-inf">EOS calculator</span><span class="d">Risk at birth and after exam (per 1,000)&nbsp;· exam time&nbsp;· plan&nbsp;· next review</span></span></li>
+              <li><span><span class="task">Update problem list</span> <span class="xref c-wf">Coding key&nbsp;· baby</span></span></li>
+              <li><span><span class="task">Spok message</span> → update the baby’s Epic sticky note</span></li>
+              <li><span><span class="task">Update Teams OB list</span></span></li>
+              <li><span><span class="task">Share baby’s discharge note</span><span class="d">Pair with mother’s <a href="25-dyad-discharge.html#p-A" class="xlink"><span class="xref c-wf">25&nbsp;· A</span></a>&nbsp;· pending results + owner <a href="25-dyad-discharge.html#p-H" class="xlink"><span class="xref c-wf">25&nbsp;· H</span></a>&nbsp;· hearing / CMV <a href="22-hearing-cmv.html#p-H" class="xlink"><span class="xref c-wf">22&nbsp;· H</span></a></span></span></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col">
+      <section class="panel c-wf" data-panel="CALL" id="p-CALL">
+        <div class="ph ph-inline"><h2>Calling the attending</h2><span class="sub">admit to OB&nbsp;· not admitting <a href="21-before-discharge.html" class="xlink"><span class="xref c-wf">21</span></a></span></div>
+        <div class="sbar action-surface">
+          <p class="sbar-open"><span class="w">Open</span> Name, role, unit&nbsp;· callback #&nbsp;· patient, room&nbsp;· how soon.</p>
+          <div class="L">S</div><p><span class="w">Situation</span> <b>G_P_ at __w_d</b> (dating), chief complaint, why you’re calling.</p>
+          <div class="L">B</div><p><span class="w">Background</span> GBS&nbsp;· Rh&nbsp;· prior CS&nbsp;· pregnancy problems&nbsp;· meds/allergies.</p>
+          <div class="L">A</div><p><span class="w">Assessment</span> Vitals&nbsp;· cervical exam (SVE: dilation / effacement / station)&nbsp;· ROM&nbsp;· fetal heart tracing category <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a>&nbsp;· contractions&nbsp;· labs&nbsp;· change since last, actions + response. <b class="nowrap">“My assessment / concern is ___.”</b></p>
+          <div class="L">R</div><p><span class="w">Recommendation</span> <b>“I recommend ___. I need you to ___ <span class="nowrap">(now / by ___).”</span></b> Then your questions. Confirm the plan, who owns care and when to reassess. Offer to write the H&amp;P.</p>
+        </div>
+        <div class="consult-route"><b>OB/GYN consult / transfer:</b> request <a href="27-ob-consult.html#p-C" class="xlink"><span class="xref c-wf">27&nbsp;· C</span></a>&nbsp;· acceptance <a href="27-ob-consult.html#p-D" class="xlink"><span class="xref c-wf">27&nbsp;· D / F</span></a></div>
+      </section>
+
+      <section class="panel c-inf" id="p-EOS">
+        <div class="ph"><span class="num">EOS</span><h2>EOS calculator <small>neonatal early-onset sepsis</small></h2></div>
+        <div class="qr">
+          <img src="../../assets/svg/qr-eos.svg" alt="QR: Kaiser EOS calculator">
+          <div class="qt"><p class="eos-entry">For infants <b>≥ 35w0d</b>; 34&nbsp;wk → local NICU pathway.</p><b>neonatalsepsiscalculator<wbr>.kaiserpermanente.org</b><br>
+            <span class="muted">Select <b>Updated (2024)&nbsp;— universal GBS screening</b>.</span></div>
+        </div>
+        <h3>Inputs</h3>
+        <ul class="ls tight eos-inputs">
+          <li>EOS incidence <span class="tag local">Local</span>&nbsp;· GA (wk + d)&nbsp;· ROM (h)</li>
+          <li>Highest maternal <b>antepartum</b> temp&nbsp;· GBS status</li>
+          <li>Intrapartum antibiotics, for calculator entry: <b>GBS-specific = penicillin, ampicillin or cefazolin only.</b> Clindamycin or vancomycin alone = “none” in the calculator.</li>
+        </ul>
+        <div class="box stop eos-override"><b>Clinically ill</b> → strongly consider antibiotics even if risk after examination &lt; 3 per 1,000. <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a><a href="23-nicu-transfer.html#p-B" class="xlink"><span class="xref c-nb">23&nbsp;· B</span></a></div>
+        <table class="t eos-table">
+          <thead><tr><th colspan="2">Risk after exam <span class="nc">(per 1,000)</span> → action</th></tr></thead>
+          <tbody>
+            <tr><td class="k num">≥ 3</td><td><b>Empiric antibiotics</b></td></tr>
+            <tr><td class="k num">1 to &lt; 3</td><td>Blood culture&nbsp;· vitals q4h × 24&nbsp;h</td></tr>
+            <tr><td class="k num">&lt; 1</td><td>Routine care. <b>If risk at birth ≥ 1 per 1,000: vitals q4h × 24&nbsp;h</b></td></tr>
+          </tbody>
+        </table>
+        <div class="eos-doc"><span class="lbl">Document in Epic</span><code>.EOSCALCNOTE</code><span>calculator note</span><code>.EOSSCORE</code><span>risk score</span></div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- REFERENCE ROW: coding key (mother beside baby) and dot phrases -->
+  <div class="refs">
+
+    <section class="panel c-wf">
+      <div class="ph ph-inline"><h2>Coding key</h2><span class="sub">problem list&nbsp;· ICD-10-CM</span></div>
+      <div class="coding-key">
+        <div>
+          <h3>Mother’s record <span class="h3-note">— stage 2</span></h3>
+          <div class="codes">
+            <div class="code-row"><code>Z37.0</code><span>Single live birth <span class="muted">(other outcomes Z37.1–.9)</span></span></div>
+            <div class="code-row"><code>Z3A.__</code><span>Completed weeks: 39w6d → <b>Z3A.39</b>&nbsp;· <b>never on baby</b></span></div>
+            <div class="code-row"><code>O80</code><span>Term, spontaneous, uncomplicated vaginal birth&nbsp;— <b>only if no other O-code</b></span></div>
+            <div class="code-row"><code>O70._</code><span>Laceration replaces O80 <a href="03-labor-efm.html#p-C" class="xlink"><span class="xref c-trm">3&nbsp;· C</span></a>
+              <span class="code-options"><span><b class="mono">.0</b> 1st</span><span><b class="mono">.1</b> 2nd</span><span><b class="mono">.21/.22/.23</b> 3a/b/c</span><span><b class="mono">.3</b> 4th</span></span></span></div>
+            <div class="code-row"><code>O24.41_</code><span>GDM in pregnancy, by control:
+              <span class="code-breakdown"><span><b class="mono">0</b> diet</span><span><b class="mono">4</b> insulin</span><span><b class="mono">5</b> oral (metFORMIN)</span><span class="code-sub">Childbirth: <b class="mono">O24.42_</b></span></span></span></div>
+          </div>
+        </div>
+        <div>
+          <h3>Baby’s record <span class="h3-note">— stage 3</span></h3>
+          <div class="codes">
+            <div class="code-row"><code>Z38.00</code><span>Single liveborn, in hospital, <b>vaginal</b> <span class="muted">(Z38.0 alone won’t bill)</span></span></div>
+            <div class="code-row"><code>Z38.01</code><span>Single liveborn, in hospital, <b>cesarean</b></span></div>
+            <div class="code-row"><code>P07.3_</code><span>Preterm 28–36&nbsp;wk: <span class="mono">P07.31</span> = 28&nbsp;wk … <span class="mono">P07.39</span> = 36&nbsp;wk <span class="muted">(&lt; 28&nbsp;wk: P07.2_)</span></span></div>
+            <div class="code-note">Term (37–40&nbsp;wk): no GA code</div>
+            <div class="code-row"><code>P08.2_</code><span>Post-term: <span class="mono">.21</span> &gt; 40–42&nbsp;wk&nbsp;· <span class="mono">.22</span> &gt; 42&nbsp;wk</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+      <section class="panel c-wf">
+      <div class="ph ph-inline"><h2>Dot phrases</h2><span class="tag local">Local&nbsp;· Epic</span></div>
+      <div class="dp">
+        <div class="dp-row"><span>OB note</span><code>.edmOB</code></div>
+        <div class="dp-row"><span>Spok info for sticky note</span><code>.edmOBspokinfo</code></div>
+        <div class="dp-row"><span>Labor progress note</span><code>.edmoblaborprogress</code></div>
+        <div class="dp-row"><span>Newborn note</span><code>.edmNB</code></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- HOW TO USE THIS WALL: orientation key for new residents and cross-cover -->
+  <section class="panel c-wf guide-band" data-panel="GUIDE" id="p-GUIDE">
+    <div class="ph ph-inline"><h2>How to use this wall</h2><span class="sub">start here</span></div>
+    <div class="guide">
+      <dl>
+        <dt>First week</dt><dd><a href="04-workflow.html" class="xlink"><span class="sref">04</span></a> Workflow → <a href="01-triage.html" class="xlink"><span class="sref">01</span></a> Triage → <a href="03-labor-efm.html" class="xlink"><span class="sref">03</span></a> Labor/EFM. Rehearse <a href="02-emergencies.html" class="xlink"><span class="sref">02</span></a> maternal emergencies and <a href="05-newborn.html" class="xlink"><span class="sref">05</span></a> newborn resuscitation with a senior. Next: <a href="06-postpartum.html" class="xlink"><span class="sref">06</span></a> Postpartum&nbsp;· <a href="21-before-discharge.html" class="xlink"><span class="sref">21</span></a> Triage → home&nbsp;· <a href="18-nursery.html" class="xlink"><span class="sref">18</span></a> Nursery&nbsp;· <a href="10-feeding.html" class="xlink"><span class="sref">10</span></a> Feeding.</dd>
+      </dl>
+      <dl>
+        <dt>Chips</dt><dd><a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a> = sheet 02, section B. Large masthead number = sheet; panel letter or number = section. Chip colour = the destination’s topic.</dd>
+      </dl>
+      <dl>
+        <dt>Tags</dt><dd><span class="tag local">Local</span> or a dashed box = this program’s workflow or policy&nbsp;· <span class="tag new">Updated</span> = new or changed guidance&nbsp;· <span class="tag stop">Stop</span> = do not.</dd>
+      </dl>
+      <dl>
+        <dt>Gestational age</dt><dd><b>34w0d</b> = 34&nbsp;weeks, 0&nbsp;days: the day after 33w6d.</dd>
+        <dt>Fetal heart tracing</dt><dd><b>Category I</b> normal&nbsp;· <b>II</b> indeterminate&nbsp;· <b>III</b> abnormal <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a></dd>
+      </dl>
+      <dl class="guide-row">
+        <dt>Sheets by stage</dt><dd><span class="grp"><b>Emergencies</b> 02&nbsp;· 13&nbsp;· 16&nbsp;· 14</span> <span class="grp"><b>Triage</b> 01&nbsp;· 09&nbsp;· 21</span> <span class="grp"><b>Labor</b> 26&nbsp;· 03&nbsp;· 28&nbsp;· 29&nbsp;· 20&nbsp;· 27</span> <span class="grp"><b>Postpartum</b> 06&nbsp;· 11&nbsp;· 25</span> <span class="grp"><b>Newborn</b> 05&nbsp;· 15&nbsp;· 23&nbsp;· 10&nbsp;· 18&nbsp;· 17&nbsp;· 22&nbsp;· 24</span> <span class="grp"><b>Planning</b> 07&nbsp;· 08&nbsp;· 12&nbsp;· 19</span></dd>
+      </dl>
+      <dl class="colour-row">
+        <dt>Colour = topic</dt><dd class="swatches"><span class="c-hem"><i></i>Bleeding</span><span class="c-htn"><i></i>Hypertension</span><span class="c-ptl"><i></i>Preterm / ROM</span><span class="c-fet"><i></i>Fetal</span><span class="c-lab"><i></i>Labor</span><span class="c-nb"><i></i>Newborn</span><span class="c-inf"><i></i>Infection</span><span class="c-met"><i></i>Glucose</span><span class="c-trm"><i></i>Trauma</span><span class="c-wf"><i></i>Workflow</span></dd>
+        <dd class="stopnote"><span class="c-stop"><i></i></span><b>Stop red</b> = emergency action or do not</dd>
+      </dl>
+    </div>
+  </section>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ICD-10-CM Official Guidelines &amp; Tabular FY2027 (I.C.15, I.C.16, I.C.21; no changes to Z37/Z38/Z3A/O80/O70/P07/P08 for FY2027); Kaiser Permanente Neonatal EOS Calculator, 2024 update (Kuzniewicz et al., Pediatrics 2024;154:e2023065267); Puopolo et al., AAP Clinical Report, Pediatrics 2018;142:e20182894. Items tagged <b>LOCAL</b> reflect this program’s workflow.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTAsMUgxMVYySDEwek0xMiwxSDEzVjJIMTJ6TTEzLDFIMTRWMkgxM3pNMTcsMUgxOFYySDE3ek0xOSwxSDIwVjJIMTl6TTIwLDFIMjFWMkgyMHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTksMkgxMFYzSDl6TTEwLDJIMTFWM0gxMHpNMTEsMkgxMlYzSDExek0xNywySDE4VjNIMTd6TTE5LDJIMjBWM0gxOXpNMjIsMkgyM1YzSDIyek0yNCwySDI1VjNIMjR6TTI1LDJIMjZWM0gyNXpNMjYsMkgyN1YzSDI2ek0yOCwySDI5VjNIMjh6TTAsM0gxVjRIMHpNMiwzSDNWNEgyek0zLDNINFY0SDN6TTQsM0g1VjRINHpNNiwzSDdWNEg2ek04LDNIOVY0SDh6TTEwLDNIMTFWNEgxMHpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTEzLDNIMTRWNEgxM3pNMTYsM0gxN1Y0SDE2ek0xOCwzSDE5VjRIMTh6TTIyLDNIMjNWNEgyMnpNMjQsM0gyNVY0SDI0ek0yNSwzSDI2VjRIMjV6TTI2LDNIMjdWNEgyNnpNMjgsM0gyOVY0SDI4ek0wLDRIMVY1SDB6TTIsNEgzVjVIMnpNMyw0SDRWNUgzek00LDRINVY1SDR6TTYsNEg3VjVINnpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNOSw1SDEwVjZIOXpNMTAsNUgxMVY2SDEwek0xMyw1SDE0VjZIMTN6TTE2LDVIMTdWNkgxNnpNMTgsNUgxOVY2SDE4ek0xOSw1SDIwVjZIMTl6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek05LDdIMTBWOEg5ek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTUsN0gxNlY4SDE1ek0xNyw3SDE4VjhIMTd6TTE4LDdIMTlWOEgxOHpNMjAsN0gyMVY4SDIwek0wLDhIMVY5SDB6TTEsOEgyVjlIMXpNNCw4SDVWOUg0ek01LDhINlY5SDV6TTYsOEg3VjlINnpNMTEsOEgxMlY5SDExek0xMiw4SDEzVjlIMTJ6TTE3LDhIMThWOUgxN3pNMTksOEgyMFY5SDE5ek0yMyw4SDI0VjlIMjN6TTI1LDhIMjZWOUgyNXpNMjYsOEgyN1Y5SDI2ek0yNyw4SDI4VjlIMjd6TTI4LDhIMjlWOUgyOHpNMiw5SDNWMTBIMnpNMyw5SDRWMTBIM3pNNCw5SDVWMTBINHpNNSw5SDZWMTBINXpNOCw5SDlWMTBIOHpNOSw5SDEwVjEwSDl6TTExLDlIMTJWMTBIMTF6TTEyLDlIMTNWMTBIMTJ6TTEzLDlIMTRWMTBIMTN6TTE1LDlIMTZWMTBIMTV6TTE2LDlIMTdWMTBIMTZ6TTE3LDlIMThWMTBIMTd6TTE4LDlIMTlWMTBIMTh6TTIxLDlIMjJWMTBIMjF6TTIyLDlIMjNWMTBIMjJ6TTIzLDlIMjRWMTBIMjN6TTI0LDlIMjVWMTBIMjR6TTI1LDlIMjZWMTBIMjV6TTI2LDlIMjdWMTBIMjZ6TTI3LDlIMjhWMTBIMjd6TTI4LDlIMjlWMTBIMjh6TTEsMTBIMlYxMUgxek0zLDEwSDRWMTFIM3pNNCwxMEg1VjExSDR6TTYsMTBIN1YxMUg2ek03LDEwSDhWMTFIN3pNMTEsMTBIMTJWMTFIMTF6TTEyLDEwSDEzVjExSDEyek0xMywxMEgxNFYxMUgxM3pNMTUsMTBIMTZWMTFIMTV6TTE2LDEwSDE3VjExSDE2ek0xOCwxMEgxOVYxMUgxOHpNMjIsMTBIMjNWMTFIMjJ6TTIzLDEwSDI0VjExSDIzek0yOCwxMEgyOVYxMUgyOHpNMSwxMUgyVjEySDF6TTMsMTFINFYxMkgzek00LDExSDVWMTJINHpNMTAsMTFIMTFWMTJIMTB6TTE1LDExSDE2VjEySDE1ek0xNywxMUgxOFYxMkgxN3pNMTgsMTFIMTlWMTJIMTh6TTIxLDExSDIyVjEySDIxek0yMiwxMUgyM1YxMkgyMnpNMjUsMTFIMjZWMTJIMjV6TTI3LDExSDI4VjEySDI3ek0yOCwxMUgyOVYxMkgyOHpNMCwxMkgxVjEzSDB6TTIsMTJIM1YxM0gyek00LDEySDVWMTNINHpNNiwxMkg3VjEzSDZ6TTEwLDEySDExVjEzSDEwek0xNywxMkgxOFYxM0gxN3pNMTgsMTJIMTlWMTNIMTh6TTIwLDEySDIxVjEzSDIwek0yMSwxMkgyMlYxM0gyMXpNMjMsMTJIMjRWMTNIMjN6TTI3LDEySDI4VjEzSDI3ek0xLDEzSDJWMTRIMXpNMiwxM0gzVjE0SDJ6TTMsMTNINFYxNEgzek00LDEzSDVWMTRINHpNNSwxM0g2VjE0SDV6TTcsMTNIOFYxNEg3ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTAsMTRIMVYxNUgwek0xLDE0SDJWMTVIMXpNNiwxNEg3VjE1SDZ6TTcsMTRIOFYxNUg3ek04LDE0SDlWMTVIOHpNOSwxNEgxMFYxNUg5ek0xMSwxNEgxMlYxNUgxMXpNMTIsMTRIMTNWMTVIMTJ6TTE0LDE0SDE1VjE1SDE0ek0xNSwxNEgxNlYxNUgxNXpNMTgsMTRIMTlWMTVIMTh6TTIxLDE0SDIyVjE1SDIxek0yNCwxNEgyNVYxNUgyNHpNMjUsMTRIMjZWMTVIMjV6TTI2LDE0SDI3VjE1SDI2ek0yOCwxNEgyOVYxNUgyOHpNMiwxNUgzVjE2SDJ6TTMsMTVINFYxNkgzek00LDE1SDVWMTZINHpNNywxNUg4VjE2SDd6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTQsMTVIMTVWMTZIMTR6TTE1LDE1SDE2VjE2SDE1ek0xNiwxNUgxN1YxNkgxNnpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0yMCwxNUgyMVYxNkgyMHpNMjQsMTVIMjVWMTZIMjR6TTI3LDE1SDI4VjE2SDI3ek0yOCwxNUgyOVYxNkgyOHpNMCwxNkgxVjE3SDB6TTEsMTZIMlYxN0gxek02LDE2SDdWMTdINnpNOSwxNkgxMFYxN0g5ek0xMCwxNkgxMVYxN0gxMHpNMTIsMTZIMTNWMTdIMTJ6TTE1LDE2SDE2VjE3SDE1ek0xNywxNkgxOFYxN0gxN3pNMTksMTZIMjBWMTdIMTl6TTIxLDE2SDIyVjE3SDIxek0yNywxNkgyOFYxN0gyN3pNMCwxN0gxVjE4SDB6TTEsMTdIMlYxOEgxek01LDE3SDZWMThINXpNNywxN0g4VjE4SDd6TTgsMTdIOVYxOEg4ek0xMSwxN0gxMlYxOEgxMXpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNSwxN0gxNlYxOEgxNXpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0xOCwxN0gxOVYxOEgxOHpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNCwxN0gyNVYxOEgyNHpNMjUsMTdIMjZWMThIMjV6TTI3LDE3SDI4VjE4SDI3ek0yOCwxN0gyOVYxOEgyOHpNMiwxOEgzVjE5SDJ6TTMsMThINFYxOUgzek01LDE4SDZWMTlINXpNNiwxOEg3VjE5SDZ6TTgsMThIOVYxOUg4ek0xMSwxOEgxMlYxOUgxMXpNMTIsMThIMTNWMTlIMTJ6TTEzLDE4SDE0VjE5SDEzek0xNCwxOEgxNVYxOUgxNHpNMTUsMThIMTZWMTlIMTV6TTE4LDE4SDE5VjE5SDE4ek0yMCwxOEgyMVYxOUgyMHpNMjIsMThIMjNWMTlIMjJ6TTIzLDE4SDI0VjE5SDIzek0yNCwxOEgyNVYxOUgyNHpNMjYsMThIMjdWMTlIMjZ6TTI4LDE4SDI5VjE5SDI4ek0yLDE5SDNWMjBIMnpNNCwxOUg1VjIwSDR6TTE2LDE5SDE3VjIwSDE2ek0xNywxOUgxOFYyMEgxN3pNMTgsMTlIMTlWMjBIMTh6TTIyLDE5SDIzVjIwSDIyek0yMywxOUgyNFYyMEgyM3pNMjcsMTlIMjhWMjBIMjd6TTI4LDE5SDI5VjIwSDI4ek0wLDIwSDFWMjFIMHpNMSwyMEgyVjIxSDF6TTMsMjBINFYyMUgzek01LDIwSDZWMjFINXpNNiwyMEg3VjIxSDZ6TTcsMjBIOFYyMUg3ek0xMiwyMEgxM1YyMUgxMnpNMTYsMjBIMTdWMjFIMTZ6TTE3LDIwSDE4VjIxSDE3ek0yMCwyMEgyMVYyMUgyMHpNMjEsMjBIMjJWMjFIMjF6TTIyLDIwSDIzVjIxSDIyek0yMywyMEgyNFYyMUgyM3pNMjQsMjBIMjVWMjFIMjR6TTI1LDIwSDI2VjIxSDI1ek0yOCwyMEgyOVYyMUgyOHpNOCwyMUg5VjIySDh6TTExLDIxSDEyVjIySDExek0xMywyMUgxNFYyMkgxM3pNMTQsMjFIMTVWMjJIMTR6TTE1LDIxSDE2VjIySDE1ek0xNiwyMUgxN1YyMkgxNnpNMTgsMjFIMTlWMjJIMTh6TTE5LDIxSDIwVjIySDE5ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI4LDIxSDI5VjIySDI4ek0wLDIySDFWMjNIMHpNMSwyMkgyVjIzSDF6TTIsMjJIM1YyM0gyek0zLDIySDRWMjNIM3pNNCwyMkg1VjIzSDR6TTUsMjJINlYyM0g1ek02LDIySDdWMjNINnpNOSwyMkgxMFYyM0g5ek0xMCwyMkgxMVYyM0gxMHpNMTEsMjJIMTJWMjNIMTF6TTE0LDIySDE1VjIzSDE0ek0xNSwyMkgxNlYyM0gxNXpNMTksMjJIMjBWMjNIMTl6TTIwLDIySDIxVjIzSDIwek0yMiwyMkgyM1YyM0gyMnpNMjQsMjJIMjVWMjNIMjR6TTI1LDIySDI2VjIzSDI1ek0yNiwyMkgyN1YyM0gyNnpNMjgsMjJIMjlWMjNIMjh6TTAsMjNIMVYyNEgwek02LDIzSDdWMjRINnpNOCwyM0g5VjI0SDh6TTEyLDIzSDEzVjI0SDEyek0xNCwyM0gxNVYyNEgxNHpNMTUsMjNIMTZWMjRIMTV6TTE3LDIzSDE4VjI0SDE3ek0xOSwyM0gyMFYyNEgxOXpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0yNywyM0gyOFYyNEgyN3pNMjgsMjNIMjlWMjRIMjh6TTAsMjRIMVYyNUgwek0yLDI0SDNWMjVIMnpNMywyNEg0VjI1SDN6TTQsMjRINVYyNUg0ek02LDI0SDdWMjVINnpNOCwyNEg5VjI1SDh6TTEwLDI0SDExVjI1SDEwek0xMSwyNEgxMlYyNUgxMXpNMTIsMjRIMTNWMjVIMTJ6TTE3LDI0SDE4VjI1SDE3ek0xOCwyNEgxOVYyNUgxOHpNMTksMjRIMjBWMjVIMTl6TTIwLDI0SDIxVjI1SDIwek0yMSwyNEgyMlYyNUgyMXpNMjIsMjRIMjNWMjVIMjJ6TTIzLDI0SDI0VjI1SDIzek0yNCwyNEgyNVYyNUgyNHpNMjUsMjRIMjZWMjVIMjV6TTI3LDI0SDI4VjI1SDI3ek0wLDI1SDFWMjZIMHpNMiwyNUgzVjI2SDJ6TTMsMjVINFYyNkgzek00LDI1SDVWMjZINHpNNiwyNUg3VjI2SDZ6TTksMjVIMTBWMjZIOXpNMTEsMjVIMTJWMjZIMTF6TTEzLDI1SDE0VjI2SDEzek0xNSwyNUgxNlYyNkgxNXpNMTYsMjVIMTdWMjZIMTZ6TTE3LDI1SDE4VjI2SDE3ek0xOCwyNUgxOVYyNkgxOHpNMjcsMjVIMjhWMjZIMjd6TTI4LDI1SDI5VjI2SDI4ek0wLDI2SDFWMjdIMHpNMiwyNkgzVjI3SDJ6TTMsMjZINFYyN0gzek00LDI2SDVWMjdINHpNNiwyNkg3VjI3SDZ6TTksMjZIMTBWMjdIOXpNMTEsMjZIMTJWMjdIMTF6TTEyLDI2SDEzVjI3SDEyek0xMywyNkgxNFYyN0gxM3pNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTgsMjZIMTlWMjdIMTh6TTE5LDI2SDIwVjI3SDE5ek0yMSwyNkgyMlYyN0gyMXpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTEwLDI3SDExVjI4SDEwek0xMSwyN0gxMlYyOEgxMXpNMTIsMjdIMTNWMjhIMTJ6TTE2LDI3SDE3VjI4SDE2ek0xNywyN0gxOFYyOEgxN3pNMTgsMjdIMTlWMjhIMTh6TTIwLDI3SDIxVjI4SDIwek0yNSwyN0gyNlYyOEgyNXpNMjcsMjdIMjhWMjhIMjd6TTI4LDI3SDI5VjI4SDI4ek0wLDI4SDFWMjlIMHpNMSwyOEgyVjI5SDF6TTIsMjhIM1YyOUgyek0zLDI4SDRWMjlIM3pNNCwyOEg1VjI5SDR6TTUsMjhINlYyOUg1ek02LDI4SDdWMjlINnpNOCwyOEg5VjI5SDh6TTksMjhIMTBWMjlIOXpNMTIsMjhIMTNWMjlIMTJ6TTE2LDI4SDE3VjI5SDE2ek0xNywyOEgxOFYyOUgxN3pNMjAsMjhIMjFWMjlIMjB6TTIyLDI4SDIzVjI5SDIyek0yMywyOEgyNFYyOUgyM3pNMjUsMjhIMjZWMjlIMjV6TTI3LDI4SDI4VjI5SDI3eiIgaWQ9InFyLXBhdGgiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIiBzdHJva2U9Im5vbmUiLz48L3N2Zz4="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>When to call OB/GYN</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); --body: 11pt; --gap: 0.13in; }
+  .masthead h1 { font-size: calc(56pt / var(--k)); }
+  .masthead .sub { max-width: 8in; font-size: 13.5pt; margin-top: 30pt; }
+  .sheet .small { font-size: var(--body); line-height: 1.28; }
+  .sheet .xs { font-size: 10.2pt; line-height: 1.25; }
+  .sheet .panel { gap: 6pt; }
+  .ph h2 { font-size: 25pt; font-family: "Inter", sans-serif; }   /* < 24 pt printed: text face (css2 #9) */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  .lfx { white-space: nowrap; }
+  .sheet > .pairs, .sheet > .panel { flex: none; }
+  .sheet > .panel + .panel, .sheet > .panel + .pairs { margin-top: var(--gap); }
+  .stopt { color: var(--stop); }
+
+  /* A: emergency entry + contacts */
+  .entry { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 0.22in; align-items: stretch; }
+  .entry .left { display: flex; flex-direction: column; gap: 6pt; }
+  .entry .urgent-head { font-size: 12.2pt; line-height: 1.25; font-weight: 600; align-items: flex-start; }
+  .entry .urgent-head b { font-weight: 800; }
+  .entry .urgent-head .deadline { margin-top: 1pt; }
+  .entry .worse { border-left: 3pt solid var(--stop); padding: 2pt 0 2pt 8pt; font-size: var(--body); line-height: 1.28; }
+  .entry .worse b { color: var(--stop); font-weight: 800; }
+  .howwho { font-size: var(--body); line-height: 1.28; border-top: 1.5pt solid var(--wf); padding-top: 4pt; }
+  .howwho b { color: var(--wf); font-weight: 800; }
+  .entry .box.local { margin-top: 6pt; font-size: var(--body); line-height: 1.3; }
+  .fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3pt 14pt; }
+  .fields > span { min-width: 0; }
+  .fields .k { font-weight: 700; color: var(--wf); }
+  .fields .full { grid-column: 1 / -1; }
+  .fields hr { grid-column: 1 / -1; border: 0; border-top: .75pt dashed color-mix(in srgb, var(--wf) 55%, white); margin: 2pt 0; }
+
+  /* B: situation x response matrix */
+  .mxnote { display: flex; justify-content: space-between; align-items: baseline; gap: 0.3in; font-size: var(--body); line-height: 1.28; }
+  table.mx { table-layout: fixed; --cell-y: 2.6pt; --table-leading: 1.22; font-size: 10.6pt; }
+  table.mx col.sit { width: 53%; }
+  table.mx thead tr.grp th { font: 800 10.6pt/1.1 "Inter"; letter-spacing: .06em; color: var(--ink-3); text-align: center; border-bottom: 0; padding: 0 5pt 3pt; }
+  table.mx thead tr.grp th.span { position: relative; }
+  table.mx thead tr.grp th.span::after { content: ""; position: absolute; left: 8pt; right: 8pt; bottom: 0; border-bottom: 1.2pt solid var(--ink-3); }
+  table.mx thead tr.hd th { text-transform: none; letter-spacing: 0; text-align: center; vertical-align: bottom; padding: 4pt 5pt 5pt;
+    font: 800 11.4pt/1.12 "Inter"; color: var(--wf); }
+  table.mx thead tr.hd th small { display: block; font: 500 10.6pt/1.18 "Inter"; color: var(--ink-3); margin-top: 3pt; }
+  table.mx thead tr.hd th:first-child { text-align: left; padding-left: 12pt; color: var(--ink); }
+  table.mx tbody th { text-align: left; vertical-align: top; text-transform: none; letter-spacing: 0; color: var(--ink);
+    font: 800 11pt/1.2 "Inter"; padding: var(--cell-y) 6pt var(--cell-y) 8pt !important;
+    border-left: 4pt solid var(--c); border-bottom: 0.75pt solid var(--rule); }
+  table.mx tbody th .cd { display: inline; font: 400 10.6pt/1.26 "Inter"; color: var(--ink-2); margin-left: 3pt; }
+  table.mx tbody th .cd b { color: var(--ink); font-weight: 700; }
+  table.mx tbody th .xref { vertical-align: 0.04em; }
+  table.mx td { text-align: center; vertical-align: middle; border-left: 0; padding: var(--cell-y) 4pt; }
+  /* dividers only where the column group changes: situation | FM · consultation · responsibility · where (ax6 #2, pv1 #7) */
+  table.mx :is(td, thead th).group-start { border-left: calc(1pt / var(--k)) solid var(--rule); }
+  table.mx tr.e > th { color: var(--stop); }
+  .mxread { display: block; font: 600 10.6pt/1.26 "Inter"; color: var(--ink-2); margin-bottom: 6pt; padding-right: 0.3in; }
+  .mxread b { color: var(--ink); font-weight: 800; }
+  table.mx td:first-of-type { padding-left: 4pt; }
+  table.mx tbody tr:last-child td { border-bottom: 0.75pt solid var(--rule); }
+  table.mx tbody:last-of-type tr:last-child td, table.mx tbody:last-of-type tr:last-child th { border-bottom: none; }
+  table.mx tr.phase > th { border-left: 0; border-bottom: 0; padding: 5pt 8pt 3pt !important; font: 800 11.4pt/1.15 "Inter"; color: var(--wf);
+    background: color-mix(in srgb, var(--wf) 12%, white); border-top: 1.5pt solid var(--wf); }
+  table.mx tr.phase > th .pn { font: 500 10.6pt/1.2 "Inter"; color: var(--ink-2); margin-left: 6pt; }
+  table.mx tr.phase.em > th { color: var(--stop); background: var(--t-stop); border-top-color: var(--stop); }
+  table.mx tr.phase.em > th .deadline { margin-left: 6pt; vertical-align: .05em; }
+  /* response markers: shape carries the meaning; colour only repeats it */
+  .m { --mk: var(--wf); display: inline-flex; flex-direction: row; align-items: flex-start; gap: 4pt; font: 700 10.6pt/1.14 "Inter"; color: var(--ink); text-align: left; }
+  .m::before { margin-top: .5pt; }
+  .m::before { content: ""; width: 11pt; height: 11pt; border-radius: 50%; flex: none; box-sizing: border-box; }
+  .m.y::before { background: var(--mk); }
+  .m.if::before { border: 1.7pt solid var(--mk); background: #fff; }
+  .m.if { font-weight: 600; color: var(--ink-2); }
+  .m.l::before { width: calc(16pt / var(--k)); height: calc(8pt / var(--k)); border-radius: 0; border: 1pt dashed color-mix(in srgb, var(--wf) 70%, white); background: #fff; }
+  .m.no { color: var(--ink-3); font-weight: 600; font-size: 11pt; }
+  .m.no::before { display: none; }
+  tr.e .m.y { --mk: var(--stop); }
+  .m.mr { flex-direction: row; gap: 5pt; text-align: left; }
+  td.cons { text-align: left; padding-left: 8pt !important; padding-right: 6pt; }
+  td.cons .m { align-items: flex-start; }
+  td.cons .m::before { margin-top: 1pt; }
+  .mkey { display: flex; flex-wrap: wrap; gap: 3pt 18pt; align-items: center; font-size: 10.6pt; line-height: 1.25; color: var(--ink-2); }
+  .mkey > span { display: inline-flex; align-items: center; gap: 5pt; }
+  .mkey .m::before { margin: 0; }
+  .mkey b { color: var(--ink); }
+  .mxfoot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 0.22in; align-items: start; }
+  .mxfoot .box.local { margin-top: 6pt; font-size: var(--body); line-height: 1.3; }
+
+  /* lower grid: lettered pairs read across */
+  .pairs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap); align-items: stretch; }
+  .pairs > .panel > .box.local:last-child, .pairs > .panel > .push { margin-top: auto; }
+  .rail.sb { grid-template-columns: 0.3in minmax(0, 1fr); font-size: var(--body); line-height: 1.28; }
+  .rail.sb > .when { font: 800 16pt/1 "Inter", sans-serif; letter-spacing: 0; color: var(--wf); }   /* < 24 pt printed: text face (pv1 #15) */
+  .rail.sb { align-items: first baseline; }
+  .sheet table.mx tbody th, .sheet table.mx tbody th .cd { text-wrap: wrap; }
+  .rail.sb > .do { font-weight: 400; }
+  .rail.sb > .do .w { font: 800 10.6pt/1 "Inter"; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-right: 3pt; }
+  /* consecutive rails own their spacing (fo3 #2) */
+  .rail-list { display: flex; flex-direction: column; gap: 0; }
+  .rail-list > .rail { margin: 0; padding-block: calc(4pt / var(--k)); }
+  .rail-list > .rail + .rail { border-top: calc(.75pt / var(--k)) solid var(--rule); }
+  .rail-list > .rail:first-child { padding-top: 0; }
+  .rail-list > .rail:last-child { padding-bottom: 0; }
+  .rail.ag { grid-template-columns: 1.32in minmax(0, 1fr); font-size: var(--body); line-height: 1.28; }
+  .rail.ag > .when { color: var(--wf); display: flex; gap: 5pt; align-items: baseline; }
+  .rail.ag > .when .m { flex: none; }
+  .rail.ag > .when .m::before { width: 9.5pt; height: 9.5pt; position: relative; top: 1pt; }
+  .rail.ag > .do { font-weight: 400; }
+  .rail-list > .rail.ag.ownership-acceptance { background: color-mix(in srgb, var(--wf) 10%, white); box-shadow: inset 0 0 0 calc(1pt / var(--k)) var(--wf); padding: calc(4pt / var(--k)) 6pt; border-top: 0; }
+  .rail-list > .rail.ag.ownership-acceptance + .rail { border-top: 0; }
+  .pairs.ef { grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr); }
+  .sheet > .pairs + .pairs { margin-top: var(--gap); }
+  .rail.lv { grid-template-columns: 1.05in minmax(0, 1fr); font-size: var(--body); line-height: 1.28; }
+  .rail.lv > .when { color: var(--wf); }
+  .rail.lv > .do { font-weight: 400; }
+  .readback { font-size: var(--body); line-height: 1.28; border-top: 1.5pt solid var(--wf); padding-top: 4pt; }
+  .script { font-size: var(--body); line-height: 1.3; }
+  .script q { quotes: "“" "”"; font-weight: 700; }
+  ul.ls.check.doc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3pt 12pt; font-size: var(--body); line-height: 1.24; }
+  ul.ls.check.doc > li { padding-left: 16pt; }
+  ul.ls.check.doc > li::before { width: 9.5pt; height: 9.5pt; top: .14em; border-width: 1.5pt; }
+  .sep3 { border-top: 1.5pt solid var(--wf); padding-top: 4pt; font-size: var(--body); line-height: 1.28; }
+  .sep3 > b:first-child { color: var(--wf); }
+  .box.decision.small b { font-weight: 800; }
+  .three { font-style: italic; color: var(--ink-2); }
+  table.mx thead tr.hd th .hn { font: 500 10.6pt/1.18 "Inter"; color: var(--ink-3); margin-left: 3pt; }
+  td.cons .m { display: flex; }
+  td.cons .m + .m { margin-top: 0; }
+  .mkey { margin-top: 2pt; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="26-induction-labor.html" title="Induction &amp; stages of labor">‹ 26</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html" selected="">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="28-fm-signal.html" title="Fetal monitoring: signal">28 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/27-ob-consult.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-wf" style="--k:0.895">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>FM maternity care&nbsp;· OB/GYN backup&nbsp;· L&amp;D&nbsp;· postpartum</div>
+      <h1><span class="sid">27</span>When to call OB/GYN</h1>
+    </div>
+    <div class="sub">Say what you need&nbsp;— phone advice, bedside review, co-management or transfer of care&nbsp;— and who owns care afterward.<br><span class="muted">Competence, privileges, resources and explicit acceptance decide the route. No national diagnosis list exists: response assignments are LOCAL.</span></div>
+    <nav class="setnav rel"><em>See also</em><a href="01-triage.html" class="xlink"><span><b>1</b>Triage</span></a><a href="02-emergencies.html" class="xlink"><span><b>2</b>Emergencies</span></a><a href="26-induction-labor.html" class="xlink"><span><b>26</b>Induction&nbsp;· labor</span></a><a href="04-workflow.html" class="xlink"><span><b>4</b>Workflow</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-04.svg)"></div>
+
+  <!-- A: emergency entry + LOCAL contacts / scope -->
+  <section class="panel c-wf" id="p-A">
+    <div class="ph inl src-right"><span class="num">A</span><h2>Emergency? Call OB/GYN to the bedside now</h2><span class="src">CMQCC OBH Toolkit v3.0 (2022) App. C&nbsp;· ACOG CO 767 (2019)&nbsp;· SMFM Consult 67 (2023)&nbsp;· ACOG CPG 10 (2025)&nbsp;· AHA (2025)&nbsp;· AAFP Birth Equity (2026)&nbsp;· AAFP–ACOG joint statement §§A–B&nbsp;· ownership is LOCAL</span></div>
+    <div class="entry">
+      <div class="left">
+        <div class="urgent-head"><span><b>Activate the emergency response. Call FM attending + OB/GYN to the bedside; notify the bedside RN. Start treatment while help comes.</b> <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a> <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a> <a href="02-emergencies.html#p-C" class="xlink"><span class="xref c-lab">2&nbsp;· C</span></a> <a href="02-emergencies.html#p-D" class="xlink"><span class="xref c-stop">2&nbsp;· D</span></a> <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> <a href="29-fm-response.html#p-A" class="xlink"><span class="xref c-fet">29&nbsp;· A</span></a></span><span class="deadline">Now</span></div>
+        <div class="worse"><b>No response, worsening, or safety concern still unresolved?</b> State the concern explicitly; use the chain of command. Immediate danger → activate emergency backup now.</div>
+        <div class="howwho"><b>Required care exceeds the FM attending’s competence or privileges?</b> Obtain a clinician credentialed for that care. Agree whether OB/GYN takes the procedure, a defined problem or the maternal episode.</div>
+      </div>
+      <div class="box local">
+        <div class="fields">
+          <span><span class="k">FM attending</span> <span class="lfv" data-local="fm_attending_contact">____</span></span>
+          <span><span class="k">OB/GYN first call</span> <span class="lfv" data-local="obgyn_first_call">____</span></span>
+          <span><span class="k">OB/GYN backup</span> <span class="lfv" data-local="obgyn_backup">____</span></span>
+          <span><span class="k">Emergency activation</span> <span class="lfv" data-local="ob_rapid_response">____</span></span>
+          <span><span class="k">MFM / transfer center</span> <span class="lfv" data-local="mfm_transfer_center">____</span></span>
+          <span><span class="k">Escalate:</span> backup after <span class="lfv" data-local="escalate_backup_after">____</span> min</span>
+          <hr>
+          <span class="full"><span class="k">Emergencies:</span> OB/GYN assumes maternal primary when <span class="lfv" data-local="obgyn_assumes_primary_when">____</span>&nbsp;· <span class="lfx">escalation leader <span class="lfv" data-local="emergency_escalation_leader">____</span></span>&nbsp;· <span class="lfx">interim responsible attending <span class="lfv" data-local="interim_responsible_attending">____</span></span>&nbsp;· <span class="lfx">chain of command <span class="lfv" data-local="clinical_escalation_chain">____</span></span></span>
+          <span class="full"><span class="k">Scope:</span> <span class="lfx">FM procedural privileges / supervision <span class="lfv" data-local="fm_privileges_supervision">____</span></span>&nbsp;· <span class="lfx">scope agreement <span class="lfv" data-local="fm_obgyn_scope_agreement">____</span></span>&nbsp;· <span class="lfx">OB/GYN-primary criteria <span class="lfv" data-local="obgyn_primary_criteria">____</span></span>&nbsp;· <span class="lfx">co-management criteria <span class="lfv" data-local="comanagement_criteria">____</span></span>&nbsp;· <span class="lfx">return-to-FM criteria <span class="lfv" data-local="return_to_fm_criteria">____</span></span>&nbsp;· <span class="lfx">postoperative / readmission service <span class="lfv" data-local="postop_readmission_service">____</span></span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B: matrix -->
+  <section class="panel c-wf" id="p-B">
+    <div class="ph inl src-right"><span class="num">B</span><h2>Situation → response</h2><span class="src">CMQCC&nbsp;· CO 767&nbsp;· SMFM 67&nbsp;· CPG 10&nbsp;· OCC 9 Table 3&nbsp;· OCC 7&nbsp;· SMFM 37&nbsp;· PB 205&nbsp;· 219&nbsp;· 222&nbsp;· CO 745&nbsp;· AAFP (2022)&nbsp;· AFP (2021)&nbsp;· <b>LOCAL</b> cells are program policy</span></div>
+    <table class="t mx">
+      <colgroup><col class="sit"><col style="width:7.2%"><col style="width:7.6%"><col style="width:8.2%"><col style="width:7.6%"><col style="width:7.6%"><col style="width:8.8%"></colgroup>
+      <thead>
+        <tr class="grp"><th></th><th class="group-start"></th><th class="span group-start" colspan="2" id="mx-g-cons" scope="colgroup">Consultation&nbsp;— how</th><th class="span group-start" colspan="2" id="mx-g-resp" scope="colgroup">Responsibility&nbsp;— who</th><th class="group-start" id="mx-g-where" scope="colgroup">Where</th></tr>
+        <tr class="hd">
+          <th id="mx-sit" scope="col"><span class="mxread"><b>Separate choices, not one ladder:</b> choose the consultation (how); separately agree who is responsible and where care happens.</span>Situation <span class="hn">· defining condition&nbsp;· reference</span></th>
+          <th class="group-start" id="mx-fm" scope="col">FM manages<small>FM stays primary</small></th>
+          <th class="group-start" id="mx-phone" scope="col">Phone consult<small>stable&nbsp;· focused question</small></th>
+          <th id="mx-bedside" scope="col">Bedside consult<small>presence needed</small></th>
+          <th class="group-start" id="mx-coman" scope="col">Co-manage<small>named primary + OB tasks</small></th>
+          <th id="mx-obcare" scope="col">OB assumes care<small>accepted&nbsp;· scope&nbsp;· time</small></th>
+          <th class="group-start" id="mx-transfer" scope="col">Transfer to higher level<small>exceeds capability</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="phase em"><th colspan="7" scope="rowgroup">Emergency&nbsp;· any phase <span class="deadline">Now</span><span class="pn">activate the emergency response&nbsp;· start treatment while help comes</span></th></tr>
+        <tr class="e c-stop"><th id="mx-r1" scope="row">Hemorrhage&nbsp;— stage 2 <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a><span class="cd"><b>OB/GYN to the bedside already at stage 2.</b> Call earlier for deterioration or anticipated need beyond current resources.</span></th>
+          <td class="group-start" headers="mx-r1 mx-fm"><span class="m if">Start Rx</span></td><td class="group-start" headers="mx-r1 mx-phone mx-g-cons"><span class="m no">—</span></td><td headers="mx-r1 mx-bedside mx-g-cons"><span class="m y">Stage 2</span></td><td class="group-start" headers="mx-r1 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r1 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r1 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="e c-stop"><th id="mx-r2" scope="row">Stage 3&nbsp;· major or worsening bleeding <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a><span class="cd">Suspected uterine rupture / inversion / major abruption; shock; bleeding persisting despite initial measures or needing operative control → add surgery, anesthesia, critical care; <b>name procedural lead + maternal primary.</b></span></th>
+          <td class="group-start" headers="mx-r2 mx-fm"><span class="m if">Start Rx</span></td><td class="group-start" headers="mx-r2 mx-phone mx-g-cons"><span class="m no">—</span></td><td headers="mx-r2 mx-bedside mx-g-cons"><span class="m y">Now</span></td><td class="group-start" headers="mx-r2 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r2 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r2 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="e c-stop"><th id="mx-r3" scope="row">Eclampsia&nbsp;· severe-range BP <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a><span class="cd">SBP ≥ 160 or DBP ≥ 110 persisting ≥ 15&nbsp;min: <b>treat within 30–60&nbsp;min&nbsp;— do not wait for symptoms or deterioration</b>, antepartum or postpartum. Bedside obstetric + anesthesia response.</span></th>
+          <td class="group-start" headers="mx-r3 mx-fm"><span class="m if">Start Rx</span></td><td class="group-start" headers="mx-r3 mx-phone mx-g-cons"><span class="m no">—</span></td><td headers="mx-r3 mx-bedside mx-g-cons"><span class="m y">Now</span></td><td class="group-start" headers="mx-r3 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r3 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r3 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="e c-stop"><th id="mx-r4" scope="row">Shoulder dystocia <a href="02-emergencies.html#p-C" class="xlink"><span class="xref c-lab">2&nbsp;· C</span></a><span class="cd">Call extra hands, OB/GYN, newborn team. Begin maneuvers immediately.</span></th>
+          <td class="group-start" headers="mx-r4 mx-fm"><span class="m if">Maneuvers</span></td><td class="group-start" headers="mx-r4 mx-phone mx-g-cons"><span class="m no">—</span></td><td headers="mx-r4 mx-bedside mx-g-cons"><span class="m y">Now</span></td><td class="group-start" headers="mx-r4 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r4 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r4 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="e c-stop"><th id="mx-r5" scope="row">Maternal arrest <a href="02-emergencies.html#p-D" class="xlink"><span class="xref c-stop">2&nbsp;· D</span></a><span class="cd">Start CPR immediately; defibrillate when indicated. Activate code + obstetric surgical response. <b>Fundus ≥ umbilicus → prepare resuscitative delivery from recognition; aim for birth by 5&nbsp;min.</b></span></th>
+          <td class="group-start" headers="mx-r5 mx-fm"><span class="m if">CPR</span></td><td class="group-start" headers="mx-r5 mx-phone mx-g-cons"><span class="m no">—</span></td><td headers="mx-r5 mx-bedside mx-g-cons"><span class="m y">Now</span></td><td class="group-start" headers="mx-r5 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r5 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r5 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="e c-stop"><th id="mx-r6" scope="row">Category III&nbsp;· cord prolapse&nbsp;· urgent birth <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> <a href="29-fm-response.html#p-A" class="xlink"><span class="xref c-fet">29&nbsp;· A</span></a><span class="cd">Intrauterine resuscitation as indicated; cord prolapse → relieve cord compression. Category III unresolved after initial measures → <b>expedite delivery.</b></span></th>
+          <td class="group-start" headers="mx-r6 mx-fm"><span class="m if">Resuscitate</span></td><td class="group-start" headers="mx-r6 mx-phone mx-g-cons"><span class="m no">—</span></td><td headers="mx-r6 mx-bedside mx-g-cons"><span class="m y">Now</span></td><td class="group-start" headers="mx-r6 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r6 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r6 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="e c-stop"><th id="mx-r7" scope="row">Suspected sepsis <a href="13-sepsis.html#p-02" class="xlink"><span class="xref c-stop">13&nbsp;· 02</span></a> <a href="13-sepsis.html#p-04" class="xlink"><span class="xref c-inf">13&nbsp;· 04</span></a><span class="cd">Activate the multidisciplinary emergency response; begin treatment immediately. Emergency source control when indicated; uterine source → prompt delivery / evacuation.</span></th>
+          <td class="group-start" headers="mx-r7 mx-fm"><span class="m if">Start Rx</span></td><td class="group-start" headers="mx-r7 mx-phone mx-g-cons"><span class="m no">—</span></td><td headers="mx-r7 mx-bedside mx-g-cons"><span class="m y">Now</span></td><td class="group-start" headers="mx-r7 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r7 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r7 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+      </tbody>
+      <tbody>
+        <tr class="phase"><th colspan="7" scope="rowgroup">Antepartum<span class="pn">stable findings: formal consult early enough to plan surveillance, delivery site, operator, escalation&nbsp;· record the plan where the admitting team finds it</span></th></tr>
+        <tr class="c-hem"><th id="mx-r8" scope="row">Placenta / vasa previa&nbsp;· suspected PAS <a href="01-triage.html#p-01" class="xlink"><span class="xref c-hem">1&nbsp;· 01</span></a><span class="cd">Delivery site + hemorrhage plan; MFM / PAS team for suspected PAS or previa + prior uterine surgery. Vasa previa: on-site immediate neonatal transfusion; <b>known + ROM / labor → prompt cesarean; don’t await bleeding.</b></span></th>
+          <td class="group-start" headers="mx-r8 mx-fm"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td>
+          <td colspan="2" class="cons group-start" headers="mx-r8 mx-phone mx-bedside mx-g-cons"><span class="m y">OB/GYN review</span><span class="m if">+ MFM / PAS team</span></td>
+          <td class="group-start" headers="mx-r8 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r8 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r8 mx-transfer mx-g-where"><span class="m y">PAS: level III / IV</span></td></tr>
+        <tr class="c-lab"><th id="mx-r9" scope="row">Prior uterine surgery&nbsp;· planned TOLAC <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a><span class="cd">Review operative report; candidacy per PB 205. <b>Prior classical / T incision, prior rupture or extensive transfundal surgery generally precludes planned TOLAC.</b></span></th>
+          <td class="group-start" headers="mx-r9 mx-fm"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td>
+          <td colspan="2" class="cons group-start" headers="mx-r9 mx-phone mx-bedside mx-g-cons"><span class="m y">Delivery plan</span><span class="m if">Labor, ROM, bleeding, pain → urgent bedside</span></td>
+          <td class="group-start" headers="mx-r9 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r9 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r9 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="c-htn"><th id="mx-r10" scope="row">Preeclampsia with severe features <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a><span class="cd"><b>Urgent inpatient assessment.</b> ≥ 34w0d: deliver after stabilization; do not delay for late-preterm steroids. &lt; 34w0d: expectant care only if selected, stable, appropriate resources <b>E</b>; maternal / fetal deterioration → deliver after stabilization.</span></th>
+          <td class="group-start" headers="mx-r10 mx-fm"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td>
+          <td colspan="2" class="cons group-start" headers="mx-r10 mx-phone mx-bedside mx-g-cons"><span class="m y">Urgent assessment</span><span class="m if">+ MFM if complex</span></td>
+          <td class="group-start" headers="mx-r10 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r10 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r10 mx-transfer mx-g-where"><span class="m if">&lt; 34w0d: level III</span></td></tr>
+        <tr class="c-lab"><th id="mx-r11" scope="row">Twins / higher-order&nbsp;· persistent malpresentation<span class="cd">Chorionicity + amnionicity; monochorionic → MFM surveillance <b>E</b>. Timing, operator, neonatal resources; name who owns the plan. ECV: contraindications, consent, cesarean readily available.</span></th>
+          <td class="group-start" headers="mx-r11 mx-fm"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td>
+          <td colspan="2" class="cons group-start" headers="mx-r11 mx-phone mx-bedside mx-g-cons"><span class="m y">Formal consult + plan</span></td>
+          <td class="group-start" headers="mx-r11 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r11 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r11 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="c-fet"><th id="mx-r12" scope="row">Major maternal disease&nbsp;· fetal complication&nbsp;· threatened early birth / PPROM <a href="01-triage.html#p-04" class="xlink"><span class="xref c-ptl">1&nbsp;· 04 / 06</span></a> <a href="07-prenatal.html#p-07" class="xlink"><span class="xref c-fet">7&nbsp;· 07</span></a> <a href="07-prenatal.html#p-08" class="xlink"><span class="xref c-wf">7&nbsp;· 08</span></a><span class="cd">Define specialist involvement + place of care.</span></th>
+          <td class="group-start" headers="mx-r12 mx-fm"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td>
+          <td colspan="2" class="cons group-start" headers="mx-r12 mx-phone mx-bedside mx-g-cons"><span class="m y">Formal consult</span><span class="m if">+ MFM if complex</span></td>
+          <td class="group-start" headers="mx-r12 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r12 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r12 mx-transfer mx-g-where"><span class="m if">Exceeds capability</span></td></tr>
+      </tbody>
+      <tbody>
+        <tr class="phase"><th colspan="7" scope="rowgroup">Intrapartum<span class="pn">call before the needed intervention</span></th></tr>
+        <tr class="c-lab"><th id="mx-r13" scope="row">Possible operative vaginal birth or cesarean&nbsp;· unsuccessful vacuum / forceps <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a> <a href="26-induction-labor.html#p-G" class="xlink"><span class="xref c-lab">26&nbsp;· G</span></a><span class="cd">Request bedside assessment while the need is developing; agree indication, urgency, operator, backup + maternal primary. <b>Unsuccessful attempt → bedside reassessment now.</b></span></th>
+          <td class="group-start" headers="mx-r13 mx-fm"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r13 mx-phone mx-g-cons"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r13 mx-bedside mx-g-cons"><span class="m y">As need develops</span></td><td class="group-start" headers="mx-r13 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r13 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r13 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="c-lab"><th id="mx-r14" scope="row">TOLAC&nbsp;· twins&nbsp;· malpresentation in labor<span class="cd">Outside the documented plan → bedside review + revised ownership.</span></th>
+          <td class="group-start" headers="mx-r14 mx-fm"><span class="m if">Per plan</span></td><td class="group-start" headers="mx-r14 mx-phone mx-g-cons"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r14 mx-bedside mx-g-cons"><span class="m if">Outside plan</span></td><td class="group-start" headers="mx-r14 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r14 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r14 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="c-trm"><th id="mx-r15" scope="row">3rd- / 4th-degree laceration (OASIS) <a href="03-labor-efm.html#p-C" class="xlink"><span class="xref c-trm">3&nbsp;· C</span></a><span class="cd">Clinician experienced + credentialed in sphincter repair; adequate anesthesia, exposure, assistance. Consider OR.</span></th>
+          <td class="group-start" headers="mx-r15 mx-fm"><span class="m if">If credentialed</span></td><td class="group-start" headers="mx-r15 mx-phone mx-g-cons"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r15 mx-bedside mx-g-cons"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r15 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r15 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r15 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+      </tbody>
+      <tbody>
+        <tr class="phase"><th colspan="7" scope="rowgroup">Postpartum<span class="pn">new instability, major bleeding, seizure, acute cardiopulmonary / neurologic concern → emergency rows</span></th></tr>
+        <tr class="c-hem"><th id="mx-r16" scope="row">Persistent hemorrhage&nbsp;· retained placenta&nbsp;· expanding hematoma <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a> <a href="03-labor-efm.html#p-C" class="xlink"><span class="xref c-trm">3&nbsp;· C</span></a><span class="cd">Possible uterine / surgical intervention → credentialed proceduralist; agree primary service. <b>No separation plane → suspect PAS; stop forceful removal;</b> blood bank + anesthesia.</span></th>
+          <td class="group-start" headers="mx-r16 mx-fm"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r16 mx-phone mx-g-cons"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r16 mx-bedside mx-g-cons"><span class="m y">Assess</span></td><td class="group-start" headers="mx-r16 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r16 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r16 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="c-htn"><th id="mx-r17" scope="row">Severe-range BP&nbsp;· headache red flags&nbsp;· suspected PE <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a> <a href="14-pp-headache.html#p-01" class="xlink"><span class="xref c-stop">14&nbsp;· 01</span></a> <a href="16-pe-dvt.html#p-01" class="xlink"><span class="xref c-stop">16&nbsp;· 01</span></a><span class="cd">Emergency pathway + specialist support. Ongoing BP <a href="06-postpartum.html#p-B" class="xlink"><span class="xref c-htn">6&nbsp;· B</span></a> <a href="11-bp-meds.html" class="xlink"><span class="xref c-htn">11</span></a></span></th>
+          <td class="group-start" headers="mx-r17 mx-fm"><span class="m if">Start Rx</span></td><td class="group-start" headers="mx-r17 mx-phone mx-g-cons"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r17 mx-bedside mx-g-cons"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r17 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r17 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r17 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+        <tr class="c-wf"><th id="mx-r18" scope="row">Stable postpartum complication<span class="cd">Formal consult when advice, intervention or monitoring exceeds team scope.</span></th>
+          <td class="group-start" headers="mx-r18 mx-fm"><span class="m y">Within scope</span></td>
+          <td colspan="2" class="cons group-start" headers="mx-r18 mx-phone mx-bedside mx-g-cons"><span class="m if">Beyond scope → formal consult</span></td>
+          <td class="group-start" headers="mx-r18 mx-coman mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td headers="mx-r18 mx-obcare mx-g-resp"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td><td class="group-start" headers="mx-r18 mx-transfer mx-g-where"><span class="m l" role="img" aria-label="LOCAL: program assigns"></span></td></tr>
+      </tbody>
+    </table>
+    <div class="mkey">
+      <span><span class="m y"></span><b>Expected response</b></span>
+      <span><span class="m if"></span><b>Conditional / interim</b>&nbsp;— condition in cell</span>
+      <span><span class="m no">—</span>not this response</span>
+      <span><span class="m l"></span><b>LOCAL</b>&nbsp;— program assigns before posting</span>
+      <span>Emergency rows: red label + red dot</span>
+          </div>
+  </section>
+
+  <!-- C–F -->
+  <div class="pairs">
+    <section class="panel c-wf" id="p-C">
+      <div class="ph"><span class="num">C</span><h2>Make the call&nbsp;— SBAR</h2><span class="src">AHRQ TeamSTEPPS 3.0 (2023) SBAR&nbsp;· OB fields are LOCAL adaptation&nbsp;· generic call <a href="04-workflow.html" class="xlink"><span class="xref c-wf">4</span></a></span></div>
+      <div class="rail-list">
+      <div class="rail sb"><span class="when">S</span><span class="do"><span class="w">Situation</span>“FM resident ____ with attending Dr ____. Patient ____, G__P__, __w__d / postpartum day __, room __. Concern ____; stable / deteriorating. <b>I need ____ now / by ____.</b>”</span></div>
+      <div class="rail sb"><span class="when">B</span><span class="do"><span class="w">Background</span>“Relevant risks ____; uterine surgery / placenta ____; labor / delivery course ____; allergies ____; treatment given, doses + times ____.”</span></div>
+      <div class="rail sb"><span class="when">A</span><span class="do"><span class="w">Assessment</span>“Maternal vitals / trend ____; bleeding ____; fetal status if pregnant ____ <a href="29-fm-response.html#p-F" class="xlink"><span class="xref c-fet">29&nbsp;· F</span></a>; exam / results ____; treatment response ____; uncertainty ____.”</span></div>
+      <div class="rail sb"><span class="when">R</span><span class="do"><span class="w">Request</span>Choose: phone advice&nbsp;· bedside review&nbsp;· co-management&nbsp;· assumption of primary maternal care. “<b>I need ____.</b> Proposed next step ____. Please confirm the plan, urgency and responsible clinician.”</span></div>
+      </div>
+      <div class="readback push"><b>Repeat back:</b> immediate actions ____&nbsp;· consultant arrival / next contact ____&nbsp;· worsening trigger ____&nbsp;· <span class="lfx">responsible attending ____.</span></div>
+    </section>
+
+    <section class="panel c-wf" id="p-D">
+      <div class="ph"><span class="num">D</span><h2>Agree explicitly&nbsp;— who owns care</h2><span class="src">AAFP Consultations, Referrals &amp; Transfers of Care (2025)&nbsp;· AAFP–ACOG joint statement §§A–B&nbsp;· workflow is LOCAL</span></div>
+      <div class="rail-list">
+      <div class="rail ag"><span class="when">Phone</span><span class="do">Question, recommendations, reassessment, conditions that require bedside review. <b>FM remains primary.</b></span></div>
+      <div class="rail ag"><span class="when">Bedside</span><span class="do">Who is coming, urgency / arrival plan, care while awaiting arrival. <b>Confirm ongoing ownership.</b></span></div>
+      <div class="rail ag"><span class="when">Co-manage</span><span class="do">Explicitly agreed shared care: <b>named maternal primary</b>; OB/GYN responsibilities; order-writing roles; pending-result owner; escalation triggers.</span></div>
+      <div class="rail ag ownership-acceptance"><span class="when">OB assumes care</span><span class="do"><b>Accepting attending, scope, effective time</b>; FM’s continuing role; criteria for return to FM.</span></div>
+      <div class="rail ag"><span class="when">Curbside</span><span class="do">General discussion. If patient-specific advice will drive management → <b>formal consultation</b>, documented.</span></div>
+      </div>
+      <div class="box decision small push"><b>Procedure lead and maternal primary may differ&nbsp;— document both.</b> A page or consult order alone does not establish acceptance; the sending clinician stays responsible until the receiver accepts.</div>    </section>
+  </div>
+  <div class="pairs ef">
+    <section class="panel c-wf" id="p-E">
+      <div class="ph"><span class="num">E</span><h2>Need MFM or a higher level of care?</h2><span class="src">ACOG/SMFM OCC 9 (2019, reaff. 2025) Table 3&nbsp;· OCC 7 (2018)&nbsp;· SMFM Maternal Transport Checklist (2020, reaff. 2025)</span></div>
+      <div class="rail-list">
+      <div class="rail lv"><span class="when">MFM consult</span><span class="do">Complex maternal / fetal disease, suspected PAS, remote-from-term severe preeclampsia. Agree: <b>advice, shared care or transfer.</b></span></div>
+      <div class="rail lv"><span class="when">Higher-level facility</span><span class="do">Care exceeds surgical, anesthesia, transfusion, critical-care or neonatal capability → <b>contact the receiving team.</b> Suspected PAS: experienced level III / IV center. Severe preeclampsia &lt; 34w0d, selected expectant care: appropriate maternal + neonatal resources (OCC 9: level III example).</span></div>
+      <div class="rail lv"><span class="when">While arranging</span><span class="do"><b>Stabilize;</b> continue indicated emergency treatment / delivery. Sending + receiving clinicians agree urgency, transport suitability, interim treatment; confirm acceptance, destination, bed / capability, transport team, equipment, records <b>F</b>.</span></div>
+      <div class="rail lv"><span class="when">Separate decisions</span><span class="do">Maternal and NICU levels are separate assessments. MFM advice, OB/GYN primary care and interhospital transfer are separate decisions.</span></div>
+      </div>
+      <div class="box local small"><span class="lfx">Maternal level <span class="lfv" data-local="maternal_level_of_care">____</span></span>&nbsp;· <span class="lfx">neonatal capability <span class="lfv" data-local="neonatal_level_of_care">____</span></span>&nbsp;· <span class="lfx">transfer criteria <span class="lfv" data-local="maternal_transfer_criteria">____</span></span>&nbsp;· <span class="lfx">receiving center <span class="lfv" data-local="maternal_receiving_center">____</span></span>&nbsp;· <span class="lfx">transport pathway <span class="lfv" data-local="maternal_transport_pathway">____</span></span></div>
+    </section>
+
+    <section class="panel c-wf" id="p-F">
+      <div class="ph"><span class="num">F</span><h2>Close the loop&nbsp;— document + hand off</h2><span class="src">AHRQ Handoff (2023)&nbsp;· AAFP transfer definition (2025)&nbsp;· SMFM briefing form (2020)&nbsp;· fields LOCAL</span></div>
+      <ul class="ls check doc">
+        <li>Reason + urgency</li>
+        <li>Call / response times</li>
+        <li>Consultant</li>
+        <li>Assessment / recommendations</li>
+        <li>Actions taken</li>
+        <li>Maternal primary&nbsp;· procedure lead</li>
+        <li>Order-writing roles</li>
+        <li>Pending results + owner</li>
+        <li>Reassessment / escalation plan</li>
+      </ul>
+      <div class="sep3"><b>OB/GYN assumes care:</b> <q>Dr ____ accepts primary maternal care for ____ effective ____.</q> Care while awaiting arrival / transport: clinician ____, plan ____. FM continuing role ____.</div>
+      <div class="sep3"><b>Interfacility transfer:</b> receiving hospital / unit ____&nbsp;· accepting clinician ____&nbsp;· acceptance time ____&nbsp;· maternal / fetal status ____&nbsp;· transport plan ____&nbsp;· records / results sent ____.</div>
+      <div class="sep3"><b>Return to FM:</b> accepting FM attending ____&nbsp;· effective time ____&nbsp;· remaining problems / pending-result owners ____.</div>
+      <div class="box decision small push"><b>Tell the patient and bedside RN; update both teams and the EHR.</b> Allow questions and confirmation. Before discharge: primary service, follow-up, pending-result owner <a href="21-before-discharge.html#p-H" class="xlink"><span class="xref c-wf">21&nbsp;· H</span></a></div>
+    </section>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> AAFP–ACOG Joint Statement (AAFP policy action 2025), §§A–B; AAFP Consultations, Referrals &amp; Transfers of Care (2025); AAFP Pregnancy, Perinatal &amp; Newborn Care (2023); AAFP Cesarean Delivery in Family Medicine (2022); AAFP Birth Equity (2026); CMQCC Obstetric Hemorrhage Toolkit v3.0 (2022), App. C; ACOG CO 767 (2019); SMFM Consult 67 (2023, reaff. 2025); ACOG CPG 10 (2025); AHA CPR/ECC Guidelines (2025), Part 10; RCOG GTG 50 (2014, reviewed 2024); ACOG/SMFM OCC 9 (2019, reaff. 2025), Table 3 (examples, not mandatory assignments); OCC 7 PAS (2018); SMFM Consult 37 (2015, reaff. 2024); SMFM Monochorionic Twin Checklists (2026); ACOG CO 745 (2018, reaff. 2026); PB 205 VBAC (2019, reaff. 2024); PB 222 (2020, reaff. 2026); PB 219 (2020); PB 183 Postpartum Hemorrhage (2017); AAFP/AFP Obstetric Lacerations (2021); SMFM Maternal Transport Checklist (2020, reaff. 2025); AHRQ TeamSTEPPS 3.0 SBAR and Handoff (2023). No national diagnosis-based FM → OB/GYN transfer list exists; specialty assignments, attendance rules, response intervals, privileges and transfer thresholds are program policy. Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTAsMUgxMVYySDEwek0xMiwxSDEzVjJIMTJ6TTEzLDFIMTRWMkgxM3pNMTcsMUgxOFYySDE3ek0xOSwxSDIwVjJIMTl6TTIwLDFIMjFWMkgyMHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTksMkgxMFYzSDl6TTE3LDJIMThWM0gxN3pNMTksMkgyMFYzSDE5ek0yMiwySDIzVjNIMjJ6TTI0LDJIMjVWM0gyNHpNMjUsMkgyNlYzSDI1ek0yNiwySDI3VjNIMjZ6TTI4LDJIMjlWM0gyOHpNMCwzSDFWNEgwek0yLDNIM1Y0SDJ6TTMsM0g0VjRIM3pNNCwzSDVWNEg0ek02LDNIN1Y0SDZ6TTgsM0g5VjRIOHpNMTAsM0gxMVY0SDEwek0xMSwzSDEyVjRIMTF6TTEyLDNIMTNWNEgxMnpNMTMsM0gxNFY0SDEzek0xNiwzSDE3VjRIMTZ6TTE4LDNIMTlWNEgxOHpNMjIsM0gyM1Y0SDIyek0yNCwzSDI1VjRIMjR6TTI1LDNIMjZWNEgyNXpNMjYsM0gyN1Y0SDI2ek0yOCwzSDI5VjRIMjh6TTAsNEgxVjVIMHpNMiw0SDNWNUgyek0zLDRINFY1SDN6TTQsNEg1VjVINHpNNiw0SDdWNUg2ek05LDRIMTBWNUg5ek0xMSw0SDEyVjVIMTF6TTEyLDRIMTNWNUgxMnpNMTQsNEgxNVY1SDE0ek0xNSw0SDE2VjVIMTV6TTE2LDRIMTdWNUgxNnpNMTcsNEgxOFY1SDE3ek0xOCw0SDE5VjVIMTh6TTIyLDRIMjNWNUgyMnpNMjQsNEgyNVY1SDI0ek0yNSw0SDI2VjVIMjV6TTI2LDRIMjdWNUgyNnpNMjgsNEgyOVY1SDI4ek0wLDVIMVY2SDB6TTYsNUg3VjZINnpNOCw1SDlWNkg4ek05LDVIMTBWNkg5ek0xMCw1SDExVjZIMTB6TTEzLDVIMTRWNkgxM3pNMTYsNUgxN1Y2SDE2ek0xOCw1SDE5VjZIMTh6TTE5LDVIMjBWNkgxOXpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTksN0gxMFY4SDl6TTEyLDdIMTNWOEgxMnpNMTQsN0gxNVY4SDE0ek0xNSw3SDE2VjhIMTV6TTE3LDdIMThWOEgxN3pNMTgsN0gxOVY4SDE4ek0yMCw3SDIxVjhIMjB6TTAsOEgxVjlIMHpNMSw4SDJWOUgxek00LDhINVY5SDR6TTUsOEg2VjlINXpNNiw4SDdWOUg2ek0xMSw4SDEyVjlIMTF6TTEyLDhIMTNWOUgxMnpNMTcsOEgxOFY5SDE3ek0xOSw4SDIwVjlIMTl6TTIzLDhIMjRWOUgyM3pNMjUsOEgyNlY5SDI1ek0yNiw4SDI3VjlIMjZ6TTI3LDhIMjhWOUgyN3pNMjgsOEgyOVY5SDI4ek0yLDlIM1YxMEgyek0zLDlINFYxMEgzek00LDlINVYxMEg0ek01LDlINlYxMEg1ek03LDlIOFYxMEg3ek04LDlIOVYxMEg4ek05LDlIMTBWMTBIOXpNMTEsOUgxMlYxMEgxMXpNMTIsOUgxM1YxMEgxMnpNMTMsOUgxNFYxMEgxM3pNMTUsOUgxNlYxMEgxNXpNMTYsOUgxN1YxMEgxNnpNMTcsOUgxOFYxMEgxN3pNMTgsOUgxOVYxMEgxOHpNMjEsOUgyMlYxMEgyMXpNMjIsOUgyM1YxMEgyMnpNMjMsOUgyNFYxMEgyM3pNMjQsOUgyNVYxMEgyNHpNMjUsOUgyNlYxMEgyNXpNMjYsOUgyN1YxMEgyNnpNMjcsOUgyOFYxMEgyN3pNMjgsOUgyOVYxMEgyOHpNMCwxMEgxVjExSDB6TTEsMTBIMlYxMUgxek0yLDEwSDNWMTFIMnpNNCwxMEg1VjExSDR6TTUsMTBINlYxMUg1ek02LDEwSDdWMTFINnpNOCwxMEg5VjExSDh6TTExLDEwSDEyVjExSDExek0xMiwxMEgxM1YxMUgxMnpNMTMsMTBIMTRWMTFIMTN6TTE1LDEwSDE2VjExSDE1ek0xNiwxMEgxN1YxMUgxNnpNMTgsMTBIMTlWMTFIMTh6TTIyLDEwSDIzVjExSDIyek0yMywxMEgyNFYxMUgyM3pNMjgsMTBIMjlWMTFIMjh6TTAsMTFIMVYxMkgwek0zLDExSDRWMTJIM3pNNCwxMUg1VjEySDR6TTUsMTFINlYxMkg1ek03LDExSDhWMTJIN3pNOCwxMUg5VjEySDh6TTEwLDExSDExVjEySDEwek0xNSwxMUgxNlYxMkgxNXpNMTcsMTFIMThWMTJIMTd6TTE4LDExSDE5VjEySDE4ek0yMSwxMUgyMlYxMkgyMXpNMjIsMTFIMjNWMTJIMjJ6TTI1LDExSDI2VjEySDI1ek0yNywxMUgyOFYxMkgyN3pNMjgsMTFIMjlWMTJIMjh6TTAsMTJIMVYxM0gwek0zLDEySDRWMTNIM3pNNiwxMkg3VjEzSDZ6TTgsMTJIOVYxM0g4ek0xMCwxMkgxMVYxM0gxMHpNMTcsMTJIMThWMTNIMTd6TTE4LDEySDE5VjEzSDE4ek0yMCwxMkgyMVYxM0gyMHpNMjEsMTJIMjJWMTNIMjF6TTIzLDEySDI0VjEzSDIzek0yNywxMkgyOFYxM0gyN3pNMCwxM0gxVjE0SDB6TTUsMTNINlYxNEg1ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTMsMTRINFYxNUgzek00LDE0SDVWMTVINHpNNiwxNEg3VjE1SDZ6TTcsMTRIOFYxNUg3ek04LDE0SDlWMTVIOHpNOSwxNEgxMFYxNUg5ek0xMCwxNEgxMVYxNUgxMHpNMTEsMTRIMTJWMTVIMTF6TTEyLDE0SDEzVjE1SDEyek0xNCwxNEgxNVYxNUgxNHpNMTUsMTRIMTZWMTVIMTV6TTE4LDE0SDE5VjE1SDE4ek0yMSwxNEgyMlYxNUgyMXpNMjQsMTRIMjVWMTVIMjR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjgsMTRIMjlWMTVIMjh6TTQsMTVINVYxNkg0ek04LDE1SDlWMTZIOHpNMTEsMTVIMTJWMTZIMTF6TTEyLDE1SDEzVjE2SDEyek0xNCwxNUgxNVYxNkgxNHpNMTUsMTVIMTZWMTZIMTV6TTE2LDE1SDE3VjE2SDE2ek0xNywxNUgxOFYxNkgxN3pNMTgsMTVIMTlWMTZIMTh6TTIwLDE1SDIxVjE2SDIwek0yNCwxNUgyNVYxNkgyNHpNMjcsMTVIMjhWMTZIMjd6TTI4LDE1SDI5VjE2SDI4ek0xLDE2SDJWMTdIMXpNMiwxNkgzVjE3SDJ6TTQsMTZINVYxN0g0ek02LDE2SDdWMTdINnpNNywxNkg4VjE3SDd6TTgsMTZIOVYxN0g4ek05LDE2SDEwVjE3SDl6TTEwLDE2SDExVjE3SDEwek0xMiwxNkgxM1YxN0gxMnpNMTUsMTZIMTZWMTdIMTV6TTE3LDE2SDE4VjE3SDE3ek0xOSwxNkgyMFYxN0gxOXpNMjEsMTZIMjJWMTdIMjF6TTI3LDE2SDI4VjE3SDI3ek0wLDE3SDFWMThIMHpNMSwxN0gyVjE4SDF6TTIsMTdIM1YxOEgyek0zLDE3SDRWMThIM3pNNywxN0g4VjE4SDd6TTksMTdIMTBWMThIOXpNMTAsMTdIMTFWMThIMTB6TTExLDE3SDEyVjE4SDExek0xMywxN0gxNFYxOEgxM3pNMTQsMTdIMTVWMThIMTR6TTE1LDE3SDE2VjE4SDE1ek0xNiwxN0gxN1YxOEgxNnpNMTcsMTdIMThWMThIMTd6TTE4LDE3SDE5VjE4SDE4ek0yMiwxN0gyM1YxOEgyMnpNMjMsMTdIMjRWMThIMjN6TTI0LDE3SDI1VjE4SDI0ek0yNSwxN0gyNlYxOEgyNXpNMjcsMTdIMjhWMThIMjd6TTI4LDE3SDI5VjE4SDI4ek0yLDE4SDNWMTlIMnpNMywxOEg0VjE5SDN6TTQsMThINVYxOUg0ek01LDE4SDZWMTlINXpNNiwxOEg3VjE5SDZ6TTgsMThIOVYxOUg4ek0xMCwxOEgxMVYxOUgxMHpNMTEsMThIMTJWMTlIMTF6TTEyLDE4SDEzVjE5SDEyek0xMywxOEgxNFYxOUgxM3pNMTQsMThIMTVWMTlIMTR6TTE1LDE4SDE2VjE5SDE1ek0xOCwxOEgxOVYxOUgxOHpNMjAsMThIMjFWMTlIMjB6TTIyLDE4SDIzVjE5SDIyek0yMywxOEgyNFYxOUgyM3pNMjQsMThIMjVWMTlIMjR6TTI2LDE4SDI3VjE5SDI2ek0yOCwxOEgyOVYxOUgyOHpNMywxOUg0VjIwSDN6TTgsMTlIOVYyMEg4ek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTEsMjBIMlYyMUgxek0zLDIwSDRWMjFIM3pNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek03LDIwSDhWMjFIN3pNMTIsMjBIMTNWMjFIMTJ6TTE2LDIwSDE3VjIxSDE2ek0xNywyMEgxOFYyMUgxN3pNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNSwyMEgyNlYyMUgyNXpNMjgsMjBIMjlWMjFIMjh6TTgsMjFIOVYyMkg4ek0xMSwyMUgxMlYyMkgxMXpNMTMsMjFIMTRWMjJIMTN6TTE0LDIxSDE1VjIySDE0ek0xNSwyMUgxNlYyMkgxNXpNMTYsMjFIMTdWMjJIMTZ6TTE4LDIxSDE5VjIySDE4ek0xOSwyMUgyMFYyMkgxOXpNMjAsMjFIMjFWMjJIMjB6TTI0LDIxSDI1VjIySDI0ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTEwLDIySDExVjIzSDEwek0xMSwyMkgxMlYyM0gxMXpNMTQsMjJIMTVWMjNIMTR6TTE1LDIySDE2VjIzSDE1ek0xOSwyMkgyMFYyM0gxOXpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjUsMjJIMjZWMjNIMjV6TTI2LDIySDI3VjIzSDI2ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNOSwyM0gxMFYyNEg5ek0xMiwyM0gxM1YyNEgxMnpNMTQsMjNIMTVWMjRIMTR6TTE1LDIzSDE2VjI0SDE1ek0xNywyM0gxOFYyNEgxN3pNMTksMjNIMjBWMjRIMTl6TTIwLDIzSDIxVjI0SDIwek0yNCwyM0gyNVYyNEgyNHpNMjcsMjNIMjhWMjRIMjd6TTI4LDIzSDI5VjI0SDI4ek0wLDI0SDFWMjVIMHpNMiwyNEgzVjI1SDJ6TTMsMjRINFYyNUgzek00LDI0SDVWMjVINHpNNiwyNEg3VjI1SDZ6TTgsMjRIOVYyNUg4ek05LDI0SDEwVjI1SDl6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTcsMjRIMThWMjVIMTd6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjcsMjRIMjhWMjVIMjd6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNOSwyNUgxMFYyNkg5ek0xMSwyNUgxMlYyNkgxMXpNMTMsMjVIMTRWMjZIMTN6TTE1LDI1SDE2VjI2SDE1ek0xNiwyNUgxN1YyNkgxNnpNMTcsMjVIMThWMjZIMTd6TTE4LDI1SDE5VjI2SDE4ek0yNywyNUgyOFYyNkgyN3pNMjgsMjVIMjlWMjZIMjh6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNMTAsMjZIMTFWMjdIMTB6TTExLDI2SDEyVjI3SDExek0xMiwyNkgxM1YyN0gxMnpNMTMsMjZIMTRWMjdIMTN6TTE1LDI2SDE2VjI3SDE1ek0xNiwyNkgxN1YyN0gxNnpNMTcsMjZIMThWMjdIMTd6TTE4LDI2SDE5VjI3SDE4ek0xOSwyNkgyMFYyN0gxOXpNMjEsMjZIMjJWMjdIMjF6TTI1LDI2SDI2VjI3SDI1ek0yNiwyNkgyN1YyN0gyNnpNMjcsMjZIMjhWMjdIMjd6TTI4LDI2SDI5VjI3SDI4ek0wLDI3SDFWMjhIMHpNNiwyN0g3VjI4SDZ6TTgsMjdIOVYyOEg4ek05LDI3SDEwVjI4SDl6TTEwLDI3SDExVjI4SDEwek0xMSwyN0gxMlYyOEgxMXpNMTIsMjdIMTNWMjhIMTJ6TTE2LDI3SDE3VjI4SDE2ek0xNywyN0gxOFYyOEgxN3pNMTgsMjdIMTlWMjhIMTh6TTIwLDI3SDIxVjI4SDIwek0yNSwyN0gyNlYyOEgyNXpNMjcsMjdIMjhWMjhIMjd6TTI4LDI3SDI5VjI4SDI4ek0wLDI4SDFWMjlIMHpNMSwyOEgyVjI5SDF6TTIsMjhIM1YyOUgyek0zLDI4SDRWMjlIM3pNNCwyOEg1VjI5SDR6TTUsMjhINlYyOUg1ek02LDI4SDdWMjlINnpNOCwyOEg5VjI5SDh6TTksMjhIMTBWMjlIOXpNMTIsMjhIMTNWMjlIMTJ6TTE2LDI4SDE3VjI5SDE2ek0xNywyOEgxOFYyOUgxN3pNMjAsMjhIMjFWMjlIMjB6TTIyLDI4SDIzVjI5SDIyek0yMywyOEgyNFYyOUgyM3pNMjUsMjhIMjZWMjlIMjV6TTI3LDI4SDI4VjI5SDI3eiIgaWQ9InFyLXBhdGgiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIiBzdHJva2U9Im5vbmUiLz48L3N2Zz4="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

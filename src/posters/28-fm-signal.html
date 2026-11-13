@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Fetal monitoring: signal</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  /* sheet 28 · 18x24 poster · clinical text >= 9.5 pt printed (CSS pt × --k) */
+  .sheet { --accent: var(--fet); --body: 10.7pt; --gap: 0.12in; }
+  .sheet > .foot { font-size: calc(7.4pt / var(--k)); }   /* citations stay tiny */
+  .masthead h1 { font-size: calc(54pt / var(--k)); }
+  .masthead .sub { max-width: none; font-size: 13pt; margin-top: 19pt; padding-bottom: 0.02in; }
+  .masthead .urgent-head.mh { font-size: 11.4pt; line-height: 1.22; font-weight: 600; margin-bottom: 5pt; }
+  .masthead .urgent-head.mh b { font-weight: 800; }
+  .masthead .scope { font-size: 11.6pt; line-height: 1.28; }
+  .sheet .small { font-size: var(--body); line-height: 1.27; }
+  .sheet .xs { font-size: 10.6pt; line-height: 1.25; }
+  .sheet .panel { gap: 4.5pt; }
+  .ph h2 { font-size: 22pt; font-family: "Inter", sans-serif; }   /* < 24 pt printed: text face (css2 #9) */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  .ph.inl { grid-template-columns: auto auto minmax(0, 1fr); }
+  .ph.inl .num { grid-row: 1; }
+  .ph.inl .src { grid-column: 3; grid-row: 1; text-align: right; align-self: baseline; padding-left: 0.2in; }
+  .sheet > .row2 { flex: none; }
+  .sheet > .row2 + .row2 { margin-top: var(--gap); }
+  .row2 { display: grid; grid-template-columns: minmax(0, 905fr) minmax(0, 772fr); gap: 0.2in; align-items: stretch; }
+  .row2.ef { grid-template-columns: minmax(0, 985fr) minmax(0, 692fr); }
+  .panel > .box.local:last-child, .panel > .tail { margin-top: auto; }
+  .duo > .stack > .box.local:last-child { margin-top: auto; }
+  .duo.eq { align-items: stretch; }
+  .lfx { white-space: nowrap; }
+  .lc28 { color: var(--wf); font-weight: 600; }
+
+  /* strip figures: drawn at the box's CSS width (build/strips28.py WIDTHS) */
+  figure.s28 { margin: 0; break-inside: avoid; }
+  figure.s28 img { display: block; width: 100%; height: auto; }
+  figure.s28 figcaption { font-size: 10.6pt; line-height: 1.24; color: var(--ink-2); margin-top: 2pt; }
+  figure.s28 figcaption b { color: var(--ink); }
+  figure.s28 figcaption .syn { color: var(--ink-3); font-style: italic; }
+
+  .duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.15in; align-items: start; }
+  .duo.wl { grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); }
+  .stack { display: flex; flex-direction: column; gap: 5pt; min-width: 0; }
+  .sh { font: 800 10.6pt/1.15 "Inter"; letter-spacing: .07em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); border-top: 1.5pt solid var(--c); padding-top: 3pt; }
+  .sh .nc { color: var(--ink-3); font-weight: 700; }
+  ul.ls.s28 { font-size: var(--body); line-height: 1.26; gap: 3pt; }
+  ul.ls.s28 > li::before { background: var(--c); }
+  ol.steps.s28 { font-size: var(--body); line-height: 1.26; gap: 3pt; }
+  ol.steps.s28 > li { padding-left: 22pt; }
+  ol.steps.s28 > li::before { width: 15pt; height: 15pt; font-size: calc(10pt / var(--k)); line-height: 15pt; }
+
+  /* look / why / do rails */
+  .rail.r28 { grid-template-columns: 0.62in minmax(0, 1fr); font-size: var(--body); line-height: 1.26; }
+  .rail.r28 > .when { color: var(--c); font: 800 10.6pt/1.3 "Inter"; letter-spacing: .06em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; }
+  .rail.r28 > .do { font-weight: 400; }
+  .rail.r28 + .rail.r28 { margin-top: 3pt; padding-top: 3pt; }
+
+  .prohib { border-left: 4pt solid var(--stop); background: var(--t-stop); padding: 4pt 8pt 5pt; font-size: var(--body); line-height: 1.26; }
+  .prohib .tag.stop { margin-right: 3pt; }
+  .prohib b.x { color: var(--stop); }
+  .panel .urgent-head { font-size: var(--body); line-height: 1.25; font-weight: 600; }
+  .panel .urgent-head b { font-weight: 800; }
+  .key { border-left: 4pt solid var(--c); padding: 2pt 0 2pt 8pt; font-size: var(--body); line-height: 1.26; }
+
+  table.t.s28 { font-size: var(--body); --cell-y: 3pt; --table-leading: 1.24; table-layout: fixed; }
+  table.t.s28 th { font-size: 10.6pt; }
+  table.t.s28 td.k { white-space: normal; color: var(--c); }
+  table.t.toco col.a { width: 21%; }
+  table.t.iupc col.a { width: 33%; }
+
+  /* F: arithmetic */
+  .calc { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2pt 12pt; align-items: baseline; border-left: 4pt solid var(--c); background: color-mix(in srgb, var(--c) 12%, white); padding: 5pt 10pt 6pt; }
+  .calc .eq { font: 800 calc(17pt / var(--k))/1.15 "Inter"; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; }
+  .calc .eq.r { color: var(--c); }
+  .calc .lb { font: 800 10.6pt/1.2 "Inter"; letter-spacing: .06em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--ink-3); }
+  .hero.mvu { font-size: calc(22pt / var(--k)); color: var(--lab); }
+  .adq { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2pt 10pt; align-items: center; }
+  .x-no { color: var(--stop); font-weight: 800; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="27-ob-consult.html" title="When to call OB/GYN">‹ 27</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html" selected="">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="29-fm-response.html" title="Fetal monitoring: response">29 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/28-fm-signal.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-fet" style="--k:0.9">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>L&amp;D&nbsp;· intrapartum&nbsp;· EFM equipment</div>
+      <h1><span class="sid">28</span>Fetal monitoring: signal</h1>
+    </div>
+    <div class="sub"><div class="urgent-head mh"><span><b>Lost signal, uncertain source or apparent bradycardia = fetal status unknown → assess the patient, call FM attending, confirm by ultrasound. Equipment checks never delay indicated delivery</b> <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> <a href="29-fm-response.html#p-A" class="xlink"><span class="xref c-fet">29&nbsp;· A</span></a></span></div><div class="scope"><span class="muted">Confirm fetal rate&nbsp;· troubleshoot sensors&nbsp;· measure contractions. Definitions, Categories, resuscitation</span> <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> <span class="muted">· oxytocin</span> <a href="26-induction-labor.html#p-D" class="xlink"><span class="xref c-lab">26&nbsp;· D</span></a> <span class="muted">· tachysystole</span> <a href="26-induction-labor.html#p-E" class="xlink"><span class="xref c-lab">26&nbsp;· E</span></a></div></div>
+    <nav class="setnav rel"><em>See also</em><a href="03-labor-efm.html" class="xlink"><span><b>3</b>Labor &amp; EFM</span></a><a href="29-fm-response.html" class="xlink"><span><b>29</b>FHR&nbsp;· response</span></a><a href="26-induction-labor.html" class="xlink"><span><b>26</b>Induction&nbsp;· labor</span></a><a href="20-neuraxial.html" class="xlink"><span><b>20</b>Neuraxial</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/s28-strip.svg)"></div>
+
+  <!-- A · B -->
+  <div class="row2">
+    <section class="panel c-fet" id="p-A">
+      <div class="ph"><span class="num">A</span><h2>Confirm the fetal signal</h2><span class="src">ACOG CPG 10 (2025) pp.591–592&nbsp;· NICE NG229 §§1.4.5–9&nbsp;· AWHONN (2024)&nbsp;· HRS (2023)&nbsp;· NICE NG137 §1.11</span></div>
+      <figure class="s28"><img src="../../assets/svg/s28-maternal-capture.svg" alt="Maternal capture strip: during pushing the displayed FHR switches to the maternal pulse, so pushes look like accelerations; after repositioning, ultrasound confirms the fetal rate of 145 bpm">
+        <figcaption><b>Maternal capture.</b> Pushes look like accelerations because the trace is the mother’s pulse; no fetal information while captured. <span class="syn">Synthetic; values illustrative.</span></figcaption></figure>
+      <div class="duo wl">
+        <div class="stack">
+          <div class="sh">Is that really the fetus?</div>
+          <ol class="steps s28">
+            <li><b>Patient + channel:</b> right patient, monitor, transducer, channel.</li>
+            <li><b>Mother:</b> palpate pulse; display maternal SpO₂ HR beside the tracing.</li>
+            <li><b>Fetus:</b> listen; compare audible, displayed and maternal rates at the same time.</li>
+            <li><b>Signal:</b> contact, position, connections. Good signal quality ≠ fetal origin.</li>
+            <li><b>Still uncertain → bedside ultrasound</b> for fetal cardiac activity + rate; FM attending / OB/GYN now; consider FSE <span class="xref here">C</span></li>
+          </ol>
+        </div>
+        <div class="stack">
+          <div class="sh">Capture clues <span class="nc">· suggest, do not prove</span></div>
+          <ul class="ls s28">
+            <li>Displayed rate = maternal pulse; <b>“accelerations” with each push</b> (key sign); abrupt baseline shift; unexpected “recovery” after poor signal. Can occur without a visible break.</li>
+            <li><b>Second stage:</b> maternal HR rises into the fetal range as the fetus descends: keep it visible. Push-timed accels on <b>12%</b> of external vs <b>4%</b> of FSE tracings&nbsp;— ≈ 8% may be maternal.</li>
+            <li><b>Fast / irregular maternal pulse:</b> BP, symptoms, 12-lead ECG; confirm fetal rate independently.</li>
+          </ul>
+          <div class="small"><b>Source confirmed → classify and act</b> <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a></div>
+        </div>
+      </div>
+      <div class="key"><b>Twins: confirm two hearts.</b> Ultrasound-map each heart; label channel ↔ twin; maternal pulse too. Matching detail on both channels → one fetus recorded twice: ultrasound, reposition. A display offset does not prove two sources. Keep monitoring twin B after the first birth.</div>
+      <div class="box local small"><span class="lfx">Twin channel labels <span class="lfv" data-local="twin_channel_convention">____</span></span>&nbsp;· <span class="lfx">FM attending <span class="lfv" data-local="fm_attending_contact">____</span></span>&nbsp;· <span class="lfx">OB/GYN <span class="lfv" data-local="obgyn_first_call">____</span></span></div>
+    </section>
+
+    <section class="panel c-fet" id="p-B">
+      <div class="ph"><span class="num">B</span><h2>Sudden half or double rate?</h2><span class="src">Philips Avalon IFU ch.12&nbsp;· FIGO CTG (2015) §§3.2–3.3&nbsp;· GE 250cx manual</span></div>
+      <figure class="s28"><img src="../../assets/svg/s28-doubling-halving.svg" alt="Counting artefact strips: displayed rate doubles from 100 to 200 bpm and back, and halves from 190 to 95 bpm and back, while independent ultrasound checks stay at 100 and 190 bpm">
+        <figcaption><b>Exact ×2 / ÷2 jumps</b> while independent checks (◇) stay put: suspect counting artefact. <span class="syn">Synthetic.</span></figcaption></figure>
+      <div class="rail r28"><span class="when">Look</span><span class="do">Abrupt switch to ≈ ½ or 2× the prior rate, often with gaps.</span></div>
+      <div class="rail r28"><span class="when">Why</span><span class="do">Autocorrelation locks onto the wrong interval: missed cycles (halving) or extra counted signals (doubling).</span></div>
+      <div class="rail r28"><span class="when">Do</span><span class="do"><b>Verify immediately:</b> assess apparent brady- / tachycardia now; compare maternal pulse; listen; reposition. Uncertain → ultrasound. Ongoing difficulty → FSE when eligible <span class="xref here">C</span></span></div>
+      <div class="prohib"><span class="tag stop">Stop</span><b class="x">Never multiply or divide the displayed rate and call it fetal.</b> Assess the true rate + prior record <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a></div>
+      <div class="small"><b>Gap = missing data:</b> never read depth, recovery or variability across it. <b>Irregular beats?</b> External Doppler may misrepresent an arrhythmia → FSE when eligible <span class="xref here">C</span> rhythm <a href="29-fm-response.html#p-D" class="xlink"><span class="xref c-fet">29&nbsp;· D</span></a></div>
+      <div class="sh">Read the scale</div>
+      <ul class="ls s28">
+        <li><b>US paper, 3&nbsp;cm/min:</b> 1 small division = <b>10&nbsp;s</b>; 6 = <b>1&nbsp;min</b>. FHR <b>30&nbsp;bpm/cm</b>; minor line = 10&nbsp;bpm (as in these strips).</li>
+        <li>Check speed + scale on paper and screen: zoom or <b>1&nbsp;cm/min</b> (UK) changes shape, not duration.</li>
+      </ul>
+      <div class="box local small"><span class="lfx">Monitor model / IFU <span class="lfv" data-local="efm_monitor_ifu">____</span></span>&nbsp;· <span class="lfx">recorder speed / scale <span class="lfv" data-local="efm_recorder_speed">____</span></span></div>
+    </section>
+  </div>
+
+  <!-- C · D -->
+  <div class="row2 ef">
+    <section class="panel c-fet" id="p-C">
+      <div class="ph"><span class="num">C</span><h2>FSE: better acquisition, verify the source</h2><span class="src">ACOG CPG 10 (2025) Box 2&nbsp;· NIH Perinatal HIV (2025)&nbsp;· Philips Avalon IFU ch.16&nbsp;· FSE IFUs</span></div>
+      <figure class="s28"><img src="../../assets/svg/s28-fse-maternal-ecg.svg" alt="FSE strip: rate recorded through the scalp electrode, about 105 bpm, matches the dashed maternal heart rate; source unresolved until ultrasound confirms fetal cardiac activity">
+        <figcaption><b>FSE rate = maternal HR:</b> unresolved until ultrasound shows fetal cardiac activity. After fetal death an FSE can record maternal ECG. <span class="syn">Synthetic.</span></figcaption></figure>
+      <div class="duo">
+        <div class="stack">
+          <div class="sh">Consider&nbsp;· before placing</div>
+          <ul class="ls s28">
+            <li><b>Use when</b> external FHR stays inadequate despite adjustment, or maternal vs fetal rate remains unclear. Not routine: small ↑ scalp injury + cephalohematoma.</li>
+            <li><b>Check:</b> consent&nbsp;· ROM&nbsp;· cervical access&nbsp;· identified vertex scalp&nbsp;· infection + bleeding risk&nbsp;· IFU + minimum GA.</li>
+          </ul>
+          <div class="prohib"><span class="tag stop">Stop</span><b class="x">ACOG absolute:</b> malpresentation / unknown presenting part&nbsp;· HIV viral load <b>&gt; 1,000 copies/mL</b>&nbsp;· active genital HSV lesions&nbsp;· placenta or vasa previa&nbsp;· suspected fetal hematologic disorder (fetal hemophilia, NAIT, maternal ITP).<br><b>HIV at any viral load:</b> NIH avoids FSE even when suppressed&nbsp;— ≤ 1,000 is not permission; expert review. <b>Hepatitis B / C:</b> relative; individualize.</div>
+        </div>
+        <div class="stack">
+          <div class="sh">Verify&nbsp;· troubleshoot</div>
+          <ul class="ls s28">
+            <li><b>A readable FSE trace does not prove a fetal heartbeat.</b> Keep maternal HR displayed; compare after application, any abrupt change or unexplained “recovery”.</li>
+            <li><b>Rates coincide / origin uncertain → urgent bedside ultrasound + FM attending;</b> keep treating apparent compromise meanwhile. Matching rates alone neither prove capture nor diagnose death.</li>
+            <li><b>Apply / remove per the stocked IFU:</b> avoid fontanelles, sutures, face, genitalia; never over-rotate; unscrew counterclockwise, never pull; check the spiral is intact; tell the newborn team the site.</li>
+            <li><b>Leads off / erratic:</b> compatible cable, dry connector, reference-electrode contact, lead tension&nbsp;— before any re-application. No blind extra turns or traction.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tail xs muted">FSE ≠ scalp blood sampling; digital scalp stimulation needs no FSE <a href="29-fm-response.html#p-D" class="xlink"><span class="xref c-fet">29&nbsp;· D</span></a></div>
+      <div class="box local small"><span class="lfx">Electrode / IFU revision <span class="lfv" data-local="fse_device_ifu">____</span></span>&nbsp;· <span class="lfx">minimum GA <span class="lfv" data-local="fse_min_ga">____</span></span>&nbsp;· <span class="lfx">authorized operator <span class="lfv" data-local="fse_authorized_operator">____</span></span></div>
+    </section>
+
+    <section class="panel c-lab" id="p-D">
+      <div class="ph"><span class="num">D</span><h2>External toco: time it, palpate it</h2><span class="src">AWHONN (2020, 2024)&nbsp;· FIGO CTG (2015) §3.4&nbsp;· ACOG CPG 10 Table 1</span></div>
+      <figure class="s28"><img src="../../assets/svg/s28-toco-placement.svg" alt="External toco strip: nearly flat for 4 minutes while contractions are felt by palpation at 1 and 3 minutes; after the toco is moved over the fundus and secured, clear waves appear at 5 and 7 minutes">
+        <figcaption><b>Flat toco while contractions are felt:</b> move it over the fundus, secure it. <span class="syn">Synthetic.</span></figcaption></figure>
+      <table class="t s28 toco stripe">
+        <colgroup><col class="a"><col><col></colgroup>
+        <thead><tr><th>Assess</th><th>External toco</th><th>Palpation</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Frequency</td><td>Detects when acquisition is adequate</td><td>Palpate if missed / ambiguous</td></tr>
+          <tr><td class="k">Duration</td><td>Approximate onset → end</td><td>Time onset → end</td></tr>
+          <tr><td class="k">Intensity</td><td><b>Height is relative:</b> not strength, not mmHg</td><td>Mild / moderate / strong</td></tr>
+          <tr><td class="k">Resting tone</td><td><b>Baseline is relative:</b> not resting pressure</td><td>Soft / firm <b>between</b> contractions</td></tr>
+        </tbody>
+      </table>
+      <ul class="ls s28">
+        <li><b>Flat / small trace:</b> palpate the fundus while watching; reposition over palpable activity; restore contact; secure belt. Reset the external reference <b>between</b> contractions per IFU.</li>
+        <li><b>Spikes</b> with breathing, cough, turning or pushing → compare with what you see; count only confirmed contractions.</li>
+        <li>Obesity can reduce detection: <b>a quiet trace does not exclude contractions.</b> Do not titrate oxytocin or calculate MVU from an unreliable or external trace.</li>
+      </ul>
+      <div class="tail key"><b>Tachysystole &gt; 5 / 10&nbsp;min</b>, averaged over 30&nbsp;min <a href="26-induction-labor.html#p-E" class="xlink"><span class="xref c-lab">26&nbsp;· E</span></a> Contraction <b>≥ 2&nbsp;min</b> → assess promptly. Timing still unclear → IUPC when indicated <span class="xref here">E</span></div>
+    </section>
+  </div>
+
+  <!-- E · F -->
+  <div class="row2 ef">
+    <section class="panel c-lab" id="p-E">
+      <div class="ph"><span class="num">E</span><h2>IUPC: validate the pressure trace</h2><span class="src">ACOG CPG 8 (2024) p.156&nbsp;· INTRAN Plus IFU (2020)&nbsp;· Koala QRG (2024)&nbsp;· Rinehart 2000</span></div>
+      <figure class="s28"><img src="../../assets/svg/s28-iupc-validity.svg" alt="IUPC strip: pressure trace flat at 15 mmHg despite contractions felt at 1 and 2.5 minutes; after system and catheter position are checked, resting pressure 15 mmHg and contractions peaking at 65 and 70 mmHg">
+        <figcaption><b>Flat IUPC despite palpable contractions = invalid until checked.</b> Do not base augmentation on an invalid pressure. <span class="syn">Synthetic.</span></figcaption></figure>
+      <div class="duo">
+        <div class="stack">
+          <div class="sh">Use when the number changes care</div>
+          <ul class="ls s28">
+            <li><b>ROM +</b> protracted active labor needing quantified adequacy, contractions not assessable externally, or amnioinfusion <a href="29-fm-response.html#p-C" class="xlink"><span class="xref c-fet">29&nbsp;· C</span></a> Not routine: no outcome benefit over external. <b>Check</b> cervical access, presenting part, placental location, consent.</li>
+          </ul>
+          <div class="prohib"><span class="tag stop">Stop</span><b class="x">No insertion:</b> known / suspected placenta previa or unexplained uterine bleeding&nbsp;· vasa previa&nbsp;· intact membranes or inadequate access. Guard the introducer with fingers at the cervix, never beyond fingertips; <b>never force resistance.</b></div>
+          <div class="urgent-head"><span><b>Resistance, frank blood, new pain / bleeding or FHR change → stop; assess now with attending / OB/GYN.</b> A normal pressure trace does not exclude rupture.</span></div>
+          <div class="small amn"><b>Amnioinfusion via the IUPC port</b> after intra-amniotic placement is confirmed: NS or LR; label tubing. <b>Pause</b> for sustained pressure rise / firmness, no fluid return, new pain / bleeding, worsening FHR. Study regimen (Rinehart 2000): <span class="dose">500&nbsp;mL NS over 30&nbsp;min</span>, repeat if variables recur; or bolus then <span class="dose">3&nbsp;mL/min</span>. Indication + unit order <a href="29-fm-response.html#p-C" class="xlink"><span class="xref c-fet">29&nbsp;· C</span></a></div>
+        </div>
+        <div class="stack">
+          <div class="sh">Trace wrong? <span class="nc">patient → placement → system</span></div>
+          <table class="t s28 iupc">
+            <colgroup><col class="a"><col></colgroup>
+            <tbody>
+              <tr><td class="k">Flat, contractions felt</td><td>UA input / mode, cable, zero control back to monitor, displacement, failure</td></tr>
+              <tr><td class="k">Damped / small</td><td>Placement; fluid-filled: kinks, air, level. Unreliable → replace</td></tr>
+              <tr><td class="k">High / negative, no fluid return</td><td>Possible <b>extra-ovular</b> catheter&nbsp;— still gives readings. Do not advance or infuse to “prove” it</td></tr>
+              <tr><td class="k">Resting pressure rising</td><td>Palpate + check FHR first; position, migration, retained fluid. <b>Never zero away sustained tone</b></td></tr>
+              <tr><td class="k">Spikes: cough / push</td><td>Annotate; not extra contractions, not amplitude</td></tr>
+            </tbody>
+          </table>
+          <div class="small"><b>Zero per the stocked system</b> (tip-sensor, air-coupled, fluid-filled differ). Atmospheric zero ≠ resting pressure.</div>
+          <div class="box local small"><span class="lfx">IUPC model / IFU <span class="lfv" data-local="iupc_device_ifu">____</span></span>&nbsp;· <span class="lfx">authorized operator / supervision <span class="lfv" data-local="iupc_authorized_operator">____</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel c-lab" id="p-F">
+      <div class="ph"><span class="num">F</span><h2>Calculate MVU over 10 minutes</h2><span class="src">ACOG CPG 8 (2024) pp.149, 156&nbsp;· Rosen &amp; Yogev 2023&nbsp;· INTRAN Plus (2021)&nbsp;· AWHONN (2020)</span></div>
+      <figure class="s28"><img src="../../assets/svg/s28-mvu-worked.svg" alt="Montevideo units worked example: 10-minute IUPC strip, resting pressure 15 mmHg, four contractions peaking at 65, 70, 60 and 75 mmHg, measured above rest as 50, 55, 45 and 60 mmHg, total 210 MVU">
+        <figcaption><b>Measure each peak from the resting line</b>, not from zero. <span class="syn">Synthetic.</span></figcaption></figure>
+      <div class="calc">
+        <span class="lb">Formula</span><span class="eq">MVU = Σ (peak − resting) in 10&nbsp;min</span>
+        <span class="lb">Example</span><span class="eq r">50 + 55 + 45 + 60 = 210&nbsp;MVU</span>
+        <span class="lb">Not</span><span class="small"><span class="x-no">✗</span> raw peaks 65 + 70 + 60 + 75 = 270</span>
+      </div>
+      <div class="adq"><span class="hero mvu">&gt; 200 / 10&nbsp;min</span><span class="small"><b>Adequacy convention</b> for arrest assessment; interpret clinically&nbsp;— 200 is not a validated boundary <a href="26-induction-labor.html#p-G" class="xlink"><span class="xref c-lab">26&nbsp;· G</span></a></span></div>
+      <ul class="ls s28">
+        <li><b>Valid IUPC only</b> <span class="xref here">E</span> never external toco. Also assess duration, relaxation, FHR; MVU alone does not diagnose arrest.</li>
+        <li><b>Resting pressure:</b> INTRAN Plus describes a typical <b>5–25&nbsp;mmHg</b>; <b>&gt; 25&nbsp;mmHg</b> → assess patient + setup with palpation and FHR.</li>
+        <li>Do not raise oxytocin solely to reach a number when relaxation or FHR is concerning <a href="26-induction-labor.html#p-D" class="xlink"><span class="xref c-lab">26&nbsp;· D</span></a> Excess activity <a href="26-induction-labor.html#p-E" class="xlink"><span class="xref c-lab">26&nbsp;· E</span></a></li>
+      </ul>
+    </section>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG CPG 10 Intrapartum FHR Monitoring (2025), Table 1, Box 2, pp.589–592; ACOG CPG 8 First and Second Stage Labor Management (2024), pp.149, 156; NICHD/ACOG/SMFM EFM Workshop (Macones 2008); NICE NG229 Fetal Monitoring in Labour (2022, updated 2026); NICE NG137 Twin and Triplet Pregnancy (2019); FIGO Consensus Guidelines: Cardiotocography (2015); AWHONN Back to Basics: EFM (2020); AWHONN Fetal Heart Rate Auscultation, 4th ed. (2024); AWHONN / Simpson, Cervical Ripening and Labor Induction and Augmentation (2020); HRS Expert Consensus, Arrhythmias During Pregnancy (2023); NIH Perinatal HIV Clinical Guidelines, Intrapartum Care (2025); Philips Avalon FM20–FM50 Instructions for Use (rel. L.3); GE Corometrics 250cx Operator’s Manual (2007); Rocket Medical Copeland FSE IFU (2025); Vital Signs Fetal Spiral Electrode IFU (2019); Utah Medical INTRAN Plus IFU (2020) and User Guidelines (2021); Laborie Koala IUPC Quick Reference Guide (2024); Kawakita et al., 2016; Rodriguez et al., 1989; Rinehart et al., Obstet Gynecol 2000; Rosen &amp; Yogev, AJOG 2023. Strip vignettes are synthetic teaching examples. Device steps follow the stocked product’s IFU. Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span><span><span class="xref here">C</span> this sheet</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek05LDBIMTBWMUg5ek0xMSwwSDEyVjFIMTF6TTEyLDBIMTNWMUgxMnpNMTUsMEgxNlYxSDE1ek0xNywwSDE4VjFIMTd6TTE4LDBIMTlWMUgxOHpNMTksMEgyMFYxSDE5ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTAsMUgxMVYySDEwek0xMSwxSDEyVjJIMTF6TTE0LDFIMTVWMkgxNHpNMTUsMUgxNlYySDE1ek0xNiwxSDE3VjJIMTZ6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTEwLDJIMTFWM0gxMHpNMTIsMkgxM1YzSDEyek0xNSwySDE2VjNIMTV6TTE3LDJIMThWM0gxN3pNMTgsMkgxOVYzSDE4ek0xOSwySDIwVjNIMTl6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTE4LDNIMTlWNEgxOHpNMTksM0gyMFY0SDE5ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTgsNEg5VjVIOHpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNMTAsNUgxMVY2SDEwek0xMiw1SDEzVjZIMTJ6TTEzLDVIMTRWNkgxM3pNMTUsNUgxNlY2SDE1ek0xNiw1SDE3VjZIMTZ6TTE5LDVIMjBWNkgxOXpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTgsN0g5VjhIOHpNOSw3SDEwVjhIOXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE1LDdIMTZWOEgxNXpNMTcsN0gxOFY4SDE3ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTMsOEg0VjlIM3pNNiw4SDdWOUg2ek03LDhIOFY5SDd6TTEwLDhIMTFWOUgxMHpNMTIsOEgxM1Y5SDEyek0xMyw4SDE0VjlIMTN6TTE0LDhIMTVWOUgxNHpNMTYsOEgxN1Y5SDE2ek0yMCw4SDIxVjlIMjB6TTIyLDhIMjNWOUgyMnpNMjMsOEgyNFY5SDIzek0yNCw4SDI1VjlIMjR6TTI2LDhIMjdWOUgyNnpNMjcsOEgyOFY5SDI3ek0xLDlIMlYxMEgxek0yLDlIM1YxMEgyek0zLDlINFYxMEgzek00LDlINVYxMEg0ek03LDlIOFYxMEg3ek0xMyw5SDE0VjEwSDEzek0xNCw5SDE1VjEwSDE0ek0xNiw5SDE3VjEwSDE2ek0yMCw5SDIxVjEwSDIwek0yMiw5SDIzVjEwSDIyek0yNSw5SDI2VjEwSDI1ek0yOCw5SDI5VjEwSDI4ek0zLDEwSDRWMTFIM3pNNiwxMEg3VjExSDZ6TTcsMTBIOFYxMUg3ek05LDEwSDEwVjExSDl6TTEwLDEwSDExVjExSDEwek0xNCwxMEgxNVYxMUgxNHpNMTcsMTBIMThWMTFIMTd6TTE5LDEwSDIwVjExSDE5ek0yMCwxMEgyMVYxMUgyMHpNMjEsMTBIMjJWMTFIMjF6TTI0LDEwSDI1VjExSDI0ek0yNSwxMEgyNlYxMUgyNXpNMjYsMTBIMjdWMTFIMjZ6TTI3LDEwSDI4VjExSDI3ek0wLDExSDFWMTJIMHpNMSwxMUgyVjEySDF6TTMsMTFINFYxMkgzek00LDExSDVWMTJINHpNNywxMUg4VjEySDd6TTExLDExSDEyVjEySDExek0xMywxMUgxNFYxMkgxM3pNMTQsMTFIMTVWMTJIMTR6TTE1LDExSDE2VjEySDE1ek0xNiwxMUgxN1YxMkgxNnpNMTgsMTFIMTlWMTJIMTh6TTE5LDExSDIwVjEySDE5ek0yMCwxMUgyMVYxMkgyMHpNMjEsMTFIMjJWMTJIMjF6TTIzLDExSDI0VjEySDIzek0yNiwxMUgyN1YxMkgyNnpNMjcsMTFIMjhWMTJIMjd6TTAsMTJIMVYxM0gwek0zLDEySDRWMTNIM3pNNSwxMkg2VjEzSDV6TTYsMTJIN1YxM0g2ek03LDEySDhWMTNIN3pNMTMsMTJIMTRWMTNIMTN6TTE2LDEySDE3VjEzSDE2ek0xNywxMkgxOFYxM0gxN3pNMTgsMTJIMTlWMTNIMTh6TTE5LDEySDIwVjEzSDE5ek0yMCwxMkgyMVYxM0gyMHpNMjEsMTJIMjJWMTNIMjF6TTIyLDEySDIzVjEzSDIyek0yMywxMkgyNFYxM0gyM3pNMjUsMTJIMjZWMTNIMjV6TTI3LDEySDI4VjEzSDI3ek0yOCwxMkgyOVYxM0gyOHpNMCwxM0gxVjE0SDB6TTEsMTNIMlYxNEgxek0zLDEzSDRWMTRIM3pNNCwxM0g1VjE0SDR6TTcsMTNIOFYxNEg3ek04LDEzSDlWMTRIOHpNOSwxM0gxMFYxNEg5ek0xMCwxM0gxMVYxNEgxMHpNMTIsMTNIMTNWMTRIMTJ6TTE5LDEzSDIwVjE0SDE5ek0yMCwxM0gyMVYxNEgyMHpNMjEsMTNIMjJWMTRIMjF6TTAsMTRIMVYxNUgwek0yLDE0SDNWMTVIMnpNMywxNEg0VjE1SDN6TTQsMTRINVYxNUg0ek01LDE0SDZWMTVINXpNNiwxNEg3VjE1SDZ6TTgsMTRIOVYxNUg4ek0xMCwxNEgxMVYxNUgxMHpNMTEsMTRIMTJWMTVIMTF6TTE0LDE0SDE1VjE1SDE0ek0yNSwxNEgyNlYxNUgyNXpNMjYsMTRIMjdWMTVIMjZ6TTI3LDE0SDI4VjE1SDI3ek0yOCwxNEgyOVYxNUgyOHpNMCwxNUgxVjE2SDB6TTIsMTVIM1YxNkgyek0zLDE1SDRWMTZIM3pNNSwxNUg2VjE2SDV6TTksMTVIMTBWMTZIOXpNMTAsMTVIMTFWMTZIMTB6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTMsMTVIMTRWMTZIMTN6TTE0LDE1SDE1VjE2SDE0ek0xNSwxNUgxNlYxNkgxNXpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0xOSwxNUgyMFYxNkgxOXpNMjAsMTVIMjFWMTZIMjB6TTIyLDE1SDIzVjE2SDIyek0yNCwxNUgyNVYxNkgyNHpNMjUsMTVIMjZWMTZIMjV6TTI3LDE1SDI4VjE2SDI3ek0zLDE2SDRWMTdIM3pNNCwxNkg1VjE3SDR6TTUsMTZINlYxN0g1ek02LDE2SDdWMTdINnpNOCwxNkg5VjE3SDh6TTksMTZIMTBWMTdIOXpNMTIsMTZIMTNWMTdIMTJ6TTE1LDE2SDE2VjE3SDE1ek0xNywxNkgxOFYxN0gxN3pNMTksMTZIMjBWMTdIMTl6TTIxLDE2SDIyVjE3SDIxek0yNywxNkgyOFYxN0gyN3pNNCwxN0g1VjE4SDR6TTUsMTdINlYxOEg1ek04LDE3SDlWMThIOHpNOSwxN0gxMFYxOEg5ek0xMCwxN0gxMVYxOEgxMHpNMTEsMTdIMTJWMThIMTF6TTEyLDE3SDEzVjE4SDEyek0xMywxN0gxNFYxOEgxM3pNMTQsMTdIMTVWMThIMTR6TTE2LDE3SDE3VjE4SDE2ek0xNywxN0gxOFYxOEgxN3pNMjEsMTdIMjJWMThIMjF6TTIyLDE3SDIzVjE4SDIyek0yMywxN0gyNFYxOEgyM3pNMjUsMTdIMjZWMThIMjV6TTI4LDE3SDI5VjE4SDI4ek0wLDE4SDFWMTlIMHpNMiwxOEgzVjE5SDJ6TTMsMThINFYxOUgzek02LDE4SDdWMTlINnpNNywxOEg4VjE5SDd6TTEzLDE4SDE0VjE5SDEzek0xNywxOEgxOFYxOUgxN3pNMjEsMThIMjJWMTlIMjF6TTIyLDE4SDIzVjE5SDIyek0yNywxOEgyOFYxOUgyN3pNMjgsMThIMjlWMTlIMjh6TTMsMTlINFYyMEgzek01LDE5SDZWMjBINXpNNywxOUg4VjIwSDd6TTgsMTlIOVYyMEg4ek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTIsMjBIM1YyMUgyek0zLDIwSDRWMjFIM3pNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek03LDIwSDhWMjFIN3pNOSwyMEgxMFYyMUg5ek0xMCwyMEgxMVYyMUgxMHpNMTEsMjBIMTJWMjFIMTF6TTEyLDIwSDEzVjIxSDEyek0xMywyMEgxNFYyMUgxM3pNMTQsMjBIMTVWMjFIMTR6TTE5LDIwSDIwVjIxSDE5ek0yMCwyMEgyMVYyMUgyMHpNMjEsMjBIMjJWMjFIMjF6TTIyLDIwSDIzVjIxSDIyek0yMywyMEgyNFYyMUgyM3pNMjQsMjBIMjVWMjFIMjR6TTI2LDIwSDI3VjIxSDI2ek04LDIxSDlWMjJIOHpNMTIsMjFIMTNWMjJIMTJ6TTEzLDIxSDE0VjIySDEzek0xNiwyMUgxN1YyMkgxNnpNMTcsMjFIMThWMjJIMTd6TTE5LDIxSDIwVjIySDE5ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI2LDIxSDI3VjIySDI2ek0yNywyMUgyOFYyMkgyN3pNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek04LDIySDlWMjNIOHpNOSwyMkgxMFYyM0g5ek0xMCwyMkgxMVYyM0gxMHpNMTIsMjJIMTNWMjNIMTJ6TTEzLDIySDE0VjIzSDEzek0xNiwyMkgxN1YyM0gxNnpNMTcsMjJIMThWMjNIMTd6TTE4LDIySDE5VjIzSDE4ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yNywyMkgyOFYyM0gyN3pNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek05LDIzSDEwVjI0SDl6TTExLDIzSDEyVjI0SDExek0xMiwyM0gxM1YyNEgxMnpNMTMsMjNIMTRWMjRIMTN6TTE1LDIzSDE2VjI0SDE1ek0xNiwyM0gxN1YyNEgxNnpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0yNSwyM0gyNlYyNEgyNXpNMjYsMjNIMjdWMjRIMjZ6TTI3LDIzSDI4VjI0SDI3ek0wLDI0SDFWMjVIMHpNMiwyNEgzVjI1SDJ6TTMsMjRINFYyNUgzek00LDI0SDVWMjVINHpNNiwyNEg3VjI1SDZ6TTksMjRIMTBWMjVIOXpNMTAsMjRIMTFWMjVIMTB6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTMsMjRIMTRWMjVIMTN6TTE2LDI0SDE3VjI1SDE2ek0xNywyNEgxOFYyNUgxN3pNMTgsMjRIMTlWMjVIMTh6TTIwLDI0SDIxVjI1SDIwek0yMSwyNEgyMlYyNUgyMXpNMjIsMjRIMjNWMjVIMjJ6TTIzLDI0SDI0VjI1SDIzek0yNCwyNEgyNVYyNUgyNHpNMjcsMjRIMjhWMjVIMjd6TTI4LDI0SDI5VjI1SDI4ek0wLDI1SDFWMjZIMHpNMiwyNUgzVjI2SDJ6TTMsMjVINFYyNkgzek00LDI1SDVWMjZINHpNNiwyNUg3VjI2SDZ6TTgsMjVIOVYyNkg4ek05LDI1SDEwVjI2SDl6TTEwLDI1SDExVjI2SDEwek0xMiwyNUgxM1YyNkgxMnpNMTQsMjVIMTVWMjZIMTR6TTE5LDI1SDIwVjI2SDE5ek0yMCwyNUgyMVYyNkgyMHpNMjEsMjVIMjJWMjZIMjF6TTIyLDI1SDIzVjI2SDIyek0yMywyNUgyNFYyNkgyM3pNMjQsMjVIMjVWMjZIMjR6TTI1LDI1SDI2VjI2SDI1ek0yNiwyNUgyN1YyNkgyNnpNMCwyNkgxVjI3SDB6TTIsMjZIM1YyN0gyek0zLDI2SDRWMjdIM3pNNCwyNkg1VjI3SDR6TTYsMjZIN1YyN0g2ek05LDI2SDEwVjI3SDl6TTEwLDI2SDExVjI3SDEwek0xMSwyNkgxMlYyN0gxMXpNMTMsMjZIMTRWMjdIMTN6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTksMjZIMjBWMjdIMTl6TTI0LDI2SDI1VjI3SDI0ek0yNSwyNkgyNlYyN0gyNXpNMjYsMjZIMjdWMjdIMjZ6TTI4LDI2SDI5VjI3SDI4ek0wLDI3SDFWMjhIMHpNNiwyN0g3VjI4SDZ6TTgsMjdIOVYyOEg4ek0xMCwyN0gxMVYyOEgxMHpNMTEsMjdIMTJWMjhIMTF6TTEyLDI3SDEzVjI4SDEyek0xMywyN0gxNFYyOEgxM3pNMTcsMjdIMThWMjhIMTd6TTE4LDI3SDE5VjI4SDE4ek0xOSwyN0gyMFYyOEgxOXpNMjAsMjdIMjFWMjhIMjB6TTIyLDI3SDIzVjI4SDIyek0yNywyN0gyOFYyOEgyN3pNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek0xMiwyOEgxM1YyOUgxMnpNMTYsMjhIMTdWMjlIMTZ6TTE3LDI4SDE4VjI5SDE3ek0yMCwyOEgyMVYyOUgyMHpNMjIsMjhIMjNWMjlIMjJ6TTIzLDI4SDI0VjI5SDIzek0yNSwyOEgyNlYyOUgyNXpNMjcsMjhIMjhWMjlIMjd6IiBpZD0icXItcGF0aCIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIxIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZT0ibm9uZSIvPjwvc3ZnPg=="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

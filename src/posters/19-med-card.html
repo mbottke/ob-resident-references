@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Medication companion card</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  /* desk card 17×11: clinical text >= 10 pt printed (--fb) */
+  .sheet { --accent: var(--wf); --fb: calc(10pt / var(--k)); --gap: 0.12in; padding: calc(0.32in / var(--k)) calc(0.55in / var(--k)) calc(0.28in / var(--k)); }
+  .masthead { gap: 0.3in; padding-bottom: 0.06in; }
+  .masthead h1 { font-size: calc(31pt / var(--k)); padding-bottom: 0.02in; }
+  .masthead .kicker { margin-bottom: 0.05in; }
+  .masthead .sub { margin-top: 22pt; padding-bottom: 0.02in; max-width: 8.2in; }
+  .panel { gap: 0.06in; padding-top: 0.08in; }
+  .panel > *, .col > * { flex-shrink: 0; }
+  table.t, .small, .xs, .box { font-size: var(--fb); line-height: 1.21; }
+  table.t td { padding: 2pt 5pt; }
+  .xref.sm { font-size: calc(10pt / var(--k)); }
+  table.t th { padding-bottom: 3pt; }
+  /* column headings quieter than the prescribing information (still at the 10 pt card floor) */
+  .sheet table.t thead th { font-size: calc(10pt / var(--k)); font-weight: 600; letter-spacing: calc(.45pt / var(--k)); padding-bottom: calc(4pt / var(--k)); }
+  table.t .dose { font-size: 1.04em; }
+  table.t td.k { white-space: normal; }
+  .box { padding: 0.05in 0.09in 0.06in; }
+  .foot { padding-top: 0.06in; }
+  .lasa { text-transform: none; }
+  table.ren td.k { width: 0.95in; }
+  table.ren td.th { white-space: nowrap; font-weight: 700; width: 0.8in; padding-left: 5pt; }   /* same gutter on rowspan continuation rows */
+  table.lac td.k { width: 1.02in; }
+  /* antimicrobial index: Indication | Drug | Dose | Interval | Go to; one regimen line per row */
+  table.abx td { border-bottom: none; padding-top: 0.8pt; padding-bottom: 0.8pt; }
+  table.abx tbody + tbody tr:first-child > td { border-top: 0.75pt solid var(--rule); }
+  table.abx tbody tr:first-child > td { padding-top: 1.4pt; }
+  table.abx tbody tr:last-child > td { padding-bottom: 1.3pt; }
+  table.abx tbody:nth-of-type(even) > tr > td.ind { background: var(--t-ink); }
+  table.abx td:first-child, table.abx th:first-child { padding-left: 4pt; }
+  table.abx td.dg { padding-left: 5pt; }   /* continuation rows (DOM first cell after a rowspan) keep the drug gutter */
+  table.abx { table-layout: fixed; line-height: 1.17; }
+  table.abx td.ind { font-weight: 800; }
+  table.abx td.ind small { display: block; font-weight: 500; color: var(--ink-2); font-size: var(--fb); line-height: 1.12; margin-top: 1pt; }
+  table.abx td.ind small b { font-weight: 800; color: var(--stop); }
+  table.abx td.dg.gbs { font-weight: 500; color: var(--ink-2); }
+  table.abx td.dg.gbs b { color: var(--ink); font-weight: 800; }
+  table.abx td.dg { font-weight: 500; }
+  table.abx td.dg.alt { padding-left: 14pt; }
+  /* IAI allergy options: a short fence groups the alternatives to ampicillin */
+  table.abx tr.allergy-option > td.dg { background: linear-gradient(var(--ink-3), var(--ink-3)) left top / calc(2pt / var(--k)) 100% no-repeat; }
+  table.abx tr.allergy-option > td.dg:not(.alt) { padding-left: 8pt; }
+
+  table.abx .q { font-weight: 800; }
+  table.abx .or { font-weight: 500; font-style: italic; color: var(--ink-2); }
+  table.abx .qual { font-weight: 500; }
+  table.abx .dose { white-space: nowrap; font-weight: 700; }
+  table.abx td.iv { font-weight: 700; font-variant-numeric: tabular-nums; }
+  table.abx th .iv-note { text-transform: none; letter-spacing: 0; font-weight: 600; }
+  table.abx td.x { text-align: right; padding-left: 0; padding-right: 2pt; vertical-align: top; }
+  table.abx td.x.here { font-weight: 800; color: var(--ink-2); }
+  /* additive drug inside a regimen: divider + label, then its schedules */
+  table.abx tr.plus-start > td.dg { border-top: 0.75pt dashed var(--ink-3); padding-top: 2.5pt; font-weight: 500; }
+  table.abx tr.plus-start .add { font-weight: 800; }
+  .abx-note { margin: 0; padding: 1pt 5pt; border-left: 2pt solid var(--inf); background: color-mix(in srgb, var(--inf) 12%, white); }
+  .ren-scope { margin: 0; }
+  table.ren tbody + tbody tr:first-child > td { border-top: 0.75pt solid var(--rule); }
+  table.ren td { border-bottom: none; }
+  table.ren tr + tr > td { border-top: 0.5pt dotted var(--rule); }
+  table.ren td.th.wrap { white-space: normal; }
+  table.ren .rx-purpose { display: block; }
+  table.ren .rx-purpose + .rx-purpose { margin-top: 1.5pt; }
+  table.ren .purpose { font-weight: 600; color: var(--ink-2); }
+  table.ren .pre { display: block; margin-bottom: 1.5pt; }
+  table.lac .restriction { color: var(--stop); font-weight: 800; }
+  /* analgesics: maximum always in the same column */
+  table.anl td.k { width: 1.02in; }
+  table.anl .limit { display: block; font-weight: 800; }
+  table.anl .limit .lw { font-weight: 600; color: var(--ink-2); }
+  table.anl .exc { display: block; margin-top: 1pt; }
+  table.anl .exc b { font-weight: 800; }
+  table.iron td.el { font-weight: 800; background: color-mix(in srgb, var(--ink) 6%, white); padding-right: 5pt; }
+  .iron-rule { margin: 0; }
+  .foot { font-size: calc(7.4pt / var(--k)); }   /* room for the footer QR; citations stay tiny */
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="18-nursery.html" title="Nursery card">‹ 18</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html" selected="">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="20-neuraxial.html" title="Neuraxial &amp; anticoagulation">20 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/19-med-card.pdf">PDF</a></nav>
+<div class="sheet landscape-17x11 c-wf" style="--k:0.765">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>By the computers&nbsp;· adult doses</div>
+      <h1><span class="sid">19</span>Medication companion</h1>
+    </div>
+    <div class="sub">Where each L&amp;D antibiotic dose lives, and its interval&nbsp;· renal adjustments&nbsp;· lactation exceptions&nbsp;· analgesic maximums&nbsp;· oral iron.</div>
+    <nav class="setnav rel"><em>See also</em><a href="08-infections.html" class="xlink"><span><b>8</b>Infections</span></a><a href="13-sepsis.html" class="xlink"><span><b>13</b>Sepsis</span></a><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="12-diabetes.html" class="xlink"><span><b>12</b>Diabetes</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-19.svg)"></div>
+
+  <div class="cols" style="grid-template-columns: 1.6fr 0.86fr 1.06fr;">
+    <!-- COL 1 -->
+    <div class="col">
+      <section class="panel c-inf grow" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>L&amp;D antimicrobial index</h2><span class="src">Doses as printed on the sheet named&nbsp;· ACOG CO 797&nbsp;· CO 712&nbsp;· PB 199&nbsp;· CC 4&nbsp;· CDC STI 2021</span></div>
+        <div class="xs abx-note"><p><b>Dose by the indication row:</b> ampicillin, cefazolin and gentamicin have different intervals.</p><p>Gentamicin: <b><span class="dose">5&nbsp;mg/kg q24h</span> or <span class="dose">1.5&nbsp;mg/kg q8h</span>; never both.</b> Levels and renal dosing by pharmacy.</p></div>
+        <table class="t abx">
+          <colgroup><col style="width:15.5%"><col style="width:31%"><col style="width:27.5%"><col style="width:15%"><col style="width:11%"></colgroup>
+          <thead><tr><th>Indication</th><th>Drug <span class="iv-note">(IV unless noted)</span></th><th>Dose</th><th>Interval</th><th class="right">Go to</th></tr></thead>
+          <tbody>
+            <tr><td class="ind" rowspan="3">Sepsis<small><b>give ≤ 1&nbsp;h</b></small></td><td class="dg">Piperacillin-tazobactam</td><td><span class="dose">4.5&nbsp;g</span></td><td class="iv">q6h</td><td class="x" rowspan="3"><a href="13-sepsis.html#p-03" class="xlink"><span class="xref c-inf">13&nbsp;· 03</span></a></td></tr>
+            <tr><td class="dg"><span class="or">or</span> meropenem</td><td><span class="dose">1&nbsp;g</span></td><td class="iv">q8h</td></tr>
+            <tr><td class="dg">+ vancomycin load</td><td><span class="dose">25–30&nbsp;mg/kg</span> <span class="qual">(actual weight; max 3&nbsp;g)</span></td><td class="iv">→ pharmacy</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind" rowspan="2">GBS IAP</td><td class="dg">Penicillin G</td><td><span class="dose">5 million units</span>, then <span class="dose">2.5–3 million units</span></td><td class="iv">q4h</td><td class="x" rowspan="2"><a href="01-triage.html#p-08" class="xlink"><span class="xref c-inf">1&nbsp;· 08</span></a></td></tr>
+            <tr><td class="dg"><span class="or">or</span> ampicillin</td><td><span class="dose">2&nbsp;g</span>, then <span class="dose">1&nbsp;g</span></td><td class="iv">q4h</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind" rowspan="3">GBS, PCN allergy</td><td class="dg"><span class="q">Low risk:</span> cefazolin</td><td><span class="dose">2&nbsp;g</span>, then <span class="dose">1&nbsp;g</span></td><td class="iv">q8h</td><td class="x" rowspan="3"><a href="01-triage.html#p-08" class="xlink"><span class="xref c-inf">1&nbsp;· 08</span></a></td></tr>
+            <tr><td class="dg"><span class="q">High risk:</span> clindamycin</td><td><span class="dose">900&nbsp;mg</span> <span class="qual">(if susceptible)</span></td><td class="iv">q8h</td></tr>
+            <tr><td class="dg"><span class="or">or</span> vancomycin</td><td><span class="dose">20&nbsp;mg/kg</span> <span class="qual">(max 2&nbsp;g)</span></td><td class="iv">q8h</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind" rowspan="9">Intraamniotic infection<small>Diagnosed on IAP → switch to this regimen; don’t run both</small></td><td class="dg">Ampicillin</td><td><span class="dose">2&nbsp;g</span></td><td class="iv">q6h</td><td class="x" rowspan="9"><a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a></td></tr>
+            <tr class="allergy-option"><td class="dg"><span class="q">Mild allergy:</span> cefazolin</td><td><span class="dose">2&nbsp;g</span></td><td class="iv">q8h</td></tr>
+            <tr class="allergy-option"><td class="dg"><span class="q">Severe allergy:</span> clindamycin</td><td><span class="dose">900&nbsp;mg</span></td><td class="iv">q8h</td></tr>
+            <tr class="allergy-option"><td class="dg alt"><span class="or">or</span> vancomycin</td><td><span class="dose">1&nbsp;g</span></td><td class="iv">q12h</td></tr>
+            <tr><td class="dg alt gbs" colspan="3"><b>GBS+</b> with clindamycin resistance or unknown susceptibility → vancomycin</td></tr>
+            <tr class="plus-start"><td class="dg" colspan="3"><span class="add">+ Gentamicin</span> with ampicillin or any allergy option&nbsp;· choose one schedule:</td></tr>
+            <tr><td class="dg alt">gentamicin</td><td><span class="dose">5&nbsp;mg/kg</span></td><td class="iv">q24h</td></tr>
+            <tr><td class="dg alt"><span class="or">or</span> gentamicin</td><td><span class="dose">2&nbsp;mg/kg</span>, then <span class="dose">1.5&nbsp;mg/kg</span></td><td class="iv">q8h</td></tr>
+            <tr><td class="dg" colspan="2"><span class="q">Cesarean:</span> + clindamycin or metroNIDAZOLE</td><td class="iv">≥ 1&nbsp;dose</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind" rowspan="3">Cesarean prophylaxis</td><td class="dg">Cefazolin</td><td><span class="dose">2&nbsp;g</span> ≤ 60&nbsp;min before incision</td><td class="iv" rowspan="3"><b>Redose at 4&nbsp;h or QBL &gt; 1.5&nbsp;L</b></td><td class="x here" rowspan="3">Here</td></tr>
+            <tr><td class="dg"><span class="q">Labor or ROM:</span> + azithromycin</td><td><span class="dose">500&nbsp;mg</span> over 1&nbsp;h</td></tr>
+            <tr><td class="dg"><span class="q">Severe PCN allergy:</span> clindamycin + gentamicin</td><td><span class="dose">900&nbsp;mg</span> + <span class="dose">5&nbsp;mg/kg</span></td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind" rowspan="4">Endometritis</td><td class="dg">Clindamycin</td><td><span class="dose">900&nbsp;mg</span></td><td class="iv">q8h</td><td class="x" rowspan="4"><a href="08-infections.html#p-E" class="xlink"><span class="xref c-inf">8&nbsp;· E</span></a></td></tr>
+            <tr><td class="dg">+ gentamicin</td><td><span class="dose">5&nbsp;mg/kg</span></td><td class="iv">q24h</td></tr>
+            <tr><td class="dg alt"><span class="or">or</span> gentamicin</td><td><span class="dose">1.5&nbsp;mg/kg</span></td><td class="iv">q8h</td></tr>
+            <tr><td class="dg" colspan="3">+ ampicillin if no response 48–72&nbsp;h</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind" rowspan="4">Pyelonephritis<small>14&nbsp;d total</small></td><td class="dg">Ceftriaxone</td><td><span class="dose">1&nbsp;g</span></td><td class="iv">q24h</td><td class="x" rowspan="4"><a href="08-infections.html#p-A" class="xlink"><span class="xref c-inf">8&nbsp;· A</span></a></td></tr>
+            <tr><td class="dg"><span class="or">or</span> cefepime</td><td><span class="dose">1&nbsp;g</span></td><td class="iv">q12h</td></tr>
+            <tr><td class="dg"><span class="or">or</span> ampicillin + gentamicin</td><td><span class="dose">2&nbsp;g</span> <span class="qual">(ampicillin)</span></td><td class="iv">q6h</td></tr>
+            <tr><td class="dg"><span class="or">or</span> aztreonam; consult ID</td><td><span class="dose">1&nbsp;g</span></td><td class="iv">q8–12h</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind" rowspan="2">Syphilis</td><td class="dg">Benzathine penicillin G</td><td><span class="dose">2.4 million units IM</span></td><td class="iv">Early: once</td><td class="x"><a href="08-infections.html#p-B" class="xlink"><span class="xref c-inf">8&nbsp;· B</span></a></td></tr>
+            <tr><td class="dg alt" colspan="4"><span class="q">Late or unknown duration:</span> <b>weekly × 3</b>, 7&nbsp;d apart; <b>&gt; 9&nbsp;d between doses → restart</b></td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind">Influenza</td><td class="dg">Oseltamivir <span class="qual">· pregnant or ≤ 2&nbsp;wk postpartum</span></td><td><span class="dose">75&nbsp;mg PO</span></td><td class="iv">BID × 5&nbsp;d</td><td class="x"><a href="08-infections.html#p-F" class="xlink"><span class="xref c-inf">8&nbsp;· F</span></a></td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="ind">Mastitis, bacterial</td><td class="dg">Dicloxacillin or cephalexin</td><td><span class="dose">500&nbsp;mg PO</span></td><td class="iv">QID × 10–14&nbsp;d</td><td class="x"><a href="06-postpartum.html#p-F" class="xlink"><span class="xref c-wf">6&nbsp;· F</span></a></td></tr>
+          </tbody>
+        </table>
+        <div class="box local small">Cesarean cefazolin for ≥ 120&nbsp;kg (2&nbsp;g vs 3&nbsp;g): <span class="lfv" data-local="cefazolin_120kg">____</span>&nbsp;· gentamicin dosing weight: <span class="lfv" data-local="gentamicin_dosing_weight">____</span>&nbsp;· pharmacy: <span class="lfv" data-local="pharmacy_contact">____</span></div>
+      </section>
+    </div>
+
+    <!-- COL 2 -->
+    <div class="col">
+      <section class="panel c-wf grow" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>Renal dose adjustments</h2><span class="src">FDA labels&nbsp;· FDA metformin DSC 2016&nbsp;· CDC 2026</span></div>
+        <div class="xs ren-scope"><b>CrCl</b> (Cockcroft-Gault, female) = (140 − age) × kg ÷ (72 × Cr) × 0.85. Labels use CrCl, metFORMIN eGFR; both unreliable in pregnancy, AKI, preeclampsia.</div>
+        <table class="t ren">
+          <thead><tr><th>Drug</th><th>Threshold</th><th>Adjust</th></tr></thead>
+          <tbody>
+            <tr><td class="k" rowspan="2">Enalapril</td><td class="th">CrCl ≤ 30</td><td>Start <span class="dose">2.5&nbsp;mg daily</span> <a href="11-bp-meds.html#p-03" class="xlink"><span class="xref c-htn">11&nbsp;· 03</span></a></td></tr>
+            <tr><td class="th">Dialysis</td><td><span class="dose">2.5&nbsp;mg</span> on dialysis days</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="k">Enoxaparin</td><td class="th">CrCl &lt; 30</td><td><span class="pre"><b>Neuraxial:</b> double the hold interval <a href="20-neuraxial.html#p-02" class="xlink"><span class="xref sm c-wf">20&nbsp;· 02</span></a></span><span class="rx-purpose"><span class="purpose">Treatment</span> <span class="dose">1&nbsp;mg/kg SUBQ q24h</span></span><span class="rx-purpose"><span class="purpose">Prophylaxis</span> <span class="dose">30&nbsp;mg SUBQ daily</span></span></td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="k">Gentamicin&nbsp;· vancomycin</td><td class="th">Any</td><td><b>Pharmacy dosing</b> (also cefepime, acyclovir)&nbsp;— weight, levels</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="k">Ketorolac</td><td class="th">Renal impair.</td><td><span class="dose">15&nbsp;mg IV q6h</span>, max <span class="dose">60&nbsp;mg/day</span>; advanced disease or hypovolemia → <b>avoid</b></td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="k">Magnesium</td><td class="th">Cr&nbsp;· UOP</td><td>Maintenance and level rules <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a></td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="k" rowspan="3"><span class="lasa">metFORMIN</span> <span class="muted">(eGFR)</span></td><td class="th">eGFR &lt; 30</td><td><b>Contraindicated</b>&nbsp;— stop</td></tr>
+            <tr><td class="th">eGFR 30–45</td><td>Don’t start; on it → reassess.</td></tr>
+            <tr><td class="th wrap">Iodinated contrast, <span class="nowrap">eGFR 30–60</span></td><td>Hold; at 48&nbsp;h, restart if renal function stable <a href="12-diabetes.html#p-05" class="xlink"><span class="xref c-met">12&nbsp;· 05</span></a></td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="k">Nitrofurantoin</td><td class="th">CrCl &lt; 60</td><td>Label contraindication&nbsp;— use another agent</td></tr>
+          </tbody>
+          <tbody>
+            <tr><td class="k" rowspan="4">Oseltamivir</td><td class="th">CrCl 31–60</td><td><span class="rx-purpose"><span class="purpose">Treatment</span> <span class="dose">30&nbsp;mg BID × 5&nbsp;d</span></span><span class="rx-purpose"><span class="purpose">Prophylaxis</span> <span class="dose">30&nbsp;mg daily</span></span></td></tr>
+            <tr><td class="th">CrCl 11–30</td><td><span class="rx-purpose"><span class="purpose">Treatment</span> <span class="dose">30&nbsp;mg daily × 5&nbsp;d</span></span><span class="rx-purpose"><span class="purpose">Prophylaxis</span> <span class="dose">30&nbsp;mg every other day</span></span></td></tr>
+            <tr><td class="th wrap">HD treatment</td><td><span class="dose">30&nbsp;mg</span> now, then after each session (≤ 5&nbsp;d)</td></tr>
+            <tr><td class="th wrap">HD prophylaxis</td><td><span class="dose">30&nbsp;mg</span> now, then after every 2nd session</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- COL 3 -->
+    <div class="col">
+      <section class="panel c-nb" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Lactation exceptions</h2><span class="src">NLM LactMed&nbsp;· FDA DSC 2017&nbsp;· ACR 2024</span></div>
+        <table class="t lac">
+          <tbody>
+            <tr><td class="k">Codeine&nbsp;· <span class="lasa">traMADol</span></td><td><b class="restriction">Avoid</b>&nbsp;— FDA recommends against use while breastfeeding</td></tr>
+            <tr><td class="k">Nitrofurantoin</td><td><b class="restriction">Another drug if</b> infant &lt; 8&nbsp;d (label: &lt; 1 mo) or G6PD-deficient</td></tr>
+            <tr><td class="k">TMP-SMX</td><td><b class="restriction">Avoid if</b> infant jaundiced, ill, stressed, preterm or G6PD-deficient; OK for healthy term infant past the newborn period</td></tr>
+            <tr><td class="k">Doxycycline</td><td>Short courses OK; <b class="restriction">avoid</b> &gt; 21&nbsp;d or repeat courses</td></tr>
+            <tr><td class="k"><span class="lasa">metroNIDAZOLE</span></td><td>Usual doses OK. After a single 2&nbsp;g dose, advice differs on a 12–24&nbsp;h breastfeeding pause: individualize with lactation / pharmacy</td></tr>
+            <tr><td class="k">Sertraline</td><td>Preferred SSRI; escitalopram also first-line <a href="06-postpartum.html#p-D" class="xlink"><span class="xref c-wf">6&nbsp;· D</span></a></td></tr>
+            <tr><td class="k">MOUD&nbsp;· THC</td><td>Feeding decision by substance <a href="24-substance-dyad.html#p-E" class="xlink"><span class="xref sm c-wf">24&nbsp;· E</span></a></td></tr>
+            <tr><td class="k">Contrast</td><td>Iodinated, gadolinium: <b>no interruption needed</b></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel c-wf" id="p-04">
+        <div class="ph"><span class="num">04</span><h2>Analgesics&nbsp;· daily maximums</h2><span class="src">FDA labels&nbsp;· ACOG CC 1 (2021)&nbsp;· LactMed</span></div>
+        <table class="t anl">
+          <tbody>
+            <tr><td class="k">Acetaminophen</td><td><span class="limit">Max 4&nbsp;g/day <span class="lw">from all products</span></span><span class="dose">1&nbsp;g PO/IV q6h</span>. IV, &lt; 50&nbsp;kg: <span class="dose">15&nbsp;mg/kg</span>, max <b>75&nbsp;mg/kg/day</b></td></tr>
+            <tr><td class="k">Ibuprofen</td><td><span class="limit">Max 3,200&nbsp;mg/day</span><span class="dose">600&nbsp;mg q6h</span> or <span class="dose">800&nbsp;mg q8h</span>. Preferred in lactation.</td></tr>
+            <tr><td class="k">Ketorolac</td><td><span class="limit">Max 120&nbsp;mg/day <span class="lw">· IV and PO combined ≤ 5&nbsp;d</span></span><span class="dose">30&nbsp;mg IV q6h</span>; no other NSAID<span class="exc">Age ≥ 65 y, &lt; 50&nbsp;kg, or renal impairment: <span class="dose">15&nbsp;mg IV q6h</span>, <b>max 60&nbsp;mg/day</b></span></td></tr>
+            <tr><td class="k"><span class="lasa">oxyCODONE</span> or <span class="lasa">HYDROcodone</span></td><td><span class="limit">Max 30&nbsp;mg/day <span class="lw">if needed, × 2–3&nbsp;d in lactation</span></span>Watch infant sedation&nbsp;· OUD pain plan <a href="24-substance-dyad.html#p-D" class="xlink"><span class="xref sm c-wf">24&nbsp;· D</span></a></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel c-wf grow" id="p-05">
+        <div class="ph"><span class="num">05</span><h2>Oral iron</h2><span class="src">Product labels (DailyMed)&nbsp;· NATA 2018&nbsp;· Stoffel 2017</span></div>
+        <p class="small iron-rule">Order by <b>elemental</b> mg; “325&nbsp;mg” is the salt.</p>
+        <table class="t iron">
+          <thead><tr><th>Salt</th><th class="right">Tablet (mg)</th><th class="right">Elemental iron (mg)</th><th class="right">%</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Ferrous sulfate</td><td class="num">325</td><td class="num el">65</td><td class="right">20%</td></tr>
+            <tr><td class="k">Ferrous gluconate</td><td class="num">324</td><td class="num el">≈ 38</td><td class="right">12%</td></tr>
+            <tr><td class="k">Ferrous fumarate</td><td class="num">325</td><td class="num el">106</td><td class="right">33%</td></tr>
+          </tbody>
+        </table>
+        <ul class="ls small tight">
+          <li><b>Postpartum Hb 9–11&nbsp;g/dL:</b> oral iron 80–100&nbsp;mg elemental daily (alternate-day: better absorbed, fewer GI effects) × 3 mo <a href="06-postpartum.html#p-E" class="xlink"><span class="xref c-wf">6&nbsp;· E</span></a></li>
+          <li>≥ 2&nbsp;h apart from calcium and antacids; ≥ 4&nbsp;h from levothyroxine.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> Panel 01&nbsp;doses as on the sheet named (ACOG CO 797, CO 712 + CPU 2024, CC 4; SMFM #67; CDC STI 2021; ABM #36); ACOG PB 199 Prophylactic Antibiotics in Labor and Delivery (2018). FDA labels: Lovenox (05/2025) §2.3, §5.1; Tamiflu (08/2019) Table 2; Vasotec; Macrobid; ketorolac injection; Motrin; acetaminophen injection. FDA Drug Safety Communications: metformin and kidney function (2016); codeine and tramadol in breastfeeding (2017). CDC Influenza Antivirals: Summary for Clinicians (2026). NLM LactMed 2024–2026 (nitrofurantoin, sulfamethoxazole-trimethoprim, doxycycline, metronidazole, sertraline, escitalopram, oxycodone, hydrocodone, ibuprofen, acetaminophen, ketorolac, iohexol, gadobutrol). ACR Manual on Contrast Media (2024). Muñoz M et al., NATA, Transfus Med 2018; Stoffel NU et al., Lancet Haematol 2017;4:e524–33. ACOG CC 1 (2021). <div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTksMEgxMFYxSDl6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTMsMUgxNFYySDEzek0xNywxSDE4VjJIMTd6TTE5LDFIMjBWMkgxOXpNMjAsMUgyMVYySDIwek0yMiwxSDIzVjJIMjJ6TTI4LDFIMjlWMkgyOHpNMCwySDFWM0gwek0yLDJIM1YzSDJ6TTMsMkg0VjNIM3pNNCwySDVWM0g0ek02LDJIN1YzSDZ6TTgsMkg5VjNIOHpNOSwySDEwVjNIOXpNMTEsMkgxMlYzSDExek0xNywySDE4VjNIMTd6TTE5LDJIMjBWM0gxOXpNMjIsMkgyM1YzSDIyek0yNCwySDI1VjNIMjR6TTI1LDJIMjZWM0gyNXpNMjYsMkgyN1YzSDI2ek0yOCwySDI5VjNIMjh6TTAsM0gxVjRIMHpNMiwzSDNWNEgyek0zLDNINFY0SDN6TTQsM0g1VjRINHpNNiwzSDdWNEg2ek04LDNIOVY0SDh6TTEwLDNIMTFWNEgxMHpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTEzLDNIMTRWNEgxM3pNMTYsM0gxN1Y0SDE2ek0xOCwzSDE5VjRIMTh6TTIyLDNIMjNWNEgyMnpNMjQsM0gyNVY0SDI0ek0yNSwzSDI2VjRIMjV6TTI2LDNIMjdWNEgyNnpNMjgsM0gyOVY0SDI4ek0wLDRIMVY1SDB6TTIsNEgzVjVIMnpNMyw0SDRWNUgzek00LDRINVY1SDR6TTYsNEg3VjVINnpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNOSw1SDEwVjZIOXpNMTAsNUgxMVY2SDEwek0xMyw1SDE0VjZIMTN6TTE2LDVIMTdWNkgxNnpNMTgsNUgxOVY2SDE4ek0xOSw1SDIwVjZIMTl6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek05LDdIMTBWOEg5ek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTUsN0gxNlY4SDE1ek0xNyw3SDE4VjhIMTd6TTE4LDdIMTlWOEgxOHpNMjAsN0gyMVY4SDIwek0wLDhIMVY5SDB6TTEsOEgyVjlIMXpNNCw4SDVWOUg0ek01LDhINlY5SDV6TTYsOEg3VjlINnpNMTEsOEgxMlY5SDExek0xMiw4SDEzVjlIMTJ6TTE3LDhIMThWOUgxN3pNMTksOEgyMFY5SDE5ek0yMyw4SDI0VjlIMjN6TTI1LDhIMjZWOUgyNXpNMjYsOEgyN1Y5SDI2ek0yNyw4SDI4VjlIMjd6TTI4LDhIMjlWOUgyOHpNMCw5SDFWMTBIMHpNMSw5SDJWMTBIMXpNMiw5SDNWMTBIMnpNMyw5SDRWMTBIM3pNNCw5SDVWMTBINHpNOCw5SDlWMTBIOHpNOSw5SDEwVjEwSDl6TTExLDlIMTJWMTBIMTF6TTEyLDlIMTNWMTBIMTJ6TTEzLDlIMTRWMTBIMTN6TTE1LDlIMTZWMTBIMTV6TTE2LDlIMTdWMTBIMTZ6TTE3LDlIMThWMTBIMTd6TTE4LDlIMTlWMTBIMTh6TTIxLDlIMjJWMTBIMjF6TTIyLDlIMjNWMTBIMjJ6TTIzLDlIMjRWMTBIMjN6TTI0LDlIMjVWMTBIMjR6TTI1LDlIMjZWMTBIMjV6TTI2LDlIMjdWMTBIMjZ6TTI3LDlIMjhWMTBIMjd6TTI4LDlIMjlWMTBIMjh6TTEsMTBIMlYxMUgxek0yLDEwSDNWMTFIMnpNNCwxMEg1VjExSDR6TTUsMTBINlYxMUg1ek02LDEwSDdWMTFINnpNNywxMEg4VjExSDd6TTgsMTBIOVYxMUg4ek0xMSwxMEgxMlYxMUgxMXpNMTIsMTBIMTNWMTFIMTJ6TTEzLDEwSDE0VjExSDEzek0xNSwxMEgxNlYxMUgxNXpNMTYsMTBIMTdWMTFIMTZ6TTE4LDEwSDE5VjExSDE4ek0yMiwxMEgyM1YxMUgyMnpNMjMsMTBIMjRWMTFIMjN6TTI4LDEwSDI5VjExSDI4ek0zLDExSDRWMTJIM3pNNCwxMUg1VjEySDR6TTgsMTFIOVYxMkg4ek0xMCwxMUgxMVYxMkgxMHpNMTUsMTFIMTZWMTJIMTV6TTE3LDExSDE4VjEySDE3ek0xOCwxMUgxOVYxMkgxOHpNMjEsMTFIMjJWMTJIMjF6TTIyLDExSDIzVjEySDIyek0yNSwxMUgyNlYxMkgyNXpNMjcsMTFIMjhWMTJIMjd6TTI4LDExSDI5VjEySDI4ek0xLDEySDJWMTNIMXpNMiwxMkgzVjEzSDJ6TTMsMTJINFYxM0gzek01LDEySDZWMTNINXpNNiwxMkg3VjEzSDZ6TTcsMTJIOFYxM0g3ek04LDEySDlWMTNIOHpNMTAsMTJIMTFWMTNIMTB6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMjAsMTJIMjFWMTNIMjB6TTIxLDEySDIyVjEzSDIxek0yMywxMkgyNFYxM0gyM3pNMjcsMTJIMjhWMTNIMjd6TTAsMTNIMVYxNEgwek0xLDEzSDJWMTRIMXpNMiwxM0gzVjE0SDJ6TTMsMTNINFYxNEgzek00LDEzSDVWMTRINHpNNSwxM0g2VjE0SDV6TTgsMTNIOVYxNEg4ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTAsMTRIMVYxNUgwek02LDE0SDdWMTVINnpNNywxNEg4VjE1SDd6TTksMTRIMTBWMTVIOXpNMTEsMTRIMTJWMTVIMTF6TTEyLDE0SDEzVjE1SDEyek0xNCwxNEgxNVYxNUgxNHpNMTUsMTRIMTZWMTVIMTV6TTE4LDE0SDE5VjE1SDE4ek0yMSwxNEgyMlYxNUgyMXpNMjQsMTRIMjVWMTVIMjR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjgsMTRIMjlWMTVIMjh6TTEsMTVIMlYxNkgxek0yLDE1SDNWMTZIMnpNNCwxNUg1VjE2SDR6TTUsMTVINlYxNkg1ek03LDE1SDhWMTZIN3pNMTEsMTVIMTJWMTZIMTF6TTEyLDE1SDEzVjE2SDEyek0xNCwxNUgxNVYxNkgxNHpNMTUsMTVIMTZWMTZIMTV6TTE2LDE1SDE3VjE2SDE2ek0xNywxNUgxOFYxNkgxN3pNMTgsMTVIMTlWMTZIMTh6TTIwLDE1SDIxVjE2SDIwek0yNCwxNUgyNVYxNkgyNHpNMjcsMTVIMjhWMTZIMjd6TTI4LDE1SDI5VjE2SDI4ek0wLDE2SDFWMTdIMHpNMiwxNkgzVjE3SDJ6TTQsMTZINVYxN0g0ek02LDE2SDdWMTdINnpNNywxNkg4VjE3SDd6TTEyLDE2SDEzVjE3SDEyek0xNSwxNkgxNlYxN0gxNXpNMTcsMTZIMThWMTdIMTd6TTE5LDE2SDIwVjE3SDE5ek0yMSwxNkgyMlYxN0gyMXpNMjcsMTZIMjhWMTdIMjd6TTAsMTdIMVYxOEgwek0zLDE3SDRWMThIM3pNNSwxN0g2VjE4SDV6TTcsMTdIOFYxOEg3ek04LDE3SDlWMThIOHpNMTEsMTdIMTJWMThIMTF6TTEzLDE3SDE0VjE4SDEzek0xNCwxN0gxNVYxOEgxNHpNMTUsMTdIMTZWMThIMTV6TTE2LDE3SDE3VjE4SDE2ek0xNywxN0gxOFYxOEgxN3pNMTgsMTdIMTlWMThIMTh6TTIyLDE3SDIzVjE4SDIyek0yMywxN0gyNFYxOEgyM3pNMjQsMTdIMjVWMThIMjR6TTI1LDE3SDI2VjE4SDI1ek0yNywxN0gyOFYxOEgyN3pNMjgsMTdIMjlWMThIMjh6TTIsMThIM1YxOUgyek02LDE4SDdWMTlINnpNNywxOEg4VjE5SDd6TTExLDE4SDEyVjE5SDExek0xMiwxOEgxM1YxOUgxMnpNMTMsMThIMTRWMTlIMTN6TTE0LDE4SDE1VjE5SDE0ek0xNSwxOEgxNlYxOUgxNXpNMTgsMThIMTlWMTlIMTh6TTIwLDE4SDIxVjE5SDIwek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI0LDE4SDI1VjE5SDI0ek0yNiwxOEgyN1YxOUgyNnpNMjgsMThIMjlWMTlIMjh6TTIsMTlIM1YyMEgyek0zLDE5SDRWMjBIM3pNNywxOUg4VjIwSDd6TTksMTlIMTBWMjBIOXpNMTAsMTlIMTFWMjBIMTB6TTE2LDE5SDE3VjIwSDE2ek0xNywxOUgxOFYyMEgxN3pNMTgsMTlIMTlWMjBIMTh6TTIyLDE5SDIzVjIwSDIyek0yMywxOUgyNFYyMEgyM3pNMjcsMTlIMjhWMjBIMjd6TTI4LDE5SDI5VjIwSDI4ek0wLDIwSDFWMjFIMHpNMSwyMEgyVjIxSDF6TTYsMjBIN1YyMUg2ek0xMiwyMEgxM1YyMUgxMnpNMTYsMjBIMTdWMjFIMTZ6TTE3LDIwSDE4VjIxSDE3ek0yMCwyMEgyMVYyMUgyMHpNMjEsMjBIMjJWMjFIMjF6TTIyLDIwSDIzVjIxSDIyek0yMywyMEgyNFYyMUgyM3pNMjQsMjBIMjVWMjFIMjR6TTI1LDIwSDI2VjIxSDI1ek0yOCwyMEgyOVYyMUgyOHpNOCwyMUg5VjIySDh6TTEwLDIxSDExVjIySDEwek0xMSwyMUgxMlYyMkgxMXpNMTMsMjFIMTRWMjJIMTN6TTE0LDIxSDE1VjIySDE0ek0xNSwyMUgxNlYyMkgxNXpNMTYsMjFIMTdWMjJIMTZ6TTE4LDIxSDE5VjIySDE4ek0xOSwyMUgyMFYyMkgxOXpNMjAsMjFIMjFWMjJIMjB6TTI0LDIxSDI1VjIySDI0ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTEwLDIySDExVjIzSDEwek0xMSwyMkgxMlYyM0gxMXpNMTQsMjJIMTVWMjNIMTR6TTE1LDIySDE2VjIzSDE1ek0xOSwyMkgyMFYyM0gxOXpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjUsMjJIMjZWMjNIMjV6TTI2LDIySDI3VjIzSDI2ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNMTAsMjNIMTFWMjRIMTB6TTEyLDIzSDEzVjI0SDEyek0xNCwyM0gxNVYyNEgxNHpNMTUsMjNIMTZWMjRIMTV6TTE3LDIzSDE4VjI0SDE3ek0xOSwyM0gyMFYyNEgxOXpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0yNywyM0gyOFYyNEgyN3pNMjgsMjNIMjlWMjRIMjh6TTAsMjRIMVYyNUgwek0yLDI0SDNWMjVIMnpNMywyNEg0VjI1SDN6TTQsMjRINVYyNUg0ek02LDI0SDdWMjVINnpNOCwyNEg5VjI1SDh6TTksMjRIMTBWMjVIOXpNMTAsMjRIMTFWMjVIMTB6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTcsMjRIMThWMjVIMTd6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjcsMjRIMjhWMjVIMjd6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNMTAsMjVIMTFWMjZIMTB6TTExLDI1SDEyVjI2SDExek0xMywyNUgxNFYyNkgxM3pNMTUsMjVIMTZWMjZIMTV6TTE2LDI1SDE3VjI2SDE2ek0xNywyNUgxOFYyNkgxN3pNMTgsMjVIMTlWMjZIMTh6TTI3LDI1SDI4VjI2SDI3ek0yOCwyNUgyOVYyNkgyOHpNMCwyNkgxVjI3SDB6TTIsMjZIM1YyN0gyek0zLDI2SDRWMjdIM3pNNCwyNkg1VjI3SDR6TTYsMjZIN1YyN0g2ek05LDI2SDEwVjI3SDl6TTEwLDI2SDExVjI3SDEwek0xMSwyNkgxMlYyN0gxMXpNMTIsMjZIMTNWMjdIMTJ6TTEzLDI2SDE0VjI3SDEzek0xNSwyNkgxNlYyN0gxNXpNMTYsMjZIMTdWMjdIMTZ6TTE3LDI2SDE4VjI3SDE3ek0xOCwyNkgxOVYyN0gxOHpNMTksMjZIMjBWMjdIMTl6TTIxLDI2SDIyVjI3SDIxek0yNSwyNkgyNlYyN0gyNXpNMjYsMjZIMjdWMjdIMjZ6TTI3LDI2SDI4VjI3SDI3ek0yOCwyNkgyOVYyN0gyOHpNMCwyN0gxVjI4SDB6TTYsMjdIN1YyOEg2ek04LDI3SDlWMjhIOHpNMTAsMjdIMTFWMjhIMTB6TTExLDI3SDEyVjI4SDExek0xMiwyN0gxM1YyOEgxMnpNMTYsMjdIMTdWMjhIMTZ6TTE3LDI3SDE4VjI4SDE3ek0xOCwyN0gxOVYyOEgxOHpNMjAsMjdIMjFWMjhIMjB6TTI1LDI3SDI2VjI4SDI1ek0yNywyN0gyOFYyOEgyN3pNMjgsMjdIMjlWMjhIMjh6TTAsMjhIMVYyOUgwek0xLDI4SDJWMjlIMXpNMiwyOEgzVjI5SDJ6TTMsMjhINFYyOUgzek00LDI4SDVWMjlINHpNNSwyOEg2VjI5SDV6TTYsMjhIN1YyOUg2ek04LDI4SDlWMjlIOHpNOSwyOEgxMFYyOUg5ek0xMCwyOEgxMVYyOUgxMHpNMTIsMjhIMTNWMjlIMTJ6TTE2LDI4SDE3VjI5SDE2ek0xNywyOEgxOFYyOUgxN3pNMjAsMjhIMjFWMjlIMjB6TTIyLDI4SDIzVjI5SDIyek0yMywyOEgyNFYyOUgyM3pNMjUsMjhIMjZWMjlIMjV6TTI3LDI4SDI4VjI5SDI3eiIgaWQ9InFyLXBhdGgiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIiBzdHJva2U9Im5vbmUiLz48L3N2Zz4="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

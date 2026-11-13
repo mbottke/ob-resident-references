@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Infections in Pregnancy</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--inf); }
+  /* trimester-safety chips */
+  .s { display: inline-block; font: 800 9.6pt/1 "Inter"; padding: 3pt 5pt 2.5pt; border-radius: 2pt; white-space: nowrap; }
+  .s.y { background: var(--t-go); color: #1E5B2E; box-shadow: inset 0 0 0 1pt #9CC7A6; }
+  .s.n { background: var(--t-warn); color: var(--ink); box-shadow: inset 0 0 0 1pt #D9C27A; }
+  .s.x { background: var(--stop); color: #fff; }
+  .s.c { background: var(--t-ink); color: var(--ink-2); }
+  table.tri td { vertical-align: middle; }
+  table.tri td.cc { text-align: center; }
+  table.tri th.cc { text-align: center; }
+  table.pw td.k { white-space: normal; }
+  .sheet .mt3 { margin-top: 0.16in; }
+  .stack { display: flex; flex-direction: column; gap: 8pt; min-width: 0; }
+  .flow .node { font-size: 11pt; }
+  .drug .rx small { font: 600 11pt/1.2 "Inter"; color: var(--ink-3); }
+  .drug .alt { font-size: 11pt; margin: 2pt 0 4pt; }
+  .drug p + p { margin-top: 3pt; }
+  table.t.tight { --cell-y: 3.5pt; }
+  /* ≥ 38 wk column: overrides the 2nd–3rd column */
+  table.tri th.ga-term { background: var(--t-warn); border-left: 1.2pt solid var(--ink-3); }
+  table.tri td.ga-term { border-left: 1.2pt solid var(--ink-3); }
+  /* pyelonephritis: agent + dose inside the empiric node */
+  .flow .iv-regimens { width: 100%; margin-top: 2pt; }
+  .flow .iv-regimens td { font-size: 11pt; line-height: 1.28; padding: 3pt 0 3pt 6pt; vertical-align: top; border-bottom: 0.75pt solid var(--rule); }
+  .flow .iv-regimens td.k { padding-left: 0; white-space: normal; width: 33%; font-weight: 700; color: var(--ink); }
+  .flow .iv-regimens td.k .nc { font-weight: 600; color: var(--ink-3); }
+  .flow .iv-regimens tr.sub td { padding-top: 5pt; font-weight: 800; color: var(--c); border-bottom: none; padding-bottom: 0; }
+  .flow .iv-regimens tr:last-child td { border-bottom: none; }
+  .flow .node.q > .qq { display: block; font: 800 13pt/1.2 "Inter"; color: var(--ink); }
+  .flow .node.q > .qq small { display: block; font: 500 11pt/1.25 "Inter"; color: var(--ink-2); margin-top: 2pt; }
+  .flow .split { padding-top: 26pt; }
+  .flow .split > .arm::before { top: -26pt; height: 20pt; }
+  .flow .split .node { font-size: 10.8pt; }
+  /* BV regimen rows */
+  table.bv-regimens td { padding: 3pt 6pt 3pt 0; vertical-align: top; }
+  table.bv-regimens td.k { font-weight: 600; color: var(--ink-2); width: 3.4em; white-space: nowrap; }
+  .bv-cols { display: grid; grid-template-columns: 1.08fr 1fr; gap: 0.14in; align-items: start; margin-top: 2pt; }
+  table.bv-regimens td, table.bv-regimens td .dose { white-space: normal; }
+  table.bv-regimens tr.sub td { font-weight: 800; color: var(--ink); padding-top: 0; border-bottom: 0.75pt solid var(--rule); }
+  /* syphilis */
+  .syphilis-heading { font: 800 15pt/1.18 "Inter"; border-top: 1.5pt solid var(--c); padding-top: 4pt; }
+  /* keyed decision rows (influenza, listeria) */
+  .infection-actions { margin-top: 2pt; }
+  .infection-actions > div { display: grid; grid-template-columns: 14.2em minmax(0, 1fr); gap: 8pt; padding: 1.5pt 0; border-bottom: 0.75pt solid color-mix(in srgb, var(--c) 35%, white); }
+  .infection-actions > div:last-child { border-bottom: none; }
+  .infection-actions > div > b { font-weight: 800; }
+  .infection-actions > div > b small { display: block; font: 600 10pt/1.25 "Inter"; color: var(--ink-3); }
+  .xrow { border-top: 1.5pt solid var(--c); padding-top: 5pt; margin-top: auto; }
+  /* round 3 */
+  .row.pair:is(.cd, .ef) > .block > .band { min-height: 0; }
+  .route-title { font: 800 calc(17pt / var(--k))/1.15 "Inter"; letter-spacing: 0; text-transform: none; color: var(--ink); border-top: calc(3pt / var(--k)) solid var(--c); padding-top: 5pt; margin-top: 4pt; }
+  .route-title .tag { vertical-align: .15em; }
+  .route-note { font: 500 10.5pt/1.25 "Inter"; color: var(--ink-3); }
+  .route-title.split-note { display: flex; justify-content: space-between; align-items: baseline; gap: 12pt; }
+  .phase-label { display: inline; margin-right: 3pt; font: 800 9.6pt/1.2 "Inter"; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+  .avoid-rows { display: grid; gap: 3pt; }
+  .avoid-rows > div + div { border-top: 0.75pt solid color-mix(in srgb, var(--stop) 30%, white); padding-top: 3pt; }
+  .box.reference { --reference-rule: var(--rule); }
+  .sti-regimens { display: grid; grid-template-columns: minmax(0, 0.94fr) minmax(0, 1.1fr) minmax(0, 1.04fr) minmax(0, 0.92fr); gap: var(--gap); align-items: stretch; }
+  .ept { background: var(--paper); border-top: 1.5pt solid var(--ink-3); padding: 6pt 9pt 7pt; font-size: 11pt; line-height: 1.3; color: var(--ink-2); }
+  .ept > h4 { margin-bottom: 3pt; color: var(--ink); }
+  .ept > h4 .nc { font-weight: 600; color: var(--ink-3); }
+  .hsv-route { background: var(--t-stop); border-left: calc(5pt / var(--k)) solid var(--stop); padding: 5pt 9pt; display: grid; gap: 4pt; }
+  .hsv-route .hr-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 10pt; align-items: baseline; }
+  .hsv-route .hr-row + .hr-row { border-top: 0.75pt solid color-mix(in srgb, var(--stop) 35%, white); padding-top: 4pt; }
+  .hsv-route .when { font: 600 11pt/1.25 "Inter"; color: var(--ink); }
+  .hsv-route .action { font: 800 calc(16pt / var(--k))/1.15 "Inter"; color: var(--stop); }
+  table.hsv td.na { color: var(--ink-3); }
+  table.hsv tr.sev td { border-bottom: none; padding-bottom: 0; }
+  table.hsv tr.cont td { padding-top: 1pt; color: var(--ink-2); }
+  /* round 4 */
+  .s.y.permitted { background: transparent; box-shadow: none; color: var(--ink-2); font-weight: 600; }
+  table.tri thead tr.grp th.ga-span { border-bottom: 0.75pt solid var(--ink-3); padding-bottom: 2pt; }
+  table.tri thead tr.grp th[rowspan] { vertical-align: bottom; }
+  table.tri thead th { padding-top: 0; padding-bottom: 3pt; line-height: 1.15; }
+  .ef .drug .rx-line { display: block; }
+  .ef .drug .rx-line + .rx-line { margin-top: 2pt; }
+  /* round 5 (ax6 #1): one 45:55 axis for C/D and E/F; lookup labels distinct from treatment text */
+  table.pw :is(td.k, th:first-child) { box-shadow: inset calc(-.75pt / var(--k)) 0 var(--rule); }
+  table.pw td.k { color: var(--inf); }
+  .ef .infection-actions > div { grid-template-columns: 12.6em minmax(0, 1fr); }
+  table.hsv tbody td:first-child { background: color-mix(in srgb, var(--inf) 12%, white); padding-left: 4pt; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="07-prenatal.html" title="Prenatal &amp; Timing">‹ 07</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html" selected="">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="09-early-pregnancy.html" title="Early pregnancy">09 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/08-infections.pdf">PDF</a></nav>
+<div class="sheet portrait-24x36" style="--k:1.19">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Clinic&nbsp;· triage&nbsp;· L&amp;D&nbsp;· postpartum</div>
+      <h1><span class="sid">08</span>Infections</h1>
+    </div>
+    <div class="sub">Treatment in pregnancy: urinary tract (hospital protocol), STIs, vaginitis, HSV, endometritis, influenza, listeria.</div>
+    <nav class="setnav rel"><em>See also</em><a href="13-sepsis.html" class="xlink"><span><b>13</b>Sepsis</span></a><a href="07-prenatal.html" class="xlink"><span><b>7</b>Prenatal</span></a><a href="17-syphilis-newborn.html" class="xlink"><span><b>17</b>Syphilis → NB</span></a><a href="01-triage.html" class="xlink"><span><b>1</b>Triage</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-08.svg)"></div>
+
+  <!-- ============ A — URINARY TRACT (UPH protocol v1.2) ============ -->
+  <section class="block c-inf" id="p-A">
+    <div class="band">
+      <div class="lt">A</div>
+      <h2>Urinary tract<small>UnityPoint Health protocol v1.2. Screen once early by urine culture for asymptomatic bacteriuria (ASB). After the initial screen: no test-of-cure or surveillance cultures; obtain UA + culture only if symptomatic.</small></h2>
+      <div class="src">UPH UTI in Pregnancy Protocol v1.2 (Nov 2026)&nbsp;· ACOG CC 4 (2023)<br>Doses: ACOG CC 4 Tables 1 &amp; 3</div>
+    </div>
+
+    <div class="row" style="align-items:stretch">
+      <!-- pathways + definitions -->
+      <div class="stack uti-outpatient" style="flex:1.86">
+        <table class="t small tight pw">
+          <colgroup><col style="width:6.5%"><col style="width:37.5%"><col style="width:33%"><col></colgroup>
+          <thead><tr><th></th><th>Definition&nbsp;· threshold</th><th>Diagnose&nbsp;· treat</th><th>Follow-up</th></tr></thead>
+          <tbody>
+            <tr><td class="k">ASB</td><td><b>≥ 10⁵ CFU/mL single uropathogen</b>, voided, one culture (≥ 10² if catheterized). Pyuria alone ≠ treat.</td><td>Urine culture <b>once</b>, early. <b class="nowrap">5–7&nbsp;d</b> targeted, or <span class="dose">fosfomycin 3&nbsp;g PO once</span></td><td>No test-of-cure; no repeat screen</td></tr>
+            <tr><td class="k">Cystitis</td><td>Dysuria, frequency, urgency, suprapubic pain; <b>no</b> fever, flank pain or CVA tenderness. ≥ 10⁵ typical; 10²–10³ single organism may count with symptoms.</td><td>UA + culture. <b>Exclude pyelo first.</b> Empiric oral <b class="nowrap">5–7&nbsp;d</b>, narrow to culture</td><td>UA + culture only if symptoms persist or recur</td></tr>
+            <tr><td class="k">Pyelo</td><td><b>Usually T ≥ 38.0&nbsp;°C</b> + urine findings; flank pain, CVA tenderness, N/V support. Clinical dx, culture confirms. <b>No fever + CVA tenderness</b> → still assess for evolving pyelo.</td><td><b>Admit</b>&nbsp;· IV ceftriaxone (default) → oral&nbsp;· <b>14&nbsp;d total</b> →</td><td>Suppression until delivery</td></tr>
+            <tr><td class="k">Recurrent</td><td><b>≥ 2 UTIs</b> this pregnancy, each culture-confirmed</td><td>Recurrent UTI <b>or after pyelo</b> → nightly or post-coital prophylaxis <span class="nc muted">(Suppression box ↓)</span></td><td>Stop at delivery</td></tr>
+            <tr><td class="k">GBS</td><td><b>Any count</b>, any urine culture this pregnancy</td><td><span class="phase-label">Now</span>≥ 10⁵ or symptomatic → treat as above; &lt; 10⁵ and asymptomatic → no antepartum treatment</td><td><span class="phase-label">In labor</span>intrapartum antibiotic prophylaxis (IAP) at any count <a href="01-triage.html#p-08" class="xlink"><span class="xref c-inf">1&nbsp;· 08</span></a>; omit 36–37&nbsp;wk swab</td></tr>
+          </tbody>
+        </table>
+        <div class="route-title split-note"><span>Oral agents for ASB &amp; cystitis</span><span class="route-note">Choose by susceptibility first, then gestational age, then site.</span></div>
+        <table class="t small tight tri">
+          <colgroup><col style="width:14%"><col style="width:29%"><col style="width:10.5%"><col style="width:10%"><col style="width:7.5%"><col></colgroup>
+          <thead><tr class="grp"><th rowspan="2">Agent</th><th rowspan="2">Dose <span class="nc">(ACOG CC 4)</span></th><th class="cc ga-span" colspan="3">Gestational age</th><th rowspan="2">Notes</th></tr><tr><th class="cc">1st tri</th><th class="cc">2nd–3rd, &lt; 38&nbsp;wk</th><th class="cc ga-term">≥ 38&nbsp;wk</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Nitrofurantoin</td><td><span class="dose">100&nbsp;mg PO q12h × 5–7&nbsp;d</span></td><td class="cc"><span class="s n">If no alternative</span></td><td class="cc"><span class="s y">First-line</span></td><td class="cc ga-term"><span class="s x">Avoid</span></td><td>Neonatal hemolysis at term; not with G6PD deficiency. Not for pyelo.</td></tr>
+            <tr><td class="k">TMP-SMX</td><td><span class="dose">Sulfamethoxazole 800&nbsp;mg</span> + <span class="dose">trimethoprim 160&nbsp;mg</span> <span class="dose">PO q12h × 5–7&nbsp;d</span></td><td class="cc"><span class="s n">If no alternative</span></td><td class="cc"><span class="s y">First-line</span></td><td class="cc ga-term"><span class="s x">Avoid</span></td><td>Folate antagonist; kernicterus near term. Empiric only if local resistance OK.</td></tr>
+            <tr><td class="k">Cephalexin</td><td><span class="dose">250–500&nbsp;mg PO q6h × 5–7&nbsp;d</span></td><td class="cc"><span class="s y permitted">Yes</span></td><td class="cc"><span class="s y permitted">Yes</span></td><td class="cc ga-term"><span class="s y permitted">Yes</span></td><td>Treatment and prophylaxis</td></tr>
+            <tr><td class="k">Cefpodoxime ·<br>cefuroxime&nbsp;· cefdinir</td><td class="muted">Per pharmacy&nbsp;— not in CC 4 table</td><td class="cc"><span class="s y permitted">Yes</span></td><td class="cc"><span class="s y permitted">Yes</span></td><td class="cc ga-term"><span class="s y permitted">Yes</span></td><td>Susceptibility directed</td></tr>
+            <tr><td class="k">Amoxicillin-clavulanate</td><td>Amoxicillin component: <span class="dose">500&nbsp;mg q8h</span> or <span class="dose">875&nbsp;mg q12h × 5–7&nbsp;d</span></td><td class="cc"><span class="s y permitted">Yes</span></td><td class="cc"><span class="s y permitted">Yes</span></td><td class="cc ga-term"><span class="s y permitted">Yes</span></td><td>Susceptibility directed</td></tr>
+            <tr><td class="k">Fosfomycin</td><td><span class="dose">3&nbsp;g PO once</span></td><td class="cc"><span class="s y permitted">Yes</span></td><td class="cc"><span class="s y permitted">Yes</span></td><td class="cc ga-term"><span class="s y permitted">Yes</span></td><td>ASB and cystitis only. Not for pyelo.</td></tr>
+            <tr><td class="k">Amoxicillin&nbsp;· ampicillin</td><td>Amoxicillin: <span class="dose">500&nbsp;mg q8h</span> or <span class="dose">875&nbsp;mg q12h × 5–7&nbsp;d</span></td><td class="cc" colspan="3"><span class="s c">Culture-directed only</span></td><td>High <i>E. coli</i> resistance&nbsp;— <b>never empiric</b></td></tr>
+          </tbody>
+        </table>
+        <div class="xs muted">Trimester columns: ACOG CO 717. Nitrofurantoin label: contraindicated 38–42&nbsp;wk, in labor, or when labor is imminent.</div>
+        <div class="row" style="gap:8pt">
+            <div class="box small reference" style="flex:0.85">
+              <h4>Recurrent UTI: before prophylaxis</h4>
+              Fully treat the current episode. Correct reversible causes: resistance, adherence, obstruction, stones, retention; renal US or urology as indicated.
+            </div>
+            <div class="box small reference" style="flex:1.15">
+              <h4>Suppression / prophylaxis</h4>
+              <span class="dose">Nitrofurantoin 100&nbsp;mg</span> or <span class="dose">cephalexin 250–500&nbsp;mg</span> PO <b>nightly</b> (or 1 post-coital dose), by susceptibility. Nitrofurantoin: T1 only if no alternative; <b>switch to cephalexin by 38w0d</b> (earlier if labor imminent). <b>Stop at delivery.</b>
+            </div>
+        </div>
+      </div>
+
+      <!-- pyelonephritis flow -->
+      <div class="stack uti-inpatient" style="flex:1">
+        <div class="route-title">Pyelonephritis&nbsp;— inpatient <span class="tag local nc">Local&nbsp;· protocol v1.2</span></div>
+        <div class="flow">
+          <div class="node fill">Admit&nbsp;· urine + blood cultures&nbsp;· CBC&nbsp;· BMP</div>
+          <div class="node tint" style="border-top:none"><span class="phase-label">Throughout inpatient care</span>Monitor VS, urine output, fetal status. Watch: sepsis, ARDS, preterm labor, anemia, renal dysfunction.</div>
+          <div class="arrow"></div>
+          <div class="node"><span class="lbl">Empiric IV&nbsp;— when&nbsp;· agent and dose <span class="nc" style="font-weight:600;color:var(--ink-3)">· all ACOG-listed</span></span>
+            <table class="iv-regimens">
+              <tbody>
+                <tr><td class="k">Default <span class="nc">(institutional)</span></td><td><span class="dose">Ceftriaxone 1&nbsp;g IV q24h</span></td></tr>
+                <tr><td class="k">Severe illness or higher local resistance</td><td><span class="dose">Cefepime 1&nbsp;g IV q12h</span></td></tr>
+                <tr><td class="k">Enterococcal coverage</td><td><span class="dose">Ampicillin 2&nbsp;g IV q6h</span> + gentamicin (<span class="dose">1.5&nbsp;mg/kg IV q8h</span> or <span class="dose">5&nbsp;mg/kg IV q24h</span>)&nbsp;— follow renal function and levels</td></tr>
+                <tr class="sub"><td colspan="2">Penicillin allergy</td></tr>
+                <tr><td class="k">Low anaphylaxis risk</td><td>Cephalosporin (above)</td></tr>
+                <tr><td class="k">High risk</td><td><span class="dose">Aztreonam 1&nbsp;g IV q8–12h</span>; <b>consult infectious diseases</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="arrow"></div>
+          <div class="node q"><span class="qq">Improved by 48–72&nbsp;h?<small>Afebrile 24–48&nbsp;h, symptoms better</small></span></div>
+          <div class="stem"></div>
+          <div class="split two">
+            <div class="arm"><span class="yn">Yes</span><div class="node end-go">Oral step-down by susceptibility, <b>14&nbsp;d total</b> (IV + oral) → start suppression</div></div>
+            <div class="arm"><span class="yn">No</span><div class="node">Renal US (obstruction, abscess; urology if obstructed); review susceptibilities, broaden, stay inpatient</div></div>
+          </div>
+        </div>
+        <div class="box stop small">
+          <h4>Avoid <span class="tag stop">Stop</span></h4>
+          <div class="avoid-rows">
+            <div><b>In pregnancy:</b> fluoroquinolones and tetracyclines.</div>
+            <div><b>For pyelo / possible upper tract:</b> nitrofurantoin or fosfomycin.</div>
+            <div><b>Empiric treatment:</b> amoxicillin or ampicillin.</div>
+          </div>
+        </div>
+        <div class="box small reference" id="culture-screen">
+          <h4>Screen by culture</h4>
+          Dipstick is not an ASB screen. Symptomatic: pyuria (&gt; 5–10 WBC/hpf or LE+) sensitive, nonspecific; nitrite specific (~94–98%), insensitive; both negative (NPV 78–98%) doesn’t replace culture.
+          <div class="xs muted mt1">Midstream clean catch: ~⅓ grow skin flora up to 10⁴&nbsp;— mixed or low-count skin flora usually = contamination. 10⁵ CFU/mL = 10⁸ CFU/L: confirm lab units.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ B — STIs ============ -->
+  <section class="block c-inf mt3" id="p-B">
+    <div class="band">
+      <div class="lt">B</div>
+      <h2>Sexually transmitted infections<small>No doxycycline in pregnancy. Test for HIV, syphilis, GC/CT with any STI. Abstain 7&nbsp;d after treatment and until partners treated.</small></h2>
+      <div class="src">CDC STI Treatment Guidelines 2021 (current Nov 2026)<br>ACOG PA Syphilis Screening 2024 (reaff. 2025)</div>
+    </div>
+    <div class="sti-regimens sti-drugs">
+      <div class="drug c-inf">
+        <div class="nm">Chlamydia</div>
+        <div class="rx">Azithromycin 1&nbsp;g PO once</div>
+        <div class="alt">Alternative: <span class="dose">amoxicillin 500&nbsp;mg PO TID × 7&nbsp;d</span></div>
+        <div class="ci"><p><span style="font-weight:700;color:var(--ink)">Test of cure</span> (NAAT) ~4&nbsp;wk after treatment, then retest at 3 mo.</p><p>Partners: last 60&nbsp;d.</p></div>
+      </div>
+      <div class="drug c-inf">
+        <div class="nm">Gonorrhea</div>
+        <div class="rx">Ceftriaxone 500&nbsp;mg IM once <small>1&nbsp;g if ≥ 150&nbsp;kg</small></div>
+        <div class="alt">+ <span class="dose">azithromycin 1&nbsp;g PO once</span> unless chlamydia excluded</div>
+        <div class="ci"><p>Cephalosporin allergy → ID / STI consult (gentamicin: caution in pregnancy).</p><p><span style="font-weight:700;color:var(--ink)">Pharyngeal:</span> test of cure 7–14&nbsp;d. All: retest 3 mo.</p></div>
+      </div>
+      <div class="drug c-inf">
+        <div class="nm">Trichomonas</div>
+        <div class="rx">Metronidazole 500&nbsp;mg PO BID × 7&nbsp;d</div>
+        <div class="alt">Male partner: <span class="dose">metronidazole 2&nbsp;g PO once</span></div>
+        <div class="ci"><p>Dx: NAAT (wet mount sensitivity 44–68%). <b>No tinidazole</b> in pregnancy.</p><p>Retest 3 mo; recurrence NAAT ≥ 3&nbsp;wk after treatment.</p></div>
+      </div>
+      <div class="ept">
+        <h4>Expedited partner therapy</h4>
+        CDC: use where legal when partners can’t be seen. GC partner: <span class="dose">cefixime 800&nbsp;mg PO once</span>. If CT not excluded&nbsp;— doxycycline add-on for a nonpregnant partner: <span class="dose">100&nbsp;mg BID × 7&nbsp;d</span>. Not for syphilis.
+        <div class="mt1"><span class="tag local">Local</span> State EPT law and program process: <span class="lfv" data-local="ept_law_process">________</span></div>
+      </div>
+    </div>
+    <div class="row sti-followup" style="align-items:stretch">
+      <div class="stack" style="flex:1.02">
+        <div class="syphilis-heading">Syphilis&nbsp;— penicillin G only</div>
+        <div class="small" style="margin-top:-4pt">Bicillin L-A, never C-R&nbsp;· reactive RPR → titer, treponemal test, prior Rx, stage <a href="17b-syphilis-back.html#p-02" class="xlink"><span class="xref c-inf">17b&nbsp;· 02</span></a>&nbsp;· penicillin allergy → desensitize, then treat</div>
+        <table class="t small tight">
+          <thead><tr><th>Stage</th><th>Regimen</th><th>Pregnancy rules</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Primary&nbsp;· secondary ·<br>early latent (&lt; 12 mo)</td><td><span class="dose">Benzathine penicillin G 2.4 million units IM once</span></td><td>A 2nd dose 1&nbsp;wk later may be given</td></tr>
+            <tr><td class="k">Late latent ·<br>unknown duration</td><td><span class="dose">Benzathine penicillin G 2.4 million units IM weekly × 3</span><br><span class="muted">7.2 million units total</span></td><td><b>7&nbsp;d apart; any interval &gt; 9&nbsp;d → restart the full course</b></td></tr>
+            <tr><td class="k">Neuro&nbsp;· ocular&nbsp;· otic</td><td>Aqueous penicillin G <span class="dose">3–4 million units IV q4h × 10–14&nbsp;d</span></td><td>ID consult</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stack" style="flex:1">
+        <div class="box small reference">
+          <h4>Screen &amp; follow</h4>
+          <dl class="kv" style="gap:3pt 10pt">
+            <dt>Screen</dt><dd>All: 1st visit&nbsp;· 3rd trimester (28&nbsp;wk)&nbsp;· delivery <a href="07-prenatal.html#p-01" class="xlink"><span class="xref c-wf">7&nbsp;· 01</span></a>; any fetal death &gt; 20&nbsp;wk</dd>
+            <dt>Repeat titers</dt><dd>Treatment at ≤ 24&nbsp;wk: repeat titers ≥ 8&nbsp;wk after treatment (e.g., 32&nbsp;wk) and at delivery. Treatment at &gt; 24&nbsp;wk: repeat titers at delivery.</dd>
+            <dt>Concerning<br>response</dt><dd>Fourfold rise sustained &gt; 2&nbsp;wk = failure or reinfection. Treatment is likely inadequate if delivery occurs &lt; 30&nbsp;d after therapy.</dd>
+          </dl>
+        </div>
+        <div class="box small">
+          <h4>Second half of pregnancy</h4>
+          Fetal ultrasound for congenital syphilis (don’t delay treatment). Jarisch-Herxheimer can trigger preterm labor or fetal distress: report fever, contractions, ↓ fetal movement.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ C + D ============ -->
+  <div class="row mt3 pair cd" style="align-items:stretch">
+    <section class="block c-inf" style="flex:0.84" id="p-C">
+      <div class="band">
+        <div class="lt">C</div>
+        <h2>Vaginitis<small>Treat symptomatic BV in any trimester; don’t screen asymptomatic.</small></h2>
+        <div class="src">CDC STI Treatment<br>Guidelines 2021</div>
+      </div>
+      <table class="t small tight">
+        <thead><tr><th></th><th>Diagnosis</th></tr></thead>
+        <tbody>
+          <tr><td class="k">BV</td><td>Amsel ≥ 3 of 4: thin homogeneous discharge&nbsp;· clue cells&nbsp;· pH &gt; 4.5&nbsp;· whiff (KOH) +&nbsp;— or Nugent 7–10</td></tr>
+          <tr><td class="k">Candida</td><td>Budding yeast, hyphae or pseudohyphae on saline / 10% KOH; pH normal (&lt; 4.5); culture if microscopy negative</td></tr>
+          <tr><td class="k">Trich</td><td>NAAT preferred&nbsp;· treat as in B</td></tr>
+        </tbody>
+      </table>
+      <div class="box small reference">
+        <h4>BV&nbsp;— any one, symptomatic</h4>
+        <div class="bv-cols">
+          <table class="t bv-regimens">
+            <tbody>
+              <tr><td class="k">Oral</td><td><span class="dose">Metronidazole 500&nbsp;mg PO BID × 7&nbsp;d</span></td></tr>
+              <tr><td class="k">Gel</td><td><span class="dose">Metronidazole gel 0.75% 5&nbsp;g PV daily × 5&nbsp;d</span></td></tr>
+              <tr><td class="k">Cream</td><td><span class="dose">Clindamycin cream 2% 5&nbsp;g PV <span class="nowrap">at bedtime × 7&nbsp;d</span></span></td></tr>
+            </tbody>
+          </table>
+          <table class="t bv-regimens">
+            <tbody>
+              <tr class="sub"><td colspan="2">Also OK in pregnancy</td></tr>
+              <tr><td class="k">Oral</td><td><span class="dose">Clindamycin 300&nbsp;mg PO BID × 7&nbsp;d</span></td></tr>
+              <tr><td class="k">Ovules</td><td><span class="dose">Clindamycin ovules 100&nbsp;mg PV at bedtime × 3&nbsp;d</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt1">No tinidazole or secnidazole. Partners: no treatment.</div>
+      </div>
+      <div class="box small reference">
+        <h4>Candidiasis&nbsp;— topical azole × 7&nbsp;d only</h4>
+        e.g., <span class="dose">clotrimazole 1% cream 5&nbsp;g PV daily × 7–14&nbsp;d</span> or <span class="dose">miconazole 2% cream 5&nbsp;g PV daily × 7&nbsp;d</span>.
+        <div class="mt1"><b style="color:var(--stop)">No oral fluconazole</b>&nbsp;— associated with spontaneous abortion.</div>
+      </div>
+    </section>
+
+    <section class="block c-inf" style="flex:1" id="p-D">
+      <div class="band">
+        <div class="lt">D</div>
+        <h2>Genital herpes<small>Suppress from 36w0d; examine every laboring patient with HSV history.</small></h2>
+        <div class="src">ACOG PB 220 (2020)<br>CDC STI 2021</div>
+      </div>
+      <div class="hsv-route">
+        <div class="hr-row"><div class="when">Genital lesions or prodrome (vulvar pain, burning) in labor or with <span class="nowrap">term ROM</span></div><div class="action">→ Cesarean as soon as feasible</div></div>
+        <div class="hr-row"><div class="when">Lesions or prodrome with PPROM</div><div class="action">→ MFM; antiviral if expectant</div></div>
+      </div>
+      <ul class="ls small tight">
+        <li><b>Neither genital lesions nor prodrome → vaginal birth.</b> Nongenital lesions (back, thigh, buttock) → cover lesions; vaginal birth.</li>
+      </ul>
+      <table class="t small tight hsv">
+        <colgroup><col style="width:27%"><col style="width:38%"><col></colgroup>
+        <thead><tr><th>Indication</th><th>Acyclovir</th><th>Valacyclovir</th></tr></thead>
+        <tbody>
+          <tr class="sev"><td class="k">Severe / disseminated</td><td><span class="dose">5–10&nbsp;mg/kg IV q8h × 2–7&nbsp;d</span> or until improved</td><td class="na">—</td></tr>
+          <tr class="cont"><td></td><td colspan="2">Then oral to complete ≥ 10&nbsp;d&nbsp;· CNS → ID</td></tr>
+          <tr><td class="k">Primary / first episode</td><td><span class="dose">400&nbsp;mg PO TID × 7–10&nbsp;d</span></td><td><span class="dose">1&nbsp;g PO BID × 7–10&nbsp;d</span></td></tr>
+          <tr><td class="k">Recurrent episode</td><td><span class="dose">400&nbsp;mg TID × 5&nbsp;d</span> or <span class="dose">800&nbsp;mg BID × 5&nbsp;d</span></td><td><span class="dose">500&nbsp;mg BID × 3&nbsp;d</span> or <span class="dose">1&nbsp;g daily × 5&nbsp;d</span></td></tr>
+          <tr><td class="k">Suppression from 36w0d to delivery</td><td><span class="dose">400&nbsp;mg PO TID</span></td><td><span class="dose">500&nbsp;mg PO BID</span></td></tr>
+        </tbody>
+      </table>
+      <div class="xs muted">Extend first-episode course if healing incomplete at 10&nbsp;d. Pregnancy suppression doses are higher than nonpregnant (renal clearance). Primary outbreak in T3: may continue therapy to delivery.</div>
+      <ul class="ls small tight">
+        <li>Primary or first-episode in 3rd trimester → cesarean may be offered (prolonged shedding).</li>
+        <li>Confirm suspected HSV with type-specific testing; no routine screening. Acquired in 2nd half → MFM + ID.</li>
+        <li>Neonatal risk: acquired near delivery 30–50%&nbsp;· recurrent or acquired in 1st half &lt; 1%.</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ============ E + F ============ -->
+  <div class="row mt3 pair ef" style="align-items:stretch">
+    <section class="block c-inf" style="flex:0.84" id="p-E">
+      <div class="band">
+        <div class="lt">E</div>
+        <h2>Endometritis<small>Postpartum treatment</small></h2>
+        <div class="src">Cochrane (Mackeen) 2015<br>ACOG CO 712 + CPU 2024</div>
+      </div>
+      <div class="drug c-inf">
+        <div class="nm">Postpartum endometritis <small>fever + uterine tenderness ± foul lochia</small></div>
+        <div class="rx"><span class="rx-line">Clindamycin 900&nbsp;mg IV q8h</span><span class="rx-line">+ gentamicin 5&nbsp;mg/kg IV q24h <small>(or 1.5&nbsp;mg/kg q8h)</small></span></div>
+        <div class="ci"><p>Add ampicillin if no response by 48–72&nbsp;h or enterococcus suspected. Adjust gentamicin for renal function.</p></div>
+      </div>
+      <dl class="kv small" style="gap:5pt 10pt">
+        <dt>Stop</dt><dd>Afebrile 24–48&nbsp;h and clinically improved → stop IV. <b>No oral course</b> after uncomplicated endometritis.</dd>
+        <dt>No response</dt><dd><b>No improvement after 48–72&nbsp;h → exam, imaging, cultures.</b> Assess for wound infection, abscess or hematoma, retained products, septic pelvic thrombophlebitis, or resistant organism.</dd>
+      </dl>
+      <div class="small xrow"><b>Intraamniotic infection:</b> criteria and antibiotic lanes (standard, penicillin allergy, <span class="nowrap">cesarean add-on</span>, postpartum stop) <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a></div>
+    </section>
+
+    <section class="block c-inf" style="flex:1" id="p-F">
+      <div class="band">
+        <div class="lt">F</div>
+        <h2>Other infections<small>Influenza, listeria; GBS, HBV, HCV and HIV references</small></h2>
+        <div class="src">CDC antivirals 2026&nbsp;· ACOG CO 614<br>SMFM Listeria Statement 2026</div>
+      </div>
+      <div class="box small reference">
+        <h4>Influenza&nbsp;— pregnancy or ≤ 2&nbsp;wk postpartum = high risk</h4>
+        <div class="infection-actions">
+          <div><b>Suspected illness</b><span>Treat now, any trimester; don’t wait for the test (best ≤ 48&nbsp;h of onset): <span class="dose">oseltamivir 75&nbsp;mg PO BID × 5&nbsp;d</span></span></div>
+          <div><b>Post-exposure</b><span>Asymptomatic, ≤ 48&nbsp;h after exposure: <span class="dose">oseltamivir 75&nbsp;mg PO daily × 7&nbsp;d</span> after last exposure</span></div>
+        </div>
+        No baloxavir in pregnancy or lactation. Renal-adjust.
+      </div>
+      <div class="box small reference">
+        <h4>Listeria&nbsp;— after exposure (recalled food) <span class="tag new">SMFM 2026</span></h4>
+        <div class="infection-actions">
+          <div><b>Asymptomatic</b><span>No testing or treatment; watch 2 mo</span></div>
+          <div><b>Afebrile, mild GI / flu-like</b><span>Expectant or blood cultures</span></div>
+          <div><b>T &gt; 38.1&nbsp;°C + symptoms</b><span>Blood cultures (tell lab) + <span class="dose">ampicillin 2&nbsp;g IV q4–6h × ≥ 14&nbsp;d</span> ± gentamicin</span></div>
+        </div>
+        Cephalosporins don’t work; penicillin allergy → TMP-SMX IV + gentamicin. Withhold iron supplementation, particularly IV iron, until antibiotic treatment is finished.
+      </div>
+      <dl class="kv small" style="gap:4pt 10pt">
+        <dt>GBS IAP</dt><dd>Indications and doses <a href="01-triage.html#p-08" class="xlink"><span class="xref c-inf">1&nbsp;· 08</span></a>&nbsp;— GBS bacteriuria any count = IAP</dd>
+        <dt>HBV&nbsp;· HCV&nbsp;· HIV</dt><dd>Screening every pregnancy <a href="07-prenatal.html#p-01" class="xlink"><span class="xref c-wf">7&nbsp;· 01</span></a>&nbsp;· HIV delivery timing <a href="07-prenatal.html#p-08" class="xlink"><span class="xref c-wf">7&nbsp;· 08</span></a>&nbsp;· newborn HBV <a href="05-newborn.html#p-E" class="xlink"><span class="xref c-nb">5&nbsp;· E</span></a></dd>
+      </dl>
+    </section>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> UnityPoint Health, Urinary Tract Infection in Pregnancy: Clinical Management Protocol, v1.2 (Nov 1, 2026; draft for faculty review); ACOG Clinical Consensus No. 4, Urinary Tract Infections in Pregnant Individuals, Obstet Gynecol 2023;142:435–45 (erratum 2024;144:e138), Tables 1 and 3; ACOG CO 717 (2017); ACOG CO 797 (2020); nitrofurantoin prescribing information; CDC Sexually Transmitted Infections Treatment Guidelines, 2021, MMWR Recomm Rep 2021;70(RR-4)&nbsp;— chlamydia, gonorrhea, syphilis in pregnancy, trichomoniasis, bacterial vaginosis, vulvovaginal candidiasis, genital HSV; ACOG Practice Advisory, Screening for Syphilis in Pregnancy (2024, reaff. 2025); ACOG PB 220, Management of Genital Herpes in Pregnancy (2020); ACOG CO 712 + Clinical Practice Update (2024); Mackeen AD et al., Antibiotic regimens for postpartum endometritis, Cochrane Database Syst Rev 2015;CD001067; CDC Influenza Antiviral Medications: Summary for Clinicians (2026); ACOG CO 614, Listeria exposure (2014); SMFM Statement, Listeria monocytogenes in pregnancy (Oct 2026). <div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTksMEgxMFYxSDl6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTIsMUgxM1YySDEyek0xMywxSDE0VjJIMTN6TTE3LDFIMThWMkgxN3pNMTksMUgyMFYySDE5ek0yMCwxSDIxVjJIMjB6TTIyLDFIMjNWMkgyMnpNMjgsMUgyOVYySDI4ek0wLDJIMVYzSDB6TTIsMkgzVjNIMnpNMywySDRWM0gzek00LDJINVYzSDR6TTYsMkg3VjNINnpNOCwySDlWM0g4ek05LDJIMTBWM0g5ek0xMCwySDExVjNIMTB6TTExLDJIMTJWM0gxMXpNMTcsMkgxOFYzSDE3ek0xOSwySDIwVjNIMTl6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNOCwzSDlWNEg4ek0xMCwzSDExVjRIMTB6TTExLDNIMTJWNEgxMXpNMTIsM0gxM1Y0SDEyek0xMywzSDE0VjRIMTN6TTE2LDNIMTdWNEgxNnpNMTgsM0gxOVY0SDE4ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTksNEgxMFY1SDl6TTExLDRIMTJWNUgxMXpNMTIsNEgxM1Y1SDEyek0xNCw0SDE1VjVIMTR6TTE1LDRIMTZWNUgxNXpNMTYsNEgxN1Y1SDE2ek0xNyw0SDE4VjVIMTd6TTE4LDRIMTlWNUgxOHpNMjIsNEgyM1Y1SDIyek0yNCw0SDI1VjVIMjR6TTI1LDRIMjZWNUgyNXpNMjYsNEgyN1Y1SDI2ek0yOCw0SDI5VjVIMjh6TTAsNUgxVjZIMHpNNiw1SDdWNkg2ek04LDVIOVY2SDh6TTksNUgxMFY2SDl6TTEwLDVIMTFWNkgxMHpNMTMsNUgxNFY2SDEzek0xNiw1SDE3VjZIMTZ6TTE4LDVIMTlWNkgxOHpNMTksNUgyMFY2SDE5ek0yMiw1SDIzVjZIMjJ6TTI4LDVIMjlWNkgyOHpNMCw2SDFWN0gwek0xLDZIMlY3SDF6TTIsNkgzVjdIMnpNMyw2SDRWN0gzek00LDZINVY3SDR6TTUsNkg2VjdINXpNNiw2SDdWN0g2ek04LDZIOVY3SDh6TTEwLDZIMTFWN0gxMHpNMTIsNkgxM1Y3SDEyek0xNCw2SDE1VjdIMTR6TTE2LDZIMTdWN0gxNnpNMTgsNkgxOVY3SDE4ek0yMCw2SDIxVjdIMjB6TTIyLDZIMjNWN0gyMnpNMjMsNkgyNFY3SDIzek0yNCw2SDI1VjdIMjR6TTI1LDZIMjZWN0gyNXpNMjYsNkgyN1Y3SDI2ek0yNyw2SDI4VjdIMjd6TTI4LDZIMjlWN0gyOHpNOSw3SDEwVjhIOXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE1LDdIMTZWOEgxNXpNMTcsN0gxOFY4SDE3ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTQsOEg1VjlINHpNNSw4SDZWOUg1ek02LDhIN1Y5SDZ6TTExLDhIMTJWOUgxMXpNMTIsOEgxM1Y5SDEyek0xNyw4SDE4VjlIMTd6TTE5LDhIMjBWOUgxOXpNMjMsOEgyNFY5SDIzek0yNSw4SDI2VjlIMjV6TTI2LDhIMjdWOUgyNnpNMjcsOEgyOFY5SDI3ek0yOCw4SDI5VjlIMjh6TTIsOUgzVjEwSDJ6TTgsOUg5VjEwSDh6TTksOUgxMFYxMEg5ek0xMSw5SDEyVjEwSDExek0xMiw5SDEzVjEwSDEyek0xMyw5SDE0VjEwSDEzek0xNSw5SDE2VjEwSDE1ek0xNiw5SDE3VjEwSDE2ek0xNyw5SDE4VjEwSDE3ek0xOCw5SDE5VjEwSDE4ek0yMSw5SDIyVjEwSDIxek0yMiw5SDIzVjEwSDIyek0yMyw5SDI0VjEwSDIzek0yNCw5SDI1VjEwSDI0ek0yNSw5SDI2VjEwSDI1ek0yNiw5SDI3VjEwSDI2ek0yNyw5SDI4VjEwSDI3ek0yOCw5SDI5VjEwSDI4ek0yLDEwSDNWMTFIMnpNMywxMEg0VjExSDN6TTYsMTBIN1YxMUg2ek04LDEwSDlWMTFIOHpNMTEsMTBIMTJWMTFIMTF6TTEyLDEwSDEzVjExSDEyek0xMywxMEgxNFYxMUgxM3pNMTUsMTBIMTZWMTFIMTV6TTE2LDEwSDE3VjExSDE2ek0xOCwxMEgxOVYxMUgxOHpNMjIsMTBIMjNWMTFIMjJ6TTIzLDEwSDI0VjExSDIzek0yOCwxMEgyOVYxMUgyOHpNMCwxMUgxVjEySDB6TTIsMTFIM1YxMkgyek0zLDExSDRWMTJIM3pNNywxMUg4VjEySDd6TTgsMTFIOVYxMkg4ek0xMCwxMUgxMVYxMkgxMHpNMTUsMTFIMTZWMTJIMTV6TTE3LDExSDE4VjEySDE3ek0xOCwxMUgxOVYxMkgxOHpNMjEsMTFIMjJWMTJIMjF6TTIyLDExSDIzVjEySDIyek0yNSwxMUgyNlYxMkgyNXpNMjcsMTFIMjhWMTJIMjd6TTI4LDExSDI5VjEySDI4ek0yLDEySDNWMTNIMnpNNiwxMkg3VjEzSDZ6TTgsMTJIOVYxM0g4ek0xMCwxMkgxMVYxM0gxMHpNMTcsMTJIMThWMTNIMTd6TTE4LDEySDE5VjEzSDE4ek0yMCwxMkgyMVYxM0gyMHpNMjEsMTJIMjJWMTNIMjF6TTIzLDEySDI0VjEzSDIzek0yNywxMkgyOFYxM0gyN3pNMiwxM0gzVjE0SDJ6TTMsMTNINFYxNEgzek00LDEzSDVWMTRINHpNNSwxM0g2VjE0SDV6TTcsMTNIOFYxNEg3ek04LDEzSDlWMTRIOHpNOSwxM0gxMFYxNEg5ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTAsMTRIMVYxNUgwek0xLDE0SDJWMTVIMXpNMiwxNEgzVjE1SDJ6TTUsMTRINlYxNUg1ek02LDE0SDdWMTVINnpNOCwxNEg5VjE1SDh6TTEwLDE0SDExVjE1SDEwek0xMSwxNEgxMlYxNUgxMXpNMTIsMTRIMTNWMTVIMTJ6TTE0LDE0SDE1VjE1SDE0ek0xNSwxNEgxNlYxNUgxNXpNMTgsMTRIMTlWMTVIMTh6TTIxLDE0SDIyVjE1SDIxek0yNCwxNEgyNVYxNUgyNHpNMjUsMTRIMjZWMTVIMjV6TTI2LDE0SDI3VjE1SDI2ek0yOCwxNEgyOVYxNUgyOHpNMSwxNUgyVjE2SDF6TTIsMTVIM1YxNkgyek00LDE1SDVWMTZINHpNNywxNUg4VjE2SDd6TTksMTVIMTBWMTZIOXpNMTAsMTVIMTFWMTZIMTB6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTQsMTVIMTVWMTZIMTR6TTE1LDE1SDE2VjE2SDE1ek0xNiwxNUgxN1YxNkgxNnpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0yMCwxNUgyMVYxNkgyMHpNMjQsMTVIMjVWMTZIMjR6TTI3LDE1SDI4VjE2SDI3ek0yOCwxNUgyOVYxNkgyOHpNMiwxNkgzVjE3SDJ6TTUsMTZINlYxN0g1ek02LDE2SDdWMTdINnpNNywxNkg4VjE3SDd6TTEwLDE2SDExVjE3SDEwek0xMiwxNkgxM1YxN0gxMnpNMTUsMTZIMTZWMTdIMTV6TTE3LDE2SDE4VjE3SDE3ek0xOSwxNkgyMFYxN0gxOXpNMjEsMTZIMjJWMTdIMjF6TTI3LDE2SDI4VjE3SDI3ek0wLDE3SDFWMThIMHpNMSwxN0gyVjE4SDF6TTMsMTdINFYxOEgzek00LDE3SDVWMThINHpNNSwxN0g2VjE4SDV6TTgsMTdIOVYxOEg4ek0xMCwxN0gxMVYxOEgxMHpNMTEsMTdIMTJWMThIMTF6TTEzLDE3SDE0VjE4SDEzek0xNCwxN0gxNVYxOEgxNHpNMTUsMTdIMTZWMThIMTV6TTE2LDE3SDE3VjE4SDE2ek0xNywxN0gxOFYxOEgxN3pNMTgsMTdIMTlWMThIMTh6TTIyLDE3SDIzVjE4SDIyek0yMywxN0gyNFYxOEgyM3pNMjQsMTdIMjVWMThIMjR6TTI1LDE3SDI2VjE4SDI1ek0yNywxN0gyOFYxOEgyN3pNMjgsMTdIMjlWMThIMjh6TTYsMThIN1YxOUg2ek03LDE4SDhWMTlIN3pNOCwxOEg5VjE5SDh6TTksMThIMTBWMTlIOXpNMTEsMThIMTJWMTlIMTF6TTEyLDE4SDEzVjE5SDEyek0xMywxOEgxNFYxOUgxM3pNMTQsMThIMTVWMTlIMTR6TTE1LDE4SDE2VjE5SDE1ek0xOCwxOEgxOVYxOUgxOHpNMjAsMThIMjFWMTlIMjB6TTIyLDE4SDIzVjE5SDIyek0yMywxOEgyNFYxOUgyM3pNMjQsMThIMjVWMTlIMjR6TTI2LDE4SDI3VjE5SDI2ek0yOCwxOEgyOVYxOUgyOHpNMiwxOUgzVjIwSDJ6TTQsMTlINVYyMEg0ek03LDE5SDhWMjBIN3pNMTYsMTlIMTdWMjBIMTZ6TTE3LDE5SDE4VjIwSDE3ek0xOCwxOUgxOVYyMEgxOHpNMjIsMTlIMjNWMjBIMjJ6TTIzLDE5SDI0VjIwSDIzek0yNywxOUgyOFYyMEgyN3pNMjgsMTlIMjlWMjBIMjh6TTAsMjBIMVYyMUgwek0xLDIwSDJWMjFIMXpNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek03LDIwSDhWMjFIN3pNOCwyMEg5VjIxSDh6TTksMjBIMTBWMjFIOXpNMTIsMjBIMTNWMjFIMTJ6TTE2LDIwSDE3VjIxSDE2ek0xNywyMEgxOFYyMUgxN3pNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNSwyMEgyNlYyMUgyNXpNMjgsMjBIMjlWMjFIMjh6TTgsMjFIOVYyMkg4ek05LDIxSDEwVjIySDl6TTEwLDIxSDExVjIySDEwek0xMSwyMUgxMlYyMkgxMXpNMTMsMjFIMTRWMjJIMTN6TTE0LDIxSDE1VjIySDE0ek0xNSwyMUgxNlYyMkgxNXpNMTYsMjFIMTdWMjJIMTZ6TTE4LDIxSDE5VjIySDE4ek0xOSwyMUgyMFYyMkgxOXpNMjAsMjFIMjFWMjJIMjB6TTI0LDIxSDI1VjIySDI0ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTEwLDIySDExVjIzSDEwek0xMSwyMkgxMlYyM0gxMXpNMTQsMjJIMTVWMjNIMTR6TTE1LDIySDE2VjIzSDE1ek0xOSwyMkgyMFYyM0gxOXpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjUsMjJIMjZWMjNIMjV6TTI2LDIySDI3VjIzSDI2ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNOSwyM0gxMFYyNEg5ek0xMCwyM0gxMVYyNEgxMHpNMTIsMjNIMTNWMjRIMTJ6TTE0LDIzSDE1VjI0SDE0ek0xNSwyM0gxNlYyNEgxNXpNMTcsMjNIMThWMjRIMTd6TTE5LDIzSDIwVjI0SDE5ek0yMCwyM0gyMVYyNEgyMHpNMjQsMjNIMjVWMjRIMjR6TTI3LDIzSDI4VjI0SDI3ek0yOCwyM0gyOVYyNEgyOHpNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek04LDI0SDlWMjVIOHpNMTAsMjRIMTFWMjVIMTB6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTcsMjRIMThWMjVIMTd6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjcsMjRIMjhWMjVIMjd6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNMTAsMjVIMTFWMjZIMTB6TTExLDI1SDEyVjI2SDExek0xMywyNUgxNFYyNkgxM3pNMTUsMjVIMTZWMjZIMTV6TTE2LDI1SDE3VjI2SDE2ek0xNywyNUgxOFYyNkgxN3pNMTgsMjVIMTlWMjZIMTh6TTI3LDI1SDI4VjI2SDI3ek0yOCwyNUgyOVYyNkgyOHpNMCwyNkgxVjI3SDB6TTIsMjZIM1YyN0gyek0zLDI2SDRWMjdIM3pNNCwyNkg1VjI3SDR6TTYsMjZIN1YyN0g2ek0xMCwyNkgxMVYyN0gxMHpNMTEsMjZIMTJWMjdIMTF6TTEyLDI2SDEzVjI3SDEyek0xMywyNkgxNFYyN0gxM3pNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTgsMjZIMTlWMjdIMTh6TTE5LDI2SDIwVjI3SDE5ek0yMSwyNkgyMlYyN0gyMXpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTEwLDI3SDExVjI4SDEwek0xMSwyN0gxMlYyOEgxMXpNMTIsMjdIMTNWMjhIMTJ6TTE2LDI3SDE3VjI4SDE2ek0xNywyN0gxOFYyOEgxN3pNMTgsMjdIMTlWMjhIMTh6TTIwLDI3SDIxVjI4SDIwek0yNSwyN0gyNlYyOEgyNXpNMjcsMjdIMjhWMjhIMjd6TTI4LDI3SDI5VjI4SDI4ek0wLDI4SDFWMjlIMHpNMSwyOEgyVjI5SDF6TTIsMjhIM1YyOUgyek0zLDI4SDRWMjlIM3pNNCwyOEg1VjI5SDR6TTUsMjhINlYyOUg1ek02LDI4SDdWMjlINnpNOCwyOEg5VjI5SDh6TTksMjhIMTBWMjlIOXpNMTAsMjhIMTFWMjlIMTB6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>
