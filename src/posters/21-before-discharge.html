@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Before discharge</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); --body: 11pt; --gap: 0.22in; }
+  .masthead h1 { font-size: calc(64pt / var(--k)); }
+  .masthead .sub { max-width: 7.6in; font-size: 13.5pt; margin-top: 30pt; }
+  .sheet .small { font-size: var(--body); line-height: 1.28; }
+  .sheet .xs { font-size: 10.2pt; line-height: 1.25; }
+  .sheet .panel { gap: 5pt; }
+  .ph h2 { font-size: 25pt; font-family: "Inter", sans-serif; } /* 23.5 pt printed: below the Display cutoff */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  /* A: universal gate — three columns of checks */
+  .gate { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6pt 0.22in; font-size: var(--body); line-height: 1.28; }
+  .gate ul.ls.check { gap: 5pt; }
+  .gate ul.ls.check > li { padding-left: 18pt; }
+  .gate ul.ls.check > li::before { width: 10.5pt; height: 10.5pt; top: .12em; border-width: 1.6pt; }
+  .gate b.k { color: var(--wf); }
+  .g3 { display: flex; flex-direction: column; gap: 8pt; }
+  .g3 .box.local { margin-top: auto; }
+  .discharge-stop { font-size: 11.8pt; line-height: 1.25; font-weight: 600; }
+  .discharge-stop b { font-weight: 800; }
+  /* B: complaint table */
+  table.dc { table-layout: fixed; --cell-y: 4pt; --table-leading: 1.25; }
+  table.dc td { font-size: 10.6pt; }
+  table.dc thead th { font-size: 10.2pt; }
+  table.dc tbody th { text-align: left; vertical-align: top; font: 800 11pt/1.2 "Inter"; color: var(--c); padding: var(--cell-y) 6pt var(--cell-y) 8pt;
+    border-left: 4pt solid var(--c); border-bottom: 0.75pt solid var(--rule); text-transform: none; letter-spacing: 0; }
+  table.dc tbody th:first-child { padding-left: 8pt; }
+  table.dc tbody tr:last-child th { border-bottom: none; }
+  /* decision columns: neutral divider + labelled escalation column; neutral row striping */
+  table.dc :is(thead th:last-child, td.esc) { border-left: 1pt solid var(--rule); padding-left: 10pt; }
+  table.dc thead th .subhead { margin-left: 4pt; text-transform: none; letter-spacing: 0; font-weight: 600; font-size: 10.6pt; }
+  table.dc thead th:last-child { color: var(--wf); background: color-mix(in srgb, var(--wf) 12%, white); }
+  table.dc.stripe tbody tr:nth-child(even) > th { background: color-mix(in srgb, var(--ink) 4.5%, white); }
+  .nowrap { white-space: nowrap; }
+  table.dc thead th:first-child { padding-left: 12pt; }
+  table.dc td:first-of-type { padding-left: 8pt; }
+  table.dc td.esc { color: var(--ink-2); }
+  table.dc td.esc b { color: var(--ink); }
+  table.dc .lc { color: var(--wf); font-weight: 600; }
+  table.dc .lc .tag { margin-right: 2pt; }
+  table.dc .st { color: var(--stop); font-weight: 700; }
+  /* severe-range BP line: hypertension topic colour, not stop-red (V4, C8) */
+  table.dc .sev { color: var(--htn); font-weight: 700; }
+  table.dc .sev .deadline { vertical-align: .05em; }
+  .gate li.att b.k { color: var(--ink); }
+  .lfx { white-space: nowrap; }
+  /* lower grid: lettered pairs read across */
+  .pairs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap); align-items: stretch; }
+  .pairs > .panel > .box.local:last-child { margin-top: auto; }
+  .lead { color: var(--c); }
+  .rail.dcr { grid-template-columns: 0.85in minmax(0, 1fr); font-size: var(--body); line-height: 1.28; }
+  .rail.dcr > .do { font-weight: 400; }
+  .rail.dcr > .when { color: var(--c); }
+  /* consecutive rails own their spacing (fo3 #2) */
+  .rail-list { display: flex; flex-direction: column; gap: 0; }
+  .rail-list > .rail { margin: 0; padding-block: calc(4pt / var(--k)); }
+  .rail-list > .rail + .rail { border-top: calc(.75pt / var(--k)) solid var(--rule); }
+  .rail-list > .rail:first-child { padding-top: 0; }
+  .rail-list > .rail:last-child { padding-bottom: 0; }
+  /* D: patient-facing warning signs */
+  .help .urgent-head { font-size: 13pt; line-height: 1.2; }
+  .signs { list-style: none; columns: 2; column-gap: 12pt; font: 500 12.2pt/1.2 "Inter"; }
+  .signs > li { border-left: 1.5pt solid var(--rule); padding: 1pt 0 1pt 7pt; margin-bottom: 4pt; break-inside: avoid; }
+  .signs > li b { font-weight: 800; }
+  .say { font: 800 15pt/1.2 "Inter"; color: var(--ink); margin-top: 2pt; }
+  .say q { quotes: "“" "”"; color: var(--stop); }
+  .route { display: grid; grid-template-columns: max-content max-content minmax(0, 1fr); gap: 6pt; }
+  .route > div { background: var(--t-stop); border-top: 0; border-left: calc(4pt / var(--k)) solid var(--stop); padding: 3pt 6pt 4pt; font: 600 11.4pt/1.2 "Inter"; }
+  .route > div > span { display: block; font-weight: 500; }
+  .route > div > b { display: block; font-weight: 800; }
+  .help .box.local { font-size: 12pt; font-weight: 600; margin-top: 0; }
+  .dfoot { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8pt; align-items: stretch; }
+  .help .box.local .lfx { display: block; }
+  /* F: condition → action list */
+  .kv.wk { grid-template-columns: 0.98in minmax(0, 1fr); gap: 3pt 9pt; font-size: var(--body); line-height: 1.28; }
+  .kv.wk dt { color: var(--c); white-space: normal; }
+  .kv.wk dd + dt, .kv.wk dd + dt + dd { border-top: 0.75pt solid var(--rule); padding-top: 3pt; }
+  /* G: teach-back prompts */
+  .tb { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 4pt 10pt; font: 600 11.4pt/1.26 "Inter"; }
+  .tb > li { border-left: 3pt solid var(--c); padding-left: 7pt; }
+  /* H: documentation checklist */
+  ul.ls.check.doc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3pt 10pt; font-size: var(--body); line-height: 1.24; }
+  .ph.inl .src { grid-column: 3; grid-row: 1; text-align: right; align-self: baseline; padding-inline-start: 0; }
+  .ph.inl.wscope { grid-template-columns: auto auto minmax(0, 1fr) auto; }
+  .ph.inl.wscope .scope { grid-column: 3; grid-row: 1; align-self: baseline; padding-inline-start: 0; color: var(--ink); font: 600 10.2pt/1.25 "Inter"; }
+  .ph.inl.wscope .src { grid-column: 4; }
+  .box.local.pending-plan::before { content: "LOCAL · PENDING-RESULT PLAN"; }
+  .pending-plan .field-row { display: flex; flex-wrap: wrap; column-gap: 10pt; }
+  .pending-plan .field-row + .field-row { margin-top: 2pt; }
+  .duo { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: 0.16in; align-items: center; }
+  .duo > .box.local { margin-top: 4pt; }
+  .pairs > .panel > .duo:last-child { margin-top: auto; }
+  .sheet > .pairs, .sheet > .panel { flex: none; }
+  .sheet > .panel + .panel, .sheet > .panel + .pairs { margin-top: var(--gap); }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="20-neuraxial.html" title="Neuraxial &amp; anticoagulation">‹ 20</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html" selected="">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="22-hearing-cmv.html" title="Failed hearing screen · cCMV">22 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/21-before-discharge.pdf">PDF</a></nav>
+<div class="sheet portrait-24x36 c-wf" style="--k:1.38">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>L&amp;D triage&nbsp;· pregnant ≥ 20&nbsp;wk&nbsp;· triage → home</div>
+      <h1><span class="sid">21</span>Before discharge</h1>
+    </div>
+    <div class="sub">Evaluate <b>A</b> → check the complaint <b>B</b> → plan <b>C–F</b> → teach-back <b>G</b> → document <b>H</b>.<br><span class="muted">Doses, algorithms and trauma observation thresholds → linked sheets.</span><br>After birth: maternal care <a href="06-postpartum.html" class="xlink"><span class="xref c-wf">6</span></a>&nbsp;· mother-baby discharge <a href="25-dyad-discharge.html" class="xlink"><span class="xref c-wf">25</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="01-triage.html" class="xlink"><span><b>1</b>Triage</span></a><a href="03-labor-efm.html" class="xlink"><span><b>3</b>Labor &amp; EFM</span></a><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="26-induction-labor.html" class="xlink"><span><b>26</b>Induction&nbsp;· labor</span></a><a href="27-ob-consult.html" class="xlink"><span><b>27</b>OB/GYN consult</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-04.svg)"></div>
+
+  <!-- A: universal gate -->
+  <section class="panel c-wf" id="p-A">
+    <div class="ph inl wscope"><span class="num">A</span><h2>Home only when all are met</h2><span class="scope">The MFTI prioritizes evaluation; it does not replace the complete maternal / fetal evaluation.</span><span class="src">ACOG CO 667 (2016)&nbsp;· AWHONN MFTI FAQ (2022)</span></div>
+    <div class="urgent-head discharge-stop"><span><b>Unresolved concern, worsening symptoms or discordant findings → pause discharge; reassess + tell the FM attending</b> <a href="27-ob-consult.html" class="xlink"><span class="xref c-wf">27</span></a> Severe BP, significant bleeding or maternal / fetal compromise <a href="01-triage.html" class="xlink"><span class="xref c-wf">1</span></a> <a href="02-emergencies.html" class="xlink"><span class="xref c-wf">2</span></a></span></div>
+    <div class="gate">
+      <ul class="ls check">
+        <li><b class="k">Diagnosis named:</b> a working diagnosis&nbsp;— or the remaining uncertainty stated in one line. Complaint, GA / best EDD and risks reviewed.</li>
+        <li><b class="k">Repeat vitals + symptoms</b> after observation / treatment: normal, or each abnormal finding explained and met by its row in <b>B</b>. Symptoms controlled on the home plan; oral fluids / medicines tolerated when relevant.</li>
+      </ul>
+      <ul class="ls check">
+        <li><b class="k">Fetal assessment</b> fits GA + indication; interpreted and reassuring <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a></li>
+        <li><b class="k">Every applicable row in B met;</b> name any unmet criterion.</li>
+        <li><b class="k">Plan in hand:</b> follow-up booked and each pending result owned (<b>C</b>); medicines, language, safety and transport solved (<b>F</b>).</li>
+      </ul>
+
+      <div class="g3">
+        <ul class="ls check">
+          <li><b class="k">Teach-back done:</b> patient states return signs, where to go and how (<b>D</b>, <b>G</b>).</li>
+          <li class="att"><b class="k">FM attending agrees</b> with the disposition before the patient leaves <a href="04-workflow.html" class="xlink"><span class="xref c-wf">4</span></a></li>
+        </ul>
+        <div class="box local small"><span class="lfx">Disposition clinician <span class="lfv" data-local="maternal_disposition_clinician">____</span> <a href="27-ob-consult.html#p-F" class="xlink"><span class="xref c-wf">27&nbsp;· F</span></a></span>&nbsp;· <span class="lfx">attending-review exceptions <span class="lfv" data-local="triage_attending_review_exceptions">____</span></span>&nbsp;· <span class="lfx">discharge order / workflow <span class="lfv" data-local="triage_discharge_workflow">____</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B: complaint table -->
+  <section class="panel c-wf" id="p-B">
+    <div class="ph inl"><span class="num">B</span><h2>Complaint check&nbsp;— before home</h2><span class="src">ACOG CO 766&nbsp;· PB 171&nbsp;· PB 217&nbsp;· CO 828&nbsp;· PB 222&nbsp;· SMFM Consult 44&nbsp;· CO 723&nbsp;· PB 189&nbsp;· CC 4 (2023)&nbsp;· treatment regimens stay on the linked sheets</span></div>
+    <table class="t dc stripe">
+      <colgroup><col style="width:12%"><col style="width:47%"><col style="width:41%"></colgroup>
+      <thead><tr><th>Complaint</th><th>Required before home</th><th>Criteria unmet or uncertain <span class="subhead">→ continue the linked evaluation pathway</span></th></tr></thead>
+      <tbody>
+        <tr class="c-lab"><th>Labor rule-out</th>
+          <td><b>Term / latent:</b> maternal + fetal status reassuring; coping at home; shared self-care and reassessment plan. <b>Preterm:</b> indicated evaluation complete; no progressive cervical change or unresolved PTL concern.</td>
+          <td class="esc">Pain / fatigue may warrant admission. <a href="01-triage.html#p-05" class="xlink"><span class="xref c-lab">1&nbsp;· 05</span></a> <a href="01-triage.html#p-06" class="xlink"><span class="xref c-ptl">1&nbsp;· 06</span></a> <a href="03-labor-efm.html#p-B" class="xlink"><span class="xref c-lab">3&nbsp;· B</span></a> <a href="26-induction-labor.html#p-F" class="xlink"><span class="xref c-lab">26&nbsp;· F</span></a> <span class="lc"><span class="lfx"><span class="tag local">Local</span> observation / repeat exam <span class="lfv" data-local="labor_rule_out_observation">____</span></span>&nbsp;· <span class="lfx">reassessment <span class="lfv" data-local="labor_rule_out_reassessment">____</span></span></span></td></tr>
+        <tr class="c-ptl"><th>ROM rule-out</th>
+          <td>Clinical evaluation supports intact membranes; discordant findings resolved; no infection, bleeding, labor or fetal concern. <b>A negative adjunct test or normal fluid volume alone does not establish intact membranes.</b></td>
+          <td class="esc">Persistent leakage / uncertain diagnosis → <b>reassess</b>. Confirmed ROM → separate disposition <span class="nowrap">pathway <a href="01-triage.html#p-04" class="xlink"><span class="xref c-ptl">1&nbsp;· 04</span></a></span> <span class="lc"><span class="lfx"><span class="tag local">Local</span> equivocal-test pathway / recheck <span class="lfv" data-local="rom_equivocal_pathway">____</span></span></span></td></tr>
+        <tr class="c-fet"><th>Decreased fetal movement</th>
+          <td>GA-appropriate assessment reassuring; concern resolved; no other indication for surveillance / delivery. Single resolved episode + reassuring evaluation + no other indication → <b>no automatic repeat surveillance</b>.</td>
+          <td class="esc">Persistent concern or abnormal testing → <b>FM attending review (A)</b> <a href="01-triage.html#p-07" class="xlink"><span class="xref c-fet">1&nbsp;· 07</span></a> <a href="03-labor-efm.html#p-A" class="xlink"><span class="xref c-fet">3&nbsp;· A</span></a> Recurrent decrease → <b>prompt reassessment</b>.</td></tr>
+        <tr class="c-htn"><th>Hypertension / preeclampsia evaluation</th>
+          <td>BP trend, symptoms, indicated labs and fetal assessment reviewed; no severe features; diagnosis / GA permits outpatient care; monitoring feasible. <span class="lc"><span class="lfx"><span class="tag local">Local</span> next BP / review <span class="lfv" data-local="triage_htn_next_bp">____</span></span>&nbsp;· <span class="lfx">reviewer <span class="lfv" data-local="triage_htn_bp_reviewer">____</span></span></span></td>
+          <td class="esc"><span class="sev">SBP ≥ 160 or DBP ≥ 110 → recheck ≤ 15&nbsp;min (sooner OK)&nbsp;· still severe → treat within <span class="deadline topic c-htn">30–60&nbsp;min</span>&nbsp;· tell FM attending now</span> <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a> Gestational HTN / preeclampsia <b>≥ 37w0d → delivery</b> <a href="01-triage.html#p-03" class="xlink"><span class="xref c-htn">1&nbsp;· 03</span></a></td></tr>
+        <tr class="c-hem"><th>Vaginal bleeding</th>
+          <td><b>Individualized disposition: FM attending (A)</b> <span class="tag local">Local</span> Maternal status stable; fetal assessment reassuring; no active pathologic bleeding or unresolved labor / abruption concern; cause + placental location assessed. Rh / indicated RhIG addressed <a href="01-triage.html#p-01" class="xlink"><span class="xref c-hem">1&nbsp;· 01</span></a> <a href="01-triage.html#p-14" class="xlink"><span class="xref c-hem">1&nbsp;· 14</span></a> <b>Normal US does not exclude abruption.</b></td>
+          <td class="esc">Previa / vasa previa, recurrent or unexplained bleeding → <b>explicit specialist plan</b>. <span class="lc"><span class="lfx"><span class="tag local">Local</span> observation <span class="lfv" data-local="bleeding_observation">____</span></span>&nbsp;· <span class="lfx">follow-up <span class="lfv" data-local="bleeding_followup">____</span></span></span></td></tr>
+        <tr class="c-trm"><th>Trauma / MVA</th>
+          <td>Required maternal / fetal observation complete; no criterion for extended observation; injuries addressed; obstetric + trauma disposition agreed. Indicated FMH testing / RhIG addressed <a href="01-triage.html#p-02" class="xlink"><span class="xref c-trm">1&nbsp;· 02</span></a> <a href="01-triage.html#p-14" class="xlink"><span class="xref c-hem">1&nbsp;· 14</span></a> <b>Counsel</b> about delayed pain, uterine tenderness, contractions, bleeding, leaking and decreased movement. <span class="lc"><span class="lfx"><span class="tag local">Local</span> follow-up <span class="lfv" data-local="trauma_followup">____</span></span></span></td>
+          <td class="esc">Criterion for extended observation met → <b>continue observation</b>. <span class="lc"><span class="lfx"><span class="tag local">Local</span> observation pathway <span class="lfv" data-local="trauma_observation_pathway">____</span></span></span></td></tr>
+        <tr class="c-wf"><th>Abdominal pain</th>
+          <td>Reassessment + indicated tests complete; no unresolved obstetric / surgical concern; symptoms manageable with home plan.</td>
+          <td class="esc">Persistent focal, severe, worsening or unexplained pain → <b>further evaluation</b> <a href="01-triage.html#p-09" class="xlink"><span class="xref c-wf">1&nbsp;· 09</span></a> If uncertainty remains, explain it and specify reassessment. <span class="lc"><span class="lfx"><span class="tag local">Local</span> time / location <span class="lfv" data-local="abd_pain_reassessment">____</span></span></span></td></tr>
+        <tr class="c-wf"><th>Vomiting</th>
+          <td><b>New after 20&nbsp;wk → evaluate another cause</b> <a href="01-triage.html#p-11" class="xlink"><span class="xref c-wf">1&nbsp;· 11</span></a> Cause assessed; hydration restored; concerning metabolic findings addressed; oral fluids / planned medicines retained.</td>
+          <td class="esc">Persistent dehydration, severe pain, neurologic symptoms or concerning maternal / fetal findings → <b>continue evaluation / admit</b>. <span class="lc"><span class="lfx"><span class="tag local">Local</span> oral challenge <span class="lfv" data-local="vomiting_oral_challenge">____</span></span>&nbsp;· <span class="lfx">symptom / lab recheck <span class="lfv" data-local="vomiting_recheck">____</span></span></span></td></tr>
+        <tr class="c-inf"><th>UTI / cystitis</th>
+          <td>No upper-tract / systemic findings; oral treatment tolerated and obtainable; urine culture sent; susceptibility review assigned. <span class="lc"><span class="lfx"><span class="tag local">Local</span> culture reviewer <span class="lfv" data-local="pending_result_owner">____</span></span>&nbsp;· <span class="lfx">review deadline <span class="lfv" data-local="pending_result_review_deadline">____</span></span>&nbsp;· <span class="lfx">symptom recheck <span class="lfv" data-local="uti_symptom_recheck">____</span></span></span></td>
+          <td class="esc">Regimen + follow-up policy <a href="08-infections.html#p-A" class="xlink"><span class="xref c-inf">8&nbsp;· A</span></a> Upper-tract or systemic findings → <b>manage as suspected pyelonephritis</b> (next row).</td></tr>
+        <tr class="c-inf"><th>Suspected pyelo­nephritis</th>
+          <td><span class="st">Initially inpatient</span> <a href="08-infections.html#p-A" class="xlink"><span class="xref c-inf">8&nbsp;· A</span></a> Fever, flank / CVA pain, systemic illness or vomiting requires reassessment; <span class="st">do not clear as uncomplicated cystitis.</span></td>
+          <td class="esc">Discharge after inpatient pyelonephritis treatment belongs in the infection pathway.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- C–H: lettered pairs -->
+  <div class="pairs">
+    <section class="panel c-wf" id="p-C">
+      <div class="ph"><span class="num">C</span><h2>Next encounter + every pending result</h2><span class="src">ACOG PB 222 (2020)&nbsp;· ACOG/SMFM CO 828 (2021)&nbsp;· ACOG CO 517 (2012)&nbsp;· owner / deadline fields are LOCAL</span></div>
+      <div class="small"><b>Before departure:</b> specify next visit, BP check, lab review and fetal test as indicated.</div>
+      <div class="box local small"><span class="lfx">Purpose ____</span>&nbsp;· <span class="lfx">date / time ____</span>&nbsp;· <span class="lfx">location ____</span>&nbsp;· <span class="lfx">receiving clinician ____</span>&nbsp;· <span class="lfx">scheduling confirmed ____</span></div>
+      <div class="small c-htn"><b class="lead">Established outpatient gestational HTN / preeclampsia, no severe features:</b> Serial BP / symptom assessment; <b>at least weekly in-person review + weekly labs; fetal surveillance twice weekly; ultrasound: fluid at least weekly, growth every 3–4&nbsp;wk.</b> Reassess sooner for change.</div>
+      <div class="small c-htn"><b class="lead">Elevated BP, no established diagnosis:</b> <span class="tag local">Local</span> next BP / clinical review <span class="lfv" data-local="triage_htn_next_bp">____</span>. Today’s reassuring evaluation does not exclude evolving disease.</div>
+      <div class="box local small pending-plan">
+        <div class="field-row"><span class="lfx">Test ____</span><span class="lfx">expected availability ____</span><span class="lfx">review deadline <span class="lfv" data-local="pending_result_review_deadline">____</span></span><span class="lfx">action for abnormal result ____</span></div>
+        <div class="field-row"><span class="lfx">Reviewing clinician / team <span class="lfv" data-local="pending_result_owner">____</span></span><span class="lfx">backup <span class="lfv" data-local="pending_result_backup">____</span></span><span class="lfx">patient-contact owner <span class="lfv" data-local="patient_contact_owner">____</span></span><span class="lfx">handoff accepted by ____</span></div>
+        <div class="field-row"><span class="lfx">Safe contact method ____</span><span class="lfx">escalation if unreachable <span class="lfv" data-local="unreachable_escalation">____</span></span></div>
+      </div>
+      <div class="small">Document review, contact and action. <b>Portal release alone does not complete the LOCAL callback plan.</b></div>
+      <div class="xs muted">Cuff / log technique <a href="11-bp-meds.html#p-06" class="xlink"><span class="xref c-htn">11&nbsp;· 06</span></a> The 72-h / 7–10-day postpartum BP intervals on 06 / 11 are not antepartum triage follow-up rules.</div>
+    </section>
+
+    <section class="panel c-stop help" id="p-D">
+      <div class="ph"><span class="num">D</span><h2>Get help now&nbsp;— do not wait for the next visit</h2><span class="src">CDC HEAR HER (2024)&nbsp;· show and read with the patient&nbsp;· postpartum bleeding thresholds <a href="06-postpartum.html" class="xlink"><span class="xref c-wf">6</span></a></span></div>
+      <div class="urgent-head">Any of these, now or at home → get care right away <span class="deadline">Now</span></div>
+      <ul class="signs">
+        <li><b>Headache:</b> severe, won’t go away or getting worse</li>
+        <li><b>Fainting</b> or dizziness that won’t go away</li>
+        <li><b>Changes in vision</b></li>
+        <li><b>Fever:</b> 100.4 °F / 38&nbsp;°C or higher</li>
+        <li><b>Marked swelling</b> of face or hands</li>
+        <li><b>Thoughts of harming</b> yourself or the baby</li>
+        <li><b>Trouble breathing</b></li>
+        <li><b>Chest discomfort</b> or racing / irregular heartbeat</li>
+        <li><b>Severe vomiting</b> or can’t keep fluids down</li>
+        <li><b>Severe belly pain</b> that won’t go away</li>
+        <li><b>Baby moving less</b> or stopped moving</li>
+        <li><b>Bleeding</b> more than spotting, leaking fluid or bad-smelling discharge</li>
+        <li><b>Painful, red or swollen</b> arm or leg, especially one side</li>
+        <li><b>Sudden overwhelming</b> weakness or tiredness</li>
+      </ul>
+      <div class="say">Something feels wrong? Seek care. Say: <q>I am pregnant.</q></div>
+      <div class="dfoot">
+        <div class="route">
+          <div><span>Urgent symptoms →</span><b>get medical care now</b></div>
+          <div><span>Life-threatening →</span><b>call 911</b></div>
+          <div><span>Can’t reach your care team →</span><b>go to the emergency department</b></div>
+        </div>
+        <div class="box local"><span class="lfx">L&amp;D number <span class="lfv" data-local="ld_phone">____</span></span><span class="lfx">return location <span class="lfv" data-local="antepartum_return_location">____</span></span></div>
+      </div>
+    </section>
+
+    <section class="panel c-wf" id="p-E">
+      <div class="ph"><span class="num">E</span><h2>Labor + fetal movement</h2><span class="src">ACOG FAQ087 (2023)&nbsp;· FAQ004 (rev. 2025)&nbsp;· ACOG/SMFM CO 828&nbsp;· parity-specific numbers are LOCAL</span></div>
+      <div class="rail-list">
+        <div class="rail dcr c-ptl"><span class="when">&lt; 37&nbsp;wk</span><span class="do"><b>Call now / return for assessment for any of these:</b> regular or frequent tightening (<b>even painless</b>), pelvic pressure, persistent dull backache, cramps, changed discharge or leaking. Do not wait for a term contraction pattern.</span></div>
+        <div class="rail dcr c-lab"><span class="when">≥ 37&nbsp;wk</span><span class="do">Increasingly strong, regular contractions → follow individualized plan (LOCAL triggers below). After outpatient ripening <a href="26-induction-labor.html#p-C" class="xlink"><span class="xref c-lab">26&nbsp;· C</span></a></span></div>
+        <div class="rail dcr c-stop"><span class="when">Any GA</span><span class="do">Water breaking, heavy bleeding, severe continuous pain or less movement → <b>urgent assessment.</b></span></div>
+        <div class="rail dcr c-fet"><span class="when">Movement</span><span class="do">Know the baby’s usual pattern. Reduced / absent movement → <b>contact L&amp;D promptly, even after reassuring testing today.</b> A count must not override concern about a clear change.</span></div>
+      </div>
+      <div class="box local small"><div><b>≥ 37&nbsp;wk call / return —</b> <span class="lfx">first birth <span class="lfv" data-local="term_return_first_birth">____</span></span>&nbsp;· <span class="lfx">previous birth <span class="lfv" data-local="term_return_previous_birth">____</span></span>&nbsp;· <span class="lfx">prior rapid birth, long travel or other risk: earlier-return trigger <span class="lfv" data-local="earlier_return_trigger">____</span></span></div><div class="mt1"><b>If formal counting prescribed:</b> <span class="lfx">start GA <span class="lfv" data-local="fetal_movement_start_ga">____</span></span>&nbsp;· <span class="lfx">method <span class="lfv" data-local="fetal_movement_method">____</span></span>&nbsp;· <span class="lfx">action threshold <span class="lfv" data-local="fetal_movement_action_threshold">____</span></span></div></div>
+    </section>
+
+    <section class="panel c-wf" id="p-F">
+      <div class="ph"><span class="num">F</span><h2>Make the home plan workable <small>substance use <a href="24-substance-dyad.html#p-B" class="xlink"><span class="xref c-wf">24&nbsp;· B–D</span></a></small></h2><span class="src">CDC (2024)&nbsp;· ACOG CS 23 (2025)&nbsp;· CO 518 (2012)&nbsp;· CS 11 (2024)&nbsp;· ACOG/ASAM CO 711 (2017)</span></div>
+      <dl class="kv wk">
+        <dt>No prenatal care</dt><dd>Confirm best dating / available records; review missing prenatal evaluation; obtain indicated <b>HIV, HBV, HCV and syphilis</b> testing. Identify receiving prenatal clinician; assign pending results.</dd>
+        <dt>Language&nbsp;· access</dt><dd>Ask preferred spoken / written language and communication needs. <b>Qualified medical interpreter</b>; understandable translated instructions / accommodations.</dd>
+        <dt>Safety&nbsp;· IPV</dt><dd>Intimate partner violence (IPV): speak with patient <b>alone</b>; professional interpreter. Explain confidentiality limits before screening. Assess safe destination / contact; offer advocacy + patient-directed safety plan.</dd>
+        <dt>Transport&nbsp;· resources</dt><dd>Confirm ride home + return route, pharmacy / medicine access, housing, food, telephone. Barriers that defeat necessary outpatient monitoring → <b>escalate for an achievable disposition.</b></dd>
+        <dt>Substance use</dt><dd>Nonjudgmental verbal screen; assess intoxication / withdrawal + immediate safety. Continue prescribed treatment; offer linkage. <b>Toxicology testing requires informed consent</b> + explanation of implications.</dd>
+      </dl>
+      <div class="box local small"><span class="lfx">Prenatal appt <span class="lfv" data-local="prenatal_appt_booking">____</span></span>&nbsp;· <span class="lfx">interim contact <span class="lfv" data-local="interim_contact">____</span></span>&nbsp;· <span class="lfx">interpreter access <span class="lfv" data-local="interpreter_access">____</span></span>&nbsp;· <span class="lfx">advocate / SW <span class="lfv" data-local="advocate_social_work">____</span></span>&nbsp;· <span class="lfx">resources <span class="lfv" data-local="community_resources">____</span></span>&nbsp;· <span class="lfx">addiction service <span class="lfv" data-local="addiction_service">____</span></span></div>
+    </section>
+
+    <section class="panel c-wf" id="p-G">
+      <div class="ph"><span class="num">G</span><h2>Teach-back before departure</h2><span class="src">ACOG CO 676 (2016)</span></div>
+      <div class="small"><b>Ask the patient to explain in their own words:</b></div>
+      <ul class="tb">
+        <li>“What did today’s evaluation show&nbsp;— and what remains uncertain?”</li>
+        <li>“Which symptoms mean return now? Where will you go?”</li>
+        <li>“How will you take medicines / check BP or movement if prescribed?”</li>
+        <li>“When is follow-up? Who will contact you about pending results?”</li>
+      </ul>
+      <div class="duo"><div class="small">Plain words + interpreter as needed. Gaps → re-explain → repeat teach-back. Give matching written instructions and a working contact number.</div>
+      <div class="box local small"><span class="lfx">Instruction set <span class="lfv" data-local="triage_instruction_set">____</span></span><br><span class="lfx">documentation field <span class="lfv" data-local="triage_documentation_field">____</span></span></div></div>
+    </section>
+
+    <section class="panel c-wf" id="p-H">
+      <div class="ph"><span class="num">H</span><h2>Document the disposition</h2><span class="src">ACOG CO 517 (2012)&nbsp;· CS 23 (2025) Table 2&nbsp;· checklist fields are LOCAL</span></div>
+      <ul class="ls check doc">
+        <li>Complaint + GA / dating</li>
+        <li>Relevant risks</li>
+        <li>Working diagnosis / uncertainty</li>
+        <li>Repeat maternal vitals / symptoms</li>
+        <li>Fetal assessment / interpretation</li>
+        <li>Indicated exams / results</li>
+        <li>Treatment response</li>
+        <li>Why home is appropriate</li>
+        <li>Consultations / decision-maker</li>
+        <li>Medicines / allergies</li>
+        <li>Pending-result owner</li>
+        <li>Next encounter</li>
+        <li>Instructions / interpreter ID</li>
+        <li>Teach-back</li>
+        <li>Safety / transport plan</li>
+      </ul>
+      <div class="duo"><div class="small"><b>Recommended care declined:</b> document discussion, patient preferences, alternatives and return plan.</div>
+      <div class="box local small"><span class="lfx">Note template <span class="lfv" data-local="triage_note_template">____</span></span><br><span class="lfx">routing / sign-off <span class="lfv" data-local="triage_note_routing">____</span></span></div></div>
+    </section>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG CO 667 Obstetric Triage (2016); AWHONN MFTI FAQ (2022); ACOG CO 766 Latent Labor (2019); PB 171 Preterm Labor (2016); PB 217 PROM (2020); ACOG/SMFM CO 828 Outpatient Fetal Surveillance (2021); PB 222 Gestational HTN &amp; Preeclampsia (2020), Box 3; SMFM Consult 44 Late-Preterm Bleeding (2018; scope late preterm, broader criteria LOCAL); CO 723 Imaging in Pregnancy (2017); PB 189 NVP (2018); CC 4 UTI in Pregnancy (2023); LOCAL UnityPoint UTI protocol v1.2 (2026); CDC Hear Her Maternal Warning Signs (2024); CO 517 Handoffs (2012); FAQ087 Preterm Labor (2023); FAQ004 When Labor Begins (rev. 2025); CDC Pregnancy Infection Screening (2024); CS 23 Patient–Physician Communication (2025); CO 518 IPV (2012); CS 11 Social &amp; Structural Determinants (2024); ACOG/ASAM CO 711 Opioid Use in Pregnancy (2017); CO 676 Health Literacy (2016). Criteria are a clinical synthesis, not a single national discharge checklist. Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek0xMSwwSDEyVjFIMTF6TTEyLDBIMTNWMUgxMnpNMTUsMEgxNlYxSDE1ek0xNywwSDE4VjFIMTd6TTE4LDBIMTlWMUgxOHpNMTksMEgyMFYxSDE5ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTAsMUgxMVYySDEwek0xMSwxSDEyVjJIMTF6TTE0LDFIMTVWMkgxNHpNMTUsMUgxNlYySDE1ek0xNiwxSDE3VjJIMTZ6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTEyLDJIMTNWM0gxMnpNMTUsMkgxNlYzSDE1ek0xNywySDE4VjNIMTd6TTE4LDJIMTlWM0gxOHpNMTksMkgyMFYzSDE5ek0yMiwySDIzVjNIMjJ6TTI0LDJIMjVWM0gyNHpNMjUsMkgyNlYzSDI1ek0yNiwySDI3VjNIMjZ6TTI4LDJIMjlWM0gyOHpNMCwzSDFWNEgwek0yLDNIM1Y0SDJ6TTMsM0g0VjRIM3pNNCwzSDVWNEg0ek02LDNIN1Y0SDZ6TTExLDNIMTJWNEgxMXpNMTIsM0gxM1Y0SDEyek0xOCwzSDE5VjRIMTh6TTE5LDNIMjBWNEgxOXpNMjIsM0gyM1Y0SDIyek0yNCwzSDI1VjRIMjR6TTI1LDNIMjZWNEgyNXpNMjYsM0gyN1Y0SDI2ek0yOCwzSDI5VjRIMjh6TTAsNEgxVjVIMHpNMiw0SDNWNUgyek0zLDRINFY1SDN6TTQsNEg1VjVINHpNNiw0SDdWNUg2ek04LDRIOVY1SDh6TTksNEgxMFY1SDl6TTExLDRIMTJWNUgxMXpNMTIsNEgxM1Y1SDEyek0xNCw0SDE1VjVIMTR6TTE1LDRIMTZWNUgxNXpNMTYsNEgxN1Y1SDE2ek0xNyw0SDE4VjVIMTd6TTE4LDRIMTlWNUgxOHpNMjIsNEgyM1Y1SDIyek0yNCw0SDI1VjVIMjR6TTI1LDRIMjZWNUgyNXpNMjYsNEgyN1Y1SDI2ek0yOCw0SDI5VjVIMjh6TTAsNUgxVjZIMHpNNiw1SDdWNkg2ek04LDVIOVY2SDh6TTEwLDVIMTFWNkgxMHpNMTIsNUgxM1Y2SDEyek0xMyw1SDE0VjZIMTN6TTE1LDVIMTZWNkgxNXpNMTYsNUgxN1Y2SDE2ek0xOSw1SDIwVjZIMTl6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek04LDdIOVY4SDh6TTksN0gxMFY4SDl6TTEyLDdIMTNWOEgxMnpNMTQsN0gxNVY4SDE0ek0xNSw3SDE2VjhIMTV6TTE3LDdIMThWOEgxN3pNMTgsN0gxOVY4SDE4ek0yMCw3SDIxVjhIMjB6TTAsOEgxVjlIMHpNMSw4SDJWOUgxek0zLDhINFY5SDN6TTYsOEg3VjlINnpNNyw4SDhWOUg3ek0xMCw4SDExVjlIMTB6TTEyLDhIMTNWOUgxMnpNMTMsOEgxNFY5SDEzek0xNCw4SDE1VjlIMTR6TTE2LDhIMTdWOUgxNnpNMjAsOEgyMVY5SDIwek0yMiw4SDIzVjlIMjJ6TTIzLDhIMjRWOUgyM3pNMjQsOEgyNVY5SDI0ek0yNiw4SDI3VjlIMjZ6TTI3LDhIMjhWOUgyN3pNMiw5SDNWMTBIMnpNMyw5SDRWMTBIM3pNNCw5SDVWMTBINHpNMTMsOUgxNFYxMEgxM3pNMTQsOUgxNVYxMEgxNHpNMTYsOUgxN1YxMEgxNnpNMjAsOUgyMVYxMEgyMHpNMjIsOUgyM1YxMEgyMnpNMjUsOUgyNlYxMEgyNXpNMjgsOUgyOVYxMEgyOHpNMCwxMEgxVjExSDB6TTUsMTBINlYxMUg1ek02LDEwSDdWMTFINnpNNywxMEg4VjExSDd6TTgsMTBIOVYxMUg4ek05LDEwSDEwVjExSDl6TTEwLDEwSDExVjExSDEwek0xNCwxMEgxNVYxMUgxNHpNMTcsMTBIMThWMTFIMTd6TTE5LDEwSDIwVjExSDE5ek0yMCwxMEgyMVYxMUgyMHpNMjEsMTBIMjJWMTFIMjF6TTI0LDEwSDI1VjExSDI0ek0yNSwxMEgyNlYxMUgyNXpNMjYsMTBIMjdWMTFIMjZ6TTI3LDEwSDI4VjExSDI3ek0wLDExSDFWMTJIMHpNMSwxMUgyVjEySDF6TTIsMTFIM1YxMkgyek0zLDExSDRWMTJIM3pNNSwxMUg2VjEySDV6TTcsMTFIOFYxMkg3ek0xMSwxMUgxMlYxMkgxMXpNMTMsMTFIMTRWMTJIMTN6TTE0LDExSDE1VjEySDE0ek0xNSwxMUgxNlYxMkgxNXpNMTYsMTFIMTdWMTJIMTZ6TTE4LDExSDE5VjEySDE4ek0xOSwxMUgyMFYxMkgxOXpNMjAsMTFIMjFWMTJIMjB6TTIxLDExSDIyVjEySDIxek0yMywxMUgyNFYxMkgyM3pNMjYsMTFIMjdWMTJIMjZ6TTI3LDExSDI4VjEySDI3ek0xLDEySDJWMTNIMXpNMywxMkg0VjEzSDN6TTQsMTJINVYxM0g0ek01LDEySDZWMTNINXpNNiwxMkg3VjEzSDZ6TTgsMTJIOVYxM0g4ek0xMywxMkgxNFYxM0gxM3pNMTYsMTJIMTdWMTNIMTZ6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMTksMTJIMjBWMTNIMTl6TTIwLDEySDIxVjEzSDIwek0yMSwxMkgyMlYxM0gyMXpNMjIsMTJIMjNWMTNIMjJ6TTIzLDEySDI0VjEzSDIzek0yNSwxMkgyNlYxM0gyNXpNMjcsMTJIMjhWMTNIMjd6TTI4LDEySDI5VjEzSDI4ek0yLDEzSDNWMTRIMnpNNCwxM0g1VjE0SDR6TTUsMTNINlYxNEg1ek03LDEzSDhWMTRIN3pNOCwxM0g5VjE0SDh6TTEwLDEzSDExVjE0SDEwek0xMiwxM0gxM1YxNEgxMnpNMTksMTNIMjBWMTRIMTl6TTIwLDEzSDIxVjE0SDIwek0yMSwxM0gyMlYxNEgyMXpNMCwxNEgxVjE1SDB6TTYsMTRIN1YxNUg2ek04LDE0SDlWMTVIOHpNOSwxNEgxMFYxNUg5ek0xMSwxNEgxMlYxNUgxMXpNMTQsMTRIMTVWMTVIMTR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjcsMTRIMjhWMTVIMjd6TTI4LDE0SDI5VjE1SDI4ek0wLDE1SDFWMTZIMHpNMSwxNUgyVjE2SDF6TTIsMTVIM1YxNkgyek0zLDE1SDRWMTZIM3pNNywxNUg4VjE2SDd6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTMsMTVIMTRWMTZIMTN6TTE0LDE1SDE1VjE2SDE0ek0xNSwxNUgxNlYxNkgxNXpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0xOSwxNUgyMFYxNkgxOXpNMjAsMTVIMjFWMTZIMjB6TTIyLDE1SDIzVjE2SDIyek0yNCwxNUgyNVYxNkgyNHpNMjUsMTVIMjZWMTZIMjV6TTI3LDE1SDI4VjE2SDI3ek0wLDE2SDFWMTdIMHpNMSwxNkgyVjE3SDF6TTIsMTZIM1YxN0gyek02LDE2SDdWMTdINnpNMTAsMTZIMTFWMTdIMTB6TTEyLDE2SDEzVjE3SDEyek0xNSwxNkgxNlYxN0gxNXpNMTcsMTZIMThWMTdIMTd6TTE5LDE2SDIwVjE3SDE5ek0yMSwxNkgyMlYxN0gyMXpNMjcsMTZIMjhWMTdIMjd6TTMsMTdINFYxOEgzek00LDE3SDVWMThINHpNNywxN0g4VjE4SDd6TTgsMTdIOVYxOEg4ek05LDE3SDEwVjE4SDl6TTExLDE3SDEyVjE4SDExek0xMiwxN0gxM1YxOEgxMnpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNiwxN0gxN1YxOEgxNnpNMTcsMTdIMThWMThIMTd6TTIxLDE3SDIyVjE4SDIxek0yMiwxN0gyM1YxOEgyMnpNMjMsMTdIMjRWMThIMjN6TTI1LDE3SDI2VjE4SDI1ek0yOCwxN0gyOVYxOEgyOHpNMCwxOEgxVjE5SDB6TTIsMThIM1YxOUgyek01LDE4SDZWMTlINXpNNiwxOEg3VjE5SDZ6TTgsMThIOVYxOUg4ek05LDE4SDEwVjE5SDl6TTEwLDE4SDExVjE5SDEwek0xMywxOEgxNFYxOUgxM3pNMTcsMThIMThWMTlIMTd6TTIxLDE4SDIyVjE5SDIxek0yMiwxOEgyM1YxOUgyMnpNMjcsMThIMjhWMTlIMjd6TTI4LDE4SDI5VjE5SDI4ek0zLDE5SDRWMjBIM3pNNCwxOUg1VjIwSDR6TTgsMTlIOVYyMEg4ek05LDE5SDEwVjIwSDl6TTEwLDE5SDExVjIwSDEwek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTIsMjBIM1YyMUgyek0zLDIwSDRWMjFIM3pNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek04LDIwSDlWMjFIOHpNOSwyMEgxMFYyMUg5ek0xMSwyMEgxMlYyMUgxMXpNMTIsMjBIMTNWMjFIMTJ6TTEzLDIwSDE0VjIxSDEzek0xNCwyMEgxNVYyMUgxNHpNMTksMjBIMjBWMjFIMTl6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjYsMjBIMjdWMjFIMjZ6TTgsMjFIOVYyMkg4ek0xMCwyMUgxMVYyMkgxMHpNMTIsMjFIMTNWMjJIMTJ6TTEzLDIxSDE0VjIySDEzek0xNiwyMUgxN1YyMkgxNnpNMTcsMjFIMThWMjJIMTd6TTE5LDIxSDIwVjIySDE5ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI2LDIxSDI3VjIySDI2ek0yNywyMUgyOFYyMkgyN3pNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek04LDIySDlWMjNIOHpNOSwyMkgxMFYyM0g5ek0xMCwyMkgxMVYyM0gxMHpNMTIsMjJIMTNWMjNIMTJ6TTEzLDIySDE0VjIzSDEzek0xNiwyMkgxN1YyM0gxNnpNMTcsMjJIMThWMjNIMTd6TTE4LDIySDE5VjIzSDE4ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yNywyMkgyOFYyM0gyN3pNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek05LDIzSDEwVjI0SDl6TTExLDIzSDEyVjI0SDExek0xMiwyM0gxM1YyNEgxMnpNMTMsMjNIMTRWMjRIMTN6TTE1LDIzSDE2VjI0SDE1ek0xNiwyM0gxN1YyNEgxNnpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0yNSwyM0gyNlYyNEgyNXpNMjYsMjNIMjdWMjRIMjZ6TTI3LDIzSDI4VjI0SDI3ek0wLDI0SDFWMjVIMHpNMiwyNEgzVjI1SDJ6TTMsMjRINFYyNUgzek00LDI0SDVWMjVINHpNNiwyNEg3VjI1SDZ6TTEwLDI0SDExVjI1SDEwek0xMSwyNEgxMlYyNUgxMXpNMTIsMjRIMTNWMjVIMTJ6TTEzLDI0SDE0VjI1SDEzek0xNiwyNEgxN1YyNUgxNnpNMTcsMjRIMThWMjVIMTd6TTE4LDI0SDE5VjI1SDE4ek0yMCwyNEgyMVYyNUgyMHpNMjEsMjRIMjJWMjVIMjF6TTIyLDI0SDIzVjI1SDIyek0yMywyNEgyNFYyNUgyM3pNMjQsMjRIMjVWMjVIMjR6TTI3LDI0SDI4VjI1SDI3ek0yOCwyNEgyOVYyNUgyOHpNMCwyNUgxVjI2SDB6TTIsMjVIM1YyNkgyek0zLDI1SDRWMjZIM3pNNCwyNUg1VjI2SDR6TTYsMjVIN1YyNkg2ek04LDI1SDlWMjZIOHpNOSwyNUgxMFYyNkg5ek0xMCwyNUgxMVYyNkgxMHpNMTIsMjVIMTNWMjZIMTJ6TTE0LDI1SDE1VjI2SDE0ek0xOSwyNUgyMFYyNkgxOXpNMjAsMjVIMjFWMjZIMjB6TTIxLDI1SDIyVjI2SDIxek0yMiwyNUgyM1YyNkgyMnpNMjMsMjVIMjRWMjZIMjN6TTI0LDI1SDI1VjI2SDI0ek0yNSwyNUgyNlYyNkgyNXpNMjYsMjVIMjdWMjZIMjZ6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNMTEsMjZIMTJWMjdIMTF6TTEzLDI2SDE0VjI3SDEzek0xNiwyNkgxN1YyN0gxNnpNMTcsMjZIMThWMjdIMTd6TTE5LDI2SDIwVjI3SDE5ek0yNCwyNkgyNVYyN0gyNHpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yOCwyNkgyOVYyN0gyOHpNMCwyN0gxVjI4SDB6TTYsMjdIN1YyOEg2ek04LDI3SDlWMjhIOHpNMTAsMjdIMTFWMjhIMTB6TTExLDI3SDEyVjI4SDExek0xMiwyN0gxM1YyOEgxMnpNMTMsMjdIMTRWMjhIMTN6TTE3LDI3SDE4VjI4SDE3ek0xOCwyN0gxOVYyOEgxOHpNMTksMjdIMjBWMjhIMTl6TTIwLDI3SDIxVjI4SDIwek0yMiwyN0gyM1YyOEgyMnpNMjcsMjdIMjhWMjhIMjd6TTAsMjhIMVYyOUgwek0xLDI4SDJWMjlIMXpNMiwyOEgzVjI5SDJ6TTMsMjhINFYyOUgzek00LDI4SDVWMjlINHpNNSwyOEg2VjI5SDV6TTYsMjhIN1YyOUg2ek04LDI4SDlWMjlIOHpNOSwyOEgxMFYyOUg5ek0xMCwyOEgxMVYyOUgxMHpNMTIsMjhIMTNWMjlIMTJ6TTE2LDI4SDE3VjI5SDE2ek0xNywyOEgxOFYyOUgxN3pNMjAsMjhIMjFWMjlIMjB6TTIyLDI4SDIzVjI5SDIyek0yMywyOEgyNFYyOUgyM3pNMjUsMjhIMjZWMjlIMjV6TTI3LDI4SDI4VjI5SDI3eiIgaWQ9InFyLXBhdGgiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIiBzdHJva2U9Im5vbmUiLz48L3N2Zz4="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

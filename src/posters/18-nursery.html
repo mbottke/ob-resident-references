@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Nursery card</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  /* desk card 18 · clinical text >= 10 pt printed (CSS pt × --k unless written calc(X / var(--k))) */
+  .sheet { --accent: var(--nb); --fb: calc(10pt / var(--k)); --gap: 0.13in;
+    padding: calc(0.4in / var(--k)) calc(0.55in / var(--k)) calc(0.3in / var(--k)); }
+  .masthead { padding-bottom: 0.08in; }
+  .masthead h1 { font-size: calc(36pt / var(--k)); }
+  .masthead .kicker .side { color: var(--ink); font-weight: 800; }
+  .masthead .sub { margin-top: 44pt; max-width: none; padding-bottom: 0.04in; }
+  .foot { padding-top: 0.06in; }
+  .panel { gap: 0.05in; }
+  .cols > .col { min-width: 0; }
+  .small, table.t, .kv.cx { font-size: var(--fb); line-height: 1.22; }
+  table.t td { padding: 3.5pt 5pt; }
+  ul.ls.small { gap: 2.5pt; }
+  ul.ls.check.small { gap: 2pt; }
+
+  /* 01 · birth medications */
+  table.rx td.k { width: 1.05in; white-space: normal; }
+  table.rx .dose { font-size: 1.12em; }
+
+  /* 02 · hepatitis B matrix */
+  .hbv-scope { font-size: var(--fb); line-height: 1.22; color: var(--ink-2); }
+  table.hbv { table-layout: fixed; }
+  table.hbv th:first-child, table.hbv td:first-child { width: 1.05in; }
+  table.hbv td { line-height: 1.24; }
+  table.hbv td.k { white-space: normal; }
+  table.hbv th:nth-child(n+2) { color: var(--c); background: color-mix(in srgb, var(--c) 12%, white); padding-left: 5pt; }
+  table.hbv :is(th, td):nth-child(3) { border-left: 0.75pt solid var(--rule); }
+  table.hbv td:nth-child(n+2) { padding-left: 5pt; }
+  table.hbv td.k small { display: block; font: 700 var(--fb)/1.2 "Inter"; color: var(--ink); }
+  table.hbv .hbv-action { display: block; font-weight: 700; }
+  /* tint only the identifying rail (one level, no implied scale) */
+  table.hbv :is(tr.pos, tr.unk) td.k { background: color-mix(in srgb, var(--c) 12%, white); padding-left: 5pt; }
+  .status-label { display: block; font-weight: 800; margin-bottom: 1pt; }
+
+  /* 03 · normal vitals: value baselines aligned across the three blocks */
+  .vit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5pt; }
+  .vit > div { border-top: 4pt solid var(--c); background: color-mix(in srgb, var(--c) 12%, white); padding: 5pt 8pt 7pt; font-size: var(--fb); line-height: 1.25; }
+  .vit .l { font: 800 var(--type-min)/1.1 "Inter"; letter-spacing: .08em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); display: block; min-block-size: 2.2em; }
+  .vit .v { font: 800 19pt/1.05 "Inter", sans-serif; letter-spacing: -0.01em; display: block; margin: 2pt 0 2pt; white-space: nowrap; }
+  .vit .v small { font: 700 var(--fb)/1 "Inter"; color: var(--ink-3); letter-spacing: 0; }
+
+  /* 04 · IV glucose: action → calculation → monitoring */
+  .kv.gstart { grid-template-columns: auto 1fr; gap: 3pt 10pt; font-size: var(--fb); line-height: 1.24; padding: 4pt 0; border-top: 2pt solid var(--c); border-bottom: 0.75pt solid var(--rule); }
+  .kv.gstart dt { color: var(--c); font-weight: 800; white-space: nowrap; }
+  .kv.gstart dd .dose { font-size: 1.08em; }
+  .formula { font: 700 12pt/1.3 "Inter"; padding: 6pt 9pt; border-top: 2pt solid var(--c); background: color-mix(in srgb, var(--c) 12%, white); }
+  .formula .eq { font-size: 13.5pt; font-weight: 800; }
+  .formula small { display: block; font: 600 var(--fb)/1.3 "Inter"; color: var(--ink-2); }
+  .two { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 0.12in; }
+  .two > div + div { border-left: 1pt solid var(--ink-3); padding-left: .1in; }
+  .ttl { font: 800 var(--fb)/1.1 "Inter"; letter-spacing: .01em; color: var(--ink-2); margin-top: 2pt; }
+  table.gir { width: 100%; }
+  table.gir td, table.gir th { padding-left: 3pt; padding-right: 3pt; text-align: right; font-variant-numeric: tabular-nums; }
+  table.gir th { text-transform: none; letter-spacing: 0; vertical-align: bottom; line-height: 1.15; }
+  /* rate converter transposed: rates across, outputs down, so no row pairs with a weight */
+  table.gir-rate { table-layout: fixed; }
+  table.gir-rate :is(th, td):first-child { text-align: left; white-space: normal; }
+  table.gir-rate thead th:first-child { color: var(--ink-3); }
+  table.gir th.grp { white-space: nowrap; text-align: center; border-bottom: 0.75pt solid var(--ink-3); padding-bottom: 2pt; }
+  table.gir tr.sub th { padding-top: 2pt; text-align: right; }
+  table.gir td.num { font-size: var(--fb); }
+  table.gir td.hi { font-weight: 800; }
+
+  .local-pump .local-line { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8pt; }
+  .local-pump .local-line > span { white-space: nowrap; }
+
+  .xref.sm { font-size: calc(10pt / var(--k)); }
+
+  /* 06 · circumcision */
+  .kv.cx { grid-template-columns: auto 1fr; gap: 3pt 8pt; }
+  .kv.cx dt { color: var(--c); }
+  .kv.cx dd .dose { font-size: 1.08em; }
+  .kv.cx dt.defer { color: var(--stop); font-weight: 800; }
+  .kv.cx dd.defer { border-left: calc(4pt / var(--k)) solid var(--stop); padding-left: 5pt; }
+
+  /* 07 · discharge checklist in three groups; named internal pointers */
+  .dc-group + .dc-group { margin-top: 5pt; }
+  .dc-group > h3 { display: flex; justify-content: space-between; align-items: baseline; gap: 6pt; font: 800 calc(10pt / var(--k))/1.1 "Inter"; letter-spacing: .06em; text-transform: uppercase; color: var(--c); border: 0; margin: 0 0 3pt; padding: 0; }
+  .dc-group > h3 > :first-child { white-space: nowrap; }
+  .dc-group > h3 .xref { font-size: calc(10pt / var(--k)); padding-block: calc(1pt / var(--k)); vertical-align: 0; }
+  .dc-group > h3 .h3x { font: 600 var(--fb)/1.1 "Inter"; letter-spacing: 0; text-transform: none; color: var(--ink-2); white-space: nowrap; }
+  .inref { font-weight: 700; white-space: nowrap; color: var(--ink); text-decoration: underline; text-decoration-thickness: 0.6pt; text-underline-offset: 1.5pt; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="17b-syphilis-back.html" title="Syphilis serology patterns">‹ 17b</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html" selected="">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="19-med-card.html" title="Medication companion">19 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/18-nursery.pdf">PDF</a></nav>
+<div class="sheet portrait-11x17 c-nb" style="--k:0.84">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Well-baby nursery&nbsp;· desk card <span class="side">18</span></div>
+      <h1><span class="sid">18</span>Nursery card</h1>
+    </div>
+    <div class="sub">Term well newborn: birth medications, hepatitis B by maternal status and weight, normal vitals, IV glucose and D10W pump rates, screens, circumcision, newborn discharge. Resuscitation and thresholds <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a> <a href="05-newborn.html#p-B" class="xlink"><span class="xref c-met">5&nbsp;· B</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="05-newborn.html" class="xlink"><span><b>5</b>Newborn</span></a><a href="15-sick-newborn.html" class="xlink"><span><b>15</b>Sick newborn</span></a><a href="22-hearing-cmv.html" class="xlink"><span><b>22</b>Hearing&nbsp;· cCMV</span></a><a href="25-dyad-discharge.html" class="xlink"><span><b>25</b>Dyad → home</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-18.svg)"></div>
+
+  <div class="cols" style="grid-template-columns: 1.07fr 0.93fr;">
+    <!-- LEFT -->
+    <div class="col">
+      <section class="panel c-nb" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>Birth medications</h2><span class="src">AAP vitamin K 2022&nbsp;· CDC STI Guidelines 2021&nbsp;· USPSTF 2019</span></div>
+        <table class="t rx">
+          <tbody>
+            <tr><td class="k">Vitamin K (phytonadione)</td><td><b>&gt; 1,500&nbsp;g:</b> <span class="dose">1&nbsp;mg IM</span> within 6&nbsp;h <span class="muted">(0.5&nbsp;mL of 1&nbsp;mg/0.5&nbsp;mL)</span><br><b>≤ 1,500&nbsp;g:</b> <span class="dose">0.3–0.5&nbsp;mg/kg IM</span> once. Not IV for prophylaxis.<br><b>Read the label: methylergonovine look-alike.</b></td></tr>
+            <tr><td class="k">Eye prophylaxis</td><td><span class="dose">Erythromycin 0.5% ointment</span>, both eyes, once, as soon as possible after birth (vaginal or cesarean); ≤ 24&nbsp;h. Does not prevent chlamydial conjunctivitis.</td></tr>
+            <tr><td class="k">RSV antibody</td><td>Dose and maternal-vaccine rule <a href="05-newborn.html#p-E" class="xlink"><span class="xref c-nb">5&nbsp;· E</span></a></td></tr>
+          </tbody>
+        </table>
+        <div class="small"><b>Vitamin K refused:</b> document; oral regimens protect less against late vitamin K deficiency bleeding (VKDB). Any bleeding &lt; 6 mo → think VKDB.</div>
+      </section>
+
+      <section class="panel c-inf" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>Hepatitis B at birth</h2><span class="src">ACIP 2018 Table 3&nbsp;· AAP 2017 birth-dose statement&nbsp;· matches <b>5&nbsp;· E</b></span></div>
+                <div class="hbv-scope"><b>Positive</b> includes other evidence of maternal HBV. HBIG: hepatitis B immune globulin.</div>
+        <table class="t hbv">
+          <thead><tr><th>Mother <span class="nc">HBsAg</span></th><th class="nc">≥ 2,000&nbsp;g</th><th class="nc">&lt; 2,000&nbsp;g</th></tr></thead>
+          <tbody>
+            <tr class="pos"><td class="k">Positive</td><td><b class="hbv-action">Vaccine + HBIG ≤ 12&nbsp;h</b>Separate limbs</td><td><b class="hbv-action">Vaccine + HBIG ≤ 12&nbsp;h</b>Birth dose doesn’t count: 3 more doses (4 total) from 1 mo</td></tr>
+            <tr class="unk"><td class="k">Unknown<small>test mother now</small></td><td><b class="hbv-action">Vaccine ≤ 12&nbsp;h</b>HBIG by discharge or age 7&nbsp;d (whichever first) if mother positive or still unknown</td><td><b class="hbv-action">Vaccine + HBIG ≤ 12&nbsp;h</b>Unless mother confirmed negative ≤ 12&nbsp;h. Birth dose doesn’t count</td></tr>
+            <tr><td class="k">Negative</td><td><b class="hbv-action">Vaccine ≤ 24&nbsp;h</b>Medically stable</td><td><b class="hbv-action">1st dose at 1 mo or discharge</b>Whichever first</td></tr>
+          </tbody>
+        </table>
+        <div class="small"><b>Doses:</b> single-antigen vaccine <span class="dose">0.5&nbsp;mL IM</span>&nbsp;· HBIG <span class="dose">0.5&nbsp;mL IM</span>. Maternal HBsAg positive or still unknown → infant anti-HBs + HBsAg at 9–12 mo (delayed series: 1–2 mo after the last dose). Breastfeeding is fine.</div>
+        <div class="box warn small"><b class="status-label">Guidance status&nbsp;· verify at print</b>ACIP Dec 2025 change stayed by federal court 16 Mar 2026; appeal pending. Current CDC guidance and AAP: universal birth dose.</div>
+      </section>
+
+      <section class="panel c-nb" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Normal vitals, term</h2><span class="src">AAP COFN, Hospital stay for healthy term newborns (2015)&nbsp;· WHO 1997</span></div>
+        <div class="vit">
+          <div><span class="l">Heart rate&nbsp;· awake</span><span class="v">100–190 <small>/min</small></span>Asleep down to <b>70</b> if perfused, rouses with activity. Sustained near / above 190 → evaluate.</div>
+          <div><span class="l">Respiratory rate</span><span class="v">&lt; 60 <small>/min</small></span>No grunting, flaring or retractions.</div>
+          <div><span class="l">Axillary temp</span><span class="v">36.5–37.4 <small>°C</small></span>97.7–99.3 °F, open crib, dressed. WHO: 36.0–36.4 = cold stress.</div>
+        </div>
+        <ul class="ls small">
+          <li>Stable for 12&nbsp;h before discharge. Exam red flags / sick after transition <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a>&nbsp;· breathing <a href="15-sick-newborn.html#p-B" class="xlink"><span class="xref c-nb">15&nbsp;· B</span></a>&nbsp;· call NICU <a href="23-nicu-transfer.html#p-A" class="xlink"><span class="xref c-nb">23&nbsp;· A</span></a></li>
+          <li>Weight loss and NEWT <a href="10-feeding.html#p-02" class="xlink"><span class="xref c-nb">10&nbsp;· 02</span></a>&nbsp;· voids and stools by day <a href="10-feeding.html#p-03" class="xlink"><span class="xref c-nb">10&nbsp;· 03</span></a></li>
+        </ul>
+      </section>
+
+      <section class="panel c-wf grow" id="p-06">
+        <div class="ph"><span class="num">06</span><h2>Circumcision</h2><span class="src">AAP technical report 2012 (expired 2017, not replaced)&nbsp;· AAP 2015</span></div>
+        <dl class="kv cx c-wf">
+          <dt class="defer">Defer</dt><dd class="defer"><b>Unstable or ill</b>&nbsp;· significantly preterm&nbsp;· <b>hypospadias</b>, chordee, buried penis, penoscrotal webbing&nbsp;· blood dyscrasia or <b>family history of bleeding disorder</b>. Confirm vitamin K given.</dd>
+          <dt>DPNB</dt><dd><span class="muted">Dorsal penile nerve block:</span> <span class="dose">1% (10&nbsp;mg/mL) lidocaine</span>, no epinephrine, <span class="dose">0.4&nbsp;mL each side</span> at the base (10 and 2 o’clock) = 8&nbsp;mg total (2.7&nbsp;mg/kg at 3&nbsp;kg; 3.2 at 2.5&nbsp;kg) → check the unit max</dd>
+          <dt>Ring block</dt><dd><span class="dose">1% lidocaine</span>, no epinephrine, <span class="dose">0.8&nbsp;mL</span> at the base or midshaft; may be most effective (AAP). Instead of DPNB, not added</dd>
+          <dt>Adjuncts</dt><dd>Sucrose pacifier, swaddle, positioning&nbsp;— <b>never the only analgesia</b>. Topical 4% lidocaine is an option, not in low-birth-weight infants (skin irritation).</dd>
+          <dt>After</dt><dd>No excessive bleeding for ≥ 2&nbsp;h before discharge.</dd>
+        </dl>
+        <div class="box local small">Unit lidocaine max (mg/kg): <span class="lfv" data-local="circ_lidocaine_max">____</span>&nbsp;· sucrose dose: <span class="lfv" data-local="circ_sucrose_dose">____</span>&nbsp;· device / consent: <span class="lfv" data-local="circ_device_consent">____</span></div>
+      </section>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col">
+      <section class="panel c-met" id="p-04">
+        <div class="ph"><span class="num">04</span><h2>IV glucose&nbsp;· D10W pump rates</h2><span class="src">AAP 2011 (expired, under review)&nbsp;· thresholds, gel <a href="05-newborn.html#p-B" class="xlink"><span class="xref c-met">5&nbsp;· B</span></a></span></div>
+        <dl class="kv gstart c-met">
+          <dt>Lab</dt><dd>Send lab plasma glucose; treat without waiting for it</dd>
+          <dt>IV bolus</dt><dd><span class="dose">D10W 2&nbsp;mL/kg</span> (200&nbsp;mg/kg) IV</dd>
+          <dt>IV infusion</dt><dd><b>then</b> D10W at <span class="dose">80–100&nbsp;mL/kg/day</span> = glucose infusion rate (GIR) <span class="dose">5.6–6.9&nbsp;mg/kg/min</span></dd>
+        </dl>
+        <div class="small"><b>IV target:</b> &gt; 60&nbsp;mg/dL; persistent disorder &gt; 70 (PES)</div>
+        <div class="formula c-met"><span class="eq">GIR (mg/kg/min) = % dextrose × mL/kg/day ÷ 144</span><small>= % × mL/kg/h ÷ 6&nbsp;· D10 at 80&nbsp;mL/kg/day: 10 × 80 ÷ 144 = 5.6</small></div>
+        <div class="two">
+          <div>
+            <div class="ttl">D10W rate → GIR (mg/kg/min)</div>
+            <table class="t gir gir-rate">
+              <colgroup><col style="width:34.5%"><col style="width:16.375%"><col style="width:16.375%"><col style="width:16.375%"><col style="width:16.375%"></colgroup>
+              <thead><tr><th>mL/kg/day</th><th>60</th><th>80</th><th>100</th><th>120</th></tr></thead>
+              <tbody>
+                <tr><td>mL/kg/h</td><td class="num">2.5</td><td class="num">3.3</td><td class="num">4.2</td><td class="num">5</td></tr>
+                <tr><td>GIR</td><td class="num">4.2</td><td class="num hi">5.6</td><td class="num hi">6.9</td><td class="num">8.3</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="ttl">D10W by weight&nbsp;· infusion at 80 or 100&nbsp;mL/kg/day</div>
+            <table class="t gir">
+              <thead><tr><th rowspan="2">Weight<br>(kg)</th><th rowspan="2">Bolus<br>(mL)</th><th colspan="2" class="grp">Infusion (mL/h)</th></tr><tr class="sub"><th>at 80</th><th>at 100</th></tr></thead>
+              <tbody>
+                <tr><td>2.5</td><td class="num">5</td><td class="num">8.3</td><td class="num">10.4</td></tr>
+                <tr><td>3</td><td class="num">6</td><td class="num">10</td><td class="num">12.5</td></tr>
+                <tr><td>3.5</td><td class="num">7</td><td class="num">11.7</td><td class="num">14.6</td></tr>
+                <tr><td>4</td><td class="num">8</td><td class="num">13.3</td><td class="num">16.7</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="small">Can’t keep &gt; 45&nbsp;mg/dL after 24&nbsp;h at this GIR → <b>suspect a persistent disorder:</b> endocrinology / NICU; critical sample while lab glucose &lt; 50 (glucose, β-hydroxybutyrate, free fatty acids, insulin) without delaying rescue. <b>Discharge:</b> off IV, normal glucose through ≥ 3 feed–fast cycles on routine feeds; after symptomatic or IV-treated lows, exclude a persistent disorder (consider a 6–8&nbsp;h safety fast).</div>
+        <div class="box local small local-pump" data-required-local=""><div class="local-line"><span>Bolus push time: <span class="lfv" data-local="glucose_bolus_push_time">____</span></span><span>recheck after bolus: <span class="lfv" data-local="glucose_recheck_after_treatment">____</span> min</span></div><div class="local-line"><span>max peripheral dextrose: <span class="lfv" data-local="max_peripheral_dextrose">____</span>%</span><span>call NICU when: <span class="lfv" data-local="hypoglycemia_nicu_escalation">____</span> <a href="23-nicu-transfer.html#p-B" class="xlink"><span class="xref c-nb">23&nbsp;· B</span></a></span></div><div class="local-line"><span>40% gel protocol and repeat limit: <span class="lfv" data-local="dextrose_gel_protocol">____</span></span></div></div>
+      </section>
+
+      <section class="panel c-nb" id="p-05">
+        <div class="ph"><span class="num">05</span><h2>Screens &amp; labs before discharge</h2><span class="src">AAP 2015&nbsp;· ACHDNC timeliness&nbsp;· JCIH 2019</span></div>
+        <table class="t">
+          <tbody>
+            <tr><td class="k">Maternal labs</td><td>Syphilis <a href="17-syphilis-newborn.html#p-01" class="xlink"><span class="xref sm c-inf">17&nbsp;· 01</span></a>&nbsp;· HBsAg&nbsp;· HIV reviewed; infant blood type and DAT if indicated</td></tr>
+            <tr><td class="k">CCHD</td><td><b>≥ 24&nbsp;h</b>&nbsp;· early discharge: as late as possible <a href="05-newborn.html#p-D" class="xlink"><span class="xref sm c-nb">5&nbsp;· D</span></a></td></tr>
+            <tr><td class="k">Metabolic</td><td>Blood spot <b>24–48&nbsp;h</b>, before transfusion; drawn &lt; 24&nbsp;h of age or milk feeds → state repeat rule <span class="lfv" data-local="nbs_repeat_screen_rule">____</span></td></tr>
+            <tr><td class="k">Bilirubin</td><td>TcB / TSB at 24–48&nbsp;h or before discharge <a href="05-newborn.html#p-C" class="xlink"><span class="xref sm c-nb">5&nbsp;· C</span></a></td></tr>
+            <tr><td class="k">Hearing</td><td>Refer either ear → <b>rescreen both + cCMV test today</b> <a href="22-hearing-cmv.html#p-A" class="xlink"><span class="xref sm c-nb">22&nbsp;· A</span></a></td></tr>
+          </tbody>
+        </table>
+              </section>
+
+      <section class="panel c-wf grow" id="p-07">
+        <div class="ph"><span class="num">07</span><h2>Newborn discharge checklist</h2><span class="src">AAP COFN 2015&nbsp;· term 37w0d–41w6d, uncomplicated</span></div>
+        <div class="dc-group">
+          <h3><span>Clinical readiness</span> <span class="h3x">complete dyad discharge <a href="25-dyad-discharge.html#p-A" class="xlink"><span class="xref c-wf">25&nbsp;· A</span></a></span></h3>
+          <ul class="ls check small c-wf">
+            <li>Exam and course need no further stay</li>
+            <li>Vitals normal and stable for 12&nbsp;h <span class="inref">→ 03 Vitals</span></li>
+            <li>Voiding regularly&nbsp;· ≥ 1 spontaneous stool</li>
+            <li>≥ 2 successful feeds; a breastfeed observed and documented</li>
+            <li>Circumcision: no excessive bleeding ≥ 2&nbsp;h <span class="inref">→ 06</span></li>
+          </ul>
+        </div>
+        <div class="dc-group">
+          <h3><span>Review and screens</span> <span class="h3x">hearing + pending CMV owner <a href="22-hearing-cmv.html#p-H" class="xlink"><span class="xref c-wf">22&nbsp;· H</span></a></span></h3>
+          <ul class="ls check small c-wf">
+            <li>Jaundice assessed with a plan <a href="05-newborn.html#p-C" class="xlink"><span class="xref c-nb">5&nbsp;· C</span></a></li>
+            <li>EOS risk assessed per guideline <a href="04-workflow.html#p-EOS" class="xlink"><span class="xref c-inf">4&nbsp;· EOS</span></a></li>
+            <li>Maternal syphilis, HBsAg, HIV reviewed <span class="inref">→ 05</span></li>
+            <li>Hepatitis B vaccine per risk <span class="inref">→ 02 Hepatitis B</span></li>
+            <li>Metabolic, hearing, pulse-ox screens done <span class="inref">→ 05 Screens</span></li>
+          </ul>
+        </div>
+        <div class="dc-group">
+          <h3><span>Home plan</span> <span class="h3x">appointments / pending results <a href="25-dyad-discharge.html#p-H" class="xlink"><span class="xref c-wf">25&nbsp;· H</span></a></span></h3>
+          <ul class="ls check small c-wf">
+            <li>Car seat; caregiver education: feeding, jaundice, safe sleep</li>
+            <li>Medical home; social risks assessed</li>
+            <li>Substance exposure: observe, family plan <a href="24-substance-dyad.html#p-F" class="xlink"><span class="xref c-wf">24&nbsp;· F</span></a> <a href="24-substance-dyad.html#p-J" class="xlink"><span class="xref c-wf">24&nbsp;· J</span></a></li>
+            <li><b>Discharged at &lt; 48&nbsp;h of age → seen ≤ 48&nbsp;h after discharge</b></li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> Hand I et al., AAP Vitamin K and the Newborn Infant, Pediatrics 2022;149:e2021056036; CDC STI Treatment Guidelines 2021, MMWR 70(RR-4), ophthalmia neonatorum prophylaxis; USPSTF ocular prophylaxis 2019; Schillie S et al., ACIP Prevention of Hepatitis B Virus Infection in the United States, MMWR Recomm Rep 2018;67(RR-1), Table 3; AAP COID/COFN, Elimination of Perinatal Hepatitis B, Pediatrics 2017;140:e20171870; Benitz WE, AAP COFN, Hospital Stay for Healthy Term Newborn Infants, Pediatrics 2015;135:948–53; WHO Thermal Protection of the Newborn (1997); Adamkin DH, AAP COFN, Postnatal Glucose Homeostasis, Pediatrics 2011;127:575; Thornton PS et al., PES, J Pediatr 2015;167:238; CDC PVST guidance; AAP cCMV report 2026 (KAS 2); ACHDNC newborn-screening timeliness goals and CLSI NBS01; JCIH Year 2019 Position Statement; AAP Task Force on Circumcision, Male Circumcision technical report, Pediatrics 2012;130:e756. GIR rows are arithmetic. Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTksMEgxMFYxSDl6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTMsMUgxNFYySDEzek0xNywxSDE4VjJIMTd6TTE5LDFIMjBWMkgxOXpNMjAsMUgyMVYySDIwek0yMiwxSDIzVjJIMjJ6TTI4LDFIMjlWMkgyOHpNMCwySDFWM0gwek0yLDJIM1YzSDJ6TTMsMkg0VjNIM3pNNCwySDVWM0g0ek02LDJIN1YzSDZ6TTgsMkg5VjNIOHpNOSwySDEwVjNIOXpNMTAsMkgxMVYzSDEwek0xMSwySDEyVjNIMTF6TTE3LDJIMThWM0gxN3pNMTksMkgyMFYzSDE5ek0yMiwySDIzVjNIMjJ6TTI0LDJIMjVWM0gyNHpNMjUsMkgyNlYzSDI1ek0yNiwySDI3VjNIMjZ6TTI4LDJIMjlWM0gyOHpNMCwzSDFWNEgwek0yLDNIM1Y0SDJ6TTMsM0g0VjRIM3pNNCwzSDVWNEg0ek02LDNIN1Y0SDZ6TTgsM0g5VjRIOHpNMTAsM0gxMVY0SDEwek0xMSwzSDEyVjRIMTF6TTEyLDNIMTNWNEgxMnpNMTMsM0gxNFY0SDEzek0xNiwzSDE3VjRIMTZ6TTE4LDNIMTlWNEgxOHpNMjIsM0gyM1Y0SDIyek0yNCwzSDI1VjRIMjR6TTI1LDNIMjZWNEgyNXpNMjYsM0gyN1Y0SDI2ek0yOCwzSDI5VjRIMjh6TTAsNEgxVjVIMHpNMiw0SDNWNUgyek0zLDRINFY1SDN6TTQsNEg1VjVINHpNNiw0SDdWNUg2ek05LDRIMTBWNUg5ek0xMSw0SDEyVjVIMTF6TTEyLDRIMTNWNUgxMnpNMTQsNEgxNVY1SDE0ek0xNSw0SDE2VjVIMTV6TTE2LDRIMTdWNUgxNnpNMTcsNEgxOFY1SDE3ek0xOCw0SDE5VjVIMTh6TTIyLDRIMjNWNUgyMnpNMjQsNEgyNVY1SDI0ek0yNSw0SDI2VjVIMjV6TTI2LDRIMjdWNUgyNnpNMjgsNEgyOVY1SDI4ek0wLDVIMVY2SDB6TTYsNUg3VjZINnpNOCw1SDlWNkg4ek05LDVIMTBWNkg5ek0xMCw1SDExVjZIMTB6TTEzLDVIMTRWNkgxM3pNMTYsNUgxN1Y2SDE2ek0xOCw1SDE5VjZIMTh6TTE5LDVIMjBWNkgxOXpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTksN0gxMFY4SDl6TTEyLDdIMTNWOEgxMnpNMTQsN0gxNVY4SDE0ek0xNSw3SDE2VjhIMTV6TTE3LDdIMThWOEgxN3pNMTgsN0gxOVY4SDE4ek0yMCw3SDIxVjhIMjB6TTAsOEgxVjlIMHpNMSw4SDJWOUgxek00LDhINVY5SDR6TTUsOEg2VjlINXpNNiw4SDdWOUg2ek0xMSw4SDEyVjlIMTF6TTEyLDhIMTNWOUgxMnpNMTcsOEgxOFY5SDE3ek0xOSw4SDIwVjlIMTl6TTIzLDhIMjRWOUgyM3pNMjUsOEgyNlY5SDI1ek0yNiw4SDI3VjlIMjZ6TTI3LDhIMjhWOUgyN3pNMjgsOEgyOVY5SDI4ek0xLDlIMlYxMEgxek0zLDlINFYxMEgzek01LDlINlYxMEg1ek03LDlIOFYxMEg3ek05LDlIMTBWMTBIOXpNMTEsOUgxMlYxMEgxMXpNMTIsOUgxM1YxMEgxMnpNMTMsOUgxNFYxMEgxM3pNMTUsOUgxNlYxMEgxNXpNMTYsOUgxN1YxMEgxNnpNMTcsOUgxOFYxMEgxN3pNMTgsOUgxOVYxMEgxOHpNMjEsOUgyMlYxMEgyMXpNMjIsOUgyM1YxMEgyMnpNMjMsOUgyNFYxMEgyM3pNMjQsOUgyNVYxMEgyNHpNMjUsOUgyNlYxMEgyNXpNMjYsOUgyN1YxMEgyNnpNMjcsOUgyOFYxMEgyN3pNMjgsOUgyOVYxMEgyOHpNMCwxMEgxVjExSDB6TTEsMTBIMlYxMUgxek0yLDEwSDNWMTFIMnpNMywxMEg0VjExSDN6TTQsMTBINVYxMUg0ek01LDEwSDZWMTFINXpNNiwxMEg3VjExSDZ6TTcsMTBIOFYxMUg3ek0xMSwxMEgxMlYxMUgxMXpNMTIsMTBIMTNWMTFIMTJ6TTEzLDEwSDE0VjExSDEzek0xNSwxMEgxNlYxMUgxNXpNMTYsMTBIMTdWMTFIMTZ6TTE4LDEwSDE5VjExSDE4ek0yMiwxMEgyM1YxMUgyMnpNMjMsMTBIMjRWMTFIMjN6TTI4LDEwSDI5VjExSDI4ek0wLDExSDFWMTJIMHpNMSwxMUgyVjEySDF6TTIsMTFIM1YxMkgyek00LDExSDVWMTJINHpNNSwxMUg2VjEySDV6TTcsMTFIOFYxMkg3ek04LDExSDlWMTJIOHpNMTAsMTFIMTFWMTJIMTB6TTE1LDExSDE2VjEySDE1ek0xNywxMUgxOFYxMkgxN3pNMTgsMTFIMTlWMTJIMTh6TTIxLDExSDIyVjEySDIxek0yMiwxMUgyM1YxMkgyMnpNMjUsMTFIMjZWMTJIMjV6TTI3LDExSDI4VjEySDI3ek0yOCwxMUgyOVYxMkgyOHpNMCwxMkgxVjEzSDB6TTQsMTJINVYxM0g0ek02LDEySDdWMTNINnpNNywxMkg4VjEzSDd6TTEwLDEySDExVjEzSDEwek0xNywxMkgxOFYxM0gxN3pNMTgsMTJIMTlWMTNIMTh6TTIwLDEySDIxVjEzSDIwek0yMSwxMkgyMlYxM0gyMXpNMjMsMTJIMjRWMTNIMjN6TTI3LDEySDI4VjEzSDI3ek0wLDEzSDFWMTRIMHpNMSwxM0gyVjE0SDF6TTIsMTNIM1YxNEgyek00LDEzSDVWMTRINHpNNywxM0g4VjE0SDd6TTksMTNIMTBWMTRIOXpNMTEsMTNIMTJWMTRIMTF6TTEzLDEzSDE0VjE0SDEzek0xNCwxM0gxNVYxNEgxNHpNMTUsMTNIMTZWMTRIMTV6TTE2LDEzSDE3VjE0SDE2ek0xNywxM0gxOFYxNEgxN3pNMTgsMTNIMTlWMTRIMTh6TTIyLDEzSDIzVjE0SDIyek0yMywxM0gyNFYxNEgyM3pNMjQsMTNIMjVWMTRIMjR6TTI1LDEzSDI2VjE0SDI1ek0yNiwxM0gyN1YxNEgyNnpNMjcsMTNIMjhWMTRIMjd6TTI4LDEzSDI5VjE0SDI4ek0xLDE0SDJWMTVIMXpNNiwxNEg3VjE1SDZ6TTcsMTRIOFYxNUg3ek04LDE0SDlWMTVIOHpNMTEsMTRIMTJWMTVIMTF6TTEyLDE0SDEzVjE1SDEyek0xNCwxNEgxNVYxNUgxNHpNMTUsMTRIMTZWMTVIMTV6TTE4LDE0SDE5VjE1SDE4ek0yMSwxNEgyMlYxNUgyMXpNMjQsMTRIMjVWMTVIMjR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjgsMTRIMjlWMTVIMjh6TTAsMTVIMVYxNkgwek0zLDE1SDRWMTZIM3pNNSwxNUg2VjE2SDV6TTcsMTVIOFYxNkg3ek04LDE1SDlWMTZIOHpNMTEsMTVIMTJWMTZIMTF6TTEyLDE1SDEzVjE2SDEyek0xNCwxNUgxNVYxNkgxNHpNMTUsMTVIMTZWMTZIMTV6TTE2LDE1SDE3VjE2SDE2ek0xNywxNUgxOFYxNkgxN3pNMTgsMTVIMTlWMTZIMTh6TTIwLDE1SDIxVjE2SDIwek0yNCwxNUgyNVYxNkgyNHpNMjcsMTVIMjhWMTZIMjd6TTI4LDE1SDI5VjE2SDI4ek0wLDE2SDFWMTdIMHpNNSwxNkg2VjE3SDV6TTYsMTZIN1YxN0g2ek05LDE2SDEwVjE3SDl6TTEwLDE2SDExVjE3SDEwek0xMiwxNkgxM1YxN0gxMnpNMTUsMTZIMTZWMTdIMTV6TTE3LDE2SDE4VjE3SDE3ek0xOSwxNkgyMFYxN0gxOXpNMjEsMTZIMjJWMTdIMjF6TTI3LDE2SDI4VjE3SDI3ek0wLDE3SDFWMThIMHpNMSwxN0gyVjE4SDF6TTIsMTdIM1YxOEgyek03LDE3SDhWMThIN3pNOSwxN0gxMFYxOEg5ek0xMSwxN0gxMlYxOEgxMXpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNSwxN0gxNlYxOEgxNXpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0xOCwxN0gxOVYxOEgxOHpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNCwxN0gyNVYxOEgyNHpNMjUsMTdIMjZWMThIMjV6TTI3LDE3SDI4VjE4SDI3ek0yOCwxN0gyOVYxOEgyOHpNMiwxOEgzVjE5SDJ6TTMsMThINFYxOUgzek00LDE4SDVWMTlINHpNNiwxOEg3VjE5SDZ6TTgsMThIOVYxOUg4ek05LDE4SDEwVjE5SDl6TTExLDE4SDEyVjE5SDExek0xMiwxOEgxM1YxOUgxMnpNMTMsMThIMTRWMTlIMTN6TTE0LDE4SDE1VjE5SDE0ek0xNSwxOEgxNlYxOUgxNXpNMTgsMThIMTlWMTlIMTh6TTIwLDE4SDIxVjE5SDIwek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI0LDE4SDI1VjE5SDI0ek0yNiwxOEgyN1YxOUgyNnpNMjgsMThIMjlWMTlIMjh6TTQsMTlINVYyMEg0ek04LDE5SDlWMjBIOHpNOSwxOUgxMFYyMEg5ek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTEsMjBIMlYyMUgxek0yLDIwSDNWMjFIMnpNMywyMEg0VjIxSDN6TTUsMjBINlYyMUg1ek02LDIwSDdWMjFINnpNMTAsMjBIMTFWMjFIMTB6TTEyLDIwSDEzVjIxSDEyek0xNiwyMEgxN1YyMUgxNnpNMTcsMjBIMThWMjFIMTd6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjUsMjBIMjZWMjFIMjV6TTI4LDIwSDI5VjIxSDI4ek04LDIxSDlWMjJIOHpNMTAsMjFIMTFWMjJIMTB6TTExLDIxSDEyVjIySDExek0xMywyMUgxNFYyMkgxM3pNMTQsMjFIMTVWMjJIMTR6TTE1LDIxSDE2VjIySDE1ek0xNiwyMUgxN1YyMkgxNnpNMTgsMjFIMTlWMjJIMTh6TTE5LDIxSDIwVjIySDE5ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI4LDIxSDI5VjIySDI4ek0wLDIySDFWMjNIMHpNMSwyMkgyVjIzSDF6TTIsMjJIM1YyM0gyek0zLDIySDRWMjNIM3pNNCwyMkg1VjIzSDR6TTUsMjJINlYyM0g1ek02LDIySDdWMjNINnpNOSwyMkgxMFYyM0g5ek0xMCwyMkgxMVYyM0gxMHpNMTEsMjJIMTJWMjNIMTF6TTE0LDIySDE1VjIzSDE0ek0xNSwyMkgxNlYyM0gxNXpNMTksMjJIMjBWMjNIMTl6TTIwLDIySDIxVjIzSDIwek0yMiwyMkgyM1YyM0gyMnpNMjQsMjJIMjVWMjNIMjR6TTI1LDIySDI2VjIzSDI1ek0yNiwyMkgyN1YyM0gyNnpNMjgsMjJIMjlWMjNIMjh6TTAsMjNIMVYyNEgwek02LDIzSDdWMjRINnpNOCwyM0g5VjI0SDh6TTEwLDIzSDExVjI0SDEwek0xMiwyM0gxM1YyNEgxMnpNMTQsMjNIMTVWMjRIMTR6TTE1LDIzSDE2VjI0SDE1ek0xNywyM0gxOFYyNEgxN3pNMTksMjNIMjBWMjRIMTl6TTIwLDIzSDIxVjI0SDIwek0yNCwyM0gyNVYyNEgyNHpNMjcsMjNIMjhWMjRIMjd6TTI4LDIzSDI5VjI0SDI4ek0wLDI0SDFWMjVIMHpNMiwyNEgzVjI1SDJ6TTMsMjRINFYyNUgzek00LDI0SDVWMjVINHpNNiwyNEg3VjI1SDZ6TTgsMjRIOVYyNUg4ek0xMSwyNEgxMlYyNUgxMXpNMTIsMjRIMTNWMjVIMTJ6TTE3LDI0SDE4VjI1SDE3ek0xOCwyNEgxOVYyNUgxOHpNMTksMjRIMjBWMjVIMTl6TTIwLDI0SDIxVjI1SDIwek0yMSwyNEgyMlYyNUgyMXpNMjIsMjRIMjNWMjVIMjJ6TTIzLDI0SDI0VjI1SDIzek0yNCwyNEgyNVYyNUgyNHpNMjUsMjRIMjZWMjVIMjV6TTI3LDI0SDI4VjI1SDI3ek0wLDI1SDFWMjZIMHpNMiwyNUgzVjI2SDJ6TTMsMjVINFYyNkgzek00LDI1SDVWMjZINHpNNiwyNUg3VjI2SDZ6TTExLDI1SDEyVjI2SDExek0xMywyNUgxNFYyNkgxM3pNMTUsMjVIMTZWMjZIMTV6TTE2LDI1SDE3VjI2SDE2ek0xNywyNUgxOFYyNkgxN3pNMTgsMjVIMTlWMjZIMTh6TTI3LDI1SDI4VjI2SDI3ek0yOCwyNUgyOVYyNkgyOHpNMCwyNkgxVjI3SDB6TTIsMjZIM1YyN0gyek0zLDI2SDRWMjdIM3pNNCwyNkg1VjI3SDR6TTYsMjZIN1YyN0g2ek0xMCwyNkgxMVYyN0gxMHpNMTEsMjZIMTJWMjdIMTF6TTEyLDI2SDEzVjI3SDEyek0xMywyNkgxNFYyN0gxM3pNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTgsMjZIMTlWMjdIMTh6TTE5LDI2SDIwVjI3SDE5ek0yMSwyNkgyMlYyN0gyMXpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTksMjdIMTBWMjhIOXpNMTAsMjdIMTFWMjhIMTB6TTExLDI3SDEyVjI4SDExek0xMiwyN0gxM1YyOEgxMnpNMTYsMjdIMTdWMjhIMTZ6TTE3LDI3SDE4VjI4SDE3ek0xOCwyN0gxOVYyOEgxOHpNMjAsMjdIMjFWMjhIMjB6TTI1LDI3SDI2VjI4SDI1ek0yNywyN0gyOFYyOEgyN3pNMjgsMjdIMjlWMjhIMjh6TTAsMjhIMVYyOUgwek0xLDI4SDJWMjlIMXpNMiwyOEgzVjI5SDJ6TTMsMjhINFYyOUgzek00LDI4SDVWMjlINHpNNSwyOEg2VjI5SDV6TTYsMjhIN1YyOUg2ek04LDI4SDlWMjlIOHpNMTAsMjhIMTFWMjlIMTB6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

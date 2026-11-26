@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Failed hearing screen&nbsp;· cCMV</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  /* sheet 22 · 24x36 poster · clinical text >= 9.5 pt printed (CSS pt × --k) */
+  .sheet { --accent: var(--nb); --body: 11pt; --gap: 0.22in; }
+  .masthead h1 { font-size: calc(50pt / var(--k)); }
+  .masthead .sub { max-width: none; font-size: 12.6pt; line-height: 1.32; margin-top: 30pt; }
+  .masthead .sub b { color: var(--ink); }
+  .sheet .small { font-size: var(--body); line-height: 1.28; }
+  .sheet .xs { font-size: 10.5pt; line-height: 1.25; }
+  .sheet .panel { gap: 6pt; }
+  .ph h2 { font-size: 25pt; font-family: "Inter", sans-serif; }   /* < 24 pt printed: text face (css2 #9) */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  .ph.inl .src { grid-column: 3; grid-row: 1; text-align: right; align-self: baseline; padding-inline-start: 0; }
+  .lead { color: var(--c); }
+  table.t { font-size: var(--body); --cell-y: 4pt; --table-leading: 1.25; }
+  table.t th { font-size: 10.5pt; }
+  ul.ls.small { gap: 3pt; }
+  .sheet > .panel { flex: none; }
+
+  /* A: result reading (left) · parallel tracks (right) */
+  .entry { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 0.3in; align-items: start; }
+  .rail.rd { grid-template-columns: 1.25in minmax(0, 1fr); font-size: var(--body); line-height: 1.28; }
+  .rail.rd > .when { color: var(--c); }
+  .rail.rd > .do { font-weight: 400; }
+  .rail.rd + .rail.rd { margin-top: 4pt; padding-top: 4pt; }
+  .tracks .node { font-size: var(--body); line-height: 1.26; }
+  .tracks .node.q { font-weight: 700; }
+  .tracks .node.q b { font-weight: 800; }
+  .tracks .split { padding-top: 20pt; }
+  .tracks .split > .arm::before { top: -20pt; height: 14pt; }
+  .tracks .stem { height: 8pt; }
+  .tracks .arm .node { display: flex; flex-direction: column; gap: 4pt; }
+  .tracks .node .lbl { font-size: 10.5pt; margin-bottom: 0; display: flex; justify-content: space-between; align-items: center; }
+  .tracks .node .lbl .xref { letter-spacing: 0; }
+  .clock { margin: 2pt 0 0; line-height: 0; }
+  .clock svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .clock text { font-family: "Inter", sans-serif; font-size: 11px; font-weight: 600; fill: var(--ink); }
+  .clock text.b { font-weight: 800; }
+  .clock text.m { fill: var(--ink-3); }
+  .clock .axis { stroke: var(--ink-3); stroke-width: 1; }
+  .clock .win { fill: color-mix(in srgb, var(--inf) 28%, white); stroke: var(--inf); stroke-width: 1.2; }
+  .clock .cap { stroke: var(--inf); stroke-width: 2.4; }
+  .clock .hl { stroke: var(--nb); stroke-width: 2.4; }
+  .clock .pt { fill: var(--nb); stroke: #fff; stroke-width: 1.5; }
+  .both { font-size: var(--body); line-height: 1.28; font-weight: 700; text-align: center; margin-top: 3pt; }
+  .entry .urgent-head { font-size: 11.4pt; line-height: 1.25; margin-top: 2pt; }
+  .entry .urgent-head .xref { margin-left: auto; }
+
+  /* B–G: two independent stacks */
+  .sheet > .cols.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); flex: none; margin-top: var(--gap); margin-bottom: var(--gap); }
+
+  /* B: rescreen chain */
+  ol.steps.chain { gap: 6pt; font-size: var(--body); line-height: 1.28; }   /* 6 pt: discs no longer touch (K5-29) */
+  /* counters keep a fixed printed size (ax1 #8): 10 pt digits in a 16 pt disc */
+  ol.steps.chain > li { padding-left: calc(24pt / var(--k)); }
+  ol.steps.chain > li::before { width: calc(16pt / var(--k)); height: calc(16pt / var(--k)); top: calc(1pt / var(--k)); font: 800 calc(10pt / var(--k))/calc(16pt / var(--k)) "Inter"; }
+  .sub-h { font: 800 10.5pt/1.1 "Inter"; letter-spacing: .08em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); margin-top: 2pt; }
+  .tint-h { font-size: 11.2pt; line-height: 1.25; }
+
+  /* C: indications */
+  ul.ls.ind > li::before { background: var(--c); }
+
+  /* D: collection clock */
+  .clockbox { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4pt 12pt; align-items: center; }
+  .clockbox .hero { font-size: 28pt; color: var(--ink); }
+  .clockbox .hero small { font-size: .5em; font-weight: 800; letter-spacing: 0; margin-left: 2pt; }
+  .clockbox .why { font-size: var(--body); line-height: 1.26; }
+  table.spec { table-layout: fixed; }
+  table.spec td.k { white-space: normal; color: var(--c); }
+
+  /* E / F: result → action */
+  .rail.rs { grid-template-columns: 2in minmax(0, 1fr); font-size: var(--body); line-height: 1.26; }
+  .rail.rs > .when { color: var(--c); }
+  .rail.rs > .do { font-weight: 400; }
+  /* consecutive rails own their spacing (fo3 #2); A keeps its compact in-wrapper spacing */
+  .rail-list { display: flex; flex-direction: column; gap: 0; }
+  .rail-list > .rail { margin: 0; padding-block: calc(4pt / var(--k)); }
+  .rail-list > .rail + .rail { border-top: calc(.75pt / var(--k)) solid var(--rule); }
+  .rail-list > .rail:first-child { padding-top: 0; }
+  .rail-list > .rail:last-child { padding-bottom: 0; }
+  .eval { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3pt 12pt; }
+  .urgent-head.inf { --c: var(--inf); font-size: 11.4pt; line-height: 1.25; }
+  .urgent-head .deadline { background: var(--c); margin-left: auto; }
+  table.tx { table-layout: fixed; }
+  table.tx td.k { white-space: normal; }
+  table.tx tr.no td { color: var(--ink-2); }
+  table.tx td.k .def { display: block; font-weight: 500; color: var(--ink-2); margin-top: 1pt; }
+  .start { border-top: 2pt solid var(--c); background: color-mix(in srgb, var(--c) var(--tint-2), white); padding: 5pt 10pt 6pt; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2pt 12pt; align-items: center; font-size: var(--body); line-height: 1.26; }
+  .start .hero { font-size: 19pt; }
+  .start .hero small { font-size: .55em; font-weight: 800; letter-spacing: 0; margin-left: 2pt; }
+
+  /* G: risk follow-up */
+  table.risk { table-layout: fixed; }
+  table.risk td:last-child b { white-space: nowrap; }
+  table.risk .risk-list { list-style: none; columns: 2; column-gap: 10pt; margin: 0; padding: 0; }
+  table.risk .risk-list > li { padding-left: 7pt; position: relative; break-inside: avoid; }
+  table.risk .risk-list > li + li { margin-top: 2pt; }
+  table.risk .risk-list > li::before { content: ""; position: absolute; left: 0; top: .55em; width: 3pt; height: 3pt; border-radius: 50%; background: var(--c); }
+  .sched { font-size: var(--body); line-height: 1.28; }
+  .sched .ages { font-weight: 800; }
+
+  /* H: three columns */
+  .loop { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr) minmax(0, 1fr); gap: 0.26in; align-items: start; }
+  .loop > div { display: flex; flex-direction: column; gap: 5pt; }
+  .say { font: 700 12pt/1.3 "Inter"; border-left: 3pt solid var(--c); padding: 1pt 0 1pt 8pt; }
+  .say q { quotes: "“" "”"; }
+  .loop ul.ls.check { gap: 4pt; font-size: var(--body); line-height: 1.26; }
+  .loop .box.local { margin-top: 6pt; font-size: var(--body); line-height: 1.32; }
+  .box.local.rep b { display: block; color: var(--wf); }
+  .box.local.rep b:not(:first-child) { margin-top: 5pt; }
+  .lfx { white-space: nowrap; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="21-before-discharge.html" title="Before discharge">‹ 21</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html" selected="">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="23-nicu-transfer.html" title="NICU transferstabilize until transport">23 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/22-hearing-cmv.pdf">PDF</a></nav>
+<div class="sheet portrait-24x36 c-nb" style="--k:1.355">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Nursery&nbsp;· NICU&nbsp;· newborn clinic</div>
+      <h1><span class="sid">22</span>Failed hearing screen&nbsp;· cCMV</h1>
+    </div>
+    <div class="sub"><b>Refer in either ear → hearing follow-up + cCMV testing decision today.</b><br><span class="muted">Ill baby → escalate now</span> <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a> <span class="muted">· routine screens</span> <a href="05-newborn.html#p-E" class="xlink"><span class="xref c-nb">5&nbsp;· E</span></a> <a href="18-nursery.html#p-05" class="xlink"><span class="xref c-nb">18&nbsp;· 05</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="18-nursery.html" class="xlink"><span><b>18</b>Nursery card</span></a><a href="25-dyad-discharge.html" class="xlink"><span><b>25</b>Dyad → home</span></a><a href="05-newborn.html" class="xlink"><span><b>5</b>Newborn</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-05.svg)"></div>
+
+  <!-- A: read the result → two parallel tracks -->
+  <section class="panel c-nb" id="p-A">
+    <div class="ph inl"><span class="num">A</span><h2>Read the hearing result</h2><span class="src">ASHA Practice Portal, Newborn Hearing Screening (accessed 2026)&nbsp;· JCIH Newborn Hearing Screening FAQs (2024) pp. 1–2</span></div>
+    <div class="entry">
+      <div>
+        <div class="rail rd"><span class="when">Method</span><span class="do"><b>OAE</b> = cochlear response&nbsp;· <b>AABR</b> = auditory nerve / brainstem. <b>OAE can miss auditory neuropathy.</b> Well nursery: OAE or AABR per the validated protocol. <b>NICU: AABR.</b></span></div>
+        <div class="rail rd"><span class="when">PASS</span><span class="do">Both ears pass in the <b>same session</b>. Passes from separate sessions do not combine.</span></div>
+        <div class="rail rd"><span class="when">Readmitted in month 1</span><span class="do">Exchange-transfusion hyperbilirubinemia, culture-positive sepsis, meningitis, newly recognized congenital infection, ventilation / ECMO → <b>AABR rescreen before discharge</b> despite PASS.</span></div>
+        <div class="rail rd"><span class="when">REFER / did not pass</span><span class="do"><b>Either ear</b> → rescreen <b>both ears</b> <a href="#p-B" class="xlink"><span class="xref here">B</span></a> Assess cCMV testing indication <a href="#p-C" class="xlink"><span class="xref here">C</span></a></span></div>
+        <div class="rail rd"><span class="when">No screen / incomplete</span><span class="do">Arrange completion <a href="#p-B" class="xlink"><span class="xref here">B</span></a> Review CMV indications <a href="#p-C" class="xlink"><span class="xref here">C</span></a></span></div>
+        <div class="rail rd"><span class="when">Ear-canal atresia</span><span class="do">Including unilateral → <b>pediatric audiology for diagnostic ABR</b>; routine screening cannot clear the affected ear.</span></div>
+      </div>
+
+      <div class="tracks">
+        <div class="flow" data-tile-keep="">
+          <div class="node q">REFER in either ear&nbsp;· no screen / incomplete <span style="font-weight:500">→ start both tracks now; neither waits for the other</span></div>
+          <div class="stem" aria-hidden="true"></div>
+          <div class="split two">
+            <div class="arm">
+              <div class="node tint c-nb">
+                <span class="lbl">Hearing track <a href="#p-B" class="xlink"><span class="xref here">B</span></a></span>
+                <span>Rescreen both ears → still refers → <b>pediatric audiology</b> (diagnostic ABR).</span>
+                <figure class="clock">
+                  <svg viewBox="0 0 300 58" role="img" aria-label="Hearing milestones from birth: screening complete by 1 month, diagnosis by 3 months, intervention by 6 months">
+                    <text class="m" x="6" y="12">Birth</text>
+                    <text class="b" x="52.7" y="12" text-anchor="middle">1 mo</text>
+                    <text class="b" x="146" y="12" text-anchor="middle">3 mo</text>
+                    <text class="b" x="292" y="12" text-anchor="end">6 mo</text>
+                    <line class="axis" x1="6" y1="26" x2="286" y2="26"></line>
+                    <line class="hl" x1="6" y1="26" x2="286" y2="26"></line>
+                    <circle class="pt" cx="52.7" cy="26" r="5.5"></circle>
+                    <circle class="pt" cx="146" cy="26" r="5.5"></circle>
+                    <circle class="pt" cx="286" cy="26" r="5.5"></circle>
+                    <text x="52.7" y="48" text-anchor="middle">screen</text>
+                    <text x="146" y="48" text-anchor="middle">diagnosis</text>
+                    <text x="292" y="48" text-anchor="end">intervention</text>
+                  </svg>
+                </figure>
+              </div>
+            </div>
+            <div class="arm">
+              <div class="node tint c-inf">
+                <span class="lbl">cCMV track&nbsp;· same day <a href="#p-C" class="xlink"><span class="xref here">C</span></a></span>
+                <span>Indication met → collect indicated specimen <b>now</b>; do not await rescreen <a href="#p-D" class="xlink"><span class="xref here">D</span></a></span>
+                <figure class="clock">
+                  <svg viewBox="0 0 300 58" role="img" aria-label="cCMV specimen window: collection from birth to 21 days of age">
+                    <text class="m" x="6" y="12">Birth</text>
+                    <text class="m" x="100" y="12" text-anchor="middle">7&nbsp;d</text>
+                    <text class="m" x="193" y="12" text-anchor="middle">14&nbsp;d</text>
+                    <text class="b" x="292" y="12" text-anchor="end">21&nbsp;d</text>
+                    <rect class="win" x="6" y="19" width="280" height="14"></rect>
+                    <line class="axis" x1="100" y1="19" x2="100" y2="33"></line>
+                    <line class="axis" x1="193" y1="19" x2="193" y2="33"></line>
+                    <line class="cap" x1="286" y1="15" x2="286" y2="37"></line>
+                    <text x="6" y="48">specimen collection window</text>
+                    <text class="b" x="292" y="48" text-anchor="end">collect by</text>
+                  </svg>
+                </figure>
+              </div>
+            </div>
+          </div>
+          <div class="both">Separate scales: months for hearing, days for cCMV.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B–G: two stacks; letters read across -->
+  <div class="cols two">
+    <div class="col">
+      <section class="panel c-nb" id="p-B">
+        <div class="ph"><span class="num">B</span><h2>Rescreen → diagnose → intervene</h2><span class="src">JCIH Year 2019 Position Statement, Interpretive Criteria&nbsp;· Outpatient Rescreening&nbsp;· JCIH Audiology FAQs (2024) pp. 1–3&nbsp;· CDC Screening for Hearing Loss (2024)</span></div>
+        <div class="sub-h">Well nursery</div>
+        <ol class="steps chain">
+          <li>Initial inpatient screen.</li>
+          <li>If needed, <b>1 inpatient rescreen</b>, several hours later.</li>
+          <li>Persistent refer → <b>1 valid outpatient rescreen of both ears</b>, ASAP and <b>before 1 month</b>.</li>
+          <li>Either ear still refers → <b>pediatric audiology referral now</b> (diagnostic ABR capability).</li>
+        </ol>
+        <div class="rail rd"><span class="when">NICU</span><span class="do">AABR refer → pediatric audiologist for rescreen + diagnostic assessment; <b>OAE alone does not clear this pathway.</b> <b>Very preterm + prolonged stay → diagnostic audiology before discharge, even after PASS.</b></span></div>
+        <div class="urgent-head" style="--c:var(--nb)"><span>Repeat screening raises the chance of a false pass; middle-ear fluid must not delay diagnosis. CMV collection proceeds in parallel <a href="#p-C" class="xlink"><span class="xref here" data-p="C">C–D</span></a></span></div>
+        <div class="small"><b class="lead">Complete by:</b> screening <b>1 month</b>&nbsp;· audiologic diagnosis <b>3 months</b>&nbsp;· early intervention for confirmed hearing loss <b>6 months</b>. Programs meeting <b>1–3–6</b> should strive for <b>1–2–3</b> (diagnosis 2 months&nbsp;· intervention 3 months).</div>
+        <div class="box local small"><span class="lfx">Outpatient rescreen site <span class="lfv" data-local="hearing_rescreen_site">____</span></span>&nbsp;· <span class="lfx">pediatric audiology (diagnostic ABR) <span class="lfv" data-local="peds_audiology_abr">____</span></span>&nbsp;· <span class="lfx">booking route <span class="lfv" data-local="audiology_booking_route">____</span></span></div>
+      </section>
+      <section class="panel c-inf" id="p-D">
+        <div class="ph"><span class="num">D</span><h2>Collect the right specimen</h2><span class="src">CDC Laboratory Testing for CMV and Congenital CMV (2024), Tests in newborns&nbsp;· Specimen collection&nbsp;· AAP (2026) Diagnostic Testing, KAS 5&nbsp;· MDH cCMV Provider FAQ (accessed 2026)</span></div>
+        <div class="box focus clockbox">
+          <span class="hero">≤ 21&nbsp;days<small>of age</small></span>
+          <div class="why"><b>Collection age determines the diagnostic window.</b> Record birth date / time and specimen date / time.</div>
+        </div>
+        <div class="urgent-head inf"><span>Obtain indicated testing promptly. Do not await outpatient rescreen or confirmed hearing loss.</span><span class="deadline">Today</span></div>
+        <table class="t spec">
+          <colgroup><col style="width:27%"><col style="width:73%"></colgroup>
+          <thead><tr><th>Specimen</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Urine CMV PCR</td><td>Diagnostic specimen; may be obtained directly.</td></tr>
+            <tr><td class="k">Saliva CMV PCR</td><td>Collect <b>&gt; 1&nbsp;h after breastfeeding</b>, per lab instructions. <b>VLBW preterm → urine PCR.</b></td></tr>
+            <tr><td class="k">Saliva positive</td><td>Confirm: <b>urine PCR by 21&nbsp;days</b>. Breast milk can make saliva falsely positive.</td></tr>
+            <tr><td class="k">Window nearly closed</td><td><b>Obtain urine directly</b>; avoid losing confirmation time while awaiting saliva results.</td></tr>
+          </tbody>
+        </table>
+        <ul class="ls small">
+          <li><b>IgG / IgM do not diagnose cCMV.</b></li>
+          <li>Newly positive urine / saliva <b>after 21&nbsp;days</b> cannot alone establish congenital infection.</li>
+          <li><b>Missed the window → urine PCR promptly + consult pediatric ID</b>; also request stored newborn <b>dried-blood-spot (DBS) PCR</b> when available. <b>Negative DBS does not exclude cCMV.</b></li>
+          <li>Negative universal DBS screen + compatible findings → urine PCR within the window.</li>
+        </ul>
+        <div class="box local small"><span class="lfx">Urine CMV PCR order <span class="lfv" data-local="urine_cmv_pcr_order">____</span></span>&nbsp;· <span class="lfx">collection kit <span class="lfv" data-local="cmv_collection_kit">____</span></span>&nbsp;· <span class="lfx">laboratory contact <span class="lfv" data-local="cmv_lab_contact">____</span></span></div>
+      </section>
+      <section class="panel c-inf" id="p-F">
+        <div class="ph"><span class="num">F</span><h2>Valganciclovir&nbsp;· who needs urgent referral?</h2><span class="src">AAP (2026) cCMV Clinical Report, Table 4, KAS 6–11&nbsp;· CDC CMV in Newborns (2025), Early treatments may help</span></div>
+        <div class="urgent-head inf"><span>cCMV disease or confirmed sensorineural hearing loss → <b>pediatric ID promptly</b>. Expedite diagnostic ABR.</span></div>
+        <table class="t tx">
+          <colgroup><col style="width:38%"><col style="width:62%"></colgroup>
+          <thead><tr><th>Findings</th><th>AAP treatment position</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Moderate / severe<span class="def">CNS involvement&nbsp;· severe or multiorgan disease&nbsp;· &gt; 2 persistent or mild findings</span></td><td>Valganciclovir <b>6 months</b>.</td></tr>
+            <tr><td class="k">Isolated sensorineural hearing loss</td><td><b>6&nbsp;weeks may be offered</b> if the full baseline evaluation finds nothing else; limited evidence → decide with ID, discuss adverse effects.</td></tr>
+            <tr><td class="k">Mild<span class="def">≤ 2 transient (&lt; 2&nbsp;wk) or minor findings</span></td><td>Routine treatment unsupported; individual decision with pediatric ID.</td></tr>
+            <tr class="no"><td class="k">No disease; normal hearing</td><td>No antiviral outside research.</td></tr>
+          </tbody>
+        </table>
+        <div class="start"><span class="hero">≤ 12w6d<small>of age</small></span><span><b>When selected: start ASAP</b>, at the latest through age 12&nbsp;weeks 6&nbsp;days. Specialist owns dosing and toxicity monitoring.</span></div>
+        <div class="box local small"><span class="lfx">Pediatric ID contact <span class="lfv" data-local="peds_id_contact">____</span></span>&nbsp;· <span class="lfx">referral route / after-hours <span class="lfv" data-local="peds_id_referral_route">____</span></span></div>
+      </section>
+    </div>
+    <div class="col">
+      <section class="panel c-inf" id="p-C">
+        <div class="ph"><span class="num">C</span><h2>Who needs cCMV testing?</h2><span class="src">AAP Clinical Report, Care of the Infant With Congenital CMV Infection (2026), Key Action Statements 2 and 4</span></div>
+        <div class="small"><b class="lead">AAP: hearing-targeted + expanded testing.</b> Test if <b>any</b>:</div>
+        <ul class="ls small ind">
+          <li><b>Initial newborn hearing-screen nonpass.</b></li>
+          <li>Maternal <b>HIV</b>, or maternal <b>CMV infection during pregnancy</b>.</li>
+          <li>Unexplained <b>petechiae, thrombocytopenia, hepatomegaly or splenomegaly</b>, elevated transaminases / direct bilirubin.</li>
+          <li>Compatible <b>CNS findings</b> or intra-abdominal calcifications.</li>
+          <li>Birth weight or head circumference <b>&lt; 10th percentile for gestational age</b>.</li>
+        </ul>
+        <div class="rail rd"><span class="when">Preterm</span><span class="do">Hearing screening delayed beyond 21&nbsp;days → <b>consider cCMV testing before 21&nbsp;days</b>.</span></div>
+        <div class="box local small"><div><b>Universal cCMV screening adopted?</b> <span class="lfv" data-local="universal_ccmv_adopted">____</span>&nbsp;· <span class="lfx">Screening specimen / order <span class="lfv" data-local="ccmv_screen_order">____</span></span>&nbsp;· <span class="lfx">confirmation pathway <span class="lfv" data-local="ccmv_confirmation_pathway">____</span></span></div><div class="mt1">Universal-screen result still pending near the diagnostic deadline → <span class="lfx">responsible clinician / laboratory plan <span class="lfv" data-local="ccmv_deadline_owner">____</span></span></div></div>
+      </section>
+      <section class="panel c-inf" id="p-E">
+        <div class="ph"><span class="num">E</span><h2>Result returns&nbsp;· confirm and evaluate</h2><span class="src">AAP (2026) cCMV Clinical Report, KAS 5–6, 15&nbsp;· MDH cCMV Provider FAQ, Screening Follow-up (state model, 2026)</span></div>
+        <div class="rail-list">
+          <div class="rail rs"><span class="when">Saliva or DBS screen positive; <span class="nowrap">urine pending</span></span><span class="do">Urine CMV PCR <b>by 21&nbsp;days</b> (older: collect anyway + pediatric ID). <b>Assign a result owner</b> <a href="#p-H" class="xlink"><span class="xref here">H</span></a></span></div>
+          <div class="rail rs"><span class="when">Urine positive, <span class="nowrap">collected ≤ 21&nbsp;days</span></span><span class="do"><b>Confirmed cCMV</b> → baseline evaluation (below) and specialty coordination.</span></div>
+          <div class="rail rs"><span class="when">Positive screen / <span class="nowrap">urine negative</span></span><span class="do">Screen contamination likely. Clinical signs or persistent concern → <b>laboratory + pediatric ID review</b>.</span></div>
+          <div class="rail rs"><span class="when">Invalid / indeterminate</span><span class="do">Contact laboratory; <b>recollect while the window remains open</b>.</span></div>
+          <div class="rail rs"><span class="when">Urine PCR negative</span><span class="do">Complete the hearing pathway <a href="#p-B" class="xlink"><span class="xref here">B</span></a> CMV testing does not establish hearing status. Negative DBS screen does not exclude cCMV <a href="#p-D" class="xlink"><span class="xref here">D</span></a></span></div>
+        </div>
+        <h3 class="mt0">Confirmed cCMV&nbsp;— arrange</h3>
+        <div class="eval">
+          <ul class="ls small">
+            <li>Complete exam: growth / head circumference, neurologic findings, skin, jaundice, liver / spleen.</li>
+            <li><b>CBC with platelets&nbsp;· liver tests&nbsp;· cranial ultrasound.</b></li>
+            <li><b>Diagnostic pediatric audiology&nbsp;· ophthalmology exam.</b></li>
+          </ul>
+          <ul class="ls small">
+            <li>Pediatric ID coordination. <b>Abnormal neurologic exam or cranial ultrasound → noncontrast brain MRI.</b></li>
+            <li><b>Offer early-intervention referral</b> to every infant with cCMV disease or isolated SNHL. Neurodevelopmental assessment at 12 months; also 24 months if treated.</li>
+          </ul>
+        </div>
+        <div class="urgent-head inf push"><span>Suspected disease or hearing loss → <b>expedite evaluation</b> for treatment decisions</span><a href="#p-F" class="xlink"><span class="xref here">F</span></a></div>
+      </section>
+      <section class="panel c-nb" id="p-G">
+        <div class="ph"><span class="num">G</span><h2>Passed screen? Risk follow-up still matters</h2><span class="src">AAP Hearing Assessment (2023), Table 1 (JCIH 2019)&nbsp;· AAP (2026) cCMV, Table 6, KAS 15&nbsp;· JCIH FAQs (2024)</span></div>
+        <table class="t risk">
+          <colgroup><col style="width:64%"><col style="width:36%"></colgroup>
+          <thead><tr><th>Risk despite PASS</th><th>Diagnostic audiology</th></tr></thead>
+          <tbody>
+            <tr><td><ul class="risk-list"><li>Family history of permanent childhood hearing loss</li><li>NICU <b>&gt; 5&nbsp;days</b></li><li>Hyperbilirubinemia with exchange transfusion</li><li>Aminoglycosides <b>&gt; 5&nbsp;days</b>, or shorter with toxic levels / known genetic susceptibility</li><li>HIE / asphyxia</li><li>Congenital herpes, rubella, syphilis, toxoplasmosis</li><li>Congenital microcephaly</li><li>Congenital or acquired hydrocephalus</li><li>Relevant craniofacial / temporal-bone anomalies or syndromes</li></ul></td><td><b>By 9 months</b>; later monitoring individualized. A normal early diagnostic ABR does not replace this follow-up.</td></tr>
+            <tr><td>Possible maternal Zika in pregnancy&nbsp;· congenital Zika syndrome</td><td><b>AABR by 1 month</b> if passed on OAE only</td></tr>
+            <tr><td>ECMO&nbsp;· meningitis / encephalitis associated with hearing loss</td><td><b>Within 3 months</b> of occurrence; annually to school age, sooner for concern</td></tr>
+            <tr><td>Significant head trauma&nbsp;· chemotherapy</td><td><b>Within 3 months</b> of occurrence; then individualized</td></tr>
+            <tr><td>Caregiver concern: hearing, language, delay or regression</td><td><b>Immediate referral</b></td></tr>
+          </tbody>
+        </table>
+        <div class="sched"><b class="lead">cCMV:</b> initial diagnostic audiology <b>by 12&nbsp;weeks</b>, even after PASS, so treatment can start by 12w6d. <b class="lead">AAP 2026, no recognized hearing changes:</b> recheck at <span class="ages">4, 6, 9, 12, 15, 18, 24, 30 months</span>; annually at <span class="ages">4–6 years</span>; at <span class="ages">8 and 10 years</span>. Known SNHL → audiology / ENT schedule; <b>late-onset SNHL → ophthalmology again</b>.</div>
+        <div class="small muted">Modality: JCIH: diagnostic audiology, not screening alone&nbsp;· AAP 2026: office OAE / AABR if no hearing changes.</div>
+        <div class="box local small push"><div>cCMV hearing surveillance: <span class="lfx">adopted schedule <span class="lfv" data-local="ccmv_hearing_schedule">____</span></span>&nbsp;· <span class="lfx">modality <span class="lfv" data-local="ccmv_hearing_modality">____</span></span>&nbsp;· <span class="lfx">referral triggers <span class="lfv" data-local="ccmv_hearing_referral_triggers">____</span></span>&nbsp;· <span class="lfx">responsible service <span class="lfv" data-local="ccmv_hearing_service">____</span></span></div><div class="mt1">Exactly 5 NICU days (table &gt; 5&nbsp;d; JCIH FAQ ≥ 5&nbsp;d) → <span class="lfx">boundary rule <span class="lfv" data-local="nicu_5day_boundary_rule">____</span></span>&nbsp;· <span class="lfx">special-care-nursery classification <span class="lfv" data-local="scn_classification">____</span></span></div></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- H: family · document · report -->
+  <section class="panel c-wf" id="p-H">
+    <div class="ph inl"><span class="num">H</span><h2>Family&nbsp;· document&nbsp;· report&nbsp;· close the loop</h2><span class="src">ASHA Practice Portal, Documentation&nbsp;· Loss to Follow-Up (accessed 2026)&nbsp;· CDC CMV in Newborns (2025)&nbsp;· reporting is LOCAL</span></div>
+    <div class="loop">
+      <div>
+        <div class="small"><b class="lead">Explain:</b></div>
+        <div class="say"><q>The screen needs follow-up testing. We will check both ears. CMV testing has a short collection window, so we are arranging that now.</q></div>
+        <div class="small"><b class="lead">If cCMV confirmed:</b> hearing changes can appear later, even after a passed newborn screen. Give next appointments, written contacts and family-support resources.</div>
+      </div>
+      <div>
+        <div class="small"><b class="lead">Before the family leaves:</b></div>
+        <ul class="ls check">
+          <li>Rescreen / diagnostic appointment: <b>date, time, place, phone</b> given.</li>
+          <li>Medical home, preferred language / interpreter, reliable contact confirmed.</li>
+          <li><b>Infant’s chart:</b> each ear’s result, OAE / AABR method, screening dates, risk factors, referrals.</li>
+          <li>CMV indication, specimen type, collection date / time, result or pending status.</li>
+          <li>Named owner reviews pending results, contacts family / PCP, arranges confirmation, tracks missed appointments.</li>
+        </ul>
+        <div class="xs muted">General newborn discharge readiness <a href="18-nursery.html#p-07" class="xlink"><span class="xref c-wf">18&nbsp;· 07</span></a></div>
+      </div>
+      <div>
+        <div class="box local rep"><b>Hearing / EHDI reporting</b><span class="lfx">State / program <span class="lfv" data-local="ehdi_program">____</span></span>&nbsp;· <span class="lfx">portal / form <span class="lfv" data-local="ehdi_portal_form">____</span></span>&nbsp;· <span class="lfx">required results / events <span class="lfv" data-local="ehdi_required_results">____</span></span>&nbsp;· <span class="lfx">deadline <span class="lfv" data-local="ehdi_deadline">____</span></span>&nbsp;· <span class="lfx">responsible role <span class="lfv" data-local="ehdi_responsible_role">____</span></span>
+          <b>cCMV public-health reporting</b><span class="lfx">Required? <span class="lfv" data-local="ccmv_report_required">____</span></span>&nbsp;· <span class="lfx">authority / form <span class="lfv" data-local="ccmv_report_authority_form">____</span></span>&nbsp;· <span class="lfx">deadline <span class="lfv" data-local="ccmv_report_deadline">____</span></span>&nbsp;· <span class="lfx">responsible role <span class="lfv" data-local="ccmv_report_responsible_role">____</span></span>
+          <b>Pending-result owner</b><span class="lfx">Owner <span class="lfv" data-local="pending_result_owner">____</span></span>&nbsp;· <span class="lfx">backup <span class="lfv" data-local="pending_result_backup">____</span></span>&nbsp;· <span class="lfx">review deadline <span class="lfv" data-local="pending_result_review_deadline">____</span></span></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ASHA Practice Portal, Newborn Hearing Screening (living page, accessed 2026), Technology&nbsp;· Protocols&nbsp;· Documentation and Dissemination&nbsp;· Loss to Follow-Up; JCIH Year 2019 Position Statement; JCIH FAQs (2024): Newborn Hearing Screening, Audiology, Medical Considerations; CDC Screening for Hearing Loss (2024); AAP Clinical Report, Care of the Infant With Congenital Cytomegalovirus Infection (Pediatrics 2026; doi 10.1542/peds.2026-078595), KAS 2, 4–11, Tables 4 and 6; CDC Laboratory Testing for CMV and Congenital CMV (2024); CDC CMV in Newborns (2025); Minnesota Department of Health, CMV Screening Follow-up and cCMV Provider FAQ (accessed 2026); AAP Hearing Assessment in Infants, Children, and Adolescents: Recommendations Beyond Neonatal Screening (Pediatrics 2023), Table 1. Specialist dosing and toxicity monitoring are not on this sheet. Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek0xMSwwSDEyVjFIMTF6TTEyLDBIMTNWMUgxMnpNMTUsMEgxNlYxSDE1ek0xNywwSDE4VjFIMTd6TTE4LDBIMTlWMUgxOHpNMTksMEgyMFYxSDE5ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTAsMUgxMVYySDEwek0xMSwxSDEyVjJIMTF6TTE0LDFIMTVWMkgxNHpNMTUsMUgxNlYySDE1ek0xNiwxSDE3VjJIMTZ6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTEwLDJIMTFWM0gxMHpNMTIsMkgxM1YzSDEyek0xNSwySDE2VjNIMTV6TTE3LDJIMThWM0gxN3pNMTgsMkgxOVYzSDE4ek0xOSwySDIwVjNIMTl6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTE4LDNIMTlWNEgxOHpNMTksM0gyMFY0SDE5ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTgsNEg5VjVIOHpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNMTAsNUgxMVY2SDEwek0xMiw1SDEzVjZIMTJ6TTEzLDVIMTRWNkgxM3pNMTUsNUgxNlY2SDE1ek0xNiw1SDE3VjZIMTZ6TTE5LDVIMjBWNkgxOXpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTgsN0g5VjhIOHpNOSw3SDEwVjhIOXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE1LDdIMTZWOEgxNXpNMTcsN0gxOFY4SDE3ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTMsOEg0VjlIM3pNNiw4SDdWOUg2ek03LDhIOFY5SDd6TTEwLDhIMTFWOUgxMHpNMTIsOEgxM1Y5SDEyek0xMyw4SDE0VjlIMTN6TTE0LDhIMTVWOUgxNHpNMTYsOEgxN1Y5SDE2ek0yMCw4SDIxVjlIMjB6TTIyLDhIMjNWOUgyMnpNMjMsOEgyNFY5SDIzek0yNCw4SDI1VjlIMjR6TTI2LDhIMjdWOUgyNnpNMjcsOEgyOFY5SDI3ek0wLDlIMVYxMEgwek0xLDlIMlYxMEgxek0zLDlINFYxMEgzek01LDlINlYxMEg1ek0xMyw5SDE0VjEwSDEzek0xNCw5SDE1VjEwSDE0ek0xNiw5SDE3VjEwSDE2ek0yMCw5SDIxVjEwSDIwek0yMiw5SDIzVjEwSDIyek0yNSw5SDI2VjEwSDI1ek0yOCw5SDI5VjEwSDI4ek0wLDEwSDFWMTFIMHpNMSwxMEgyVjExSDF6TTIsMTBIM1YxMUgyek00LDEwSDVWMTFINHpNNSwxMEg2VjExSDV6TTYsMTBIN1YxMUg2ek05LDEwSDEwVjExSDl6TTEwLDEwSDExVjExSDEwek0xNCwxMEgxNVYxMUgxNHpNMTcsMTBIMThWMTFIMTd6TTE5LDEwSDIwVjExSDE5ek0yMCwxMEgyMVYxMUgyMHpNMjEsMTBIMjJWMTFIMjF6TTI0LDEwSDI1VjExSDI0ek0yNSwxMEgyNlYxMUgyNXpNMjYsMTBIMjdWMTFIMjZ6TTI3LDEwSDI4VjExSDI3ek0yLDExSDNWMTJIMnpNMywxMUg0VjEySDN6TTUsMTFINlYxMkg1ek03LDExSDhWMTJIN3pNOCwxMUg5VjEySDh6TTExLDExSDEyVjEySDExek0xMywxMUgxNFYxMkgxM3pNMTQsMTFIMTVWMTJIMTR6TTE1LDExSDE2VjEySDE1ek0xNiwxMUgxN1YxMkgxNnpNMTgsMTFIMTlWMTJIMTh6TTE5LDExSDIwVjEySDE5ek0yMCwxMUgyMVYxMkgyMHpNMjEsMTFIMjJWMTJIMjF6TTIzLDExSDI0VjEySDIzek0yNiwxMUgyN1YxMkgyNnpNMjcsMTFIMjhWMTJIMjd6TTAsMTJIMVYxM0gwek0zLDEySDRWMTNIM3pNNCwxMkg1VjEzSDR6TTYsMTJIN1YxM0g2ek04LDEySDlWMTNIOHpNMTMsMTJIMTRWMTNIMTN6TTE2LDEySDE3VjEzSDE2ek0xNywxMkgxOFYxM0gxN3pNMTgsMTJIMTlWMTNIMTh6TTE5LDEySDIwVjEzSDE5ek0yMCwxMkgyMVYxM0gyMHpNMjEsMTJIMjJWMTNIMjF6TTIyLDEySDIzVjEzSDIyek0yMywxMkgyNFYxM0gyM3pNMjUsMTJIMjZWMTNIMjV6TTI3LDEySDI4VjEzSDI3ek0yOCwxMkgyOVYxM0gyOHpNMCwxM0gxVjE0SDB6TTEsMTNIMlYxNEgxek00LDEzSDVWMTRINHpNNSwxM0g2VjE0SDV6TTcsMTNIOFYxNEg3ek05LDEzSDEwVjE0SDl6TTEwLDEzSDExVjE0SDEwek0xMiwxM0gxM1YxNEgxMnpNMTksMTNIMjBWMTRIMTl6TTIwLDEzSDIxVjE0SDIwek0yMSwxM0gyMlYxNEgyMXpNMCwxNEgxVjE1SDB6TTMsMTRINFYxNUgzek02LDE0SDdWMTVINnpNOCwxNEg5VjE1SDh6TTEwLDE0SDExVjE1SDEwek0xMSwxNEgxMlYxNUgxMXpNMTQsMTRIMTVWMTVIMTR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjcsMTRIMjhWMTVIMjd6TTI4LDE0SDI5VjE1SDI4ek0xLDE1SDJWMTZIMXpNMywxNUg0VjE2SDN6TTUsMTVINlYxNkg1ek04LDE1SDlWMTZIOHpNMTAsMTVIMTFWMTZIMTB6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTMsMTVIMTRWMTZIMTN6TTE0LDE1SDE1VjE2SDE0ek0xNSwxNUgxNlYxNkgxNXpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0xOSwxNUgyMFYxNkgxOXpNMjAsMTVIMjFWMTZIMjB6TTIyLDE1SDIzVjE2SDIyek0yNCwxNUgyNVYxNkgyNHpNMjUsMTVIMjZWMTZIMjV6TTI3LDE1SDI4VjE2SDI3ek0xLDE2SDJWMTdIMXpNMiwxNkgzVjE3SDJ6TTMsMTZINFYxN0gzek02LDE2SDdWMTdINnpNOSwxNkgxMFYxN0g5ek0xMiwxNkgxM1YxN0gxMnpNMTUsMTZIMTZWMTdIMTV6TTE3LDE2SDE4VjE3SDE3ek0xOSwxNkgyMFYxN0gxOXpNMjEsMTZIMjJWMTdIMjF6TTI3LDE2SDI4VjE3SDI3ek0xLDE3SDJWMThIMXpNMiwxN0gzVjE4SDJ6TTQsMTdINVYxOEg0ek01LDE3SDZWMThINXpNNywxN0g4VjE4SDd6TTEwLDE3SDExVjE4SDEwek0xMSwxN0gxMlYxOEgxMXpNMTIsMTdIMTNWMThIMTJ6TTEzLDE3SDE0VjE4SDEzek0xNCwxN0gxNVYxOEgxNHpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0yMSwxN0gyMlYxOEgyMXpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNSwxN0gyNlYxOEgyNXpNMjgsMTdIMjlWMThIMjh6TTAsMThIMVYxOUgwek0yLDE4SDNWMTlIMnpNNCwxOEg1VjE5SDR6TTYsMThIN1YxOUg2ek04LDE4SDlWMTlIOHpNOSwxOEgxMFYxOUg5ek0xMywxOEgxNFYxOUgxM3pNMTcsMThIMThWMTlIMTd6TTIxLDE4SDIyVjE5SDIxek0yMiwxOEgyM1YxOUgyMnpNMjcsMThIMjhWMTlIMjd6TTI4LDE4SDI5VjE5SDI4ek0zLDE5SDRWMjBIM3pNNCwxOUg1VjIwSDR6TTUsMTlINlYyMEg1ek04LDE5SDlWMjBIOHpNOSwxOUgxMFYyMEg5ek0xMCwxOUgxMVYyMEgxMHpNMTYsMTlIMTdWMjBIMTZ6TTE3LDE5SDE4VjIwSDE3ek0xOCwxOUgxOVYyMEgxOHpNMjIsMTlIMjNWMjBIMjJ6TTIzLDE5SDI0VjIwSDIzek0yNywxOUgyOFYyMEgyN3pNMjgsMTlIMjlWMjBIMjh6TTAsMjBIMVYyMUgwek0yLDIwSDNWMjFIMnpNNCwyMEg1VjIxSDR6TTYsMjBIN1YyMUg2ek03LDIwSDhWMjFIN3pNOCwyMEg5VjIxSDh6TTksMjBIMTBWMjFIOXpNMTEsMjBIMTJWMjFIMTF6TTEyLDIwSDEzVjIxSDEyek0xMywyMEgxNFYyMUgxM3pNMTQsMjBIMTVWMjFIMTR6TTE5LDIwSDIwVjIxSDE5ek0yMCwyMEgyMVYyMUgyMHpNMjEsMjBIMjJWMjFIMjF6TTIyLDIwSDIzVjIxSDIyek0yMywyMEgyNFYyMUgyM3pNMjQsMjBIMjVWMjFIMjR6TTI2LDIwSDI3VjIxSDI2ek04LDIxSDlWMjJIOHpNMTIsMjFIMTNWMjJIMTJ6TTEzLDIxSDE0VjIySDEzek0xNiwyMUgxN1YyMkgxNnpNMTcsMjFIMThWMjJIMTd6TTE5LDIxSDIwVjIySDE5ek0yMCwyMUgyMVYyMkgyMHpNMjQsMjFIMjVWMjJIMjR6TTI2LDIxSDI3VjIySDI2ek0yNywyMUgyOFYyMkgyN3pNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek04LDIySDlWMjNIOHpNMTIsMjJIMTNWMjNIMTJ6TTEzLDIySDE0VjIzSDEzek0xNiwyMkgxN1YyM0gxNnpNMTcsMjJIMThWMjNIMTd6TTE4LDIySDE5VjIzSDE4ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yNywyMkgyOFYyM0gyN3pNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek0xMSwyM0gxMlYyNEgxMXpNMTIsMjNIMTNWMjRIMTJ6TTEzLDIzSDE0VjI0SDEzek0xNSwyM0gxNlYyNEgxNXpNMTYsMjNIMTdWMjRIMTZ6TTIwLDIzSDIxVjI0SDIwek0yNCwyM0gyNVYyNEgyNHpNMjUsMjNIMjZWMjRIMjV6TTI2LDIzSDI3VjI0SDI2ek0yNywyM0gyOFYyNEgyN3pNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek0xMCwyNEgxMVYyNUgxMHpNMTEsMjRIMTJWMjVIMTF6TTEyLDI0SDEzVjI1SDEyek0xMywyNEgxNFYyNUgxM3pNMTYsMjRIMTdWMjVIMTZ6TTE3LDI0SDE4VjI1SDE3ek0xOCwyNEgxOVYyNUgxOHpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNywyNEgyOFYyNUgyN3pNMjgsMjRIMjlWMjVIMjh6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNOCwyNUg5VjI2SDh6TTksMjVIMTBWMjZIOXpNMTIsMjVIMTNWMjZIMTJ6TTE0LDI1SDE1VjI2SDE0ek0xOSwyNUgyMFYyNkgxOXpNMjAsMjVIMjFWMjZIMjB6TTIxLDI1SDIyVjI2SDIxek0yMiwyNUgyM1YyNkgyMnpNMjMsMjVIMjRWMjZIMjN6TTI0LDI1SDI1VjI2SDI0ek0yNSwyNUgyNlYyNkgyNXpNMjYsMjVIMjdWMjZIMjZ6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNOSwyNkgxMFYyN0g5ek0xMCwyNkgxMVYyN0gxMHpNMTEsMjZIMTJWMjdIMTF6TTEzLDI2SDE0VjI3SDEzek0xNiwyNkgxN1YyN0gxNnpNMTcsMjZIMThWMjdIMTd6TTE5LDI2SDIwVjI3SDE5ek0yNCwyNkgyNVYyN0gyNHpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yOCwyNkgyOVYyN0gyOHpNMCwyN0gxVjI4SDB6TTYsMjdIN1YyOEg2ek04LDI3SDlWMjhIOHpNOSwyN0gxMFYyOEg5ek0xMSwyN0gxMlYyOEgxMXpNMTIsMjdIMTNWMjhIMTJ6TTEzLDI3SDE0VjI4SDEzek0xNywyN0gxOFYyOEgxN3pNMTgsMjdIMTlWMjhIMTh6TTE5LDI3SDIwVjI4SDE5ek0yMCwyN0gyMVYyOEgyMHpNMjIsMjdIMjNWMjhIMjJ6TTI3LDI3SDI4VjI4SDI3ek0wLDI4SDFWMjlIMHpNMSwyOEgyVjI5SDF6TTIsMjhIM1YyOUgyek0zLDI4SDRWMjlIM3pNNCwyOEg1VjI5SDR6TTUsMjhINlYyOUg1ek02LDI4SDdWMjlINnpNOCwyOEg5VjI5SDh6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

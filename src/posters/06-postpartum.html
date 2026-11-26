@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Postpartum and Discharge</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); }
+  /* MEC category chips: neutral 1/2, caution 3, prohibition 4; ink outlines survive greyscale (c1, c2 #7) */
+  .m { display: inline-grid; place-items: center; width: 22pt; height: 18pt; font: 800 11pt/1 "Inter"; border-radius: 2pt; border: 1pt solid var(--ink-2); color: var(--ink); }
+  .m1 { background: #fff; }
+  .m2 { background: var(--t-ink); }
+  .m3 { background: var(--warn); }
+  .m4 { background: var(--stop); color: #fff; border-color: var(--ink); }
+  .m.ast { width: 26pt; }
+  /* C: method table + separate IUD timing table (IUD boundaries differ from the day bands) */
+  .mec-layout { display: grid; grid-template-columns: minmax(0, 1fr) 2.45in; gap: 14pt; align-items: start; }
+  .mec-main, .mec-side { display: flex; flex-direction: column; gap: calc(7pt / var(--k)); min-width: 0; }
+  .sheet.tile-rf .mec-layout { grid-template-columns: minmax(0, 1fr); }   /* 11x17 re-flow: IUD/LAM stack under the method table */
+  table.mec td, table.mec th { text-align: center; vertical-align: middle; }
+  table.mec td:first-child:not(.rf), table.mec th:first-child, table.mec td.fd, table.mec th:nth-child(2) { text-align: left; }
+  table.mec td { padding: 4pt 4pt; }
+  table.mec td.fd { color: var(--ink-2); font-weight: 600; white-space: nowrap; }
+  table.mec tr.grp > td { border-top: 1.2pt solid var(--ink-3); }
+  table.mec .sub { font: 600 9pt/1.1 "Inter"; color: var(--ink-2); display: block; text-transform: none; letter-spacing: 0; }
+  /* VTE risk as a shared row key in the feeding stub (ax2 #6); feeding cell keeps its gutter after rowspans (fo1 #5) */
+  table.mec td.fd { padding-left: 4pt; }
+  table.mec :is(td, th).rf { text-align: center; padding-inline: 4pt; }
+  table.mec td.rf { font-weight: 700; color: var(--ink); }
+  table.mec.iud td:first-child { white-space: nowrap; }
+  table.mec .method { border-left: .75pt solid var(--rule); }   /* method columns read as columns (vis7 #7) */
+  table.mec.hairline .method { border-left: calc(.55pt / var(--k)) solid #999; }   /* measured hairline trial (ax4 #5) */
+  .mkey { display: flex; gap: 10pt; flex-wrap: wrap; font-size: 10.5pt; align-items: center; }
+  /* A: three operating contexts, each with an aligned title (w1 #5, v1 #3, w2 #11, r2 #17) */
+  .contexts { align-items: stretch; }
+  .ctx { font: 800 11pt/1.2 "Inter"; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2);
+    border-bottom: 1.2pt solid var(--ink); padding-bottom: 4pt; margin-bottom: 7pt; }
+  .ctx b { color: var(--ink); }
+  .ctx, .pbhead { font-feature-settings: "ss04" 1, "case" 1; }   /* ax4 #2 */
+  .pbhead .pbsub { font-feature-settings: "ss04" 1; }
+  /* POST-BIRTH: routing action first, letters supporting (w1 #5) */
+  .pb { display: grid; grid-template-columns: 0.36in 1fr; gap: 3pt 8pt; align-items: baseline; font-size: 11.5pt; }
+  .pb .L { font: 900 calc(22pt / var(--k))/1 "Inter Display"; color: var(--c); }
+  .pbhead { font: 800 calc(18pt / var(--k))/1.15 "Inter"; letter-spacing: .02em; text-transform: uppercase; padding: 4pt 8pt; color: #fff; margin: 4pt 0 3pt; }
+  .pbhead .pbsub { font: 700 10.5pt/1.2 "Inter"; text-transform: none; letter-spacing: 0; margin-left: 8pt; opacity: .92; white-space: nowrap; }
+  .sheet > .mt3 { margin-top: 0.1in; }   /* section rhythm */
+  /* masthead: navigation in its own reserved row, never over the kicker (place1 #2, vis7 #1, vis6 #1) */
+  .masthead.safe-nav { grid-template-rows: auto auto; row-gap: calc(5pt / var(--k)); }
+  .masthead.safe-nav > .setnav { position: static; grid-column: 1 / -1; grid-row: 1; justify-self: end; }
+  .masthead.safe-nav > .kicker { grid-column: 1; grid-row: 1; align-self: center; margin: 0; }
+  .masthead.safe-nav > div:not(.kicker, .sub) { grid-column: 1; grid-row: 2; }
+  .masthead.safe-nav > .sub { grid-column: 2; grid-row: 2; margin-top: 0; }
+  /* paired rows: one gutter, shared header track (v1 #7) */
+  .row.pair { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.35fr); grid-template-rows: auto auto; column-gap: var(--gap); row-gap: 0.08in; }
+  .row.pair > .block { display: grid; grid-template-rows: subgrid; grid-row: span 2; }
+  .row.pair > .block > .band { min-height: 0; }
+  .row.pair.de { grid-template-columns: minmax(0, .82fr) minmax(0, 1.38fr); }   /* D/E: E carries the denser tables */
+  .pair-body { display: flex; flex-direction: column; gap: 0.14in; min-width: 0; }
+  /* D and E: letter beside a stacked title + citation (place1 #6) */
+  :is(.sec-d, .sec-e) > .band { grid-template-columns: auto minmax(0, 1fr); row-gap: 3pt; }
+  :is(.sec-d, .sec-e) > .band .lt { grid-row: 1 / span 2; align-self: center; }
+  :is(.sec-d, .sec-e) > .band h2 { grid-column: 2; }
+  .sec-e > .band h2 { white-space: nowrap; }
+  :is(.sec-d, .sec-e) > .band .src { grid-column: 2; text-align: left; }
+  /* paired rows: titles share a top line; citations sit on the rule (place1 #7, vis7 #15) */
+  .row.pair > .block > .band { align-items: start; }
+  .row.pair > .block > .band .src { align-self: end; }
+  /* B: severe-range BP pulled out of the definition list */
+  .bp-severe .bp-h { display: flex; align-items: center; gap: 8pt; flex-wrap: wrap; }
+  .bp-severe .bp-h h3 { margin: 0; }
+  .bp-severe .sev-line { display: flex; align-items: baseline; gap: 4pt 12pt; flex-wrap: wrap; margin-top: 3pt; }
+  .bp-severe .threshold { font: 800 15pt/1.15 "Inter"; color: var(--htn); white-space: nowrap; }
+  .bp-severe .sev-act { font-weight: 700; margin-top: 2pt; }   /* V4: purple severe-BP block, one statement per line (01 .sevbp grammar) */
+  .bp-severe .sev-act .deadline { margin: 0 2pt; }
+  /* B: postpartum BP clock (e2 #3) — .ga2 grammar: purple = HTN; solid = do, outline = presentation window */
+  .pp-bp-clock svg { display: block; width: 100%; height: auto; }
+  .pp-bp-clock text { font-family: "Inter", sans-serif; font-weight: 600; fill: var(--ink); }
+  .pp-bp-clock .nm { font-weight: 700; }
+  .pp-bp-clock .inv { fill: #fff; font-weight: 700; }
+  .pp-bp-clock .grid { stroke: var(--rule); stroke-width: .75; }
+  .pp-bp-clock .axis { stroke: var(--ink); stroke-width: 1.2; }
+  .pp-bp-clock .do { fill: var(--htn); stroke: var(--htn); }
+  .pp-bp-clock .window { fill: #fff; stroke: var(--htn); stroke-width: 1.6; }
+  .pp-bp-clock .cap { stroke: var(--htn); stroke-width: 2.2; fill: none; }
+  .pp-bp-clock .min { fill: none; stroke: var(--htn); stroke-width: 1.6; }
+  .pp-bp-clock .axis-number { font-variant-numeric: lining-nums tabular-nums; letter-spacing: 0; }
+  /* event-relative row: its clock starts at discharge, so it sits outside the birth-day grid (ax2 #2) */
+  .pp-bp-relative { display: grid; grid-template-columns: 9.6em minmax(0, 1fr); gap: 8pt; border-top: .75pt solid var(--rule); padding-top: 5pt; margin-top: -4pt; }
+  .pp-bp-relative > b { color: var(--htn); }
+  .after-dc .or { color: var(--htn); }
+  /* routine reference surfaces: white, topic edge only (c3 #3, e3 #5) */
+  .box.ref { background: #fff; border: calc(.75pt / var(--k)) solid #A6A6A6; border-top: calc(3pt / var(--k)) solid var(--c); }
+  .box.ref > .box-heading { color: var(--c); }
+  /* cd2 #5: box headings are H3 for document outline, styled as the former H4 */
+  h3.box-heading { font: 700 14pt/1.2 "Inter"; color: var(--ink); border: 0; padding: 0; margin: 0 0 3pt; letter-spacing: normal; }
+  h3.box-heading.mt2 { margin-top: 8pt; }
+  /* E: VTE decisions + neuraxial timing */
+  table.vte-dec td:first-child:not(.cont) { font-weight: 700; padding-right: 8pt; }
+  table.vte-dec td.cont { padding-left: 6pt; }
+  table.vte-dec td { border-bottom-color: var(--rule); }
+  table.vte-timing td:not(:first-child), table.vte-timing th:not(:first-child) { text-align: right; }   /* scalar clocks right-aligned (fo1 #5) */
+  table.vte-timing td:not(:first-child) { font-weight: 800; font-size: 13pt; white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; letter-spacing: 0; }
+  .restart-gate { margin: 2pt 0 4pt; padding-left: 7pt; border-left: calc(4pt / var(--k)) solid var(--stop); }
+  .box .box-heading .h4-note { font: 600 10.5pt/1 "Inter"; color: var(--ink-2); margin-left: 6pt; }
+  .box .box-heading .both { font: 700 9.5pt/1 "Inter"; letter-spacing: .02em; color: #fff; background: var(--wf); padding: 2pt 6pt; border-radius: 999px; margin-left: 4pt; vertical-align: 1pt; white-space: nowrap; }
+  .anemia .rail { grid-template-columns: max-content minmax(0, 1fr); }
+  .anemia-bleed { margin-top: 4pt; padding-top: 4pt; border-top: .75pt solid var(--rule); font-weight: 700; }
+  .e-pair { align-items: stretch; }
+  /* K4-10: lookup labels 600, actions 700 (house weight scale) */
+  .anemia .rail > .when { font-weight: 600; } .anemia .rail > .do { font-weight: 700; } .anemia-bleed { font-weight: 600; }
+  table.vte-dec td:first-child:not(.cont) { font-weight: 600; }
+  /* F: labelled lines inside the mixed vaccines & labs box (c1: vaccine = infection, glucose = diabetes) */
+  .vl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3pt 8pt; align-items: baseline; }
+  .vl > dt { font-weight: 800; white-space: nowrap; }
+  .vl > dt.inf { color: var(--inf); } .vl > dt.met { color: var(--met); }
+  .vl > dd { margin: 0; }
+  /* D: both urgent routes before score interpretation (or2 #9) */
+  .mood-gate { display: grid; gap: 6pt; }
+  .milk-intake { margin-top: 6pt; padding-top: 6pt; border-top: .75pt solid var(--rule); }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="05-newborn.html" title="Newborn">‹ 05</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html" selected="">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="07-prenatal.html" title="Prenatal &amp; Timing">07 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/06-postpartum.pdf">PDF</a></nav>
+<div class="sheet portrait-24x36" style="--k:1.47">
+  <header class="masthead safe-nav">
+    <div class="kicker"><i class="dot"></i>Postpartum unit</div>
+    <div>
+      <h1><span class="sid">06</span>Postpartum</h1>
+    </div>
+    <div class="sub">After birth: discharge readiness, warning signs, blood pressure, contraception (CDC MEC 2024), mood, VTE, pain, anemia, lactation. Still pregnant, going home from triage <a href="21-before-discharge.html" class="xlink"><span class="xref c-wf">21</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="02-emergencies.html" class="xlink"><span><b>2</b>Emergencies</span></a><a href="11-bp-meds.html" class="xlink"><span><b>11</b>BP meds</span></a><a href="14-pp-headache.html" class="xlink"><span><b>14</b>PP headache</span></a><a href="10-feeding.html" class="xlink"><span><b>10</b>Feeding</span></a><a href="25-dyad-discharge.html" class="xlink"><span><b>25</b>Dyad → home</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-06.svg)"></div>
+
+  <!-- ============ A ============ -->
+  <section class="block c-wf" id="p-A">
+    <div class="band">
+      <div class="lt">A</div>
+      <h2>Maternal discharge after birth<small>Contact within 3&nbsp;weeks; comprehensive visit by 12&nbsp;weeks (ACOG CO 736)&nbsp;· mother + newborn going home <a href="25-dyad-discharge.html#p-A" class="xlink"><span class="xref c-wf">25&nbsp;· A</span></a></small></h2>
+      <div class="src">ACOG CO 736 (reaff. 2025)&nbsp;· ERAS 2025<br>ACOG Severe HTN Bundle 2025&nbsp;· AWHONN 2023</div>
+    </div>
+    <div class="row contexts">
+      <div style="flex:1.6">
+        <div class="ctx"><b>Clinician</b>&nbsp;· discharge checklist</div>
+        <ul class="ls check small" style="gap:5pt">
+          <li><b>BP</b> controlled for <span class="lfv" data-local="pp_bp_controlled_hours">____</span> h <span class="tag local">Local</span>; BP check ≤ 72&nbsp;h after discharge if severe HTN; by 7–10&nbsp;d after birth for every HDP; home cuff if on meds</li>
+          <li><b>POST-BIRTH</b> teaching done; patient can say “I gave birth on ___ and I am having ___”</li>
+          <li><b>Mood:</b> EPDS / PHQ-9 reviewed; bipolar screen before any antidepressant</li>
+          <li><b>Contraception</b> plan; long-acting reversible contraception (LARC) or DMPA offered before discharge</li>
+          <li><b>RhIG</b> if Rh− + Rh+ / unknown infant&nbsp;· <b>MMR / varicella / Tdap / flu</b> as indicated</li>
+          <li><b>GDM:</b> order a 75&nbsp;g OGTT, to be done before discharge or at 4–12&nbsp;wk postpartum</li>
+          <li><b>Pain:</b> scheduled NSAID + acetaminophen; shared decision on opioid quantity</li>
+          <li><b>VTE</b> plan (low-molecular-weight heparin [LMWH] × 6&nbsp;wk + teaching if indicated)&nbsp;· <b>anemia</b> plan</li>
+          <li><b>OUD:</b> MOUD access, naloxone, family plan <a href="24-substance-dyad.html#p-J" class="xlink"><span class="xref c-wf">24&nbsp;· J</span></a></li>
+          <li><b>Lactation</b> support&nbsp;· visit ≤ 3&nbsp;wk booked</li>
+        </ul>
+      </div>
+      <div style="flex:0.88">
+        <div class="ctx"><b>Teach the patient</b>&nbsp;· after going home</div>
+        <div class="pbhead" style="background:var(--stop)">Call 911</div>
+        <div class="pb c-stop">
+          <span class="L">P</span><span>Pain in chest</span>
+          <span class="L">O</span><span>Obstructed breathing / short of breath</span>
+          <span class="L">S</span><span>Seizures</span>
+          <span class="L">T</span><span>Thoughts of hurting self or someone else</span>
+        </div>
+        <div class="pbhead" style="background:var(--wf)">Call your provider <span class="pbsub">no answer → 911 / ER</span></div>
+        <div class="pb c-wf">
+          <span class="L">B</span><span>Bleeding ≥ 1 pad/hour or egg-sized clots</span>
+          <span class="L">I</span><span>Incision not healing</span>
+          <span class="L">R</span><span>Red, swollen, painful or warm leg</span>
+          <span class="L">T</span><span>Temperature ≥ 100.4 °F or ≤ 96.8 °F</span>
+          <span class="L">H</span><span>Headache not relieved by medicine, or with vision changes</span>
+        </div>
+      </div>
+      <div style="flex:0.85">
+        <div class="ctx"><b>On the unit</b>&nbsp;· maternal early warning</div>
+        <div class="box stop small">
+          <h3 class="box-heading">Any one → bedside evaluation</h3>
+          <ul class="ls tight"><li>SBP &lt; 90 or &gt; 160&nbsp;· DBP &gt; 100</li><li>HR &lt; 50 or &gt; 120</li><li>RR &lt; 10 or &gt; 30</li><li>SpO₂ &lt; 95%&nbsp;· UOP &lt; 35&nbsp;mL/h for 2&nbsp;h</li><li>agitation, confusion, unresponsive</li><li>preeclampsia with persistent headache or dyspnea</li></ul>
+        </div>
+        <div class="small mt1"><b>Tell FM attending</b>&nbsp;· bleeding → <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a> PPH</div>
+        <div class="small mt1"><b>Infection + abnormal vitals or organ dysfunction → assess now, even without fever.</b> Screen <a href="13-sepsis.html#p-01" class="xlink"><span class="xref c-inf">13&nbsp;· 01</span></a> sepsis <a href="13-sepsis.html#p-02" class="xlink"><span class="xref c-inf">13&nbsp;· 02</span></a> source <a href="08-infections.html#p-E" class="xlink"><span class="xref c-inf">8&nbsp;· E</span></a></div>
+        <div class="xs muted mt1">Mhyre 2014 (NPMS). Risk persists to 1 year after birth.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ B + C ============ -->
+  <div class="row mt3 pair">
+    <section class="block c-htn" id="p-B">
+      <div class="band">
+        <div class="lt">B</div>
+        <h2>Blood pressure</h2>
+        <div class="src">ACOG PB 222&nbsp;· ACC 2026<br>Severe HTN Bundle 2025</div>
+      </div>
+      <div class="pair-body">
+      <div class="box bp-severe">
+        <div class="threshold">SBP ≥ 160 or DBP ≥ 110</div>
+        <div class="sev-act">recheck ≤ 15&nbsp;min (sooner OK)&nbsp;· tell FM attending now</div>
+        <div class="sev-act">still severe → treat within <span class="deadline topic">30–60&nbsp;min</span>&nbsp;<a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a>&nbsp;· target 130–150/80–100</div>
+      </div>
+      <figure class="pp-bp-clock"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 90" role="img" aria-labelledby="ppbp-t"><title id="ppbp-t">Postpartum blood pressure clock, days after birth</title>
+<text x="123" y="12" font-size="11" text-anchor="end" class="nm">days after birth</text>
+<path d="M 132.0 17 V 89" class="grid"></path>
+<text x="132.0" y="12" font-size="11" text-anchor="start" class="axis-number">0</text>
+<path d="M 165.8 17 V 89" class="grid"></path>
+<text x="165.8" y="12" font-size="11" text-anchor="middle" class="axis-number">1</text>
+<path d="M 199.6 17 V 89" class="grid"></path>
+<text x="199.6" y="12" font-size="11" text-anchor="middle" class="axis-number">2</text>
+<path d="M 233.4 17 V 89" class="grid"></path>
+<text x="233.4" y="12" font-size="11" text-anchor="middle" class="axis-number">3</text>
+<path d="M 267.2 17 V 89" class="grid"></path>
+<text x="267.2" y="12" font-size="11" text-anchor="middle" class="axis-number">4</text>
+<path d="M 301.0 17 V 89" class="grid"></path>
+<text x="301.0" y="12" font-size="11" text-anchor="middle" class="axis-number">5</text>
+<path d="M 334.8 17 V 89" class="grid"></path>
+<text x="334.8" y="12" font-size="11" text-anchor="middle" class="axis-number">6</text>
+<path d="M 368.6 17 V 89" class="grid"></path>
+<text x="368.6" y="12" font-size="11" text-anchor="middle" class="axis-number">7</text>
+<path d="M 402.4 17 V 89" class="grid"></path>
+<text x="402.4" y="12" font-size="11" text-anchor="middle" class="axis-number">8</text>
+<path d="M 436.2 17 V 89" class="grid"></path>
+<text x="436.2" y="12" font-size="11" text-anchor="middle" class="axis-number">9</text>
+<path d="M 470.0 17 V 89" class="grid"></path>
+<text x="470.0" y="12" font-size="11" text-anchor="end" class="axis-number">10</text>
+<path d="M 132 17 H 470" class="axis"></path>
+<text x="123" y="34.2" font-size="11.5" text-anchor="end" class="nm">HDP: monitor</text>
+<rect x="132.0" y="23" width="101.4" height="14" class="do"></rect>
+<path d="M 233.4 30 H 250.3 m -7 -4.5 l 7 4.5 -7 4.5" class="min"></path>
+<text x="182.7" y="34.2" font-size="11.5" text-anchor="middle" class="inv">≥ 72&nbsp;h</text>
+<text x="255.4" y="34.2" font-size="11.5">inpatient (or equivalent)</text>
+<text x="123" y="56.2" font-size="11.5" text-anchor="end" class="nm">Preeclampsia peaks</text>
+<rect x="233.4" y="45" width="101.4" height="14" class="window"></rect>
+<text x="284.1" y="56.2" font-size="11.5" text-anchor="middle">days 3–6</text>
+<text x="123" y="78.2" font-size="11.5" text-anchor="end" class="nm">HDP: BP recheck</text>
+<rect x="368.6" y="67" width="101.4" height="14" class="do"></rect>
+<path d="M 470.0 65 V 83" class="cap"></path>
+<text x="419.3" y="78.2" font-size="11.5" text-anchor="middle" class="inv">7–10&nbsp;d</text>
+<text x="361.6" y="78.2" font-size="11.5" text-anchor="end">BP check by</text>
+</svg></figure>
+      <div class="pp-bp-relative small"><b>Severe HTN</b><span>BP recheck ≤ 72&nbsp;h <b>after discharge</b></span></div>
+      <dl class="kv small" style="gap:6pt 10pt">
+        <dt>Start meds</dt><dd><b>Start or titrate at ≥ 150/100 (ACOG)&nbsp;· ACC 2026: target &lt; 140/90 before discharge, consider meds at ≥ 130/80</b>; program <span class="lfv" data-local="pp_bp_start_threshold">____</span> <span class="tag local">Local</span>&nbsp;· agents <a href="11-bp-meds.html#p-02" class="xlink"><span class="xref c-htn">11&nbsp;· 02</span></a></dd>
+        <dt>Magnesium</dt><dd>Severe features or eclampsia → <b>give</b>; <b>≥ 24&nbsp;h after birth or last seizure (the later)</b>; new postpartum: ≥ 24&nbsp;h from diagnosis. HTN + headache / blurred vision → consider <a href="14-pp-headache.html#p-02" class="xlink"><span class="xref c-htn">14&nbsp;· 02</span></a> <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a></dd>
+        <dt>NSAIDs</dt><dd>Preferred over opioids, incl. HDP; avoid in AKI / oliguria, renal disease, low platelets, NSAID allergy</dd>
+      </dl>
+      <div class="box small after-dc"><b>After discharge → L&amp;D / ED now, tell FM attending:</b> SBP ≥ 160 or DBP ≥ 110, <b class="or">OR</b> persistent headache, visual change, RUQ / upper abdominal pain or dyspnea <b>at any BP</b> <a href="27-ob-consult.html#p-B" class="xlink"><span class="xref c-wf">27&nbsp;· B</span></a></div>
+      </div>
+    </section>
+
+    <section class="block c-wf" id="p-C">
+      <div class="band">
+        <div class="lt">C</div>
+        <h2>Contraception<small>CDC U.S. MEC 2024 categories</small></h2>
+        <div class="src">CDC U.S. MEC &amp; SPR 2024<br>ACOG CPU salpingectomy 2026</div>
+      </div>
+      <div class="pair-body">
+      <div class="mec-layout">
+        <div class="mec-main">
+        <table class="t mec small hairline">
+          <thead><tr><th>Postpartum</th><th>Feeding</th><th class="rf">VTE RF</th><th class="method">CHC<span class="sub">pill / patch / ring</span></th><th class="method">POP&nbsp;· implant</th><th class="method">DMPA</th></tr></thead>
+          <tbody>
+            <tr><td class="k" rowspan="2">&lt; 21&nbsp;d</td><td class="fd">Breastfeeding</td><td class="rf" rowspan="2"></td><td rowspan="2" class="method"><span class="m m4">4</span></td><td class="method"><span class="m m2">2</span></td><td rowspan="2" class="method"><span class="m m2">2</span></td></tr>
+            <tr><td class="fd">Not breastfeeding</td><td class="method"><span class="m m1">1</span></td></tr>
+            <tr class="grp"><td class="k" rowspan="3">21–29&nbsp;d</td><td class="fd">Breastfeeding</td><td class="rf"></td><td class="method"><span class="m m3 ast">3*</span></td><td class="method"><span class="m m2">2</span></td><td class="method"><span class="m m2">2</span></td></tr>
+            <tr><td class="fd" rowspan="2">Not breastfeeding</td><td class="rf">yes</td><td class="method"><span class="m m3 ast">3*</span></td><td rowspan="2" class="method"><span class="m m1">1</span></td><td class="method"><span class="m m2">2</span></td></tr>
+            <tr><td class="rf">no</td><td class="method"><span class="m m2">2</span></td><td class="method"><span class="m m1">1</span></td></tr>
+            <tr class="grp"><td class="k" rowspan="2">30–42&nbsp;d</td><td class="fd" rowspan="2">Either</td><td class="rf">yes</td><td class="method"><span class="m m3 ast">3*</span></td><td rowspan="2" class="method"><span class="m m1">1</span></td><td class="method"><span class="m m2">2</span></td></tr>
+            <tr><td class="rf">no</td><td class="method"><span class="m m2">2</span></td><td class="method"><span class="m m1">1</span></td></tr>
+            <tr class="grp"><td class="k" rowspan="2">&gt; 42&nbsp;d</td><td class="fd">Breastfeeding</td><td class="rf" rowspan="2"></td><td class="method"><span class="m m2">2</span></td><td rowspan="2" class="method"><span class="m m1">1</span></td><td rowspan="2" class="method"><span class="m m1">1</span></td></tr>
+            <tr><td class="fd">Not breastfeeding</td><td class="method"><span class="m m1">1</span></td></tr>
+          </tbody>
+        </table>
+        <div class="mkey"><span><span class="m m1">1</span> no restriction</span><span><span class="m m2">2</span> benefits &gt; risks</span><span><span class="m m3">3</span> risks usually &gt; benefits</span><span><span class="m m4">4</span> unacceptable risk</span></div>
+        <div class="small muted">VTE RF = VTE risk factors (below)&nbsp;· CHC = combined hormonal contraception&nbsp;· POP = progestin-only pill&nbsp;· DMPA = depot medroxyprogesterone acetate</div>
+        <div class="small"><b>VTE risk factors:</b> age ≥ 35, prior VTE, thrombophilia, immobility, transfusion at delivery, peripartum cardiomyopathy, BMI ≥ 30, PPH, cesarean, preeclampsia, smoking.</div>
+        <div class="small"><b>*</b> VTE factors may raise CHC to <span class="m m4">4</span>: apply condition-specific MEC classifications; known thrombophilia is category 4.</div>
+        </div>
+        <div class="mec-side small">
+        <table class="t mec iud small">
+          <thead><tr><th><span class="nc">LNG / Cu IUD</span> timing</th><th>MEC</th></tr></thead>
+          <tbody>
+            <tr><td><b>Postpartum sepsis</b></td><td><span class="m m4">4</span></td></tr>
+            <tr class="grp"><td>&lt; 10&nbsp;min postplacental</td><td><span class="m m2">2</span></td></tr>
+            <tr><td>10&nbsp;min to &lt; 4&nbsp;wk</td><td><span class="m m2">2</span></td></tr>
+            <tr><td>From 4&nbsp;wk</td><td><span class="m m1">1</span></td></tr>
+          </tbody>
+        </table>
+        <div class="box"><b>Lactational amenorrhea method (LAM)</b> works only if all 3 apply: no return of menses&nbsp;· fully or nearly fully breastfeeding (gaps ≤ 4&nbsp;h day, ≤ 6&nbsp;h night)&nbsp;· &lt; 6 months postpartum.</div>
+        <div class="box"><b>Emergency contraception:</b> copper IUD, ulipristal, levonorgestrel&nbsp;— all category 1 while breastfeeding. <b>Permanent:</b> complete bilateral salpingectomy preferred (ACOG 2026).</div>
+        </div>
+      </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ D + E ============ -->
+  <div class="row mt3 pair de">
+    <section class="block c-wf sec-d" id="p-D">
+      <div class="band">
+        <div class="lt">D</div>
+        <h2>Mood<small>Screen at every postpartum visit</small></h2>
+        <div class="src">ACOG CPG 4 &amp; 5 (2023)&nbsp;· CPU zuranolone 2025</div>
+      </div>
+      <div class="pair-body">
+      <div class="mood-gate">
+      <div class="callout-stop small"><div class="ico">!</div><div>Psychosis (days 3–10, can be later): agitation, delusions, hallucinations, disorganized → FM attending + psychiatry now&nbsp;· 1:1 observation&nbsp;· infant safe.</div></div>
+      <div class="box stop small screen-alert"><b>Any response other than “never” on EPDS item 10, or other than “not at all” on PHQ-9 item 9 → assess suicide risk now&nbsp;· tell FM attending</b></div>
+      </div>
+      <table class="t small mood-scores">
+        <thead><tr><th>Tool</th><th class="right">Positive</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td class="k">EPDS</td><td class="num">≥ 10</td><td>10–14 mild&nbsp;· 15–19 moderate&nbsp;· &gt; 19 severe</td></tr>
+          <tr><td class="k">PHQ-9</td><td class="num">≥ 10</td><td>Depression</td></tr>
+          <tr><td class="k">GAD-7</td><td class="num">≥ 5</td><td>Anxiety</td></tr>
+          <tr><td class="k">MDQ</td><td class="num">≥ 7 / 13</td><td>Bipolar&nbsp;· positive → psychiatry before any antidepressant</td></tr>
+        </tbody>
+      </table>
+      <div class="small"><b>Treat:</b> psychotherapy and/or SSRI; naïve → <b>sertraline or escitalopram</b>, reassess ≤ 4&nbsp;wk. Breastfeeding is no reason to stop an SSRI.</div>
+      <div class="drug c-wf">
+        <div class="nm">Zuranolone</div>
+        <div class="ci">Severe PPD; onset third trimester to 4&nbsp;wk postpartum.</div>
+        <div class="ci"><b>Not with bipolar, psychosis, prior suicide attempt or active suicidality.</b></div>
+        <div class="rx">50&nbsp;mg PO nightly with fatty meal × 14&nbsp;days</div>
+        <div class="ci"><b>30&nbsp;mg</b>: eGFR &lt; 60, Child-Pugh C, strong CYP3A4 inhibitor; avoid inducers.</div>
+        <div class="ci"><b>For at least 12&nbsp;h after each dose: no driving or solo infant care.</b></div>
+        <div class="ci">Contraception during treatment + 1&nbsp;wk after.</div>
+      </div>
+      </div>
+    </section>
+
+    <section class="block c-wf sec-e" id="p-E">
+      <div class="band">
+        <div class="lt">E</div>
+        <h2>Pain&nbsp;· VTE&nbsp;· anemia</h2>
+        <div class="src">ACOG CC No. 1 (2021)&nbsp;· PB 196/197&nbsp;· SMFM #51<br>SOAP 2018&nbsp;· NATA 2018&nbsp;· ERAS 2025</div>
+      </div>
+      <div class="pair-body">
+      <div class="box ref small">
+        <h3 class="box-heading">VTE prophylaxis <span class="h4-note">postpartum consultation <a href="27-ob-consult.html#p-B" class="xlink"><span class="xref c-wf">27&nbsp;· B</span></a></span></h3>
+        <table class="t tight vte-dec">
+          <colgroup><col style="width:37%"><col></colgroup>
+          <tbody>
+            <tr><td>Every cesarean</td><td>Sequential compression devices from before surgery until ambulatory</td></tr>
+            <tr><td>Prior VTE or high-risk thrombophilia</td><td><b>LMWH × 6&nbsp;wk</b>, dose by risk per PB 196 tables (prophylactic <span class="dose">enoxaparin 40&nbsp;mg SUBQ daily</span>&nbsp;· intermediate&nbsp;· therapeutic)</td></tr>
+            <tr><td>Therapeutic anticoagulation antepartum</td><td><b>Resume therapeutic anticoagulation</b></td></tr>
+            <tr><td rowspan="2">Low-risk thrombophilia, no prior VTE</td><td><b>Cesarean</b> → <b>LMWH × 6&nbsp;wk</b> (SMFM #51)</td></tr>
+            <tr><td class="cont"><b>Vaginal birth</b> → surveillance; LMWH if 1st-degree relative had VTE, or added risk</td></tr>
+          </tbody>
+        </table>
+        <h3 class="box-heading mt2">Start or restart LMWH after neuraxial procedures <span class="both">both intervals must be met</span></h3>
+        <div class="restart-gate"><b>Also required:</b> hemostasis, no ongoing PPH&nbsp;· therapeutic: ≥ 24&nbsp;h after surgery (48–72&nbsp;h if high bleeding risk) <a href="20-neuraxial.html#p-02" class="xlink"><span class="xref c-wf">20&nbsp;· 02</span></a></div>
+        <table class="t tight vte-timing">
+          <colgroup><col style="width:48%"><col><col></colgroup>
+          <thead><tr><th>Regimen</th><th>After puncture</th><th>After catheter removal</th></tr></thead>
+          <tbody>
+            <tr><td>Low-dose (enoxaparin 40&nbsp;mg daily or 30&nbsp;mg q12h)</td><td>≥ 12&nbsp;h</td><td>≥ 4&nbsp;h</td></tr>
+            <tr><td>Intermediate or therapeutic</td><td>≥ 24&nbsp;h</td><td>≥ 4&nbsp;h</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row e-pair">
+      <div class="box ref small" style="flex:1">
+        <h3 class="box-heading">Pain&nbsp;— multimodal</h3>
+        <b>Scheduled</b> NSAID + acetaminophen (separate products, not combinations). Add low-dose short-acting oral opioid only if needed; discharge quantity by shared decision (median after cesarean ≈ 20 tablets). <b>No codeine or tramadol if breastfeeding.</b> <b>OUD / MOUD:</b> analgesia plan <a href="24-substance-dyad.html#p-D" class="xlink"><span class="xref c-wf">24&nbsp;· D</span></a>
+      </div>
+      <div class="box ref small anemia" style="flex:1.12">
+        <h3 class="box-heading">Anemia</h3>
+        <div class="rail"><span class="when">Hb &lt; 7&nbsp;g/dL or symptomatic</span><span class="do">Consider 1&nbsp;unit RBC, reassess</span></div>
+        <div class="rail"><span class="when">Hb &lt; 9&nbsp;g/dL</span><span class="do">IV iron <span style="font-weight:400">(NATA; ACOG gives no threshold)</span></span></div>
+        <div class="rail"><span class="when">Hb 9–11&nbsp;g/dL</span><span class="do">Oral iron 80–100&nbsp;mg elemental daily (alternate-day OK) × 3 mo</span></div>
+        <div class="anemia-bleed">Bleeding or unstable → <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a> PPH</div>
+      </div>
+      </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ F ============ -->
+  <section class="block c-wf mt3" id="p-F">
+    <div class="band">
+      <div class="lt">F</div>
+      <h2>Lactation, vaccines &amp; labs</h2>
+      <div class="src">ABM Protocol #36 (2022)&nbsp;· ACIP&nbsp;· ADA 2026<br>ACOG PB 181&nbsp;· LactMed (NLM)</div>
+    </div>
+    <div class="row" style="align-items:stretch">
+      <div class="box small c-inf" style="flex:1.05">
+        <h3 class="box-heading">Mastitis spectrum (ABM 2022)</h3>
+        Feed on demand; avoid deep breast massage and overpumping. Ice, <span class="dose">ibuprofen 800&nbsp;mg q8h</span>, acetaminophen. Antibiotics only if bacterial: <span class="dose">dicloxacillin or cephalexin 500&nbsp;mg QID × 10–14&nbsp;d</span> (clindamycin if allergic). Milk culture if severe, recurrent or no better at 48&nbsp;h. Abscess → drain. Keep breastfeeding.
+      </div>
+      <div class="box ref small c-nb" style="flex:0.72">
+        <h3 class="box-heading">Medications in milk</h3>
+        Most are compatible (relative infant dose &lt; 10% generally acceptable). Check <b>LactMed</b> (NLM). MOUD / THC and milk <a href="24-substance-dyad.html#p-E" class="xlink"><span class="xref c-wf">24&nbsp;· E</span></a>
+        <div class="milk-intake"><b>Adequate intake:</b> 8–12 feeds/day; by day 5 ≥ 6 wet diapers <a href="10-feeding.html#p-03" class="xlink"><span class="xref c-nb">10&nbsp;· 03</span></a>.</div>
+      </div>
+      <div class="box ref small c-wf" style="flex:1.55">
+        <h3 class="box-heading">Vaccines &amp; labs</h3>
+        <dl class="vl">
+          <dt>RhIG</dt><dd>Unsensitized Rh−, infant Rh+ or unknown: 300&nbsp;mcg ≤ 72&nbsp;h; <b>missed → give now</b> (some benefit to 28&nbsp;d). Kleihauer–Betke / flow → extra doses.</dd>
+          <dt class="inf">Vaccines</dt><dd>MMR, varicella if nonimmune&nbsp;— don’t delay for RhIG. Tdap if not given in pregnancy and never received before; otherwise check catch-up indications.</dd>
+          <dt class="met">GDM</dt><dd>75&nbsp;g OGTT 4–12&nbsp;wk or before discharge.</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG CO 736 Optimizing Postpartum Care (reaff. 2025); AWHONN POST-BIRTH (2023); Mhyre JM et al., Maternal Early Warning Criteria, Obstet Gynecol 2014; SMFM Consult #67 Sepsis; CDC Hear Her urgent maternal warning signs; ACOG PB 222 (reaff. 2026) and Severe Hypertension in Pregnancy Bundle (2025); CDC U.S. MEC 2024 and U.S. SPR 2024; ACOG Clinical Practice Update on salpingectomy (2026); ACOG CPG 4 and CPG 5 Perinatal Mental Health (2023) and CPU Zuranolone and Brexanolone (2025); ACOG Clinical Consensus No. 1 Pharmacologic Pain Management (2021, reaff. 2025); ERAS Society cesarean guideline (2025); ACOG PB 196 (reaff. 2025) and PB 197; SMFM Consult #51; ASRA 5th ed. (2025); ZURZUVAE label; ACC Postpartum ECDP Takeaways (2026); AIM Postpartum Severe HTN Guide (2026); Muñoz M et al., NATA postpartum anemia consensus, Transfus Med 2018; ABM Clinical Protocol #36 (2022); NLM LactMed; ACIP General Best Practices; ADA Standards of Care 2026; ACOG PB 181 (reaff. 2026). <div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTAsMUgxMVYySDEwek0xMiwxSDEzVjJIMTJ6TTEzLDFIMTRWMkgxM3pNMTcsMUgxOFYySDE3ek0xOSwxSDIwVjJIMTl6TTIwLDFIMjFWMkgyMHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTksMkgxMFYzSDl6TTEwLDJIMTFWM0gxMHpNMTEsMkgxMlYzSDExek0xNywySDE4VjNIMTd6TTE5LDJIMjBWM0gxOXpNMjIsMkgyM1YzSDIyek0yNCwySDI1VjNIMjR6TTI1LDJIMjZWM0gyNXpNMjYsMkgyN1YzSDI2ek0yOCwySDI5VjNIMjh6TTAsM0gxVjRIMHpNMiwzSDNWNEgyek0zLDNINFY0SDN6TTQsM0g1VjRINHpNNiwzSDdWNEg2ek04LDNIOVY0SDh6TTEwLDNIMTFWNEgxMHpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTEzLDNIMTRWNEgxM3pNMTYsM0gxN1Y0SDE2ek0xOCwzSDE5VjRIMTh6TTIyLDNIMjNWNEgyMnpNMjQsM0gyNVY0SDI0ek0yNSwzSDI2VjRIMjV6TTI2LDNIMjdWNEgyNnpNMjgsM0gyOVY0SDI4ek0wLDRIMVY1SDB6TTIsNEgzVjVIMnpNMyw0SDRWNUgzek00LDRINVY1SDR6TTYsNEg3VjVINnpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNOSw1SDEwVjZIOXpNMTAsNUgxMVY2SDEwek0xMyw1SDE0VjZIMTN6TTE2LDVIMTdWNkgxNnpNMTgsNUgxOVY2SDE4ek0xOSw1SDIwVjZIMTl6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek05LDdIMTBWOEg5ek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTUsN0gxNlY4SDE1ek0xNyw3SDE4VjhIMTd6TTE4LDdIMTlWOEgxOHpNMjAsN0gyMVY4SDIwek0wLDhIMVY5SDB6TTEsOEgyVjlIMXpNNCw4SDVWOUg0ek01LDhINlY5SDV6TTYsOEg3VjlINnpNMTEsOEgxMlY5SDExek0xMiw4SDEzVjlIMTJ6TTE3LDhIMThWOUgxN3pNMTksOEgyMFY5SDE5ek0yMyw4SDI0VjlIMjN6TTI1LDhIMjZWOUgyNXpNMjYsOEgyN1Y5SDI2ek0yNyw4SDI4VjlIMjd6TTI4LDhIMjlWOUgyOHpNMSw5SDJWMTBIMXpNMiw5SDNWMTBIMnpNMyw5SDRWMTBIM3pNNCw5SDVWMTBINHpNNSw5SDZWMTBINXpNNyw5SDhWMTBIN3pNOSw5SDEwVjEwSDl6TTExLDlIMTJWMTBIMTF6TTEyLDlIMTNWMTBIMTJ6TTEzLDlIMTRWMTBIMTN6TTE1LDlIMTZWMTBIMTV6TTE2LDlIMTdWMTBIMTZ6TTE3LDlIMThWMTBIMTd6TTE4LDlIMTlWMTBIMTh6TTIxLDlIMjJWMTBIMjF6TTIyLDlIMjNWMTBIMjJ6TTIzLDlIMjRWMTBIMjN6TTI0LDlIMjVWMTBIMjR6TTI1LDlIMjZWMTBIMjV6TTI2LDlIMjdWMTBIMjZ6TTI3LDlIMjhWMTBIMjd6TTI4LDlIMjlWMTBIMjh6TTAsMTBIMVYxMUgwek0yLDEwSDNWMTFIMnpNNiwxMEg3VjExSDZ6TTExLDEwSDEyVjExSDExek0xMiwxMEgxM1YxMUgxMnpNMTMsMTBIMTRWMTFIMTN6TTE1LDEwSDE2VjExSDE1ek0xNiwxMEgxN1YxMUgxNnpNMTgsMTBIMTlWMTFIMTh6TTIyLDEwSDIzVjExSDIyek0yMywxMEgyNFYxMUgyM3pNMjgsMTBIMjlWMTFIMjh6TTEsMTFIMlYxMkgxek0yLDExSDNWMTJIMnpNNCwxMUg1VjEySDR6TTUsMTFINlYxMkg1ek03LDExSDhWMTJIN3pNOCwxMUg5VjEySDh6TTEwLDExSDExVjEySDEwek0xNSwxMUgxNlYxMkgxNXpNMTcsMTFIMThWMTJIMTd6TTE4LDExSDE5VjEySDE4ek0yMSwxMUgyMlYxMkgyMXpNMjIsMTFIMjNWMTJIMjJ6TTI1LDExSDI2VjEySDI1ek0yNywxMUgyOFYxMkgyN3pNMjgsMTFIMjlWMTJIMjh6TTAsMTJIMVYxM0gwek0zLDEySDRWMTNIM3pNNiwxMkg3VjEzSDZ6TTgsMTJIOVYxM0g4ek0xMCwxMkgxMVYxM0gxMHpNMTcsMTJIMThWMTNIMTd6TTE4LDEySDE5VjEzSDE4ek0yMCwxMkgyMVYxM0gyMHpNMjEsMTJIMjJWMTNIMjF6TTIzLDEySDI0VjEzSDIzek0yNywxMkgyOFYxM0gyN3pNMCwxM0gxVjE0SDB6TTQsMTNINVYxNEg0ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTMsMTRINFYxNUgzek02LDE0SDdWMTVINnpNNywxNEg4VjE1SDd6TTksMTRIMTBWMTVIOXpNMTAsMTRIMTFWMTVIMTB6TTExLDE0SDEyVjE1SDExek0xMiwxNEgxM1YxNUgxMnpNMTQsMTRIMTVWMTVIMTR6TTE1LDE0SDE2VjE1SDE1ek0xOCwxNEgxOVYxNUgxOHpNMjEsMTRIMjJWMTVIMjF6TTI0LDE0SDI1VjE1SDI0ek0yNSwxNEgyNlYxNUgyNXpNMjYsMTRIMjdWMTVIMjZ6TTI4LDE0SDI5VjE1SDI4ek0xLDE1SDJWMTZIMXpNMiwxNUgzVjE2SDJ6TTUsMTVINlYxNkg1ek0xMCwxNUgxMVYxNkgxMHpNMTEsMTVIMTJWMTZIMTF6TTEyLDE1SDEzVjE2SDEyek0xNCwxNUgxNVYxNkgxNHpNMTUsMTVIMTZWMTZIMTV6TTE2LDE1SDE3VjE2SDE2ek0xNywxNUgxOFYxNkgxN3pNMTgsMTVIMTlWMTZIMTh6TTIwLDE1SDIxVjE2SDIwek0yNCwxNUgyNVYxNkgyNHpNMjcsMTVIMjhWMTZIMjd6TTI4LDE1SDI5VjE2SDI4ek0xLDE2SDJWMTdIMXpNMiwxNkgzVjE3SDJ6TTMsMTZINFYxN0gzek00LDE2SDVWMTdINHpNNSwxNkg2VjE3SDV6TTYsMTZIN1YxN0g2ek03LDE2SDhWMTdIN3pNOSwxNkgxMFYxN0g5ek0xMCwxNkgxMVYxN0gxMHpNMTIsMTZIMTNWMTdIMTJ6TTE1LDE2SDE2VjE3SDE1ek0xNywxNkgxOFYxN0gxN3pNMTksMTZIMjBWMTdIMTl6TTIxLDE2SDIyVjE3SDIxek0yNywxNkgyOFYxN0gyN3pNMCwxN0gxVjE4SDB6TTEsMTdIMlYxOEgxek01LDE3SDZWMThINXpNNywxN0g4VjE4SDd6TTgsMTdIOVYxOEg4ek0xMCwxN0gxMVYxOEgxMHpNMTEsMTdIMTJWMThIMTF6TTEzLDE3SDE0VjE4SDEzek0xNCwxN0gxNVYxOEgxNHpNMTUsMTdIMTZWMThIMTV6TTE2LDE3SDE3VjE4SDE2ek0xNywxN0gxOFYxOEgxN3pNMTgsMTdIMTlWMThIMTh6TTIyLDE3SDIzVjE4SDIyek0yMywxN0gyNFYxOEgyM3pNMjQsMTdIMjVWMThIMjR6TTI1LDE3SDI2VjE4SDI1ek0yNywxN0gyOFYxOEgyN3pNMjgsMTdIMjlWMThIMjh6TTIsMThIM1YxOUgyek02LDE4SDdWMTlINnpNNywxOEg4VjE5SDd6TTksMThIMTBWMTlIOXpNMTAsMThIMTFWMTlIMTB6TTExLDE4SDEyVjE5SDExek0xMiwxOEgxM1YxOUgxMnpNMTMsMThIMTRWMTlIMTN6TTE0LDE4SDE1VjE5SDE0ek0xNSwxOEgxNlYxOUgxNXpNMTgsMThIMTlWMTlIMTh6TTIwLDE4SDIxVjE5SDIwek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI0LDE4SDI1VjE5SDI0ek0yNiwxOEgyN1YxOUgyNnpNMjgsMThIMjlWMTlIMjh6TTMsMTlINFYyMEgzek01LDE5SDZWMjBINXpNNywxOUg4VjIwSDd6TTgsMTlIOVYyMEg4ek0xMCwxOUgxMVYyMEgxMHpNMTYsMTlIMTdWMjBIMTZ6TTE3LDE5SDE4VjIwSDE3ek0xOCwxOUgxOVYyMEgxOHpNMjIsMTlIMjNWMjBIMjJ6TTIzLDE5SDI0VjIwSDIzek0yNywxOUgyOFYyMEgyN3pNMjgsMTlIMjlWMjBIMjh6TTAsMjBIMVYyMUgwek0xLDIwSDJWMjFIMXpNMiwyMEgzVjIxSDJ6TTMsMjBINFYyMUgzek00LDIwSDVWMjFINHpNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek0xMCwyMEgxMVYyMUgxMHpNMTIsMjBIMTNWMjFIMTJ6TTE2LDIwSDE3VjIxSDE2ek0xNywyMEgxOFYyMUgxN3pNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNSwyMEgyNlYyMUgyNXpNMjgsMjBIMjlWMjFIMjh6TTgsMjFIOVYyMkg4ek0xMCwyMUgxMVYyMkgxMHpNMTEsMjFIMTJWMjJIMTF6TTEzLDIxSDE0VjIySDEzek0xNCwyMUgxNVYyMkgxNHpNMTUsMjFIMTZWMjJIMTV6TTE2LDIxSDE3VjIySDE2ek0xOCwyMUgxOVYyMkgxOHpNMTksMjFIMjBWMjJIMTl6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek05LDIySDEwVjIzSDl6TTExLDIySDEyVjIzSDExek0xNCwyMkgxNVYyM0gxNHpNMTUsMjJIMTZWMjNIMTV6TTE5LDIySDIwVjIzSDE5ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yNSwyMkgyNlYyM0gyNXpNMjYsMjJIMjdWMjNIMjZ6TTI4LDIySDI5VjIzSDI4ek0wLDIzSDFWMjRIMHpNNiwyM0g3VjI0SDZ6TTgsMjNIOVYyNEg4ek05LDIzSDEwVjI0SDl6TTEyLDIzSDEzVjI0SDEyek0xNCwyM0gxNVYyNEgxNHpNMTUsMjNIMTZWMjRIMTV6TTE3LDIzSDE4VjI0SDE3ek0xOSwyM0gyMFYyNEgxOXpNMjAsMjNIMjFWMjRIMjB6TTI0LDIzSDI1VjI0SDI0ek0yNywyM0gyOFYyNEgyN3pNMjgsMjNIMjlWMjRIMjh6TTAsMjRIMVYyNUgwek0yLDI0SDNWMjVIMnpNMywyNEg0VjI1SDN6TTQsMjRINVYyNUg0ek02LDI0SDdWMjVINnpNOCwyNEg5VjI1SDh6TTksMjRIMTBWMjVIOXpNMTEsMjRIMTJWMjVIMTF6TTEyLDI0SDEzVjI1SDEyek0xNywyNEgxOFYyNUgxN3pNMTgsMjRIMTlWMjVIMTh6TTE5LDI0SDIwVjI1SDE5ek0yMCwyNEgyMVYyNUgyMHpNMjEsMjRIMjJWMjVIMjF6TTIyLDI0SDIzVjI1SDIyek0yMywyNEgyNFYyNUgyM3pNMjQsMjRIMjVWMjVIMjR6TTI1LDI0SDI2VjI1SDI1ek0yNywyNEgyOFYyNUgyN3pNMCwyNUgxVjI2SDB6TTIsMjVIM1YyNkgyek0zLDI1SDRWMjZIM3pNNCwyNUg1VjI2SDR6TTYsMjVIN1YyNkg2ek05LDI1SDEwVjI2SDl6TTExLDI1SDEyVjI2SDExek0xMywyNUgxNFYyNkgxM3pNMTUsMjVIMTZWMjZIMTV6TTE2LDI1SDE3VjI2SDE2ek0xNywyNUgxOFYyNkgxN3pNMTgsMjVIMTlWMjZIMTh6TTI3LDI1SDI4VjI2SDI3ek0yOCwyNUgyOVYyNkgyOHpNMCwyNkgxVjI3SDB6TTIsMjZIM1YyN0gyek0zLDI2SDRWMjdIM3pNNCwyNkg1VjI3SDR6TTYsMjZIN1YyN0g2ek05LDI2SDEwVjI3SDl6TTEwLDI2SDExVjI3SDEwek0xMSwyNkgxMlYyN0gxMXpNMTIsMjZIMTNWMjdIMTJ6TTEzLDI2SDE0VjI3SDEzek0xNSwyNkgxNlYyN0gxNXpNMTYsMjZIMTdWMjdIMTZ6TTE3LDI2SDE4VjI3SDE3ek0xOCwyNkgxOVYyN0gxOHpNMTksMjZIMjBWMjdIMTl6TTIxLDI2SDIyVjI3SDIxek0yNSwyNkgyNlYyN0gyNXpNMjYsMjZIMjdWMjdIMjZ6TTI3LDI2SDI4VjI3SDI3ek0yOCwyNkgyOVYyN0gyOHpNMCwyN0gxVjI4SDB6TTYsMjdIN1YyOEg2ek04LDI3SDlWMjhIOHpNMTEsMjdIMTJWMjhIMTF6TTEyLDI3SDEzVjI4SDEyek0xNiwyN0gxN1YyOEgxNnpNMTcsMjdIMThWMjhIMTd6TTE4LDI3SDE5VjI4SDE4ek0yMCwyN0gyMVYyOEgyMHpNMjUsMjdIMjZWMjhIMjV6TTI3LDI3SDI4VjI4SDI3ek0yOCwyN0gyOVYyOEgyOHpNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek05LDI4SDEwVjI5SDl6TTEwLDI4SDExVjI5SDEwek0xMiwyOEgxM1YyOUgxMnpNMTYsMjhIMTdWMjlIMTZ6TTE3LDI4SDE4VjI5SDE3ek0yMCwyOEgyMVYyOUgyMHpNMjIsMjhIMjNWMjlIMjJ6TTIzLDI4SDI0VjI5SDIzek0yNSwyOEgyNlYyOUgyNXpNMjcsMjhIMjhWMjlIMjd6IiBpZD0icXItcGF0aCIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIxIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZT0ibm9uZSIvPjwvc3ZnPg=="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

@@ -1,0 +1,606 @@
+/* OB Wall Reference System — shared design system (v1.2, round 4)
+   Print-first. Sizes in pt/in; each sheet's --k zooms the layout to its physical size.
+   Colour values were checked through GRACoL2006 coated and FOGRA52 uncoated profiles.
+
+   Scaling contract (css1 #13)
+     ordinary pt / in ............ layout size: printed size = value × --k (body text, spacing)
+     calc(X / var(--k)) .......... fixed printed size X on every sheet (navigation, chips, tags, rules, headings)
+     var(--type-min) ............. the sheet's printed text floor (9.5 pt posters, 10 pt cards) in layout units
+     SVG unitless values ......... viewBox coordinates;  999px radius = pill
+   Type roles: Inter Display only at >= 24 pt printed (titles, panel headings, band letters); Inter otherwise.
+   Floors: clinical text >= 9.5 pt printed (posters) / 10 pt (cards); citation footers stay deliberately small.
+   Palette contract (cd1 #2): the block between the obwall-palette markers is the canonical token set and must stay
+   the FIRST block in this file that names the root selector, with literal hex / % values only (no var(), no
+   aliases inside it except --info/--c/--tb): build/flows.py reads it to colour the generated SVGs.
+   Cascade: only these root defaults sit in a cascade layer (@layer tokens), so every unlayered rule — this file's
+   components and each sheet's own <style> — keeps its existing precedence over them.
+
+   Contents: fonts · tokens · base · sheet formats · masthead + navigation · strip · chips · layout · panel header
+   · type · lists · atoms · tags · boxes · tables · flows · kv / drug / band · footer · blanks · QR · utilities
+   · floors · GA charts · shared components (round 2–5) · render-time layers */
+
+/* Fonts: static TrueType (glyf) instances of the same Inter 4.0 / Inter Display / JetBrains Mono designs. Chromium's
+   PDF backend embeds CFF (.otf) and variable fonts as Type 3 (bitmap-like rendering in some viewers, "bad bounding
+   box" warnings); TrueType embeds as CIDFontType2 (dp3 #1). Built with fontTools from the vendored .otf / variable
+   .woff2 (cu2qu, max error 0.5 unit; same advances, kerning and features); the .otf files remain for the SVG
+   generators until they switch. */
+@font-face { font-family: "Inter"; src: url("../../assets/fonts/Inter-Regular.ttf"); font-weight: 400; font-style: normal; }
+@font-face { font-family: "Inter"; src: url("../../assets/fonts/Inter-Italic.ttf"); font-weight: 400; font-style: italic; }
+@font-face { font-family: "Inter"; src: url("../../assets/fonts/Inter-Medium.ttf"); font-weight: 500; }
+@font-face { font-family: "Inter"; src: url("../../assets/fonts/Inter-SemiBold.ttf"); font-weight: 600; }
+@font-face { font-family: "Inter"; src: url("../../assets/fonts/Inter-Bold.ttf"); font-weight: 700; }
+@font-face { font-family: "Inter"; src: url("../../assets/fonts/Inter-ExtraBold.ttf"); font-weight: 800; }
+@font-face { font-family: "Inter Display"; src: url("../../assets/fonts/InterDisplay-SemiBold.ttf"); font-weight: 600; }
+@font-face { font-family: "Inter Display"; src: url("../../assets/fonts/InterDisplay-Bold.ttf"); font-weight: 700; }
+@font-face { font-family: "Inter Display"; src: url("../../assets/fonts/InterDisplay-ExtraBold.ttf"); font-weight: 800; }
+@font-face { font-family: "Inter Display"; src: url("../../assets/fonts/InterDisplay-Black.ttf"); font-weight: 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-400.woff2") format("woff2"); font-weight: 400; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-ext-400.woff2") format("woff2"); font-weight: 400; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-500.woff2") format("woff2"); font-weight: 500; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-ext-500.woff2") format("woff2"); font-weight: 500; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-600.woff2") format("woff2"); font-weight: 600; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-ext-600.woff2") format("woff2"); font-weight: 600; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-700.woff2") format("woff2"); font-weight: 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-ext-700.woff2") format("woff2"); font-weight: 700; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-800.woff2") format("woff2"); font-weight: 800; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../assets/fonts/JetBrainsMono-latin-ext-800.woff2") format("woff2"); font-weight: 800; unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+@layer tokens;
+@layer tokens {
+/* obwall-palette:start */
+:root {
+  /* neutrals: neutral RGB source values; production conversion must verify black-only neutral text and line art */
+  --paper: #FFFFFF;
+  --ink: #141414;
+  --ink-fill: #12151C;  /* rich black, large solids only */
+  --ink-2: #3A3A3A;
+  --ink-3: #666666;
+  --rule: #CFCFCF;
+  --rule-2: #E6E6E6;
+
+  /* topic colours */
+  --hem: #A01A42;   /* hemorrhage — crimson, separate from stop red */
+  --htn: #5B2A86;   /* hypertension */
+  --ptl: #00796B;   /* preterm / ROM */
+  --fet: #1B5FA8;   /* fetal assessment */
+  --trm: #A84912;   /* trauma (darkened for white text, round 2) */
+  --lab: #825B1B;   /* labor — ochre (darkened) */
+  --lab-1: #D9B26A; --lab-3: #6A4A26;
+  --nb:  #006B86;   /* newborn (darkened) */
+  --wf:  #3B4C61;   /* workflow slate */
+  /* signals */
+  --stop: #C8201C;  /* the brightest red on every sheet: prohibitions + emergencies only */
+  --go: #1E7B34;
+  --warn: #E2A812;  /* yellow-amber; ink text on fills */
+  --warn-ink: #6F4C00; /* warning text on white */
+  --info: var(--wf);
+  --inf: #56651B;   /* infection, antimicrobials (round 3) */
+  --met: #8A246F;   /* glucose, diabetes (round 3) */
+  --tint-1: 12%; --tint-2: 18%; --tint-3: 24%; /* functional tint levels: default / decision / focus */
+  /* fixed signal tints (≈ 12% stop / 12% go / 9% ink / 20% warn). All tints are sRGB mixtures with white; how they
+     reproduce depends on the output profile and stock (ax3 #4/#6) — borders, words and badges carry the meaning */
+  --t-stop: #F8E4E4; --t-go: #E4EFE7; --t-ink: #EAEAEA; --t-warn: #F9EED0;
+
+  --c: var(--ink);
+  --tb: var(--tint-1); /* box tint strength (default level) */
+  --gap: 0.22in;      /* layout gutter (scales with --k): .cols / .col / .row gaps, strip and footer clearance */
+  /* printed spacing scale (fo3 #1) for new spacing: use as calc(var(--space-4) / var(--k)) */
+  --space-1: 2pt; --space-2: 4pt; --space-3: 6pt; --space-4: 8pt; --space-5: 12pt; --space-6: 18pt; --space-7: 24pt;
+  /* printed rule weights (fo3 #6): use as calc(var(--rule-row) / var(--k)) */
+  --rule-hair: 0.5pt;  /* finest rule that survives print; nothing thinner (dp3 #7: 0.25 pt is the absolute minimum) */
+  --rule-row: 0.75pt; --rule-sub: 1.5pt; --rule-band: 2pt; --rule-panel: 5pt; --rule-panel-card: 3pt;
+  --panel-title: 30pt; /* printed size of numbered panel headings on posters (vis6 #4); cards use 17 pt */
+  --radius: 2pt;
+}
+/* obwall-palette:end */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--paper); font-feature-settings: "ss04" 1; }   /* ss04 = Inter disambiguation: serifed I, tailed l, unslashed zero */
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--ink);
+  font-size: 12.5pt;
+  line-height: 1.32;
+  /* no global OpenType features: tnum widens hyphens/punctuation in Inter, cv11 split the "a" forms */
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  text-rendering: geometricPrecision;
+}
+.sheet :is(p, li, td, dd, .box, .node, .small, .xs, .ci, .meta, .d, .trig) { text-wrap: pretty; }
+.sheet :is(h1, h2, h3, h4, .sub, th) { text-wrap: balance; }
+
+/* ---------- sheet ---------- */
+.sheet {
+  --k: 1;
+  width: calc(var(--w) / var(--k)); height: calc(var(--h) / var(--k)); zoom: var(--k);
+  padding: calc(0.72in / var(--k)) calc(0.72in / var(--k)) calc(0.32in / var(--k));
+  display: flex; flex-direction: column;
+  overflow: hidden; position: relative;
+  background: var(--paper);
+  --print-min: 9.5pt; --type-min: calc(var(--print-min) / var(--k));
+  /* panel geometry, printed pt (fo3 #1/#6): a sheet tunes a profile by setting these, not by re-declaring .panel/.ph */
+  --panel-pad: 8pt; --panel-stack: 7pt; --header-x: 9pt; --header-y: 2pt;
+}
+.sheet:is(.portrait-11x17, .landscape-17x11) { --print-min: 10pt; --panel-pad: 5pt; --panel-stack: 4pt; }
+.sheet.landscape-36x24 { --w: 36in; --h: 24in; }
+.sheet.portrait-24x36  { --w: 24in; --h: 36in; }
+.sheet.portrait-18x24  { --w: 18in; --h: 24in; }
+.sheet.portrait-11x17  { --w: 11in; --h: 17in; }
+.sheet.landscape-17x11 { --w: 17in; --h: 11in; }
+
+/* ---------- masthead ---------- */
+.masthead {
+  display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 0.35in;
+  padding-bottom: 0.14in; position: relative;
+}
+.masthead .kicker {
+  font: 700 12pt/1 "Inter"; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
+  margin-bottom: 0.1in; display: flex; gap: .6em; align-items: center; font-feature-settings: "case" 1, "ss04" 1;
+}
+.masthead .kicker .dot { width: 12pt; height: 12pt; border-radius: 0; background: var(--accent, var(--hem)); display: inline-block; }
+.masthead h1 {
+  font: 900 calc(84pt / var(--k))/0.9 "Inter Display"; letter-spacing: -0.03em; word-spacing: normal; color: var(--ink-fill);
+  padding-bottom: 0.06in;
+}
+.masthead h1 .thin { font-weight: 600; color: var(--ink-3); }
+/* --nav-reserve keeps a tall subtitle below the top-right navigation: 58pt for the 2-row index, 30pt printed for
+   the one-row "See also" strip */
+.masthead .sub { font: 500 15pt/1.3 "Inter"; color: var(--ink-2); max-width: 10in; align-self: end; padding-bottom: 0.1in; margin-top: var(--nav-reserve, 58pt); }
+.masthead:has(> .setnav.rel) { --nav-reserve: calc(30pt / var(--k)); }
+
+/* series navigation (written by build/setnav.py). Default: the named one-row "See also" strip (.setnav.rel, below).
+   Full 27-entry index (.setnav without .rel): 14 x 2 grid at fixed printed sizes (9.5 pt names, 11 pt numbers) — only
+   for sheets with room beside the title; render.mjs reports "! masthead" if it collides. */
+.setnav { position: absolute; inset-block-start: 0; inset-inline-end: 0; display: grid; grid-template-columns: repeat(14, auto); gap: 0;
+  border: calc(1.2pt / var(--k)) solid var(--ink); }
+.setnav span { font: 700 calc(9.5pt / var(--k))/1 "Inter"; padding: calc(4pt / var(--k)) calc(5pt / var(--k)); color: var(--ink-2);
+  border-right: calc(1pt / var(--k)) solid var(--ink); white-space: nowrap; }
+.setnav span:nth-child(14n), .setnav span:last-child { border-right: none; }
+.setnav span:nth-child(n+15) { border-top: calc(1pt / var(--k)) solid var(--ink); }
+.setnav span b { font: 800 calc(11pt / var(--k))/1 "Inter"; margin-right: calc(3pt / var(--k)); }
+.sheet:is(.portrait-18x24, .portrait-11x17, .landscape-17x11) .setnav > span { font-size: 0; padding: calc(4pt / var(--k)) calc(5pt / var(--k)); }
+.sheet:is(.portrait-18x24, .portrait-11x17, .landscape-17x11) .setnav > span b { font-size: calc(10pt / var(--k)); margin-right: 0; }
+.setnav span.on { background: var(--ink-fill); color: #fff; }
+
+/* EFM-paper signature strip under every masthead */
+.strip {
+  flex: none; height: calc(0.22in / var(--k)); margin-bottom: var(--gap);
+  border-top: calc(4pt / var(--k)) solid var(--accent, var(--ink-fill)); border-bottom: calc(0.75pt / var(--k)) solid var(--ink);
+  background-repeat: repeat-x; background-size: auto 100%; background-position: 0 50%;
+}
+
+/* desk cards: one shared, slimmer strip */
+:where(.portrait-11x17, .landscape-17x11) .strip { height: calc(0.08in / var(--k)); margin-bottom: calc(0.075in / var(--k));
+  border-top-width: calc(3pt / var(--k)); border-bottom-width: calc(0.75pt / var(--k)); }
+
+/* cross-reference chip: "→ 2 · B" */
+.xref {
+  display: inline-flex; align-items: center; gap: min(3pt, calc(3pt / var(--k))); white-space: nowrap; vertical-align: 0.08em;
+  font: 800 max(var(--type-min), calc(11pt / var(--k)))/1 "Inter"; color: #fff; background: var(--c, var(--ink));
+  padding: calc(2pt / var(--k)) calc(4pt / var(--k)); border-radius: calc(2pt / var(--k));
+}
+.xref.inverse { background: var(--paper); color: var(--c); }
+.xref.inverse::before { color: currentColor; }
+.sheet .xref.c-warn, .sheet .tag.c.c-warn, .sheet .c-warn > .ph .num { color: var(--ink); }
+.sheet .block.c-warn > .band .lt { color: var(--lab-3, var(--ink)); }
+.xref::before { content: "→"; font-weight: 700; }
+/* same-sheet section pointer (vis5 #1): outlined, no arrow — <span class="xref here">01</span>; filled .xref = another sheet */
+.xref.here { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 calc(1pt / var(--k)) var(--ink); }
+.xref.here::before { content: none; }
+
+/* ---------- layout ---------- */
+.cols { display: grid; gap: var(--gap); flex: 1; min-height: 0; }
+.col { display: flex; flex-direction: column; gap: var(--gap); min-height: 0; }
+.grow { flex: 1; }
+.row { display: flex; gap: var(--gap); }
+.row > * { flex: 1; min-width: 0; }
+
+/* ---------- panel (open section: rule + header, no card) ---------- */
+.panel {
+  border-top: calc(var(--rule-panel) / var(--k)) solid var(--c);
+  padding: calc(var(--panel-pad) / var(--k)) 0 0;
+  display: flex; flex-direction: column; gap: calc(var(--panel-stack) / var(--k));
+  break-inside: avoid;
+}
+:where(.portrait-11x17, .landscape-17x11) .panel { border-top-width: calc(var(--rule-panel-card) / var(--k)); }
+.ph { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: calc(var(--header-x) / var(--k)); row-gap: calc(var(--header-y) / var(--k)); align-items: baseline; }
+.ph .num {
+  font: 800 12pt/1 "Inter"; font-variant-numeric: tabular-nums; color: #fff; background: var(--c);
+  padding: 4pt 6pt 3pt; border-radius: 2pt; grid-row: span 2; align-self: start; margin-top: 2pt;
+}
+.ph h2 { font: 800 calc(var(--panel-title) / var(--k))/1.06 "Inter Display"; letter-spacing: -0.015em; word-spacing: normal; color: var(--ink); }
+/* desk cards (11x17 / 17x11): 17 pt printed Inter headings (Inter Display only >= 24 pt printed) */
+:where(.portrait-11x17, .landscape-17x11) .ph h2 { font: 800 calc(17pt / var(--k))/1.06 "Inter", sans-serif; letter-spacing: -.01em; }
+.ph h2 small { font: 600 13pt/1 "Inter"; color: var(--ink-3); letter-spacing: 0; margin-left: .35em; }
+.ph .src { grid-column: 2; font: 400 10pt/1.25 "Inter"; color: var(--ink-3); margin-top: 0; }
+:is(.ph, .band) .src b { font-weight: 700; }
+.ph .src br { display: none; }
+.ph .src::before { content: ""; }
+.ph:not(:has(.num)) { grid-template-columns: minmax(0, 1fr); }
+.ph:not(:has(.num)) > * { grid-column: 1; }
+.panel > h3:first-child { margin-top: 0; }
+.ph .tag { justify-self: start; }
+/* inline header: <div class="ph inl"> number · title · source on one row; add .src-right to push the source right */
+.ph.inl { grid-template-columns: auto auto minmax(0, 1fr); }
+.ph.inl .num { grid-row: 1; }
+.ph.inl .src { grid-column: 3; grid-row: 1; align-self: baseline; }
+.ph.inl.src-right .src { text-align: right; }
+
+h3 {
+  font: 700 13.5pt/1.18 "Inter"; color: var(--ink); letter-spacing: -0.003em;
+  border-top: 1.5pt solid var(--c); padding-top: 4pt; margin-top: 0.05in;
+}
+h3.ink { --c: var(--ink); }
+.h3-note { font-weight: 500; color: var(--ink-3); font-size: 0.86em; }
+h4 { font: 700 14pt/1.2 "Inter"; color: var(--ink); }
+.nc { text-transform: none !important; letter-spacing: 0 !important; }   /* !important: beats uppercase labels incl. table headers */
+
+p { margin: 0; }
+.muted { color: var(--ink-3); }
+.small { font-size: 11.5pt; line-height: 1.32; }
+.xs { font-size: 10.5pt; line-height: 1.3; }
+b, strong { font-weight: 700; }
+.hl { background: color-mix(in srgb, var(--c) 20%, white); padding: 0 .2em; }
+
+/* lists */
+ul.ls { list-style: none; display: flex; flex-direction: column; gap: 3pt; }
+ul.ls > li { padding-left: 13pt; position: relative; }
+ul.ls > li::before {
+  content: ""; position: absolute; left: 1pt; top: .52em; width: 5pt; height: 5pt; background: var(--ink-3);
+}
+ul.ls.tight { gap: 1.5pt; }
+ul.ls.check > li::before { width: 9pt; height: 9pt; top: .22em; left: 0; background: none; border: 1.4pt solid var(--c); }
+ul.ls.check > li { padding-left: 16pt; }
+ul.ls.check.tight { gap: 4pt; }
+ol.steps { list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 5pt; }
+ol.steps > li { counter-increment: s; padding-left: 25pt; position: relative; }
+ol.steps > li::before {
+  content: counter(s); position: absolute; left: 0; top: 0.02em;
+  width: 17pt; height: 17pt; border-radius: 50%; background: var(--c); color: #fff;
+  font: 800 max(10pt, var(--type-min))/17pt "Inter"; text-align: center;
+}
+
+/* ---------- typographic atoms ---------- */
+.dose, .drug .rx {
+  font-family: "Inter", system-ui, sans-serif; font-weight: 700; letter-spacing: 0;
+  font-variant-numeric: lining-nums proportional-nums; font-feature-settings: "ss04" 1;
+}
+.dose { color: var(--ink); white-space: nowrap; }
+.small .dose, .xs .dose, table.t .dose { font-size: 1.1em; }
+.dose.big, .small .dose.big, .xs .dose.big, table.t .dose.big { font-size: 1.22em; }
+code, .mono {
+  font-family: "JetBrains Mono", "Inter", ui-monospace, monospace; font-weight: 600; letter-spacing: -0.01em;
+}
+code { font-size: .92em; background: var(--rule-2); padding: 1pt 4pt; border-radius: 2pt; white-space: nowrap; }
+.ga { font-family: inherit; font-weight: 600; font-size: 1em; letter-spacing: .005em; white-space: nowrap; text-transform: none; }
+.tnum { font-variant-numeric: tabular-nums; }
+/* timing values compared down a column: <span class="time">≥ 4–6&nbsp;h</span> (qualifiers stay outside; not for running prose) */
+.time { font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; letter-spacing: 0; }
+/* route / identifier differentiation (vis3 #3): serifed I and tailed l as in .dose, e.g. <span class="rx-route">IV/IO</span>;
+   identifiers that mix O and 0 also get a slashed zero */
+.rx-route { font-feature-settings: "ss04" 1; }
+.identifier { font-feature-settings: "ss04" 1, "zero" 1; }
+/* Case (vis3 #4): write descriptive labels of 3+ words in sentence case in the markup ("Internal anal sphincter") and add .nc
+   where a shared label style uppercases; keep caps for LOCAL, STOP, acronyms, mnemonics and Tall Man drug names. */
+
+/* tags */
+.tag {
+  display: inline-flex; align-items: center; gap: 3pt; margin-block: 0;
+  font: 800 8.6pt/1.1 "Inter"; letter-spacing: .06em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1;
+  padding: 3pt 5pt 2.5pt; border-radius: 2pt; vertical-align: 0.12em; white-space: nowrap;
+}
+.tag.local { border: 1.2pt dashed var(--wf); color: var(--wf); }
+.tag.stop { background: var(--stop); color: #fff; }
+.tag.new { background: var(--ink-fill); color: #fff; }
+.tag.c { background: var(--c); color: #fff; }
+/* ISMP high-alert medication marker: <span class="tag med-alert">High alert</span> (sheets set their own alignment/margins) */
+.tag.med-alert { border: 1pt solid var(--ink); background: var(--t-ink); color: var(--ink); }
+.tag.soft { background: color-mix(in srgb, var(--c) 20%, white); color: var(--ink); }
+
+/* ---------- boxes ---------- */
+.box {
+  border-radius: 0; padding: 0.08in 0.12in 0.1in;
+  background: color-mix(in srgb, var(--c) var(--tb), white);
+  border-top: 2pt solid var(--c);
+}
+/* red-surface grammar, set-wide (pass 8): (1) .callout-stop = emergency action, full red; (2) .box.stop / .box.prohibition / .urgent-head = stop or act-now
+   condition, light red surface with one 4 pt printed left edge and no top rule; (3) red words on white (.stopline) = inline flag */
+.box.stop { --c: var(--stop); background: var(--t-stop); border-top: 0; border-left: calc(4pt / var(--k)) solid var(--stop); }
+.box.warn { --c: var(--warn); background: var(--t-warn); }
+.box.local { background: #fff; border: 1.2pt dashed var(--wf); position: relative; padding-top: calc(10pt / var(--k)); margin-top: 6pt; }
+.box.local::before {
+  content: "LOCAL"; position: absolute; top: 0; transform: translateY(-50%); left: 8pt; background: var(--paper); padding: 0 4pt;
+  font: 800 8.6pt/1.2 "Inter"; letter-spacing: .12em; color: var(--wf);
+}
+.box.ink { --c: var(--ink); background: var(--t-ink); }
+.box > h4 { margin-bottom: 3pt; }
+/* routine reference information: white surface, restrained top rule (vis6 #3). Tune per box, not per sheet:
+   --reference-rule (default topic colour), --reference-padding, --reference-heading. .framed adds an outline. */
+.box.reference { background: var(--paper); border-radius: 0; border-top: 1pt solid var(--reference-rule, var(--c));
+  padding: var(--reference-padding, 5pt 0 0); }
+.box.reference > h4 { color: var(--reference-heading, var(--c)); }
+.box.reference.framed { border: 1pt solid var(--rule); border-top: 2pt solid var(--reference-rule, var(--c)); padding: var(--reference-padding, 5pt 7pt 6pt); }
+/* supporting prohibition: light red surface, red left edge, STOP badge (full red .callout-stop stays the emergency form) */
+.box.prohibition { background: var(--t-stop); color: var(--ink); border-top: 0; border-left: calc(4pt / var(--k)) solid var(--stop);
+  padding: calc(5pt / var(--k)) calc(9pt / var(--k)); }
+.box.prohibition .tag.stop { margin-right: calc(5pt / var(--k)); }
+
+.callout-stop {
+  display: flex; gap: 0.1in; align-items: flex-start;
+  background: var(--stop); color: #fff; border-radius: var(--radius); padding: 0.1in 0.14in;
+  font-weight: 700;
+}
+.callout-stop .ico {
+  flex: none; width: 22pt; height: 22pt; border-radius: 50%; background: #fff; color: var(--stop);
+  font: 900 15pt/22pt "Inter Display"; text-align: center;
+}
+
+/* ---------- tables ---------- */
+/* Table spec (fo1 #1). Prose / regimen columns: left. Scalar columns: .num / .right on header AND cells (right, tabular).
+   Score / category matrices: centred (local). Shared units go in the header inside .unit (keeps case). Hooks:
+   --table-size, --table-leading, --table-cell-x, --table-cell-y, --table-tight-cell-y. */
+table.t { --cell-y: var(--table-cell-y, 5pt); width: 100%; border-collapse: collapse; font-size: max(var(--table-size, 11.5pt), var(--type-min)); line-height: var(--table-leading, 1.28); }
+table.t.tight { --cell-y: var(--table-tight-cell-y, 4pt); }
+table.t th {
+  text-align: left; font: 800 9.8pt/1.18 "Inter"; letter-spacing: .04em; text-wrap: wrap; text-transform: uppercase; color: var(--ink-3);
+  font-feature-settings: "case" 1, "ss04" 1; vertical-align: bottom;
+  padding: 0 6pt 5pt; border-bottom: 1.6pt solid var(--ink);
+}
+table.t td { padding: var(--cell-y) 6pt; border-bottom: 0.75pt solid var(--rule); vertical-align: top; }
+table.t tr:last-child td { border-bottom: none; }
+table.t td:first-child, table.t th:first-child { padding-left: 0; }
+table.t th.right, table.t td.right { text-align: right; }
+table.t td.right, table.t td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.t td.num { font-weight: 600; text-align: right; }
+table.t td.k { font-weight: 700; white-space: nowrap; }
+/* explicit logical first column (safe after a rowspan, where :first-child is the wrong cell) */
+table.t :is(th, td).stub { padding-left: 0; }
+table.t :is(th, td).num-h { text-align: right; }                       /* header over a .num column */
+.tabnum { font-variant-numeric: lining-nums tabular-nums; }              /* figures inside mixed cells (.dose stays proportional) */
+table.t :is(th, td).wrap { white-space: normal; }
+table.t .unit { text-transform: none; letter-spacing: 0; white-space: nowrap; font-feature-settings: "ss04" 1; }
+/* sentence-case qualifier inside an uppercase header: <th>Criteria unmet <span class="subhead">→ continue the pathway</span></th>;
+   add display:block locally for a second line */
+table.t th .subhead { text-transform: none; letter-spacing: 0; font-weight: 600; }
+/* body row headers (<th scope="row" class="rowhead">): body type, not uppercase header type */
+table.t tbody th.rowhead { font: inherit; font-weight: 700; letter-spacing: 0; text-transform: none; color: inherit; text-align: left;
+  vertical-align: top; padding: var(--cell-y) 6pt; border-bottom: 0.75pt solid var(--rule); }
+table.t caption { caption-side: top; text-align: left; font-weight: 600; padding-bottom: 4pt; }
+/* group striping for multi-row regimens: one <tbody> per group */
+table.t.stripe-groups > tbody:nth-of-type(even) > tr > * { background: color-mix(in srgb, var(--ink) 4.5%, white); }
+/* table-like grids whose rows share column tracks: .grid-table > .grid-row > cells (subgrid) */
+.grid-table { display: grid; grid-template-columns: var(--table-columns, max-content minmax(0, 1fr)); column-gap: var(--table-gap, 10pt); align-items: baseline; }
+.grid-table > .grid-row { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; }
+.grid-table > *, .grid-table > .grid-row > * { min-width: 0; }
+
+/* ---------- flow diagrams ---------- */
+img.flow { display: block; width: 100%; height: auto; }
+.flow { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+.node {
+  border: 1.4pt solid var(--c); border-radius: var(--radius); background: #fff;
+  padding: 6pt 9pt; position: relative; font-size: 11.5pt; line-height: 1.28;
+}
+.node.fill { background: var(--c); color: #fff; border-color: var(--c); font-weight: 700; }
+.node.tint { background: color-mix(in srgb, var(--c) 14%, white); }
+.node.q { border-width: 1.4pt 1.4pt 1.4pt 5pt; }
+.node.end-go { --c: var(--go); background: var(--t-go); }
+.node.end-stop { --c: var(--stop); background: var(--t-stop); border-width: 0 0 0 calc(4pt / var(--k)); font-weight: 700; }
+.node .lbl { font: 800 9pt/1 "Inter"; letter-spacing: .1em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--c); display: block; margin-bottom: 3pt; }
+.node.fill .lbl { color: #fff; }
+.arrow { height: 14pt; position: relative; }
+.arrow::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 5pt; width: 1.6pt; background: var(--c); transform: translateX(-50%); }
+.arrow::after { content: ""; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  border: 5pt solid transparent; border-top: 6pt solid var(--c); border-bottom: 0; }
+.stem { width: 1.6pt; height: 10pt; background: var(--c); margin: 0 auto; }
+
+.split { display: grid; gap: 8pt; position: relative; padding-top: 30pt; }
+.split::before { content: ""; position: absolute; top: 0; left: var(--bus-l, 25%); right: var(--bus-r, 25%); height: 1.6pt; background: var(--c); }
+.split > .arm { display: flex; flex-direction: column; position: relative; }
+.split > .arm::before { content: ""; position: absolute; top: -30pt; left: 50%; width: 1.6pt; height: 24pt; background: var(--c); transform: translateX(-50%); }
+.split > .arm::after { content: ""; position: absolute; top: -7pt; left: 50%; transform: translateX(-50%);
+  border: 4.5pt solid transparent; border-top: 5.5pt solid var(--c); border-bottom: 0; }
+.split > .arm > .node { flex: 1; }
+.split.two { grid-template-columns: 1fr 1fr; }
+.split.three { grid-template-columns: 1fr 1fr 1fr; --bus-l: 16.66%; --bus-r: 16.66%; }
+.arm > .yn {
+  position: absolute; top: -24pt; left: calc(50% + 6pt);
+  font: 800 9pt/1.1 "Inter"; letter-spacing: .08em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1;
+  color: var(--c); white-space: nowrap;
+}
+.split > .arm:last-child:not(:first-child) > .yn { left: auto; right: calc(50% + 6pt); text-align: right; }
+
+/* .lane: compatibility base for 25's two flex columns (they override display/gap locally; the grid values stay in
+   their computed style). Remove once 25 renames its columns (e.g. .dyad-lane, cd1 #6). The old severe-HTN
+   .lane .st timeline cells are gone. */
+.lane { display: grid; grid-template-columns: repeat(5, 1fr); gap: 13pt; align-items: stretch; }
+
+/* key–value grid */
+.kv { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4pt 10pt; align-items: baseline; }
+.kv > dt { font-weight: 700; white-space: nowrap; }
+.kv > dd { margin: 0; min-width: 0; }
+.kv.compact { gap: 2pt 9pt; }
+
+/* drug card */
+.drug { border-top: 4pt solid var(--c); border-bottom: 0.75pt solid var(--rule); padding: 7pt 0 8pt; background: transparent; }
+.drug .nm { font: 800 15pt/1.1 "Inter"; letter-spacing: -0.005em; }
+.drug .nm small { font: 600 10.5pt/1 "Inter"; color: var(--ink-3); margin-left: .3em; white-space: nowrap; }
+.drug .rx { font-size: 15pt; line-height: 1.28; margin: 4pt 0 3pt; }
+.drug .ci { font-size: 11pt; color: var(--ink-2); }
+.drug .ci b { color: var(--stop); }
+
+/* section band (sheets 2 & 3) */
+section.block { display: flex; flex-direction: column; gap: 0.14in; }
+.band { display: grid; grid-template-columns: auto 1fr auto; align-items: end; gap: 0.2in; border-bottom: 2pt solid var(--c); padding-bottom: 0.08in; }
+.band .lt { font: 900 calc(64pt / var(--k, 1.3))/0.85 "Inter Display"; letter-spacing: -0.03em; color: var(--c); }
+.band h2 { font: 900 calc(48pt / var(--k, 1.3))/0.95 "Inter Display"; letter-spacing: -0.02em; word-spacing: normal; }
+.band h2 small { display: block; font: 600 14pt/1.25 "Inter"; color: var(--ink-3); letter-spacing: 0; word-spacing: 0; margin-top: 4pt; }
+.row.pair > .block > .band { min-height: 1.2in; }
+.band .src { font: 400 10pt/1.3 "Inter"; color: var(--ink-3); text-align: right; }
+
+/* footer */
+.foot {
+  flex: none; margin-top: auto; padding-top: calc(4pt / var(--k)); border-top: 0.75pt solid var(--ink-3);
+  display: block; font: 500 calc(8pt / var(--k))/1.18 "Inter"; color: var(--ink-3);
+}
+.sheet > :nth-last-child(2) { margin-bottom: var(--gap); }
+.foot b { color: var(--ink-2); font-weight: 700; }
+.foot > div:first-child { column-gap: 0.28in; }
+.landscape-36x24 .foot > div:first-child { columns: 4; }
+.portrait-24x36 .foot > div:first-child { columns: 3; }
+.portrait-18x24 .foot > div:first-child { columns: 2; }
+.landscape-17x11 .foot > div:first-child { columns: 1; }
+.portrait-11x17 .foot > div:first-child { columns: 2; column-gap: calc(14pt / var(--k)); }
+.foot .legend { column-span: all; display: flex; flex-wrap: wrap; gap: calc(2pt / var(--k)) calc(10pt / var(--k)); align-items: center; margin: calc(2pt / var(--k)) 0 0; break-inside: avoid; color: var(--ink-2); }
+.foot .legend .xref { --c: var(--ink); font-size: calc(8pt / var(--k)); padding: calc(1pt / var(--k)) calc(3pt / var(--k)); }
+.foot .legend .tag { font-size: calc(7.5pt / var(--k)); }
+.foot .legend > span { white-space: nowrap; }
+
+/* LOCAL fill-in fields (vis6 #7): <div class="blanks"><span class="fld"><b>Purpose</b><i class="f"></i></span> …</div>
+   keeps each label with its blank; use inside .box.local instead of literal underscore runs */
+.blanks { display: flex; flex-wrap: wrap; gap: calc(4pt / var(--k)) calc(16pt / var(--k)); align-items: baseline; }
+.blanks .fld { white-space: nowrap; display: inline-flex; align-items: baseline; gap: calc(3pt / var(--k)); }
+.blanks .fld > b { font-weight: 700; }
+.blanks .f { display: inline-block; min-width: 3em; height: .95em; border-bottom: .75pt solid var(--ink-3); vertical-align: -0.12em; }
+.blanks .f.w { min-width: 7em; }
+
+/* QR */
+.qr { display: flex; gap: 12pt; align-items: center; }
+/* one content-QR treatment, set-wide (pass 8): 0.9 in printed on every sheet (the footer sheet-link QR stays 0.6 in) */
+.qr img { width: calc(0.9in / var(--k)); height: calc(0.9in / var(--k)); flex: none; }
+.qr .qt { font-size: 10.5pt; line-height: 1.3; }
+
+/* utility */
+.mt0 { margin-top: 0 !important; } /* !important: also beats inline margins */ .mt1 { margin-top: 4pt; } .mt2 { margin-top: 8pt; } .mt3 { margin-top: var(--section-gap, 0.3in); }
+.center { text-align: center; } .nowrap { white-space: nowrap; } .right { text-align: right; }
+.c-hem { --c: var(--hem); } .c-htn { --c: var(--htn); } .c-ptl { --c: var(--ptl); } .c-fet { --c: var(--fet); }
+.c-trm { --c: var(--trm); } .c-lab { --c: var(--lab); } .c-nb { --c: var(--nb); } .c-wf { --c: var(--wf); } .c-info { --c: var(--info); } .c-inf { --c: var(--inf); } .c-met { --c: var(--met); }
+.c-stop { --c: var(--stop); } .c-go { --c: var(--go); } .c-ink { --c: var(--ink); } .c-warn { --c: var(--warn); }
+
+/* printed type floor for auxiliary text (footers intentionally excluded: citations stay minimal) */
+.sheet .tag:not(.foot .tag), .sheet .box.local::before { font-size: max(calc(9.5pt / var(--k)), var(--type-min)); }
+.sheet .ph .src, .sheet .band .src { font-size: max(10pt, var(--type-min)); }
+.sheet:is(.portrait-11x17, .landscape-17x11) :is(.masthead .kicker, .ph .num, table.t th, .wt th, .ser th, .mx .or, .vit .l) { font-size: var(--type-min); }
+.sheet:is(.portrait-11x17, .landscape-17x11) .masthead .sub { font-size: calc(10.5pt / var(--k)); }
+
+@page { margin: 0; }
+
+/* GA charts (01 ruler, 07 timeline): colour = topic, geometry = decision type, fill = status */
+:is(.gaband, .tlband):has(> .ga2) { display: block; }
+.ga2 { margin: 0; line-height: 0; break-inside: avoid; }
+.ga2 > svg { display: block; width: 100%; height: auto; }
+.ga2 text { font-family: "Inter", sans-serif; font-weight: 600; fill: var(--ink); }
+.ga2 .ga2-name, .ga2 .ga2-landmark { font-weight: 700; }
+.ga2 .ga2-inverse { fill: var(--paper); }
+.ga2 .ga2-counsel-band { fill: var(--t-ink); }
+/* minor guides use --rule (not --rule-2) so they survive print; 01 ruler and 07 timeline share these (vis6 #6) */
+.ga2 .ga2-grid, .ga2 .ga2-grid-major { fill: none; stroke: var(--rule); stroke-width: .6; }
+.ga2 .ga2-grid-major { stroke: #9A9A9A; stroke-width: 1.15; }
+.ga2 .ga2-lane-rule { fill: none; stroke: var(--rule-2); stroke-width: .5; }
+.ga2 .ga2-group-band { fill: var(--t-ink); }
+.ga2 .ga2-axis-band { fill: #E0E0E0; }
+.ga2 .ga2-head-week { fill: var(--ink-3); font-weight: 700; }
+.ga2 .ga2-group-line { fill: none; stroke: var(--ga2-topic); stroke-width: 1.6; }
+.ga2 .ga2-chip { fill: var(--ga2-topic); }
+.ga2 .ga2-chip-t { fill: #fff; font-weight: 800; }
+.ga2 .ga2-halo { paint-order: stroke fill; stroke: var(--paper); stroke-width: 3px; stroke-linejoin: round; }
+.ga2 .ga2-ribbon {
+  stroke: var(--ga2-topic); stroke-width: .8;
+}
+.ga2 .ga2-recommended { fill: var(--ga2-topic); }
+.ga2 .ga2-consider {
+  fill: color-mix(in srgb, var(--ga2-topic) 40%, white);
+  stroke: var(--ink); stroke-width: 1.1; stroke-dasharray: 3 2;   /* "may consider": dashed ink outline on both GA charts */
+}
+.ga2 .ga2-counsel { fill: var(--paper); stroke-width: 1.1; }
+.ga2 .ga2-bracket, .ga2 .ga2-leader {
+  fill: none; stroke: var(--ga2-topic); stroke-width: 1.6;
+  stroke-linejoin: miter;
+}
+.ga2 .ga2-leader { stroke-width: .8; }
+.ga2 .ga2-cont { fill: none; stroke: var(--ga2-topic); stroke-width: 1.6; }
+.ga2 .ga2-above { font-weight: 600; }
+.ga2 .ga2-pt { fill: var(--ga2-topic); }
+.ga2 .ga2-evt { fill: var(--paper); stroke: var(--ga2-topic); stroke-width: 1.4; }
+
+/* ---- Round-2 shared components (use these class names on any sheet) ---- */
+/* operative scope / applicability line under a panel header — instructions, not citations (css2 #2):
+   <p class="scope small">Applies to …</p>; citations stay in .src */
+.scope.small { color: var(--ink); font-weight: 600; }
+/* hero numeral: glance-size threshold or dose, e.g. <span class="hero">≥ 160 / 110</span> */
+.hero { font: 800 calc(22pt / var(--k))/1 "Inter"; font-variant-numeric: tabular-nums; letter-spacing: -0.015em; color: var(--c, var(--ink)); white-space: nowrap; }
+.hero.sm { font-size: calc(16pt / var(--k)); }
+/* reading-distance landmarks (vis3 #1): printed sizes, use sparingly — 1 m for selected entry actions, 2 m for rare urgent
+   landmarks (e.g. the arrest clocks); keep the complete condition beside the enlarged number */
+.sheet .hero:is(.glance-1m, .glance-2m) { font-family: "Inter", sans-serif; font-weight: 800; line-height: 1.1; letter-spacing: 0; }
+.sheet .hero.glance-1m { font-size: calc(28pt / var(--k)); }
+.sheet .hero.glance-2m { font-size: calc(56pt / var(--k)); line-height: 1; }
+/* deadline badge beside an action heading: <span class="deadline">≤ 60 min</span> */
+.deadline { display: inline-block; vertical-align: middle; font: 800 calc(10pt / var(--k))/1 "Inter"; letter-spacing: .03em; color: #fff;
+  background: var(--stop); padding: calc(3pt / var(--k)) calc(7pt / var(--k)); border-radius: 999px; white-space: nowrap; }
+.deadline.ink { background: var(--ink); }
+.deadline.topic { background: var(--c); color: #fff; }             /* topic-coloured time badge: class="deadline topic c-htn" */
+.deadline.inverse { background: var(--paper); color: var(--c); }   /* on a solid topic banner */
+.deadline.urgent { background: var(--stop); color: var(--paper); } /* explicit immediate-action deadline (default look, stated role) */
+/* duotone urgent entry header: <div class="urgent-head" style="--c:var(--stop)">…</div> */
+.urgent-head { --c: var(--stop); display: flex; align-items: center; gap: calc(8pt / var(--k)); padding: calc(5pt / var(--k)) calc(9pt / var(--k)) calc(5pt / var(--k)) calc(12pt / var(--k));
+  position: relative; background: color-mix(in srgb, var(--c) 13%, white);
+  border-radius: var(--radius); font-weight: 800; color: var(--ink); }
+.urgent-head::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: calc(4pt / var(--k)); background: var(--c);
+  border-radius: var(--radius) 0 0 var(--radius); }
+/* neutral striping for dense comparison tables */
+table.t.stripe tbody tr:nth-child(even) > td { background: color-mix(in srgb, var(--ink) 4.5%, white); }
+/* aligned action rail: condition left, action right */
+.urgent-head.stack { flex-direction: column; align-items: flex-start; gap: calc(2pt / var(--k)); }  /* action over explanation */
+.urgent-head.prose { font-weight: 600; } .urgent-head.prose b { font-weight: 800; }                    /* lighter explanation, bold action */
+.rail { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); column-gap: calc(10pt / var(--k)); align-items: baseline; }
+.rail > .when { font-weight: 700; }
+.rail > .do { font-weight: 800; }
+.rail + .rail { border-top: 0.75pt solid var(--rule); padding-top: calc(4pt / var(--k)); margin-top: calc(4pt / var(--k)); }
+
+/* repeated condition → action rows own their spacing (fo3 #2): <div class="rail-list"><div class="rail">…</div>…</div>
+   8.75 pt printed between text blocks; replaces parent gap + row margin + padding stacking */
+.rail-list { display: flex; flex-direction: column; gap: 0; }
+.rail-list > .rail { margin: 0; padding-block: calc(4pt / var(--k)); }
+.rail-list > .rail + .rail { border-top: calc(0.75pt / var(--k)) solid var(--rule); margin-top: 0; padding-top: calc(4pt / var(--k)); }
+.rail-list > .rail:first-child { padding-top: 0; }
+.rail-list > .rail:last-child { padding-bottom: 0; }
+/* heading inside a box at the right outline level with h4's look (cd2 #5): <h3 class="box-heading"> in a .box under
+   an h2 panel, instead of skipping to h4 */
+:where(.box) > .box-heading { font: 700 14pt/1.2 "Inter"; color: var(--ink); border: 0; padding: 0; margin: 0 0 3pt; letter-spacing: normal; }
+:where(.box.reference) > .box-heading { color: var(--reference-heading, var(--c)); }
+
+/* ---- sheet identifier (inserted by build/setnav.py) ---- */
+.masthead h1 .sid { display: inline-flex; align-items: baseline; gap: .08em; vertical-align: .1em; margin-right: .2em;
+  font: 800 .6em/1 "Inter"; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: #fff;
+  background: var(--accent, var(--ink-fill)); padding: .1em .16em .08em; border-radius: calc(3pt / var(--k)); }
+.masthead h1 .sid small { font: 800 max(.42em, calc(10pt / var(--k)))/1 "Inter"; letter-spacing: .06em; text-transform: uppercase; opacity: 1; }
+/* named "See also" strip — every sheet's default navigation (one row, fixed printed sizes) */
+.setnav.rel { display: flex; align-items: stretch; border: calc(1.2pt / var(--k)) solid var(--ink); }
+.sheet .setnav.rel > em { font: 800 calc(10pt / var(--k))/1 "Inter"; letter-spacing: .1em; text-transform: uppercase; font-style: normal;
+  color: #fff; background: var(--ink-fill); padding: calc(5pt / var(--k)) calc(6pt / var(--k)); display: flex; align-items: center; }
+.sheet .setnav.rel > span { font: 700 calc(10.5pt / var(--k))/1 "Inter"; padding: calc(5pt / var(--k)) calc(7pt / var(--k));
+  border-left: calc(1pt / var(--k)) solid var(--ink); border-top: none; border-right: none; display: flex; align-items: center; color: var(--ink-2); }
+.sheet .setnav.rel > span b { font: 800 calc(11pt / var(--k))/1 "Inter"; margin-right: calc(4pt / var(--k)); }
+/* local commercial test name beside a generic test type: <span class="brand">our test: Panorama</span> */
+.brand { display: inline-block; vertical-align: .06em; font: 700 .86em/1.15 "Inter"; color: var(--fet); white-space: nowrap;
+  border: 1pt solid color-mix(in srgb, var(--fet) 55%, white); border-radius: 999px; padding: 0 .45em; }
+
+/* round 3: functional tint levels for boxes (white is the default surface) */
+.box.decision { --tb: var(--tint-2); }
+.box.focus { --tb: var(--tint-3); }
+.box:is(.decision, .focus) :is(.muted, .h3-note) { color: var(--ink-2); }
+
+/* ---------- render-time layers (build/render.mjs) ---------- */
+/* QR in the footer: opens this sheet in the online kit; 0.6 in printed, label beside it, rides up into the gap above the footer rule */
+.foot.has-qr { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: calc(12pt / var(--k)); align-items: end; }
+.foot.has-qr > :not(.sheet-qr) { grid-column: 1; }
+.foot.has-qr > .sheet-qr { justify-self: end; align-self: end; grid-column: 2; grid-row: 1 / span 9; display: flex; flex-direction: row-reverse; align-items: flex-end; gap: calc(4pt / var(--k)); margin-top: calc(-0.22in / var(--k)); }
+.sheet-qr img { width: calc(0.6in / var(--k)); height: calc(0.6in / var(--k)); display: block; }
+.sheet-qr span { font: 600 calc(7pt / var(--k))/1.15 "Inter"; color: var(--ink-3); width: calc(0.42in / var(--k)); text-align: right; }
+/* filled LOCAL value: replaces the blank line; keeps the field's position (!important: removes any blank-field
+   border/background/min-width a sheet gives its [data-local] spans) */
+.lfill { border-bottom: none !important; background: none !important; min-width: 0 !important; color: var(--ink); font-weight: 600; }
+/* desk cards: smaller QR (cards are read at arm's length; keeps the footer one line tall) */
+:where(.portrait-11x17, .landscape-17x11) .sheet-qr img { width: calc(0.45in / var(--k)); height: calc(0.45in / var(--k)); }
+:where(.portrait-11x17, .landscape-17x11) .sheet-qr span { display: none; }
+:where(.portrait-11x17, .landscape-17x11) .foot.has-qr > .sheet-qr { margin-top: calc(-0.12in / var(--k)); }

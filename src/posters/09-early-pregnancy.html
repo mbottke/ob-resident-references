@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Early Pregnancy</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); }
+  /* scan read-out: finding → meaning */
+  table.scan td:first-child { width: 34%; }
+  table.loss td { width: 50%; }
+  table.loss th { font-size: 9.6pt; }
+  .stack > * + * { margin-top: 6pt; }
+  .opt { display: flex; flex-direction: column; gap: 5pt; }
+  .opt .oh { font: 900 21pt/1 "Inter Display"; letter-spacing: -0.01em; color: var(--c); }
+  .opt .oh small { font: 600 10.5pt/1 "Inter"; color: var(--ink-3); margin-left: 4pt; letter-spacing: 0; }
+  ol.steps.ladder { gap: 7pt; }
+  ol.steps.ladder > li { font-size: 11.3pt; line-height: 1.3; }
+  ol.steps.ladder > li b.st { display: block; font-size: 12pt; }
+  table.scan td.k, table.scan td:first-child { white-space: normal; }
+  .sheet .mt3 { margin-top: 0.15in; }
+  .bgrid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr) minmax(0, 1.38fr); grid-template-areas: "pul mtx reg" "pul note note" "ret ret ret"; gap: 0.1in var(--gap); align-items: start; }
+  /* in-sheet jumps (A → B, A → E) */
+  a.local-jump { font-weight: 700; color: var(--c); white-space: nowrap; text-decoration: none; }
+  /* narrow bands (E, G): title / subtitle / sources as rows */
+  .band.rows { grid-template-columns: auto minmax(0, 1fr); row-gap: 3pt; }
+  .band.rows .src { grid-column: 2; text-align: left; }
+  /* methotrexate regimen calendars (day 1–14 axis; filled = scheduled, open = conditional) */
+  .mtx-cal { display: grid; gap: 5pt; }
+  .cal-key { display: flex; flex-wrap: wrap; gap: 3pt 12pt; font: 600 10pt/1.2 "Inter"; color: var(--ink-3); }
+  .cal-key > span { display: inline-flex; align-items: center; gap: 5pt; }
+  .cal-reg { border-top: 1.5pt solid var(--c); padding-top: 3pt; }
+  .cal-grid { display: grid; grid-template-columns: 12.4em repeat(14, minmax(0, 1fr)); align-items: center; row-gap: 1pt; }
+  .cal-grid .ax-l { grid-column: 1; font: 800 12.5pt/1.2 "Inter"; color: var(--ink); }
+  .cal-grid .ax { grid-row: 1; box-shadow: inset 0 calc(-.75pt / var(--k)) var(--rule); text-align: center; font: 700 10pt/1.3 "Inter"; font-variant-numeric: tabular-nums; color: var(--ink-3); }
+  .cal-grid .ln { grid-column: 1; font: 700 10.5pt/1.15 "Inter"; padding: 1pt 0; }
+  .cal-grid .ln small { font: 700 10pt/1.15 "Inter"; color: var(--ink); }
+  /* calendar coordinates (day d = column d + 1); bracket spans stay inline with their --n */
+  .cal-grid[data-rows="4"] { grid-template-rows: repeat(4, auto); } .cal-grid[data-rows="5"] { grid-template-rows: repeat(5, auto); }
+  .cal-grid [data-c="1"] { grid-column: 1; } .cal-grid [data-c="2"] { grid-column: 2; } .cal-grid [data-c="3"] { grid-column: 3; } .cal-grid [data-c="4"] { grid-column: 4; } .cal-grid [data-c="5"] { grid-column: 5; } .cal-grid [data-c="6"] { grid-column: 6; } .cal-grid [data-c="7"] { grid-column: 7; } .cal-grid [data-c="8"] { grid-column: 8; } .cal-grid [data-c="9"] { grid-column: 9; } .cal-grid [data-c="10"] { grid-column: 10; } .cal-grid [data-c="11"] { grid-column: 11; } .cal-grid [data-c="12"] { grid-column: 12; } .cal-grid [data-c="13"] { grid-column: 13; } .cal-grid [data-c="14"] { grid-column: 14; } .cal-grid [data-c="15"] { grid-column: 15; }
+  .cal-grid [data-r="1"] { grid-row: 1; } .cal-grid [data-r="2"] { grid-row: 2; } .cal-grid [data-r="3"] { grid-row: 3; } .cal-grid [data-r="4"] { grid-row: 4; } .cal-grid [data-r="5"] { grid-row: 5; } .cal-grid [data-r="4-5"] { grid-row: 4 / 6; }
+  .mk { display: inline-block; width: 8.5pt; height: 8.5pt; transform: rotate(45deg); background: var(--c); justify-self: center; flex: none; }
+  .mk.if { background: var(--paper); box-shadow: inset 0 0 0 1.4pt var(--c); }
+  .cal-grid .cmp { position: relative; text-align: center; font: 600 10.5pt/1.15 "Inter"; color: var(--ink-2); padding-top: 5pt; }
+  .cal-grid .cmp::before { content: ""; position: absolute; top: 0; height: 3pt; left: calc(100% / var(--n) / 2); right: calc(100% / var(--n) / 2);
+    border: 1pt solid var(--c); border-top: none; }
+  .cal-rules { margin-top: 3pt; font-size: 11pt; line-height: 1.25; }
+  .cal-rules .rail { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+  .cal-rules .rail > .when { font-weight: 600; }
+  .cal-rules .rail + .rail { margin-top: 2pt; padding-top: 2pt; }
+  /* PUL discharge checklist + section-wide return warning */
+  .pul-discharge { display: grid; grid-template-columns: auto auto; justify-content: start; column-gap: 14pt; }
+  .pul-discharge > b { display: block; grid-column: 1 / -1; margin: 0 0 3pt; }
+  .pul-discharge .ck { display: block; white-space: normal; margin: 2pt 0 0; padding-left: 14pt; text-indent: -14pt; }
+  .pul-discharge .ck:last-child { grid-column: 1 / -1; }
+  .pul-discharge .ck::before { content: ""; display: inline-block; width: 8pt; height: 8pt; border: 1.4pt solid var(--wf); margin-right: 6pt; vertical-align: -0.5pt; }
+  .ectopic-return { border-left: calc(4pt / var(--k)) solid var(--stop); background: var(--t-stop); padding: 6pt 10pt; font-size: 11.5pt; line-height: 1.3; }
+  .ectopic-return > b { color: var(--stop); font-weight: 900; margin-right: 6pt; }
+  .ectopic-return .scope { font: 700 9.6pt/1 "Inter"; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); margin-right: 8pt; }
+  .box.reference { --reference-rule: var(--rule); }
+  .loss-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 0.16in; align-items: end; }
+  .loss-foot > .xs { padding-bottom: 2pt; }
+  .row.pair.cd > .block > .band { min-height: 0; }
+  .loss-entry { border-left: calc(4pt / var(--k)) solid var(--stop); background: var(--t-stop); padding: 5pt 9pt; font: 800 12pt/1.25 "Inter"; color: var(--ink); margin-bottom: 6pt; }
+  .loss-med-sequence { display: grid; gap: 2pt; }
+  .loss-med-sequence .rx { font-size: 13.5pt; margin: 0; }
+  .loss-med-sequence .wait { font: 800 10.5pt/1.2 "Inter"; color: var(--ink-2); border-block: 0.75pt solid var(--rule); padding-block: 2pt; text-align: center; }
+  ol.steps.ladder > li b.st .esc { color: var(--c); font-weight: 700; margin-right: 3pt; }
+  .hyd .br > .box { margin-top: 0; }
+  /* scan read-out: loss criteria */
+  table.loss td.sub { font-weight: 700; padding-top: 6pt; }
+  table.loss td.sub .abbr-key { float: right; font: 600 10pt/1.3 "Inter"; color: var(--ink-3); }
+  /* nausea: shared steps, then parallel hydration branches */
+  ol.steps.ladder > li ul.ls { gap: 2pt; margin-top: 1pt; }
+  /* steps 1–2 side by side (short alternatives), then the hydration fork and refractory full width */
+  ol.steps.ladder.nvp { display: grid; grid-template-columns: 2.05fr 1fr; gap: 7pt 0.16in; }
+  ol.steps.ladder.nvp > li:nth-child(n+3) { grid-column: 1 / -1; }
+  .hyd { display: grid; grid-template-columns: 0.74fr 1.26fr; gap: 0.14in; margin-top: 4pt; align-items: stretch; }
+  .hyd .br { border-top: 3pt solid var(--c); background: var(--paper); padding: 5pt 8pt 7pt; display: flex; flex-direction: column; gap: 4pt; }
+  .hyd .bh { font: 800 12pt/1.2 "Inter"; color: var(--ink); }
+  .hyd .bh small { display: block; font: 600 10pt/1.25 "Inter"; color: var(--ink-3); margin-top: 1pt; }
+  .hyd .box { margin-top: auto; }
+  .refr { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3pt; align-items: start; }
+  .admin { font-weight: 600; color: var(--ink); }
+  /* Rh D: matched gestational-age rows */
+  .rh-choices { display: grid; gap: 6pt; }
+  .rh-choice { border-top: 2pt solid var(--hem); padding-top: 5pt; }
+  .rh-choice .ga-l { display: block; font: 800 12.5pt/1.2 "Inter"; margin-bottom: 2pt; }
+  /* loss aftercare */
+  .loss-aftercare { display: grid; grid-template-columns: 1.1fr 1fr; gap: 0.16in; align-items: stretch; }
+  /* round 4: hCG draws as circles, drugs as diamonds; brackets on their own rows */
+  .mk.lab { border-radius: 50%; transform: none; width: 9pt; height: 9pt; }
+  .cal-key > span > .mk + .mk { margin-left: -2pt; }
+  .cal-grid .cal-note { align-self: center; font: 600 10pt/1.2 "Inter"; color: var(--ink-3); padding-right: 6pt; }
+  .cal-note > span { white-space: nowrap; margin-right: 4pt; }
+  .cal-note .mk { vertical-align: -0.5pt; }
+  table.loss th { color: var(--ink); }
+  table.loss th:first-child, table.loss tr.criteria td:first-child { background: color-mix(in srgb, var(--fet) 12%, white); padding-left: 3pt; padding-right: 3pt; }
+  .hyd .br + .br { border-left: 0.75pt solid var(--rule); padding-left: 0.14in; }
+  .admit-gate { margin-top: 4pt; }
+  .mtx-after { border-top: 1.5pt solid var(--c); padding-top: 3pt; columns: 2; column-gap: var(--gap); }
+  /* pass 7 (K6-08, K6-05): methotrexate dosing basis + leucovorin naming */
+  .mtx-regimens h3 .tag.med-alert { vertical-align: .2em; margin-left: .4em; }
+  .cal-key .key-rule { color: var(--ink); font-weight: 800; }
+  .cal-rules .rail.lv { grid-template-columns: auto minmax(0, 1fr); column-gap: 8pt; }
+  .cal-rules .rail.lv > .when { color: var(--ink); font-weight: 700; }
+  .early-bottom > .block > .band { align-items: start; }
+  .early-bottom > .block > .band .src { align-self: end; }
+  /* round 5 (ax6 #6, fo3 #6): heading tiers A/B → C/D → E/F/G; bottom header rules and body starts on one line */
+  .early .cd .band h2 { font-size: calc(40pt / var(--k)); }
+  .early .cd .band .lt { font-size: calc(52pt / var(--k)); }
+  .early .early-bottom .band h2 { font-size: calc(34pt / var(--k)); line-height: 1.02; }
+  .early .early-bottom .band .lt { font-size: calc(44pt / var(--k)); }
+  .early .early-bottom .band h2 small { font-size: 12.5pt; }
+  .early-bottom { display: grid; grid-template-columns: minmax(0, .48fr) minmax(0, 2.05fr) minmax(0, .77fr); grid-template-rows: auto auto; column-gap: var(--gap); }
+  .early-bottom > section.block { display: grid; grid-template-rows: subgrid; grid-row: span 2; row-gap: 0.14in; }
+  .early-bottom > section.block > .band { min-height: 0; }
+  .early-body { display: flex; flex-direction: column; gap: 0.14in; min-width: 0; }
+  .loss-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.16in; align-items: center; }
+  .loss-head > .loss-entry { margin: 0; }
+  .loss-scope { line-height: 1.25; }
+  /* pass 7: two-line emergency entry (C09-01); one return-precaution component (K4-11); antiemetic stacking caution (C09-03) */
+  .loss-entry > div + div { margin-top: 2pt; }
+  .loss-foot + .loss-return, .loss-aftercare .loss-return { margin: 0; }
+  .stack-warn { margin-top: auto; font-size: 10.5pt; line-height: 1.28; color: var(--ink); border-left: calc(3pt / var(--k)) solid var(--c); padding: 1pt 0 1pt 7pt; }
+  .refr-note { color: var(--ink-2); }
+  .opt .oh small .xref { margin-left: 2pt; }
+  .med-not { margin-top: -2pt; }</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="08-infections.html" title="Infections">‹ 08</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html" selected="">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="10-feeding.html" title="Feeding">10 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/09-early-pregnancy.pdf">PDF</a></nav>
+<div class="sheet portrait-24x36 early" style="--k:1.215">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Clinic&nbsp;· triage&nbsp;· ED&nbsp;— before 20&nbsp;weeks</div>
+      <h1><span class="sid">09</span>Early pregnancy</h1>
+    </div>
+    <div class="sub">Pain or bleeding before 20&nbsp;wk: assess for ectopic rupture first; then determine location, viability, and how to manage a loss. Rh, nausea and vomiting, molar flags. ≥ 20&nbsp;wk bleeding <a href="01-triage.html#p-01" class="xlink"><span class="xref c-hem">1&nbsp;· 01</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="01-triage.html" class="xlink"><span><b>1</b>Triage</span></a><a href="07-prenatal.html" class="xlink"><span><b>7</b>Prenatal</span></a><a href="02-emergencies.html" class="xlink"><span><b>2</b>Emergencies</span></a><a href="27-ob-consult.html" class="xlink"><span><b>27</b>OB/GYN consult</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-09.svg)"></div>
+
+  <!-- ============ A ============ -->
+  <section class="block c-hem" id="p-A">
+    <div class="band">
+      <div class="lt">A</div>
+      <h2>First look<small>Positive test + pain or bleeding = ectopic until the location is known</small></h2>
+      <div class="src">ACOG PB 193 Tubal Ectopic (2018)<br>SRU First-Trimester Lexicon (2024)</div>
+    </div>
+    <div class="row" style="align-items:stretch">
+      <div class="stack" style="flex:0.85">
+        <div class="callout-stop"><div class="ico">!</div><div>Unstable, syncope, peritoneal signs, or hemoperitoneum on US → OR now (laparoscopy / laparotomy). Don’t wait for the formal scan.</div></div>
+        <ul class="ls small">
+          <li><b>Ectopic with hemodynamic instability</b> → OB/GYN to the bedside for emergency surgery <a href="27-ob-consult.html#p-A" class="xlink"><span class="xref c-wf">27&nbsp;· A</span></a></li>
+          <li>2 large-bore IVs&nbsp;· CBC&nbsp;· type &amp; crossmatch&nbsp;· hCG&nbsp;· <b>call FM attending + OB/GYN now</b></li>
+          <li>Shock → massive transfusion protocol, 1 : 1 : 1 <a href="02-emergencies.html#p-A" class="xlink"><span class="xref c-hem">2&nbsp;· A</span></a></li>
+          <li><b>No hCG is “too low” to rupture</b>&nbsp;— ectopics rupture at low and at falling levels.</li>
+          <li>Rupture is still possible with an intrauterine pregnancy (IUP) seen (heterotopic) and after methotrexate.</li>
+        </ul>
+      </div>
+      <div class="stack" style="flex:1.36">
+        <h3 class="mt0">Stable: workup</h3>
+        <ul class="ls small">
+          <li><b>Minimum: transvaginal ultrasound (TVUS) + confirmed pregnancy.</b> Scan at any hCG level.</li>
+          <li>Quantitative serum hCG (baseline for trend)&nbsp;· CBC&nbsp;· ABO/Rh + antibody screen <a class="local-jump" href="#e09-E">→ E&nbsp;· Rh D</a></li>
+          <li>Speculum: os, tissue, cervical source, volume of bleeding</li>
+          <li><b>Live IUP + bleeding:</b> no proven benefit of bed rest, pelvic rest or vitamins (PB 200). Prior losses → discuss vaginal progesterone.</li>
+          <li>Risks: prior ectopic, tubal surgery, PID, IUD in situ, smoking, <b>IVF</b></li>
+          <li><b>Heterotopic:</b> 1 in 4,000–30,000 spontaneous&nbsp;· up to 1 in 100 with IVF. An IUP does not exclude heterotopic pregnancy, especially after IVF.</li>
+        </ul>
+        <div class="box small reference"><b>Discriminatory level:</b> most IUPs are visible by hCG ≥ 3,000 mIU/mL. If used at all, set it conservatively high (<b>up to 3,500</b>); multiples run higher. One value never justifies methotrexate or aspiration of a wanted pregnancy.</div>
+      </div>
+      <div class="stack" style="flex:1.01">
+        <h3 class="mt0">Reading the scan <span class="h3-note">SRU 2024 terms</span></h3>
+        <table class="t scan small">
+          <tbody>
+            <tr><td class="k">Yolk sac or embryo in a normally sited sac</td><td><b>Definite IUP</b>&nbsp;— ectopic excluded except heterotopic</td></tr>
+            <tr><td class="k">Normally sited sac, no yolk sac</td><td><b>Probable IUP</b> (not PUL). Follow up; drop “pseudosac”</td></tr>
+            <tr><td class="k">Adnexal ring or mass separate from ovary</td><td><b>Probable / definite ectopic</b> (definite if yolk sac or embryo)</td></tr>
+            <tr><td class="k">Sac in cesarean scar</td><td><b>Cesarean scar ectopic</b> → specialist plan; no systemic methotrexate alone</td></tr>
+            <tr><td class="k">Nothing seen</td><td><b>Pregnancy of unknown location</b> <a class="local-jump" href="#e09-B">→ B&nbsp;· PUL pathway</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ B ============ -->
+  <section class="block c-hem mt3" id="e09-B"><span id="p-B" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+    <div class="band">
+      <div class="lt">B</div>
+      <h2>Unknown location &amp; ectopic<small>Single hCG can’t diagnose location or viability&nbsp;— trend it and rescan</small></h2>
+      <div class="src">ACOG PB 193 (2018)&nbsp;· Box 1&nbsp;· Box 2<br>ASRM Practice Committee, medical tx of ectopic (2013)</div>
+    </div>
+    <div class="bgrid">
+      <div class="stack pul-flow" style="grid-area:pul">
+        <h3 class="mt0">PUL pathway <span class="h3-note">— trend hCG, rescan</span></h3>
+        <img class="flow" src="../../assets/svg/flow-pul.svg" alt="Pregnancy of unknown location: unstable → OR now; stable → serial hCG at 48 h (minimum rise 49% below 1,500, 40% at 1,500–3,000, 33% above 3,000): rise ≥ minimum → rescan; falling → follow to nonpregnant; slower rise or plateau → rescan and/or trend if wanted and stable, if intervention chosen, aspiration, methotrexate only if eligible; after aspiration, hCG at 12–24 h if no villi">
+        <div class="box local small pul-discharge">
+          <b>PUL&nbsp;— before discharge, every patient:</b>
+          <span class="ck">Assign the result owner</span> <span class="ck">Book the 48-h hCG draw</span> <span class="ck">Document the callback plan if lost to follow-up</span>
+        </div>
+        <div class="box local small mtx-local"><b>Methotrexate:</b> order set <span class="lfv" data-local="methotrexate_order_set">____</span>&nbsp;· double-check + who gives <span class="lfv" data-local="methotrexate_check_handling">____</span></div>
+      </div>
+      <div class="stack mtx-eligibility" style="grid-area:mtx">
+        <h3 class="mt0">Methotrexate eligibility</h3>
+        <div class="small">Stable, unruptured, confirmed or high suspicion of ectopic, IUP reasonably excluded, reliable follow-up. Baseline: <b>measured height + weight, hCG, CBC + diff, LFTs, creatinine, type &amp; screen</b>.</div>
+        <div class="box stop small">
+          <h4>Absolute contraindications</h4>
+          IUP&nbsp;· rupture or instability&nbsp;· can’t follow up&nbsp;· breastfeeding&nbsp;· immunodeficiency&nbsp;· moderate–severe anemia, leukopenia, thrombocytopenia&nbsp;· clinically important hepatic or renal dysfunction&nbsp;· active pulmonary or peptic ulcer disease&nbsp;· methotrexate sensitivity
+        </div>
+        <div class="small"><b>Relative</b> (lower success): embryonic cardiac activity&nbsp;· high hCG (&gt; 5,000: failure ≥ 14.3% vs 3.7%)&nbsp;· mass &gt; 4&nbsp;cm&nbsp;· declines transfusion. Rise &gt; 50% in 48&nbsp;h also predicts failure.</div>
+        <div class="box small reference">
+          <h4>Surgery (salpingectomy or salpingostomy)</h4>
+          <b>Required:</b> instability <a href="27-ob-consult.html#p-A" class="xlink"><span class="xref c-wf">27&nbsp;· A</span></a>, ongoing rupture pain, intraperitoneal bleeding, any absolute methotrexate contraindication, methotrexate failure. <b>Consider:</b> relative contraindications, patient choice, concurrent procedure. Salpingostomy if contralateral tube damaged and fertility desired → serial hCG after.
+        </div>
+        <div class="small"><b>Counsel (methotrexate):</b> no folic-acid supplements (stop prenatal vitamin), no NSAIDs, no alcohol, avoid sun; avoid opioids and gas-producing foods (mask rupture); no sex or vigorous activity until resolved; rupture warning signs. <b>Contraception until 6 mo after the last dose</b> (label; PB 193: some advise ≥ 3 mo).</div>
+        <div class="xs muted">Expectant only if asymptomatic, hCG falling or plateaued, accepts rupture risk (RCT, hCG &lt; 2,000: 59% vs 76% with methotrexate).</div>
+      </div>
+      <div class="stack mtx-regimens" style="grid-area:reg">
+        <h3 class="mt0">Tubal ectopic: methotrexate regimens <span class="tag med-alert">High alert</span></h3>
+        <div class="mtx-cal">
+          <div class="cal-key"><span>Treatment day 1–14</span><span><i class="mk on"></i>drug dose</span><span><i class="mk lab on"></i>hCG draw</span><span><i class="mk on"></i><i class="mk lab on"></i>filled = scheduled</span><span><i class="mk if"></i><i class="mk lab if"></i>open = only if the rule below calls for it</span><span class="key-rule">Each dose = one-time IM order&nbsp;— never daily</span></div>
+          <div class="cal-reg">
+            <div class="cal-grid" data-rows="4">
+              <span class="ax-l" data-r="1">Single-dose</span><span class="ax" data-c="2">1</span><span class="ax" data-c="3">2</span><span class="ax" data-c="4">3</span><span class="ax" data-c="5">4</span><span class="ax" data-c="6">5</span><span class="ax" data-c="7">6</span><span class="ax" data-c="8">7</span><span class="ax" data-c="9">8</span><span class="ax" data-c="10">9</span><span class="ax" data-c="11">10</span><span class="ax" data-c="12">11</span><span class="ax" data-c="13">12</span><span class="ax" data-c="14">13</span><span class="ax" data-c="15">14</span>
+              <span class="ln" data-r="2">Methotrexate <small>50&nbsp;mg/m² IM</small></span><i class="mk on" data-c="2" data-r="2"></i>
+              <span class="ln" data-r="3">hCG</span><i class="mk lab on" data-c="5" data-r="3"></i><i class="mk lab on" data-c="8" data-r="3"></i>
+              <span class="cmp" style="grid-column:5 / 9;grid-row:4;--n:4">d4 → d7</span>
+            </div>
+            <div class="cal-rules">
+              <div class="rail"><span class="when">hCG fall ≥ 15% from day 4 to day 7</span><span class="do">→ hCG weekly to nonpregnant</span></div>
+              <div class="rail"><span class="when">hCG fall &lt; 15% from day 4 to day 7</span><span class="do">→ repeat <span class="dose">50&nbsp;mg/m²</span>, recheck</span></div>
+              <div class="rail"><span class="when">No fall after 2&nbsp;doses</span><span class="do">→ surgery</span></div>
+            </div>
+          </div>
+          <div class="cal-reg">
+            <div class="cal-grid" data-rows="5">
+              <span class="ax-l" data-r="1">Two-dose</span><span class="ax" data-c="2">1</span><span class="ax" data-c="3">2</span><span class="ax" data-c="4">3</span><span class="ax" data-c="5">4</span><span class="ax" data-c="6">5</span><span class="ax" data-c="7">6</span><span class="ax" data-c="8">7</span><span class="ax" data-c="9">8</span><span class="ax" data-c="10">9</span><span class="ax" data-c="11">10</span><span class="ax" data-c="12">11</span><span class="ax" data-c="13">12</span><span class="ax" data-c="14">13</span><span class="ax" data-c="15">14</span>
+              <span class="ln" data-r="2">Methotrexate <small>50&nbsp;mg/m² IM</small></span><i class="mk on" data-c="2" data-r="2"></i><i class="mk on" data-c="5" data-r="2"></i><i class="mk if" data-c="8" data-r="2"></i><i class="mk if" data-c="12" data-r="2"></i>
+              <span class="ln" data-r="3">hCG</span><i class="mk lab on" data-c="5" data-r="3"></i><i class="mk lab on" data-c="8" data-r="3"></i><i class="mk lab if" data-c="12" data-r="3"></i><i class="mk lab if" data-c="15" data-r="3"></i>
+              <span class="cmp" style="grid-column:5 / 9;grid-row:4;--n:4">d4 → d7</span>
+              <span class="cmp" style="grid-column:8 / 13;grid-row:5;--n:5">d7 → d11</span>
+            </div>
+            <div class="cal-rules">
+              <div class="rail"><span class="when">hCG fall ≥ 15% day 4→7 or day 7→11</span><span class="do">→ hCG weekly to nonpregnant</span></div>
+              <div class="rail"><span class="when">hCG fall &lt; 15% from day 4 to day 7</span><span class="do">→ dose 3&nbsp;day 7, hCG day 11</span></div>
+              <div class="rail"><span class="when">hCG fall &lt; 15% from day 7 to day 11</span><span class="do">→ dose 4&nbsp;day 11, hCG day 14</span></div>
+              <div class="rail"><span class="when">No fall after 4&nbsp;doses</span><span class="do">→ consider surgery</span></div>
+            </div>
+          </div>
+          <div class="cal-reg">
+            <div class="cal-grid" data-rows="4">
+              <span class="ax-l" data-r="1">Multi-dose</span><span class="ax" data-c="2">1</span><span class="ax" data-c="3">2</span><span class="ax" data-c="4">3</span><span class="ax" data-c="5">4</span><span class="ax" data-c="6">5</span><span class="ax" data-c="7">6</span><span class="ax" data-c="8">7</span><span class="ax" data-c="9">8</span><span class="ax" data-c="10">9</span><span class="ax" data-c="11">10</span><span class="ax" data-c="12">11</span><span class="ax" data-c="13">12</span><span class="ax" data-c="14">13</span><span class="ax" data-c="15">14</span>
+              <span class="ln" data-r="2">Methotrexate <small>1&nbsp;mg/kg IM</small></span><i class="mk on" data-c="2" data-r="2"></i><i class="mk if" data-c="4" data-r="2"></i><i class="mk if" data-c="6" data-r="2"></i><i class="mk if" data-c="8" data-r="2"></i>
+              <span class="ln" data-r="3">Leucovorin <small>0.1&nbsp;mg/kg IM</small></span><i class="mk on" data-c="3" data-r="3"></i><i class="mk if" data-c="5" data-r="3"></i><i class="mk if" data-c="7" data-r="3"></i><i class="mk if" data-c="9" data-r="3"></i>
+              <span class="ln" data-r="4">hCG <small>on methotrexate days</small></span><i class="mk lab on" data-c="2" data-r="4"></i><i class="mk lab on" data-c="4" data-r="4"></i><i class="mk lab if" data-c="6" data-r="4"></i><i class="mk lab if" data-c="8" data-r="4"></i>
+            </div>
+            <div class="cal-rules">
+              <div class="rail"><span class="when">hCG fall ≥ 15% from the previous draw</span><span class="do">→ stop; hCG weekly to nonpregnant</span></div>
+              <div class="rail"><span class="when">No fall after 4&nbsp;doses</span><span class="do">→ consider surgery</span></div>
+              <div class="rail lv"><span class="when">Leucovorin</span><span class="do">= folinic-acid rescue&nbsp;· <b>not folic acid&nbsp;· not LEVOleucovorin</b></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="xs mtx-after" style="grid-area:note"><b>After methotrexate:</b> hCG may rise above baseline in the first days&nbsp;— expected. <b>Example</b> d4 → d7: 2,000 → 1,600 = 400 / 2,000 = 20% fall → weekly hCG. If methotrexate fails and pregnancy location remains uncertain → consider abnormal IUP; consider aspiration before more methotrexate. Plateau or rise later → persistent ectopic.</div>
+      <div class="ectopic-return pul-return" style="grid-area:ret"><b>Return now</b> <span class="scope">PUL&nbsp;· ectopic&nbsp;· methotrexate</span> Severe or shoulder-tip pain, dizziness, fainting, heavy bleeding.</div>
+    </div>
+  </section>
+
+  <!-- ============ C + D ============ -->
+  <div class="row mt3 pair cd" style="align-items:stretch">
+    <section class="block c-fet" style="flex:0.75" id="p-C">
+      <div class="band">
+        <div class="lt">C</div>
+        <h2>Is it a loss?<small>TVUS, IUP of uncertain viability</small></h2>
+        <div class="src">SRU&nbsp;· Doubilet NEJM 2013<br>ACOG PB 200 Table 1</div>
+      </div>
+      <table class="t loss small">
+        <thead><tr><th>Diagnostic&nbsp;— any one</th><th>Suspicious → repeat TVUS 7–10&nbsp;d</th></tr></thead>
+        <tbody>
+          <tr class="criteria"><td><b>CRL ≥ 7&nbsp;mm</b>, no cardiac activity</td><td>CRL &lt; 7&nbsp;mm, no cardiac activity</td></tr>
+          <tr class="criteria"><td><b>MSD ≥ 25&nbsp;mm</b>, no embryo</td><td>MSD 16–24&nbsp;mm, no embryo</td></tr>
+          <tr class="criteria"><td>No embryo with cardiac activity <b>≥ 2&nbsp;wk</b> after a scan showed a sac <i>without</i> a yolk sac</td><td>No embryo with cardiac activity 7–13&nbsp;d after a scan showed a sac without a yolk sac</td></tr>
+          <tr class="criteria"><td>No embryo with cardiac activity <b>≥ 11&nbsp;d</b> after a scan showed a sac <i>with</i> a yolk sac</td><td>No embryo with cardiac activity 7–10&nbsp;d after a scan showed a sac with a yolk sac</td></tr>
+          <tr><td colspan="2" class="sub">Other suspicious findings <span class="abbr-key">CRL = crown–rump length&nbsp;· MSD = mean sac diameter</span></td></tr>
+          <tr><td colspan="2">No embryo ≥ 6&nbsp;wk after LMP&nbsp;· empty amnion&nbsp;· yolk sac &gt; 7&nbsp;mm&nbsp;· MSD − CRL &lt; 5&nbsp;mm</td></tr>
+        </tbody>
+      </table>
+      <div class="small">Criteria are deliberately strict so a wanted pregnancy is never interrupted on a single scan. Stable patient + doubt → rescan; waiting is safe.</div>
+      <div class="box small reference"><b>Say</b> “cardiac activity”, “early pregnancy loss”, “embryo”&nbsp;— not “heartbeat”, “failed pregnancy”, “fetal pole” (SRU 2024). CRL ≥ 7&nbsp;mm + no cardiac activity = embryonic demise; ≥ 11w0d = fetal demise. <b>Workup</b> for a cause after ≥ 2 losses (need not be consecutive, ASRM 2026); APS is the only thrombophilia consistently linked (PB 200).</div>
+    </section>
+
+    <section class="block c-hem" style="flex:1.22" id="p-D">
+      <div class="band">
+        <div class="lt">D</div>
+        <h2>Managing first-trimester loss<small>Through 12w6d&nbsp;· all three are safe; long-term outcomes are the same&nbsp;— her choice</small></h2>
+        <div class="src">ACOG PB 200 (2018) Box 1 + CPU 2024<br>Schreiber NEJM 2018 (mifepristone)</div>
+      </div>
+      <div class="loss-head">
+      <div class="loss-entry"><div>Hemorrhage or instability → resuscitate&nbsp;· FM attending + OB/GYN now&nbsp;· urgent aspiration</div><div>Suspected septic loss → IV antibiotics within 1&nbsp;h + urgent evacuation <a href="13-sepsis.html#p-02" class="xlink"><span class="xref c-inf">13&nbsp;· 02</span></a></div></div>
+      <div class="small loss-scope"><b>13w0d–19w6d:</b> regimens, cervical prep and setting differ → OB/GYN <a href="27-ob-consult.html" class="xlink"><span class="xref c-wf">27</span></a></div>
+      </div>
+      <div class="row" style="gap:0.16in;align-items:stretch">
+        <div class="opt" style="flex:0.63">
+          <div class="oh">Expectant</div>
+          <div class="small">First trimester only. ~80% complete within 8&nbsp;wk; better if already passing tissue.</div>
+          <div class="small">Rx analgesia + written bleeding plan. Still incomplete → aspiration.</div>
+        </div>
+        <div class="opt" style="flex:1.75">
+          <div class="oh">Medication<small>early loss only&nbsp;— not induction <a href="26-induction-labor.html#p-C" class="xlink"><span class="xref c-lab">26&nbsp;· C</span></a></small></div>
+          <div class="drug c-hem" style="padding-top:5pt">
+            <div class="loss-med-sequence"><div class="rx">miFEPRIStone 200&nbsp;mg PO</div><div class="wait">↓ 24&nbsp;h</div><div class="rx">miSOPROStol 800&nbsp;mcg PV</div></div>
+            <div class="ci">miFEPRIStone first if available (fewer aspirations). Alone: <span class="dose">miSOPROStol 800&nbsp;mcg PV</span>; no response → repeat once ≥ 3&nbsp;h later, typically ≤ 7&nbsp;d.</div>
+          </div>
+        </div>
+        <div class="opt" style="flex:0.8">
+          <div class="oh">Aspiration</div>
+          <div class="small">Preferred with severe anemia, bleeding disorder, CV disease.</div>
+          <div class="small">Office MVA/EVA under local is fine. Suction, no routine sharp curettage. <span class="dose">Doxycycline 200&nbsp;mg PO</span> 1&nbsp;h before. IUD can go in at aspiration unless septic.</div>
+        </div>
+      </div>
+      <div class="xs med-not"><b>Medication not for</b> infection, hemorrhage, severe anemia, bleeding disorder. <b>miFEPRIStone also not with</b> anticoagulation, adrenal failure or long-term steroids, inherited porphyria, IUD in place (remove first), suspected ectopic or undiagnosed adnexal mass. Incomplete loss: miSOPROStol has no clear benefit over waiting.</div>
+      <div class="loss-aftercare small">
+        <div class="box reference"><b>Completion:</b> TVUS typically 7–14&nbsp;d&nbsp;— only to confirm the sac is gone. Thick stripe without symptoms → no surgery. No US → serial hCG. Failed medication → more time or aspiration.</div>
+        <div class="ectopic-return loss-return"><b>Return now</b> Soaking ≥ 2 maxi pads/h for 2&nbsp;h in a row&nbsp;· fever or foul discharge&nbsp;· worsening pain&nbsp;· syncope.</div>
+      </div>
+      <div class="loss-foot">
+        <div class="box local small">Mifepristone: certified prescriber <span class="lfv" data-local="mifepristone_prescriber">____</span>&nbsp;· dispensing <span class="lfv" data-local="mifepristone_dispensing">____</span></div>
+        <div class="xs">After: hormonal contraception can start immediately; no need to delay conception; pelvic rest 1–2&nbsp;wk is customary, not evidence-based.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ E + F + G ============ -->
+  <div class="row mt3 pair early-bottom">
+    <section class="block c-hem" style="flex:0.55" id="e09-E"><span id="p-E" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="band rows">
+        <div class="lt">E</div>
+        <h2>Rh&nbsp;D<small>Rh D−, unsensitized</small></h2>
+        <div class="src">ACOG CPU&nbsp;· PB 181&nbsp;· SMFM&nbsp;· ASRM</div>
+      </div>
+      <div class="early-body">
+      <div class="rh-choices small">
+        <div class="rh-choice">
+          <span class="ga-l">&lt; 12w0d abortion or loss</span>
+          ACOG suggests forgoing routine RhIG (SMFM disagrees). If given: ≥ <span class="dose">50&nbsp;mcg IM</span> (300&nbsp;mcg if 50 unavailable).
+          <div class="xs mt1">Bleeding with an ongoing pregnancy &lt; 12w0d: ASRM 2026 applies the same approach; the ACOG CPU names abortion and loss.</div>
+        </div>
+        <div class="rh-choice">
+          <span class="ga-l">≥ 12w0d bleeding or loss</span>
+          RhIG <span class="dose">300&nbsp;mcg IM</span> ≤ 72&nbsp;h <a href="01-triage.html#p-14" class="xlink"><span class="xref c-hem">1&nbsp;· 14</span></a>
+        </div>
+      </div>
+      <ul class="ls small">
+        <li><b>Ectopic:</b> <span class="dose">RhIG 300&nbsp;mcg IM</span> ≤ 72&nbsp;h (label). <b>Mole:</b> RhIG at evacuation (FIGO 2025). CPU 2024 covers neither.</li>
+        <li>If giving RhIG with medication management: administer within 72&nbsp;h of the first miSOPROStol dose.</li>
+        <li>Prenatal Rh D-negative care <a href="07-prenatal.html#p-01" class="xlink"><span class="xref c-wf">7&nbsp;· 01</span></a></li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="block c-wf" style="flex:1.95" id="p-F">
+      <div class="band">
+        <div class="lt">F</div>
+        <h2>Nausea &amp; vomiting<small>Treat early&nbsp;— prevents hyperemesis. Step up if no relief</small></h2>
+        <div class="src">ACOG PB 189 (2018, reaff. 2024)<br>Figure 1 algorithm</div>
+      </div>
+      <div class="early-body">
+      <ol class="steps ladder nvp c-wf">
+        <li><b class="st">First line</b>
+          <ul class="ls">
+            <li>Ginger 250&nbsp;mg QID&nbsp;· prenatal vitamin → folic acid only&nbsp;· P6 bands</li>
+            <li><span class="dose">Pyridoxine 10–25&nbsp;mg PO TID–QID</span> ± <span class="dose">doxylamine 12.5&nbsp;mg PO TID–QID</span> (½ of OTC 25&nbsp;mg tab)</li>
+            <li>or combination <span class="dose">doxylamine 10&nbsp;mg/pyridoxine 10&nbsp;mg</span> 2 tablets at bedtime; <b>max 4 tablets/day</b></li>
+            <li>or <span class="dose">doxylamine 20&nbsp;mg/pyridoxine 20&nbsp;mg ER</span> 1 tablet at bedtime; <b>max 2 tablets/day</b></li>
+          </ul></li>
+        <li><b class="st"><span class="esc">No relief →</span> Add one of the following</b>
+          <ul class="ls">
+            <li><span class="dose">Dimenhydrinate 25–50&nbsp;mg PO q4–6h</span> (≤ 200&nbsp;mg/day with doxylamine)</li>
+            <li><span class="dose">Diphenhydramine 25–50&nbsp;mg PO q4–6h</span></li>
+            <li><span class="dose">Prochlorperazine 25&nbsp;mg PR q12h</span></li>
+            <li><span class="dose">Promethazine 12.5–25&nbsp;mg PO/PR q4–6h</span></li>
+          </ul></li>
+        <li><b class="st">Still symptomatic&nbsp;— choose by hydration</b>
+          <div class="box small admit-gate"><b>Admit</b> if she can’t keep liquids down despite outpatient treatment. HG: severe N/V limiting intake or activity, other causes excluded (often ≥ 5% weight loss). Check lytes, LFTs (AST/ALT usually &lt; 300), TSH&nbsp;— transient thyrotoxicosis needs no antithyroid drug.</div>
+          <div class="hyd">
+            <div class="br">
+              <div class="bh">No dehydration&nbsp;— add one</div>
+              <ul class="ls">
+                <li><span class="dose">Metoclopramide 5–10&nbsp;mg PO/IM q6–8h</span></li>
+                <li><span class="dose">Ondansetron 4&nbsp;mg PO q8h</span></li>
+                <li><span class="dose">Promethazine 12.5–25&nbsp;mg PO/PR/deep IM q4–6h</span></li>
+                <li><span class="dose">Trimethobenzamide 200&nbsp;mg IM q6–8h</span></li>
+              </ul>
+              <div class="stack-warn"><b>Before adding to either branch:</b> metoclopramide + a phenothiazine (promethazine, prochlorperazine, chlorpromazine) → dystonia, NMS. Ondansetron + phenothiazine → QT.</div>
+            </div>
+            <div class="br">
+              <div class="bh">Dehydration&nbsp;— IV 0.9% saline + KCl (lytes daily), then add one</div>
+              <div class="box stop small"><b>Thiamine before dextrose.</b> Admitted with vomiting or poor intake: <span class="dose">thiamine 100&nbsp;mg IV</span> with the first liter, then 100&nbsp;mg daily × 2–3&nbsp;d (Wernicke). Never delay glucose for hypoglycemia.</div>
+              <ul class="ls">
+                <li><span class="dose">Metoclopramide 5–10&nbsp;mg IV</span> <span class="admin">slowly, over ≥ 3&nbsp;min q8h</span></li>
+                <li><span class="dose">Ondansetron 8&nbsp;mg IV</span> <span class="admin">over 15&nbsp;min q12h</span></li>
+                <li><span class="dose">Promethazine 12.5–25&nbsp;mg deep IM q4–6h</span> <span class="admin">— not IV push</span></li>
+                <li><span class="dose">Dimenhydrinate 50&nbsp;mg IV</span> <span class="admin">in 50&nbsp;mL over 20&nbsp;min q4–6h</span></li>
+              </ul>
+            </div>
+          </div></li>
+        <li><b class="st">Refractory&nbsp;— still symptomatic after either branch</b>
+          <div class="refr"><ul class="ls">
+            <li><span class="dose">Chlorpromazine 25–50&nbsp;mg deep IM q4–6h</span> (10–25&nbsp;mg PO)&nbsp;· keep lying down; BP for ≥ 30&nbsp;min after injection</li>
+            <li><span class="dose">Methylprednisolone 16&nbsp;mg PO/IV q8h × 3&nbsp;d</span>&nbsp;— no response by day 3 → stop; else taper over 2&nbsp;wk (max 6&nbsp;wk). Last resort; avoid &lt; 10&nbsp;wk (clefts)</li>
+          </ul>
+          <div class="xs refr-note">Ondansetron: low K or Mg, QT-prolonging drugs or long QT → correct lytes, ECG; &lt; 10&nbsp;wk individualize (small cardiac-defect signal). Weight loss despite treatment → enteral feeding first; no routine PICC.</div></div></li>
+      </ol>
+      </div>
+    </section>
+
+    <section class="block c-wf" style="flex:0.8" id="p-G">
+      <div class="band rows">
+        <div class="lt">G</div>
+        <h2>Molar&nbsp;flags<small>Suspect → evacuate → follow hCG</small></h2>
+        <div class="src">NCCN GTN&nbsp;· FIGO 2025&nbsp;· CDC MEC 2024</div>
+      </div>
+      <div class="early-body">
+      <div class="small"><b>Think mole:</b> hCG far above dates (&gt; 100,000 = ↑ GTN risk)&nbsp;· bleeding&nbsp;· uterus &gt; dates&nbsp;· hyperemesis&nbsp;· hyperthyroidism&nbsp;· <b>preeclampsia &lt; 20&nbsp;wk</b>&nbsp;· theca-lutein cysts (&gt; 6&nbsp;cm).</div>
+      <div class="small"><b>US:</b> complete&nbsp;— heterogeneous cystic intrauterine mass, no embryo (“snowstorm”); partial&nbsp;— enlarged cystic placenta ± growth-restricted fetus; histology confirms.</div>
+      <div class="box prohibition small"><span class="tag stop">Stop</span><b>Don’t biopsy</b> a vaginal lesion after a mole&nbsp;— GTN metastases bleed.</div>
+      <div class="small"><b>Before evacuation:</b> hCG, CBC, CMP, TSH, type &amp; screen, CXR → suction D&amp;C (US-guided), gyn oncology input&nbsp;· OB/GYN consultation <a href="27-ob-consult.html" class="xlink"><span class="xref c-wf">27</span></a></div>
+      <div class="box small reference">
+        <h4>After evacuation</h4>
+        hCG q1–2&nbsp;wk until normal (2-wk sample rises or plateaus → repeat in 1&nbsp;wk). From the first normal (FIGO 2025): partial&nbsp;— confirm at 1 mo; complete&nbsp;— monthly × 6 mo; per gyn oncology.
+        <b>Post‑molar GTN:</b> plateau (&lt; 10% change) across 4 weekly hCG values over ≥ 3&nbsp;wk&nbsp;· rise &gt; 10% across 3 values over ≥ 2&nbsp;wk&nbsp;· or choriocarcinoma / PSTT / ETT histology (FIGO).
+      </div>
+      <div class="xs">Contraception: systemic hormonal MEC 1, any hCG. Intrauterine GTD suspected: IUD start MEC 4, keep MEC 2.</div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG Practice Bulletin 193, Tubal Ectopic Pregnancy (2018, interim update; Correction 2019); ACOG PB 200, Early Pregnancy Loss (2018, interim update) and ACOG Clinical Practice Update, Rh D Immune Globulin Administration After Abortion or Pregnancy Loss at Less Than 12 Weeks (Obstet Gynecol 2024;144:e140–3); ACOG PB 181, Prevention of Rh D Alloimmunization (2017); ASRM Position Statement on Rho(D) Immune Globulin in the First Trimester (2026); SMFM Statement, RhD immune globulin after abortion &lt; 12&nbsp;weeks (Am J Obstet Gynecol 2024;230:B2–5); ACOG PB 189, Nausea and Vomiting of Pregnancy (2018, reaff. 2024); Doubilet PM et al., SRU Multispecialty Panel, Diagnostic criteria for nonviable pregnancy early in the first trimester, N Engl J Med 2013;369:1443–51; Rodgers SK et al., SRU first-trimester US lexicon, Radiology 2024 / Am J Obstet Gynecol 2025; Schreiber CA et al., Mifepristone pretreatment for early pregnancy loss, N Engl J Med 2018;378:2161–70; ASRM Practice Committee, Medical treatment of ectopic pregnancy (Fertil Steril 2013); NCCN Guidelines, Gestational Trophoblastic Neoplasia; Ngan HYS et al., FIGO Cancer Report: Diagnosis and management of gestational trophoblastic disease, 2025 update (Int J Gynaecol Obstet 2025); FDA labels (mifepristone, methotrexate, RhoGAM, chlorpromazine; promethazine alert 2023); RCOG GTG 69 (2024); SMFM Consult #67 (2023); ISMP lists; CDC U.S. MEC 2024. <b>LOCAL</b> boxes = this program’s policy. <div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek05LDBIMTBWMUg5ek0xMSwwSDEyVjFIMTF6TTEyLDBIMTNWMUgxMnpNMTUsMEgxNlYxSDE1ek0xNywwSDE4VjFIMTd6TTE4LDBIMTlWMUgxOHpNMTksMEgyMFYxSDE5ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTAsMUgxMVYySDEwek0xMSwxSDEyVjJIMTF6TTE0LDFIMTVWMkgxNHpNMTUsMUgxNlYySDE1ek0xNiwxSDE3VjJIMTZ6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTExLDJIMTJWM0gxMXpNMTIsMkgxM1YzSDEyek0xNSwySDE2VjNIMTV6TTE3LDJIMThWM0gxN3pNMTgsMkgxOVYzSDE4ek0xOSwySDIwVjNIMTl6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNMTEsM0gxMlY0SDExek0xMiwzSDEzVjRIMTJ6TTE4LDNIMTlWNEgxOHpNMTksM0gyMFY0SDE5ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTgsNEg5VjVIOHpNOSw0SDEwVjVIOXpNMTEsNEgxMlY1SDExek0xMiw0SDEzVjVIMTJ6TTE0LDRIMTVWNUgxNHpNMTUsNEgxNlY1SDE1ek0xNiw0SDE3VjVIMTZ6TTE3LDRIMThWNUgxN3pNMTgsNEgxOVY1SDE4ek0yMiw0SDIzVjVIMjJ6TTI0LDRIMjVWNUgyNHpNMjUsNEgyNlY1SDI1ek0yNiw0SDI3VjVIMjZ6TTI4LDRIMjlWNUgyOHpNMCw1SDFWNkgwek02LDVIN1Y2SDZ6TTgsNUg5VjZIOHpNMTAsNUgxMVY2SDEwek0xMiw1SDEzVjZIMTJ6TTEzLDVIMTRWNkgxM3pNMTUsNUgxNlY2SDE1ek0xNiw1SDE3VjZIMTZ6TTE5LDVIMjBWNkgxOXpNMjIsNUgyM1Y2SDIyek0yOCw1SDI5VjZIMjh6TTAsNkgxVjdIMHpNMSw2SDJWN0gxek0yLDZIM1Y3SDJ6TTMsNkg0VjdIM3pNNCw2SDVWN0g0ek01LDZINlY3SDV6TTYsNkg3VjdINnpNOCw2SDlWN0g4ek0xMCw2SDExVjdIMTB6TTEyLDZIMTNWN0gxMnpNMTQsNkgxNVY3SDE0ek0xNiw2SDE3VjdIMTZ6TTE4LDZIMTlWN0gxOHpNMjAsNkgyMVY3SDIwek0yMiw2SDIzVjdIMjJ6TTIzLDZIMjRWN0gyM3pNMjQsNkgyNVY3SDI0ek0yNSw2SDI2VjdIMjV6TTI2LDZIMjdWN0gyNnpNMjcsNkgyOFY3SDI3ek0yOCw2SDI5VjdIMjh6TTgsN0g5VjhIOHpNOSw3SDEwVjhIOXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE1LDdIMTZWOEgxNXpNMTcsN0gxOFY4SDE3ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTMsOEg0VjlIM3pNNiw4SDdWOUg2ek03LDhIOFY5SDd6TTEwLDhIMTFWOUgxMHpNMTIsOEgxM1Y5SDEyek0xMyw4SDE0VjlIMTN6TTE0LDhIMTVWOUgxNHpNMTYsOEgxN1Y5SDE2ek0yMCw4SDIxVjlIMjB6TTIyLDhIMjNWOUgyMnpNMjMsOEgyNFY5SDIzek0yNCw4SDI1VjlIMjR6TTI2LDhIMjdWOUgyNnpNMjcsOEgyOFY5SDI3ek0yLDlIM1YxMEgyek0zLDlINFYxMEgzek00LDlINVYxMEg0ek03LDlIOFYxMEg3ek04LDlIOVYxMEg4ek0xMyw5SDE0VjEwSDEzek0xNCw5SDE1VjEwSDE0ek0xNiw5SDE3VjEwSDE2ek0yMCw5SDIxVjEwSDIwek0yMiw5SDIzVjEwSDIyek0yNSw5SDI2VjEwSDI1ek0yOCw5SDI5VjEwSDI4ek0xLDEwSDJWMTFIMXpNMywxMEg0VjExSDN6TTQsMTBINVYxMUg0ek01LDEwSDZWMTFINXpNNiwxMEg3VjExSDZ6TTcsMTBIOFYxMUg3ek04LDEwSDlWMTFIOHpNOSwxMEgxMFYxMUg5ek0xMCwxMEgxMVYxMUgxMHpNMTQsMTBIMTVWMTFIMTR6TTE3LDEwSDE4VjExSDE3ek0xOSwxMEgyMFYxMUgxOXpNMjAsMTBIMjFWMTFIMjB6TTIxLDEwSDIyVjExSDIxek0yNCwxMEgyNVYxMUgyNHpNMjUsMTBIMjZWMTFIMjV6TTI2LDEwSDI3VjExSDI2ek0yNywxMEgyOFYxMUgyN3pNMiwxMUgzVjEySDJ6TTQsMTFINVYxMkg0ek03LDExSDhWMTJIN3pNMTEsMTFIMTJWMTJIMTF6TTEzLDExSDE0VjEySDEzek0xNCwxMUgxNVYxMkgxNHpNMTUsMTFIMTZWMTJIMTV6TTE2LDExSDE3VjEySDE2ek0xOCwxMUgxOVYxMkgxOHpNMTksMTFIMjBWMTJIMTl6TTIwLDExSDIxVjEySDIwek0yMSwxMUgyMlYxMkgyMXpNMjMsMTFIMjRWMTJIMjN6TTI2LDExSDI3VjEySDI2ek0yNywxMUgyOFYxMkgyN3pNMCwxMkgxVjEzSDB6TTMsMTJINFYxM0gzek01LDEySDZWMTNINXpNNiwxMkg3VjEzSDZ6TTcsMTJIOFYxM0g3ek0xMywxMkgxNFYxM0gxM3pNMTYsMTJIMTdWMTNIMTZ6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMTksMTJIMjBWMTNIMTl6TTIwLDEySDIxVjEzSDIwek0yMSwxMkgyMlYxM0gyMXpNMjIsMTJIMjNWMTNIMjJ6TTIzLDEySDI0VjEzSDIzek0yNSwxMkgyNlYxM0gyNXpNMjcsMTJIMjhWMTNIMjd6TTI4LDEySDI5VjEzSDI4ek0wLDEzSDFWMTRIMHpNMSwxM0gyVjE0SDF6TTMsMTNINFYxNEgzek01LDEzSDZWMTRINXpNNywxM0g4VjE0SDd6TTgsMTNIOVYxNEg4ek05LDEzSDEwVjE0SDl6TTEwLDEzSDExVjE0SDEwek0xMiwxM0gxM1YxNEgxMnpNMTksMTNIMjBWMTRIMTl6TTIwLDEzSDIxVjE0SDIwek0yMSwxM0gyMlYxNEgyMXpNMCwxNEgxVjE1SDB6TTIsMTRIM1YxNUgyek0zLDE0SDRWMTVIM3pNNSwxNEg2VjE1SDV6TTYsMTRIN1YxNUg2ek0xMCwxNEgxMVYxNUgxMHpNMTEsMTRIMTJWMTVIMTF6TTE0LDE0SDE1VjE1SDE0ek0yNSwxNEgyNlYxNUgyNXpNMjYsMTRIMjdWMTVIMjZ6TTI3LDE0SDI4VjE1SDI3ek0yOCwxNEgyOVYxNUgyOHpNMCwxNUgxVjE2SDB6TTEsMTVIMlYxNkgxek0zLDE1SDRWMTZIM3pNNCwxNUg1VjE2SDR6TTgsMTVIOVYxNkg4ek05LDE1SDEwVjE2SDl6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTMsMTVIMTRWMTZIMTN6TTE0LDE1SDE1VjE2SDE0ek0xNSwxNUgxNlYxNkgxNXpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0xOSwxNUgyMFYxNkgxOXpNMjAsMTVIMjFWMTZIMjB6TTIyLDE1SDIzVjE2SDIyek0yNCwxNUgyNVYxNkgyNHpNMjUsMTVIMjZWMTZIMjV6TTI3LDE1SDI4VjE2SDI3ek00LDE2SDVWMTdINHpNNiwxNkg3VjE3SDZ6TTksMTZIMTBWMTdIOXpNMTIsMTZIMTNWMTdIMTJ6TTE1LDE2SDE2VjE3SDE1ek0xNywxNkgxOFYxN0gxN3pNMTksMTZIMjBWMTdIMTl6TTIxLDE2SDIyVjE3SDIxek0yNywxNkgyOFYxN0gyN3pNMiwxN0gzVjE4SDJ6TTMsMTdINFYxOEgzek00LDE3SDVWMThINHpNMTAsMTdIMTFWMThIMTB6TTExLDE3SDEyVjE4SDExek0xMiwxN0gxM1YxOEgxMnpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNiwxN0gxN1YxOEgxNnpNMTcsMTdIMThWMThIMTd6TTIxLDE3SDIyVjE4SDIxek0yMiwxN0gyM1YxOEgyMnpNMjMsMTdIMjRWMThIMjN6TTI1LDE3SDI2VjE4SDI1ek0yOCwxN0gyOVYxOEgyOHpNMCwxOEgxVjE5SDB6TTIsMThIM1YxOUgyek00LDE4SDVWMTlINHpNNSwxOEg2VjE5SDV6TTYsMThIN1YxOUg2ek04LDE4SDlWMTlIOHpNOSwxOEgxMFYxOUg5ek0xMywxOEgxNFYxOUgxM3pNMTcsMThIMThWMTlIMTd6TTIxLDE4SDIyVjE5SDIxek0yMiwxOEgyM1YxOUgyMnpNMjcsMThIMjhWMTlIMjd6TTI4LDE4SDI5VjE5SDI4ek0zLDE5SDRWMjBIM3pNOCwxOUg5VjIwSDh6TTEwLDE5SDExVjIwSDEwek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTMsMjBINFYyMUgzek00LDIwSDVWMjFINHpNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek05LDIwSDEwVjIxSDl6TTExLDIwSDEyVjIxSDExek0xMiwyMEgxM1YyMUgxMnpNMTMsMjBIMTRWMjFIMTN6TTE0LDIwSDE1VjIxSDE0ek0xOSwyMEgyMFYyMUgxOXpNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNiwyMEgyN1YyMUgyNnpNOCwyMUg5VjIySDh6TTEwLDIxSDExVjIySDEwek0xMiwyMUgxM1YyMkgxMnpNMTMsMjFIMTRWMjJIMTN6TTE2LDIxSDE3VjIySDE2ek0xNywyMUgxOFYyMkgxN3pNMTksMjFIMjBWMjJIMTl6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjYsMjFIMjdWMjJIMjZ6TTI3LDIxSDI4VjIySDI3ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTgsMjJIOVYyM0g4ek0xMiwyMkgxM1YyM0gxMnpNMTMsMjJIMTRWMjNIMTN6TTE2LDIySDE3VjIzSDE2ek0xNywyMkgxOFYyM0gxN3pNMTgsMjJIMTlWMjNIMTh6TTIwLDIySDIxVjIzSDIwek0yMiwyMkgyM1YyM0gyMnpNMjQsMjJIMjVWMjNIMjR6TTI3LDIySDI4VjIzSDI3ek0wLDIzSDFWMjRIMHpNNiwyM0g3VjI0SDZ6TTksMjNIMTBWMjRIOXpNMTEsMjNIMTJWMjRIMTF6TTEyLDIzSDEzVjI0SDEyek0xMywyM0gxNFYyNEgxM3pNMTUsMjNIMTZWMjRIMTV6TTE2LDIzSDE3VjI0SDE2ek0yMCwyM0gyMVYyNEgyMHpNMjQsMjNIMjVWMjRIMjR6TTI1LDIzSDI2VjI0SDI1ek0yNiwyM0gyN1YyNEgyNnpNMjcsMjNIMjhWMjRIMjd6TTAsMjRIMVYyNUgwek0yLDI0SDNWMjVIMnpNMywyNEg0VjI1SDN6TTQsMjRINVYyNUg0ek02LDI0SDdWMjVINnpNOSwyNEgxMFYyNUg5ek0xMCwyNEgxMVYyNUgxMHpNMTEsMjRIMTJWMjVIMTF6TTEyLDI0SDEzVjI1SDEyek0xMywyNEgxNFYyNUgxM3pNMTYsMjRIMTdWMjVIMTZ6TTE3LDI0SDE4VjI1SDE3ek0xOCwyNEgxOVYyNUgxOHpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNywyNEgyOFYyNUgyN3pNMjgsMjRIMjlWMjVIMjh6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNOCwyNUg5VjI2SDh6TTksMjVIMTBWMjZIOXpNMTAsMjVIMTFWMjZIMTB6TTEyLDI1SDEzVjI2SDEyek0xNCwyNUgxNVYyNkgxNHpNMTksMjVIMjBWMjZIMTl6TTIwLDI1SDIxVjI2SDIwek0yMSwyNUgyMlYyNkgyMXpNMjIsMjVIMjNWMjZIMjJ6TTIzLDI1SDI0VjI2SDIzek0yNCwyNUgyNVYyNkgyNHpNMjUsMjVIMjZWMjZIMjV6TTI2LDI1SDI3VjI2SDI2ek0wLDI2SDFWMjdIMHpNMiwyNkgzVjI3SDJ6TTMsMjZINFYyN0gzek00LDI2SDVWMjdINHpNNiwyNkg3VjI3SDZ6TTEwLDI2SDExVjI3SDEwek0xMSwyNkgxMlYyN0gxMXpNMTMsMjZIMTRWMjdIMTN6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTksMjZIMjBWMjdIMTl6TTI0LDI2SDI1VjI3SDI0ek0yNSwyNkgyNlYyN0gyNXpNMjYsMjZIMjdWMjdIMjZ6TTI4LDI2SDI5VjI3SDI4ek0wLDI3SDFWMjhIMHpNNiwyN0g3VjI4SDZ6TTgsMjdIOVYyOEg4ek05LDI3SDEwVjI4SDl6TTExLDI3SDEyVjI4SDExek0xMiwyN0gxM1YyOEgxMnpNMTMsMjdIMTRWMjhIMTN6TTE3LDI3SDE4VjI4SDE3ek0xOCwyN0gxOVYyOEgxOHpNMTksMjdIMjBWMjhIMTl6TTIwLDI3SDIxVjI4SDIwek0yMiwyN0gyM1YyOEgyMnpNMjcsMjdIMjhWMjhIMjd6TTAsMjhIMVYyOUgwek0xLDI4SDJWMjlIMXpNMiwyOEgzVjI5SDJ6TTMsMjhINFYyOUgzek00LDI4SDVWMjlINHpNNSwyOEg2VjI5SDV6TTYsMjhIN1YyOUg2ek04LDI4SDlWMjlIOHpNMTAsMjhIMTFWMjlIMTB6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

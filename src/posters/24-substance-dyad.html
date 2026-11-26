@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Opioid- or THC-exposed dyad</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); --body: 10pt; --gap: 0.18in; }
+  .masthead h1 { font-size: calc(56pt / var(--k)); }
+  .masthead .sub { max-width: none; font-size: 12.5pt; margin-top: 0.4in; padding-bottom: 0.06in; }
+  .sheet .small { font-size: var(--body); line-height: 1.28; }
+  .sheet .xs { font-size: 9.8pt; line-height: 1.26; }
+  .sheet .panel { gap: 6pt; }
+  .ph h2 { font-size: 20pt; font-family: "Inter", sans-serif; }   /* < 24 pt printed: text face (css2 #9) */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  .ph.inl .src { grid-column: 3; grid-row: 1; text-align: right; align-self: baseline; padding-inline-start: 0; }
+  .sheet > .panel, .sheet > .cols { flex: none; }
+  .sheet > .panel + .cols, .sheet > .cols + .panel { margin-top: var(--gap); }
+  .lead { color: var(--c); }
+  .k24 { color: var(--c); font-weight: 800; }
+
+  /* A: stabilize first — mother (overdose, stop red) beside infant (newborn) */
+  .stab { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: var(--gap); align-items: stretch; }
+  .stab > div { display: flex; flex-direction: column; gap: 5pt; }
+  .stab .urgent-head { font-size: 12.5pt; line-height: 1.2; }
+  .stab .nb.urgent-head { --c: var(--nb); }
+  .stab .mleft { display: flex; flex-direction: column; gap: 4pt; }
+  .stab .arrest { font-size: 11pt; line-height: 1.2; }
+  .stab .arrest > b { font-weight: 800; color: var(--stop); }
+  .stab .rx24 { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4pt 12pt; align-items: center; font-size: var(--body); line-height: 1.28; }
+  .stab .rx24 .hero { color: var(--stop); }
+  .stab .rx24 .hero small { font: 800 11pt/1 "Inter"; color: var(--ink); margin-left: 3pt; letter-spacing: 0; }
+  .stab .duo { display: grid; grid-template-columns: minmax(0, 1fr) 2.1in; gap: 14pt; align-items: center; }
+  .stab .box.local { margin-top: 4pt; }
+
+  /* three working columns */
+  .cols.c3 { grid-template-columns: minmax(0, 1.21fr) minmax(0, 1fr) minmax(0, .92fr); flex: none; align-items: stretch; }
+  .c3 > .col > .panel:last-child { flex: 1; }
+  .c3 .panel > .box.local:last-child { margin-top: auto; }
+  .c3 .panel > :nth-last-child(2):has(+ .box.local) { margin-bottom: 3pt; }
+
+  /* condition → action rails */
+  .rail.r24 { grid-template-columns: 0.84in minmax(0, 1fr); font-size: var(--body); line-height: 1.28; }
+  .rail.r24 > .when { color: var(--c); }
+  .rail.r24 > .do { font-weight: 400; }
+  /* consecutive rails own their spacing (fo3 #2) */
+  .rail-list { display: flex; flex-direction: column; gap: 0; }
+  .rail-list > .rail { margin: 0; padding-block: calc(4pt / var(--k)); }
+  .rail-list > .rail + .rail { border-top: calc(.75pt / var(--k)) solid var(--rule); }
+  .rail-list > .rail:first-child { padding-top: 0; }
+  .rail-list > .rail:last-child { padding-bottom: 0; }
+  .words { font-size: var(--body); line-height: 1.28; }
+  .words q { quotes: "“" "”"; font-weight: 400; }
+  .words > b:first-child { font-weight: 600; }
+  .words s { text-decoration: none; color: var(--ink-3); }
+
+  /* C: specimen table */
+  table.spec { table-layout: fixed; --cell-y: 3.5pt; --table-leading: 1.24; }
+  table.spec td { font-size: 10pt; }
+  table.spec td.k { white-space: normal; font-size: 10.2pt; color: var(--c); }
+  table.spec td.k small { display: block; font: 600 10pt/1.2 "Inter"; color: var(--ink-2); margin-top: 1pt; }
+
+  /* D: maternal treatment list */
+  ul.ls.d24 { gap: 4pt; font-size: var(--body); line-height: 1.28; }
+  ul.ls.d24 > li::before { background: var(--c); }
+
+  /* E: breastfeeding decision grid */
+  table.milk { table-layout: fixed; --cell-y: 5pt; --table-leading: 1.24; }
+  table.milk td { font-size: 10.1pt; }
+  table.milk td p + p { margin-top: 3pt; }
+  table.milk td.k { white-space: normal; font: 800 10.3pt/1.2 "Inter"; color: var(--ink); }
+  .dec { display: inline-block; font: 800 10pt/1.1 "Inter"; letter-spacing: .04em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1;
+    padding: 2.5pt 6pt 2pt; border-radius: 2pt; margin-bottom: 3pt; white-space: nowrap; }
+  .dec.yes { background: var(--nb); color: #fff; }
+  .dec.ind { border: 1.3pt solid var(--nb); color: var(--nb); }
+  .dec.no { background: var(--t-stop); color: var(--stop); border: 1.3pt solid var(--stop); }   /* restriction, not the black UPDATED chip (K5-06) */
+  .dec.cn { background: color-mix(in srgb, var(--nb) 18%, white); color: var(--ink); border: 1pt solid var(--nb); }
+  .pos { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2pt 8pt; font-size: 10.1pt; line-height: 1.24; }
+  .pos dt { font-weight: 800; color: var(--c); }
+  .pos dd { margin: 0; }
+
+  /* F: observation chart (HTML so labels keep the type floor) */
+  .obs { --lw: 1.42in; position: relative; padding-top: 2pt; }
+  .obs .ax { display: grid; grid-template-columns: var(--lw) minmax(0, 1fr); font: 500 10pt/1 "Inter"; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .obs .ax .tk { position: relative; height: 13pt; border-bottom: 1pt solid var(--ink); }
+  .obs .ax .tk span { position: absolute; bottom: 3pt; transform: translateX(-50%); white-space: nowrap; }
+  .obs .ax .tk span.a0 { transform: none; }
+  .obs .ax .tk span.a1 { transform: translateX(-100%); }
+  .obs .ax .tk span.maj { color: var(--ink); font-weight: 800; }
+  .obs .ax .cap { font: 500 10pt/1 "Inter"; color: var(--ink-3); align-self: end; padding-bottom: 3pt; }
+  .obs .ln { display: grid; grid-template-columns: var(--lw) minmax(0, 1fr); align-items: center; min-height: 0.42in; border-bottom: .6pt solid var(--rule-2); }
+  .obs .nm { font: 600 10.4pt/1.15 "Inter"; padding: 3pt 8pt 3pt 0; }
+  .obs .tr { position: relative; height: 0.28in;
+    background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 7 - .6pt), var(--rule) calc(100% / 7 - .6pt) calc(100% / 7)); }
+  .obs .bar { position: absolute; top: 0; height: 100%; display: flex; align-items: center; white-space: nowrap; font: 800 11pt/1 "Inter"; }
+  .obs .bar.min { left: 0; background: var(--nb); color: #fff; padding-left: 6pt; }
+  .obs .bar.rng { background: color-mix(in srgb, var(--nb) 22%, white); box-shadow: inset 0 0 0 1pt var(--nb); color: var(--ink); justify-content: center; }
+  /* dashed continuation (pv1 #5): the stay may extend; no implied endpoint */
+  .obs .bar.more { background: none; height: 0; top: 50%; border-top: 1.4pt dashed var(--nb); }
+  .obs .bar.more::after { content: ""; position: absolute; right: -1pt; top: -3.4pt; border-left: 5pt solid var(--nb); border-block: 3pt solid transparent; }
+  .obs .bar.ind { left: 0; right: 0; border: 1.2pt dashed var(--wf); background: #fff; color: var(--wf); padding-left: 7pt; font-size: 10.4pt; }
+  .obs .ln.thc .tr { background: none; height: auto; font-size: 10.4pt; line-height: 1.22; padding: 3pt 0; }
+  .obs .key { display: flex; gap: 12pt; flex-wrap: wrap; font: 600 10pt/1.2 "Inter"; color: var(--ink-2); margin-top: 4pt; }
+  .obs .key i { display: inline-block; width: 16pt; height: 8pt; vertical-align: 0; margin-right: 4pt; }
+  .obs .key i.k1 { background: var(--nb); }
+  .obs .key i.k2 { background: color-mix(in srgb, var(--nb) 22%, white); box-shadow: inset 0 0 0 1pt var(--nb); }
+  .obs .key i.k3 { height: 0; border-top: 1.4pt dashed var(--nb); vertical-align: .3em; }
+
+  /* G: comfort measures as pills */
+  .care { display: flex; flex-wrap: wrap; gap: 4pt; }
+  .care > span { font: 600 10pt/1.15 "Inter"; padding: 3pt 7pt; background: color-mix(in srgb, var(--nb) 14%, white); border-left: 3pt solid var(--nb); }
+  .sleep { border-left: 3pt solid var(--ink); padding: 1pt 0 1pt 8pt; }
+
+  /* H: ESC triad + huddle loop */
+  .esc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6pt; }
+  .esc .node { padding: 5pt 7pt 6pt; font-size: 10.1pt; line-height: 1.22; }
+  .esc .node .lbl { font-size: 10pt; }
+  .esc .node .hero { display: block; margin: 1pt 0 2pt; font-size: 18pt; color: var(--ink); }
+  .loop { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13pt; }
+  .loop > div { position: relative; padding: 4pt 6pt 5pt; background: color-mix(in srgb, var(--nb) 12%, white); border-top: 3pt solid var(--nb); font: 600 9.9pt/1.2 "Inter"; }
+  .loop > div b { display: block; font-weight: 800; }
+  .loop > div:not(:last-child)::after { content: "→"; position: absolute; right: -11pt; top: 50%; transform: translateY(-50%); font: 800 11pt/1 "Inter"; color: var(--nb); }
+  .loop > div.end { background: var(--nb); color: #fff; }
+
+  /* J: discharge — four lanes + LOCAL */
+  .dc4 { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, .9fr) minmax(0, .95fr) minmax(0, 1.05fr); grid-template-rows: auto auto; gap: 6pt var(--gap); align-items: start; }
+  .dc4 > .span { grid-row: span 2; }
+  .dc4 > .box.local { display: block; grid-column: 3 / span 2; margin-top: 4pt; align-self: end; }
+  .dc4 > div { display: flex; flex-direction: column; gap: 4pt; min-width: 0; }
+  .dc4 h3 { margin-top: 0; font-size: 12.5pt; }
+  .dc4 .c-nb h3 { color: var(--nb); }
+  .dc4 ul.ls.check { gap: 4pt; font-size: var(--body); line-height: 1.26; }
+  .dc4 ul.ls.check > li { padding-left: 17pt; }
+  .dc4 ul.ls.check > li::before { width: 10pt; height: 10pt; top: .14em; border-width: 1.5pt; }
+  .lfx { white-space: nowrap; }
+  .box.local.small .lfx { display: inline; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="23-nicu-transfer.html" title="NICU transferstabilize until transport">‹ 23</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html" selected="">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="25-dyad-discharge.html" title="Mother-baby discharge">25 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/24-substance-dyad.pdf">PDF</a></nav>
+<div class="sheet portrait-24x36 c-wf" style="--k:1.47">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>L&amp;D&nbsp;· postpartum&nbsp;· nursery&nbsp;· prenatal opioid or cannabis exposure</div>
+      <h1><span class="sid">24</span>Opioid- or THC-exposed dyad</h1>
+    </div>
+    <div class="sub">Screen → test only to answer a question → keep treatment → feed by substance → observe → discharge + Plan of Safe Care. <span class="muted">Routine care</span> <a href="05-newborn.html" class="xlink"><span class="xref c-nb">5</span></a> <a href="06-postpartum.html" class="xlink"><span class="xref c-wf">6</span></a> <a href="18-nursery.html" class="xlink"><span class="xref c-nb">18</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="10-feeding.html" class="xlink"><span><b>10</b>Feeding</span></a><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="25-dyad-discharge.html" class="xlink"><span><b>25</b>Dyad → home</span></a><a href="15-sick-newborn.html" class="xlink"><span><b>15</b>Sick newborn</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-06.svg)"></div>
+
+  <!-- A: stabilize first -->
+  <section class="panel c-stop" id="p-A">
+    <div class="ph inl"><span class="num">A</span><h2>Stabilize first</h2><span class="src">ACOG/ASAM CO 711 (2017)&nbsp;· naloxone 4&nbsp;mg nasal spray Drug Facts (2026)&nbsp;· AHA 2025 Part 10</span></div>
+    <div class="stab">
+      <div>
+        <div class="urgent-head"><span>Mother unresponsive or breathing slowly → emergency response&nbsp;· pulse present → ventilate + naloxone</span> <span class="deadline">Now</span></div>
+        <div class="duo">
+          <div class="mleft"><div class="arrest"><b>No definite pulse → CPR now</b> <a href="02-emergencies.html#p-D" class="xlink"><span class="xref c-stop">2&nbsp;· D</span></a>&nbsp;· naloxone only if it does not interrupt CPR</div>
+          <div class="rx24">
+            <span class="hero">4&nbsp;mg<small>nasal</small></span>
+            <span><b>Take-home product:</b> 1 spray into 1 nostril → <b>call 911</b>. Still or again breathing slowly → <b>new device every 2–3&nbsp;min</b>; stay until EMS arrives. <b>Pregnancy is not a reason to withhold naloxone.</b></span>
+          </div></div>
+          <div class="box local small"><span class="lfx">Inpatient rescue dosing <span class="lfv" data-local="naloxone_inpatient_dosing">____</span></span><br><span class="lfx">monitoring <span class="lfv" data-local="naloxone_monitoring">____</span></span></div>
+        </div>
+      </div>
+      <div>
+        <div class="urgent-head nb"><span>Infant ill or unstable → <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a></span> <span>Depression at birth → <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a></span></div>
+        <div class="small"><b>Do not attribute an ill infant’s presentation to withdrawal</b> without evaluating other causes. Suspected withdrawal after stabilization → assess function <b>H</b>.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cols c3">
+    <!-- ===== column 1: mother / exposure ===== -->
+    <div class="col">
+      <section class="panel c-wf" id="p-B">
+        <div class="ph"><span class="num">B</span><h2>Ask everyone&nbsp;· get the history</h2><span class="src">ACOG/ASAM CO 711 (2017)&nbsp;· ACOG CC 10 (2025)&nbsp;· AAP report (2026) Rec 7</span></div>
+        <div class="rail-list">
+          <div class="rail r24"><span class="when">Screen</span><span class="do"><b>Validated verbal screening</b> at the first prenatal visit; update history at delivery and postpartum. Interview privately; explain confidentiality limits.</span></div>
+          <div class="rail r24"><span class="when">Ask</span><span class="do">Substance / formulation&nbsp;· prescribed vs nonprescribed&nbsp;· route&nbsp;· frequency&nbsp;· last use&nbsp;· other sedatives&nbsp;· treatment team.</span></div>
+          <div class="rail r24"><span class="when">Cannabis</span><span class="do">Interview / self-report / validated tool. <b>Do not use biologic testing as routine cannabis screening.</b></span></div>
+          <div class="rail r24"><span class="when">Maternal toxicology</span><span class="do">Identify the clinical question → explain limitations and possible reporting consequences → <b>obtain informed consent.</b> A positive result does <b>not</b> establish OUD, current impairment or inability to parent.</span></div>
+        </div>
+        <div class="words"><b>Document:</b> <q>person with OUD</q>&nbsp;· <q>infant with prenatal opioid exposure</q>&nbsp;· <q>positive / negative result</q>. <s>Avoid “addict,” “drug baby,” “clean / dirty.”</s></div>
+        <div class="box local small"><span class="lfx">Screening tool <span class="lfv" data-local="substance_screening_tool">____</span></span>&nbsp;· <span class="lfx">documentation <span class="lfv" data-local="substance_screening_documentation">____</span></span>&nbsp;· <span class="lfx">maternal consent pathway <span class="lfv" data-local="maternal_tox_consent_pathway">____</span></span></div>
+      </section>
+
+      <section class="panel c-nb" id="p-C">
+        <div class="ph"><span class="num">C</span><h2>Infant tox: will it change care?</h2><span class="src">AAP report (2026) Table 2, Recs 6–7&nbsp;· ARUP Consult (2025)</span></div>
+        <div class="small"><b class="lead">Universal newborn toxicology is not recommended.</b></div>
+        <div class="small">Unexpected withdrawal or unclear exposure history → interview the parent first. <b>Test when results will inform assessment, treatment or feeding decisions.</b></div>
+        <div class="small">Known MOUD or maternal THC positivity alone does not create an automatic clinical indication. Seek parental permission; explain purpose and use of results. Necessary testing for acute clinical concerns may proceed without permission. <b>Testing declined + unresolved clinical concern</b> → neonatal review, clinical observation plan and safety assessment <span class="tag local">Local</span> <span class="lfv" data-local="newborn_tox_declined_pathway">____</span>.</div>
+        <table class="t spec">
+          <colgroup><col style="width:27%"><col></colgroup>
+          <thead><tr><th>Specimen</th><th>Window&nbsp;· limits</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Infant urine<small>promptly</small></td><td>Short window; recent exposure. <b>Negative does not exclude prenatal exposure.</b></td></tr>
+            <tr><td class="k">Meconium<small>first stools, per lab</small></td><td>Longer window, mainly later pregnancy. Collection may be incomplete; can contain intrapartum and newborn medications.</td></tr>
+            <tr><td class="k">Cord tissue<small>at birth</small></td><td>Longer window, mainly later pregnancy. Can contain intrapartum medications; unaffected by medication first given to the infant after collection.</td></tr>
+          </tbody>
+        </table>
+        <div class="small"><b>Interpret before acting:</b> presumptive immunoassay positive → <b>definitive confirmation</b>. Review medication records&nbsp;— <b>epidural fentanyl can explain positive infant results</b>. Routine “opiates” assays may omit fentanyl, methadone or buprenorphine. Cord / meconium results do not establish timing, dose, impairment or withdrawal severity; do not use them to determine milk clearance. Urgent care proceeds while results are pending.</div>
+        <div class="box local small"><span class="lfx">Consent / escalation pathway <span class="lfv" data-local="newborn_tox_consent_escalation">____</span></span>&nbsp;· <span class="lfx">indication <span class="lfv" data-local="newborn_tox_indication">____</span></span>&nbsp;· <span class="lfx">specimen / analytes <span class="lfv" data-local="newborn_tox_specimen">____</span></span>&nbsp;· <span class="lfx">confirmation <span class="lfv" data-local="newborn_tox_confirmation">____</span></span>&nbsp;· <span class="lfx">turnaround <span class="lfv" data-local="newborn_tox_turnaround">____</span></span>&nbsp;· <span class="lfx">result owner <span class="lfv" data-local="pending_result_owner">____</span></span></div>
+      </section>
+
+      <section class="panel c-wf" id="p-D">
+        <div class="ph"><span class="num">D</span><h2>Mother: keep MOUD&nbsp;· treat pain</h2><span class="src">SOAP/SMFM/ASRA consensus (2025) Table 1&nbsp;· ACOG/ASAM CO 711</span></div>
+        <div class="box focus small"><b>Continue prescribed methadone or buprenorphine through labor, cesarean and postpartum.</b> Verify formulation, total daily dose, last dose and prescriber / <span class="nowrap">opioid treatment program (OTP).</span></div>
+        <ul class="ls d24">
+          <li><b>Newly identified or untreated OUD / opioid withdrawal</b> → prompt addiction-capable assessment and MOUD initiation plan. Avoid abrupt cessation or withdrawal-only treatment.</li>
+          <li><b>Naltrexone use</b> → anesthesia / addiction plan <span class="lfv" data-local="naltrexone_anesthesia_plan">____</span>; opioid analgesia may be blocked.</li>
+          <li>Medication for OUD (<b>MOUD</b>) does not provide complete labor or postoperative analgesia. <b>Anesthesia plan early; offer neuraxial.</b> Multimodal <a href="06-postpartum.html#p-E" class="xlink"><span class="xref c-wf">6&nbsp;· E</span></a>&nbsp;· acetaminophen / NSAID maximums <a href="19-med-card.html#p-04" class="xlink"><span class="xref c-wf">19&nbsp;· 04</span></a> <b>Opioids on MOUD: individualized, not capped by 19&nbsp;· 04.</b></li>
+          <li><b>After cesarean with neuraxial morphine:</b> RR + sedation <b>q1h × 12&nbsp;h, then q2h to 24&nbsp;h</b>; SpO₂ / capnography as anesthesia directs.</li>
+          <li>With the prescriber, <b>split the total daily dose every 6–8&nbsp;h</b> when appropriate for analgesia.</li>
+          <li><span class="tag stop">Stop</span> OUD, with or without MOUD: <b>avoid nalbuphine / butorphanol for pain or itch, and naloxone for itch</b>&nbsp;— may precipitate withdrawal. FHR effects <a href="29-fm-response.html#p-D" class="xlink"><span class="xref c-fet">29&nbsp;· D</span></a></li>
+          <li><b>Naloxone remains indicated for significant respiratory depression or overdose</b> (<b>A</b>).</li>
+          <li><b>No automatic postpartum dose reduction.</b> Reassess sedation, breathing, withdrawal and cravings; individualize with prescriber. Review additional sedating medicines.</li>
+        </ul>
+        <div class="box local small"><span class="lfx">OTP / prescriber verification <span class="lfv" data-local="otp_verification">____</span></span>&nbsp;· <span class="lfx">addiction contact <span class="lfv" data-local="addiction_service">____</span></span>&nbsp;· <span class="lfx">missed-dose / initiation / transition pathway <span class="lfv" data-local="moud_missed_dose_pathway">____</span></span></div>
+      </section>
+    </div>
+
+    <!-- ===== column 2: milk + observation ===== -->
+    <div class="col">
+      <section class="panel c-nb" id="p-E">
+        <div class="ph"><span class="num">E</span><h2>Human milk: decide by substance</h2><span class="src">ABM #21 (2023)&nbsp;· ACOG CC 10 (2025)&nbsp;· AAP (reaff. 2026)&nbsp;· LactMed</span></div>
+        <table class="t milk">
+          <colgroup><col style="width:25%"><col></colgroup>
+          <thead><tr><th>Exposure</th><th>Feeding decision</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Methadone&nbsp;· sublingual buprenorphine</td><td><span class="dec yes">Encourage</span><br>Breastfeeding when otherwise appropriate, <b>regardless of maintenance dose</b>. Extra attention during methadone titration.</td></tr>
+            <tr><td class="k">Injectable buprenorphine</td><td><span class="dec ind">Individualize</span><br>With addiction / lactation team. Preserve effective OUD treatment while reviewing formulation-specific evidence.</td></tr>
+            <tr><td class="k">Ongoing nonprescribed opioids</td><td><span class="dec no">Avoid during use</span><p><b>During use:</b> no direct breastfeeding or expressed milk. Support expression to protect supply; alternative milk <a href="10-feeding.html#p-06" class="xlink"><span class="xref c-nb">10&nbsp;· 06</span></a></p><p><b>After clearance:</b> resume after multidisciplinary reassessment; set a recurrence plan.</p><p><b>Use stopped by / during the delivery stay:</b> support initiation after sufficient clearance and multidisciplinary assessment.</p><p>Earlier use or a positive delivery test alone is not permanent exclusion.</p></td></tr>
+            <tr><td class="k">Cannabis&nbsp;· THC</td><td><span class="dec cn">Counsel</span><br>Advise cessation; support reduction when cessation is not achieved. Discuss uncertain infant effects, route, potency and frequency. <b>THC positivity alone does not prohibit breastfeeding.</b></td></tr>
+          </tbody>
+        </table>
+        <div class="small"><b>Any opioid MOUD:</b> monitor infant alertness, feeding, breathing and weight gain. Excessive sleepiness, difficulty feeding, breathing difficulty or limpness → <b>urgent assessment</b>.</div>
+        <dl class="pos">
+          <dt>ABM</dt><dd>Cessation / reduction; shared decision-making with continued cannabis use.</dd>
+          <dt>AAP</dt><dd>Discourages cannabis use during lactation; advises abstinence and avoiding smoke.</dd>
+          <dt>ACOG</dt><dd>Continued cannabis use is <b>not</b> a breastfeeding contraindication.</dd>
+        </dl>
+        <div class="box small"><b>No established safe THC dose or waiting interval.</b> Brief pump-and-dump does not establish clearance. <b>Do not impose an automatic negative-THC-test gate.</b></div>
+        <div class="box local small"><span class="lfx">Feeding plan / reviewer <span class="lfv" data-local="thc_feeding_plan_reviewer">____</span></span>&nbsp;· <span class="lfx">lactation contact <span class="lfv" data-local="lactation_inpatient">____</span></span>&nbsp;· <span class="lfx">recurrence / restart plan <span class="lfv" data-local="feeding_restart_plan">____</span></span></div>
+      </section>
+
+      <section class="panel c-nb" id="p-F">
+        <div class="ph"><span class="num">F</span><h2>Observe by actual exposure</h2><span class="src">AAP NOWS report (2020)&nbsp;· UCSF NCNC (2024) §4&nbsp;· as on 05</span></div>
+        <div class="small"><b class="lead">Chronic prenatal opioid exposure → inpatient ≥ 72&nbsp;h;</b> longer by row ↓ <a href="05-newborn.html" class="xlink"><span class="xref c-nb">5</span></a></div>
+        <div class="obs">
+          <div class="ax"><span class="cap">AAP 2020 published approach</span>
+            <div class="tk"><span class="a0">0</span><span style="left:14.286%">1&nbsp;d</span><span style="left:28.571%">2&nbsp;d</span><span class="maj" style="left:42.857%">72&nbsp;h</span><span style="left:57.143%">4&nbsp;d</span><span style="left:71.429%">5&nbsp;d</span><span style="left:85.714%">6&nbsp;d</span><span class="a1 maj" style="left:100%">7&nbsp;d</span></div></div>
+          <div class="ln"><span class="nm">Immediate‑release opioid</span><div class="tr"><span class="bar min" style="width:42.857%">≥ 72&nbsp;h</span><span class="bar more" style="left:42.857%;width:28%"></span></div></div>
+          <div class="ln"><span class="nm">Buprenorphine&nbsp;· sustained-release opioid</span><div class="tr"><span class="bar min" style="width:57.143%">4&nbsp;d</span><span class="bar rng" style="left:57.143%;right:0">4–7&nbsp;d</span></div></div>
+          <div class="ln"><span class="nm">Methadone</span><div class="tr"><span class="bar min" style="width:71.429%">5&nbsp;d</span><span class="bar rng" style="left:71.429%;right:0">5–7&nbsp;d</span></div></div>
+          <div class="ln"><span class="nm">Unknown&nbsp;· nonprescribed fentanyl&nbsp;· mixed</span><div class="tr"><span class="bar min" style="width:42.857%">≥ 72&nbsp;h</span><span class="bar ind" style="left:42.857%">Individual plan <span class="lfv" data-local="unknown_exposure_neonatal_plan">____</span></span></div></div>
+          <div class="ln thc"><span class="nm">THC alone&nbsp;· well infant</span><div class="tr">Routine newborn discharge criteria; <b>no opioid-withdrawal scoring or prolonged stay solely for THC</b>.</div></div>
+          <div class="key"><span><i class="k1"></i>minimum</span><span><i class="k2"></i>published range</span><span><i class="k3"></i>stay may extend (note below)</span></div>
+        </div>
+        <div class="small">Brief prescribed intrapartum opioids alone do not cause NOWS. <b>A positive test alone does not assign an observation interval.</b> Symptoms, feeding, comorbidity and treatment may extend the stay; these ranges are not automatic discharge ages.</div>
+        <div class="box local small"><span class="lfx">Adopted exposure-specific minimums <span class="lfv" data-local="nows_observation_minimums">____</span></span>&nbsp;· <span class="lfx">observation location <span class="lfv" data-local="nows_observation_location">____</span></span>&nbsp;· <span class="lfx">disposition clinician <span class="lfv" data-local="newborn_disposition_clinician">____</span></span></div>
+      </section>
+    </div>
+
+    <!-- ===== column 3: infant care ===== -->
+    <div class="col">
+      <section class="panel c-nb" id="p-G">
+        <div class="ph"><span class="num">G</span><h2>Comfort first&nbsp;· stay together</h2><span class="src">CDC treatment overview (2026)&nbsp;· AAP safe sleep (2022)&nbsp;· AAP SSC (2022)</span></div>
+        <div class="small"><b>Rooming-in when clinically safe;</b> caregiver takes part, staff support.</div>
+        <div class="care"><span>Quiet / dim room</span><span>Cluster care</span><span>Awake skin-to-skin</span><span>Gentle holding / rocking</span><span>Safe swaddling</span><span>Nonnutritive sucking</span><span>Feeding support</span></div>
+        <div class="small">Track intake, output, daily weight and hydration. Feeding assessment / supplementation <a href="10-feeding.html#p-01" class="xlink"><span class="xref c-nb">10&nbsp;· 01–06</span></a> Continue supportive care if medication becomes necessary.</div>
+        <div class="small sleep"><b>Every sleep:</b> supine, firm flat separate surface, empty bassinet. <b>Rooming-in ≠ bed sharing.</b> Asleep in arms or skin-to-skin only with an <b>awake, alert</b> caregiver. No couch, recliner or weighted swaddles.</div>
+        <div class="small"><b>Caregiver drowsy / impaired / unavailable → infant to bassinet;</b> staff-supported care. Offer respite without blame.</div>
+        <div class="box local small"><span class="lfx">Caregiver support / respite <span class="lfv" data-local="caregiver_respite">____</span></span>&nbsp;· <span class="lfx">rooming-in accommodation <span class="lfv" data-local="rooming_in_accommodation">____</span></span></div>
+      </section>
+
+      <section class="panel c-nb" id="p-H">
+        <div class="ph"><span class="num">H</span><h2>Eat, Sleep, Console <small>assess function</small></h2><span class="src">AAP review (2024)&nbsp;· ESC-NOW trial (NEJM 2023)</span></div>
+        <div class="small"><b class="lead">Use the unit-approved standardized NOWS pathway:</b> ESC <span class="lfv" data-local="nows_esc_pathway">____</span> / approved alternative <span class="lfv" data-local="nows_alternative_pathway">____</span> <span class="tag local">Local</span></div>
+        <div class="esc">
+          <div class="node tint"><span class="lbl">Eat</span>Effective breastfeeding or intake appropriate for gestational and postnatal age</div>
+          <div class="node tint"><span class="lbl">Sleep</span>Undisturbed <span class="hero">≥ 1&nbsp;h</span>after feeding</div>
+          <div class="node tint"><span class="lbl">Console</span>Settles with soothing <span class="hero">≤ 10&nbsp;min</span></div>
+        </div>
+        <div class="small">Assess with the caregiver <b>every 3–4&nbsp;h, after feeding</b>; review the entire interval. Document the impaired function and likely cause. <b>No universal 30&nbsp;mL feed requirement.</b> <b>Before attributing impairment to withdrawal,</b> exclude hunger, physiologic cluster feeding, care interruptions and other illness.</div>
+        <div class="loop">
+          <div><b>Function impaired</b></div>
+          <div><b>Huddle</b>RN + clinician + caregiver</div>
+          <div><b>Check</b>feeding technique, hunger, illness</div>
+          <div class="end"><b>Optimize comfort</b>→ reassess</div>
+        </div>
+        <div class="xs"><b>Finnegan:</b> legacy alternative when required by the unit pathway. Do not combine thresholds or translate scores into ESC. ESC-NOW enrolled infants <b>≥ 36&nbsp;wk</b>; preterm / medically complex infants need an individualized neonatal pathway.</div>
+        <div class="box local small"><span class="lfx">ESC tool / training <span class="lfv" data-local="esc_tool_training">____</span></span>&nbsp;· <span class="lfx">reassessment / escalation process <span class="lfv" data-local="esc_reassessment_escalation">____</span></span></div>
+      </section>
+
+      <section class="panel c-nb" id="p-I">
+        <div class="ph"><span class="num">I</span><h2>Persistent impairment → escalate</h2><span class="src">UCSF NCNC (2024) §3&nbsp;· AAP NOWS (2020)&nbsp;· OPTimize NOW</span></div>
+        <div class="rail-list">
+          <div class="rail r24"><span class="when">Can’t eat, sleep or console</span><span class="do">Persistent, <b>because of withdrawal despite optimized care</b> → <b>FM attending + peds / NICU consultation</b> <span class="tag local">Local</span> <span class="lfv" data-local="nows_consult_route">____</span></span></div>
+          <div class="rail r24"><span class="when">Feeding failure</span><span class="do">Dehydration or poor weight trajectory → <b>prompt clinician reassessment.</b></span></div>
+          <div class="rail r24"><span class="when">Ill infant</span><span class="do">Illness / seizures / respiratory compromise → <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a> then cause-specific pathways on 15.</span></div>
+          <div class="rail r24"><span class="when">Medication</span><span class="do">Neonatal opioid treatment, rescue doses, monitoring and wean: <b>approved neonatal protocol</b> <span class="tag local">Local</span> <span class="lfv" data-local="nows_medication_protocol">____</span>. Morphine or methadone are established options. Continue comfort care and caregiver involvement.</span></div>
+        </div>
+        <div class="small"><span class="tag stop">Stop</span> <b>Naloxone does not treat NOWS;</b> it can precipitate abrupt withdrawal and seizures. Opioid exposure / NOWS alone does not require NICU admission. <b>Withdrawal pharmacotherapy requires protocol-specified monitoring:</b> room in only where staffing and equipment meet it; otherwise transfer to an appropriately monitored unit.</div>
+      </section>
+    </div>
+  </div>
+
+  <!-- J: discharge both patients -->
+  <section class="panel c-wf" id="p-J">
+    <div class="ph inl"><span class="num">J</span><h2>Discharge both patients&nbsp;· complete the family plan</h2><span class="src">AAP NOWS (2020) Discharge&nbsp;· ACOG/ASAM CO 711&nbsp;· CAPTA/CARA (2016) 42 USC §5106a&nbsp;· federal Plans of Safe Care modules (2020)</span></div>
+    <div class="dc4">
+      <div class="c-nb span">
+        <h3>Infant</h3>
+        <ul class="ls check">
+          <li>Exposure-specific observation complete (<b>F</b>); feeding, hydration, weight and function acceptable.</li>
+          <li>After withdrawal treatment: observe <b class="nowrap">24–48&nbsp;h</b> <b>after stopping withdrawal medication</b> (adopted medication-specific interval <span class="lfv" data-local="nows_post_medication_observation">____</span> when longer); no significant withdrawal signs.</li>
+          <li>Routine newborn gate <a href="18-nursery.html#p-07" class="xlink"><span class="xref c-nb">18&nbsp;· 07</span></a></li>
+          <li><b>All opioid-exposed infants:</b> primary-care follow-up <b>within 48&nbsp;h of discharge</b>, another visit at <b>1&nbsp;week</b>, then individualized. Appointment / clinician ____</li>
+          <li>Developmental surveillance / early-intervention referral <span class="lfv" data-local="early_intervention_referral">____</span>&nbsp;· infectious-exposure (e.g., HCV) follow-up owner <span class="lfv" data-local="infectious_exposure_followup_owner">____</span>&nbsp;· <span class="lfx">pending-result owner <span class="lfv" data-local="pending_result_owner">____</span></span></li>
+        </ul>
+      </div>
+      <div class="span">
+        <h3>Mother</h3>
+        <ul class="ls check">
+          <li>Next MOUD dose / supply / OTP attendance <b>confirmed</b>.</li>
+          <li>Follow-up booked ____</li>
+          <li><b>Naloxone in hand;</b> support person taught overdose response.</li>
+          <li>Mood <a href="06-postpartum.html#p-D" class="xlink"><span class="xref c-wf">6&nbsp;· D</span></a> contraception <a href="06-postpartum.html#p-C" class="xlink"><span class="xref c-wf">6&nbsp;· C</span></a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Plan of Safe Care</h3>
+        <div class="small">Begin prenatally when possible; <b>update before discharge.</b> Include infant care, maternal treatment / mental health, milk plan, safe sleep, unimpaired backup caregiver, locked medication storage, transportation and named follow-up owners.</div>
+      </div>
+      <div>
+        <h3>CAPTA / CARA notification</h3>
+        <div class="small"><b>Notification ≠ abuse report.</b> Infant meets the state’s affected-infant criteria → required notification + Plan of Safe Care (box below). Notification itself neither defines abuse / neglect nor requires prosecution; <b>an abuse / neglect report is a separate determination.</b> Tell the family which is happening and why.</div>
+      </div>
+    <div class="box local small"><span class="lfx">Jurisdiction <span class="lfv" data-local="capta_jurisdiction">____</span></span>&nbsp;· <span class="lfx">affected-infant definition / MOUD / THC criteria <span class="lfv" data-local="capta_affected_infant_criteria">____</span></span>&nbsp;· <span class="lfx">notification recipient / form / deadline <span class="lfv" data-local="capta_notification">____</span></span>&nbsp;· <span class="lfx">abuse-report trigger <span class="lfv" data-local="abuse_report_trigger">____</span></span>&nbsp;· <span class="lfx">responsible clinician / social worker <span class="lfv" data-local="capta_responsible_clinician_sw">____</span></span>&nbsp;· <span class="lfx">plan owner / monitoring <span class="lfv" data-local="plan_of_safe_care_owner">____</span></span></div>
+    </div>
+  </section>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG/ASAM CO 711 Opioid Use and Opioid Use Disorder in Pregnancy (2017); ACOG Clinical Consensus 10 Cannabis Use During Pregnancy and Lactation (2025); AAP Clinical Report, Children and Families Affected by Parental Substance Use (2026); ARUP Consult, Newborn Drug Testing (updated 2025); naloxone HCl 4&nbsp;mg nasal spray Drug Facts (DailyMed, 2026); SOAP/SMFM/ASRA consensus, pain management in pregnancy with OUD (2025); ABM Clinical Protocol #21 (revised 2023); AAP Clinical Report, Marijuana Use During Pregnancy and Breastfeeding (2018, reaffirmed 2026); NICHD LactMed, Buprenorphine and Cannabis (2026); AAP Clinical Report, Neonatal Opioid Withdrawal Syndrome (Pediatrics 2020;146:e2020029074); UCSF Benioff Children’s NCNC NOWS &amp; Drug-Exposed Infant Guidelines (2024); CDC, Treat and Manage Infants Affected by Prenatal Opioid Exposure (2026); AAP Policy Statement, Sleep-Related Infant Deaths (2022); AAP Safe Sleep and Skin-to-Skin Care in the Neonatal Period (2016, reaff. 2022); AHA 2025 Part 10, opioid overdose; AAP review, infants with prenatal opioid exposure and NOWS (2024); Young LW et al., ESC-NOW randomized trial (NEJM 2023); UNC NCCC Eat, Sleep, Console guideline (2025); OPTimize NOW trial (2026); CAPTA as amended by CARA (2016), 42 USC §5106a(b)(2)(B)(ii)–(iii); federal Plans of Safe Care Learning Modules 1, 4 (2020). Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTAsMUgxMVYySDEwek0xMiwxSDEzVjJIMTJ6TTEzLDFIMTRWMkgxM3pNMTcsMUgxOFYySDE3ek0xOSwxSDIwVjJIMTl6TTIwLDFIMjFWMkgyMHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTksMkgxMFYzSDl6TTEwLDJIMTFWM0gxMHpNMTcsMkgxOFYzSDE3ek0xOSwySDIwVjNIMTl6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNOCwzSDlWNEg4ek0xMCwzSDExVjRIMTB6TTExLDNIMTJWNEgxMXpNMTIsM0gxM1Y0SDEyek0xMywzSDE0VjRIMTN6TTE2LDNIMTdWNEgxNnpNMTgsM0gxOVY0SDE4ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTksNEgxMFY1SDl6TTExLDRIMTJWNUgxMXpNMTIsNEgxM1Y1SDEyek0xNCw0SDE1VjVIMTR6TTE1LDRIMTZWNUgxNXpNMTYsNEgxN1Y1SDE2ek0xNyw0SDE4VjVIMTd6TTE4LDRIMTlWNUgxOHpNMjIsNEgyM1Y1SDIyek0yNCw0SDI1VjVIMjR6TTI1LDRIMjZWNUgyNXpNMjYsNEgyN1Y1SDI2ek0yOCw0SDI5VjVIMjh6TTAsNUgxVjZIMHpNNiw1SDdWNkg2ek04LDVIOVY2SDh6TTksNUgxMFY2SDl6TTEwLDVIMTFWNkgxMHpNMTMsNUgxNFY2SDEzek0xNiw1SDE3VjZIMTZ6TTE4LDVIMTlWNkgxOHpNMTksNUgyMFY2SDE5ek0yMiw1SDIzVjZIMjJ6TTI4LDVIMjlWNkgyOHpNMCw2SDFWN0gwek0xLDZIMlY3SDF6TTIsNkgzVjdIMnpNMyw2SDRWN0gzek00LDZINVY3SDR6TTUsNkg2VjdINXpNNiw2SDdWN0g2ek04LDZIOVY3SDh6TTEwLDZIMTFWN0gxMHpNMTIsNkgxM1Y3SDEyek0xNCw2SDE1VjdIMTR6TTE2LDZIMTdWN0gxNnpNMTgsNkgxOVY3SDE4ek0yMCw2SDIxVjdIMjB6TTIyLDZIMjNWN0gyMnpNMjMsNkgyNFY3SDIzek0yNCw2SDI1VjdIMjR6TTI1LDZIMjZWN0gyNXpNMjYsNkgyN1Y3SDI2ek0yNyw2SDI4VjdIMjd6TTI4LDZIMjlWN0gyOHpNOSw3SDEwVjhIOXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE1LDdIMTZWOEgxNXpNMTcsN0gxOFY4SDE3ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTQsOEg1VjlINHpNNSw4SDZWOUg1ek02LDhIN1Y5SDZ6TTExLDhIMTJWOUgxMXpNMTIsOEgxM1Y5SDEyek0xNyw4SDE4VjlIMTd6TTE5LDhIMjBWOUgxOXpNMjMsOEgyNFY5SDIzek0yNSw4SDI2VjlIMjV6TTI2LDhIMjdWOUgyNnpNMjcsOEgyOFY5SDI3ek0yOCw4SDI5VjlIMjh6TTAsOUgxVjEwSDB6TTEsOUgyVjEwSDF6TTMsOUg0VjEwSDN6TTcsOUg4VjEwSDd6TTgsOUg5VjEwSDh6TTksOUgxMFYxMEg5ek0xMSw5SDEyVjEwSDExek0xMiw5SDEzVjEwSDEyek0xMyw5SDE0VjEwSDEzek0xNSw5SDE2VjEwSDE1ek0xNiw5SDE3VjEwSDE2ek0xNyw5SDE4VjEwSDE3ek0xOCw5SDE5VjEwSDE4ek0yMSw5SDIyVjEwSDIxek0yMiw5SDIzVjEwSDIyek0yMyw5SDI0VjEwSDIzek0yNCw5SDI1VjEwSDI0ek0yNSw5SDI2VjEwSDI1ek0yNiw5SDI3VjEwSDI2ek0yNyw5SDI4VjEwSDI3ek0yOCw5SDI5VjEwSDI4ek0wLDEwSDFWMTFIMHpNNSwxMEg2VjExSDV6TTYsMTBIN1YxMUg2ek03LDEwSDhWMTFIN3pNMTEsMTBIMTJWMTFIMTF6TTEyLDEwSDEzVjExSDEyek0xMywxMEgxNFYxMUgxM3pNMTUsMTBIMTZWMTFIMTV6TTE2LDEwSDE3VjExSDE2ek0xOCwxMEgxOVYxMUgxOHpNMjIsMTBIMjNWMTFIMjJ6TTIzLDEwSDI0VjExSDIzek0yOCwxMEgyOVYxMUgyOHpNMSwxMUgyVjEySDF6TTMsMTFINFYxMkgzek00LDExSDVWMTJINHpNNSwxMUg2VjEySDV6TTcsMTFIOFYxMkg3ek0xMCwxMUgxMVYxMkgxMHpNMTUsMTFIMTZWMTJIMTV6TTE3LDExSDE4VjEySDE3ek0xOCwxMUgxOVYxMkgxOHpNMjEsMTFIMjJWMTJIMjF6TTIyLDExSDIzVjEySDIyek0yNSwxMUgyNlYxMkgyNXpNMjcsMTFIMjhWMTJIMjd6TTI4LDExSDI5VjEySDI4ek0xLDEySDJWMTNIMXpNMywxMkg0VjEzSDN6TTUsMTJINlYxM0g1ek02LDEySDdWMTNINnpNOCwxMkg5VjEzSDh6TTEwLDEySDExVjEzSDEwek0xNywxMkgxOFYxM0gxN3pNMTgsMTJIMTlWMTNIMTh6TTIwLDEySDIxVjEzSDIwek0yMSwxMkgyMlYxM0gyMXpNMjMsMTJIMjRWMTNIMjN6TTI3LDEySDI4VjEzSDI3ek0xLDEzSDJWMTRIMXpNMiwxM0gzVjE0SDJ6TTUsMTNINlYxNEg1ek04LDEzSDlWMTRIOHpNOSwxM0gxMFYxNEg5ek0xMSwxM0gxMlYxNEgxMXpNMTMsMTNIMTRWMTRIMTN6TTE0LDEzSDE1VjE0SDE0ek0xNSwxM0gxNlYxNEgxNXpNMTYsMTNIMTdWMTRIMTZ6TTE3LDEzSDE4VjE0SDE3ek0xOCwxM0gxOVYxNEgxOHpNMjIsMTNIMjNWMTRIMjJ6TTIzLDEzSDI0VjE0SDIzek0yNCwxM0gyNVYxNEgyNHpNMjUsMTNIMjZWMTRIMjV6TTI2LDEzSDI3VjE0SDI2ek0yNywxM0gyOFYxNEgyN3pNMjgsMTNIMjlWMTRIMjh6TTQsMTRINVYxNUg0ek02LDE0SDdWMTVINnpNNywxNEg4VjE1SDd6TTgsMTRIOVYxNUg4ek0xMSwxNEgxMlYxNUgxMXpNMTIsMTRIMTNWMTVIMTJ6TTE0LDE0SDE1VjE1SDE0ek0xNSwxNEgxNlYxNUgxNXpNMTgsMTRIMTlWMTVIMTh6TTIxLDE0SDIyVjE1SDIxek0yNCwxNEgyNVYxNUgyNHpNMjUsMTRIMjZWMTVIMjV6TTI2LDE0SDI3VjE1SDI2ek0yOCwxNEgyOVYxNUgyOHpNMCwxNUgxVjE2SDB6TTIsMTVIM1YxNkgyek00LDE1SDVWMTZINHpNNSwxNUg2VjE2SDV6TTcsMTVIOFYxNkg3ek0xMCwxNUgxMVYxNkgxMHpNMTEsMTVIMTJWMTZIMTF6TTEyLDE1SDEzVjE2SDEyek0xNCwxNUgxNVYxNkgxNHpNMTUsMTVIMTZWMTZIMTV6TTE2LDE1SDE3VjE2SDE2ek0xNywxNUgxOFYxNkgxN3pNMTgsMTVIMTlWMTZIMTh6TTIwLDE1SDIxVjE2SDIwek0yNCwxNUgyNVYxNkgyNHpNMjcsMTVIMjhWMTZIMjd6TTI4LDE1SDI5VjE2SDI4ek0wLDE2SDFWMTdIMHpNMSwxNkgyVjE3SDF6TTIsMTZIM1YxN0gyek0zLDE2SDRWMTdIM3pNNCwxNkg1VjE3SDR6TTYsMTZIN1YxN0g2ek03LDE2SDhWMTdIN3pNOCwxNkg5VjE3SDh6TTEyLDE2SDEzVjE3SDEyek0xNSwxNkgxNlYxN0gxNXpNMTcsMTZIMThWMTdIMTd6TTE5LDE2SDIwVjE3SDE5ek0yMSwxNkgyMlYxN0gyMXpNMjcsMTZIMjhWMTdIMjd6TTAsMTdIMVYxOEgwek01LDE3SDZWMThINXpNNywxN0g4VjE4SDd6TTgsMTdIOVYxOEg4ek0xMSwxN0gxMlYxOEgxMXpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNSwxN0gxNlYxOEgxNXpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0xOCwxN0gxOVYxOEgxOHpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNCwxN0gyNVYxOEgyNHpNMjUsMTdIMjZWMThIMjV6TTI3LDE3SDI4VjE4SDI3ek0yOCwxN0gyOVYxOEgyOHpNMiwxOEgzVjE5SDJ6TTMsMThINFYxOUgzek02LDE4SDdWMTlINnpNOCwxOEg5VjE5SDh6TTExLDE4SDEyVjE5SDExek0xMiwxOEgxM1YxOUgxMnpNMTMsMThIMTRWMTlIMTN6TTE0LDE4SDE1VjE5SDE0ek0xNSwxOEgxNlYxOUgxNXpNMTgsMThIMTlWMTlIMTh6TTIwLDE4SDIxVjE5SDIwek0yMiwxOEgyM1YxOUgyMnpNMjMsMThIMjRWMTlIMjN6TTI0LDE4SDI1VjE5SDI0ek0yNiwxOEgyN1YxOUgyNnpNMjgsMThIMjlWMTlIMjh6TTMsMTlINFYyMEgzek01LDE5SDZWMjBINXpNOCwxOUg5VjIwSDh6TTE2LDE5SDE3VjIwSDE2ek0xNywxOUgxOFYyMEgxN3pNMTgsMTlIMTlWMjBIMTh6TTIyLDE5SDIzVjIwSDIyek0yMywxOUgyNFYyMEgyM3pNMjcsMTlIMjhWMjBIMjd6TTI4LDE5SDI5VjIwSDI4ek0wLDIwSDFWMjFIMHpNMSwyMEgyVjIxSDF6TTQsMjBINVYyMUg0ek02LDIwSDdWMjFINnpNMTIsMjBIMTNWMjFIMTJ6TTE2LDIwSDE3VjIxSDE2ek0xNywyMEgxOFYyMUgxN3pNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNSwyMEgyNlYyMUgyNXpNMjgsMjBIMjlWMjFIMjh6TTgsMjFIOVYyMkg4ek0xMCwyMUgxMVYyMkgxMHpNMTEsMjFIMTJWMjJIMTF6TTEzLDIxSDE0VjIySDEzek0xNCwyMUgxNVYyMkgxNHpNMTUsMjFIMTZWMjJIMTV6TTE2LDIxSDE3VjIySDE2ek0xOCwyMUgxOVYyMkgxOHpNMTksMjFIMjBWMjJIMTl6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek05LDIySDEwVjIzSDl6TTExLDIySDEyVjIzSDExek0xNCwyMkgxNVYyM0gxNHpNMTUsMjJIMTZWMjNIMTV6TTE5LDIySDIwVjIzSDE5ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yNSwyMkgyNlYyM0gyNXpNMjYsMjJIMjdWMjNIMjZ6TTI4LDIySDI5VjIzSDI4ek0wLDIzSDFWMjRIMHpNNiwyM0g3VjI0SDZ6TTgsMjNIOVYyNEg4ek0xMiwyM0gxM1YyNEgxMnpNMTQsMjNIMTVWMjRIMTR6TTE1LDIzSDE2VjI0SDE1ek0xNywyM0gxOFYyNEgxN3pNMTksMjNIMjBWMjRIMTl6TTIwLDIzSDIxVjI0SDIwek0yNCwyM0gyNVYyNEgyNHpNMjcsMjNIMjhWMjRIMjd6TTI4LDIzSDI5VjI0SDI4ek0wLDI0SDFWMjVIMHpNMiwyNEgzVjI1SDJ6TTMsMjRINFYyNUgzek00LDI0SDVWMjVINHpNNiwyNEg3VjI1SDZ6TTgsMjRIOVYyNUg4ek05LDI0SDEwVjI1SDl6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTcsMjRIMThWMjVIMTd6TTE4LDI0SDE5VjI1SDE4ek0xOSwyNEgyMFYyNUgxOXpNMjAsMjRIMjFWMjVIMjB6TTIxLDI0SDIyVjI1SDIxek0yMiwyNEgyM1YyNUgyMnpNMjMsMjRIMjRWMjVIMjN6TTI0LDI0SDI1VjI1SDI0ek0yNSwyNEgyNlYyNUgyNXpNMjcsMjRIMjhWMjVIMjd6TTAsMjVIMVYyNkgwek0yLDI1SDNWMjZIMnpNMywyNUg0VjI2SDN6TTQsMjVINVYyNkg0ek02LDI1SDdWMjZINnpNOSwyNUgxMFYyNkg5ek0xMCwyNUgxMVYyNkgxMHpNMTEsMjVIMTJWMjZIMTF6TTEzLDI1SDE0VjI2SDEzek0xNSwyNUgxNlYyNkgxNXpNMTYsMjVIMTdWMjZIMTZ6TTE3LDI1SDE4VjI2SDE3ek0xOCwyNUgxOVYyNkgxOHpNMjcsMjVIMjhWMjZIMjd6TTI4LDI1SDI5VjI2SDI4ek0wLDI2SDFWMjdIMHpNMiwyNkgzVjI3SDJ6TTMsMjZINFYyN0gzek00LDI2SDVWMjdINHpNNiwyNkg3VjI3SDZ6TTksMjZIMTBWMjdIOXpNMTEsMjZIMTJWMjdIMTF6TTEyLDI2SDEzVjI3SDEyek0xMywyNkgxNFYyN0gxM3pNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTgsMjZIMTlWMjdIMTh6TTE5LDI2SDIwVjI3SDE5ek0yMSwyNkgyMlYyN0gyMXpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTExLDI3SDEyVjI4SDExek0xMiwyN0gxM1YyOEgxMnpNMTYsMjdIMTdWMjhIMTZ6TTE3LDI3SDE4VjI4SDE3ek0xOCwyN0gxOVYyOEgxOHpNMjAsMjdIMjFWMjhIMjB6TTI1LDI3SDI2VjI4SDI1ek0yNywyN0gyOFYyOEgyN3pNMjgsMjdIMjlWMjhIMjh6TTAsMjhIMVYyOUgwek0xLDI4SDJWMjlIMXpNMiwyOEgzVjI5SDJ6TTMsMjhINFYyOUgzek00LDI4SDVWMjlINHpNNSwyOEg2VjI5SDV6TTYsMjhIN1YyOUg2ek04LDI4SDlWMjlIOHpNMTAsMjhIMTFWMjlIMTB6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>Suspected PE / DVT</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); }
+  /* masthead: navigator in its own first row, compact title, locator strip */
+  .pe16 .masthead { grid-template-rows: auto 1fr; row-gap: 0.12in; }
+  .pe16 .masthead > div:first-child { grid-row: 1 / span 2; grid-column: 1; align-self: end; }
+  .pe16 .masthead .sub { grid-row: 2; grid-column: 2; margin-top: 0; max-width: none; }
+  .pe16 .masthead .setnav { position: static; grid-row: 1; grid-column: 2; justify-self: end; align-self: start; }
+  .pe16 .masthead h1 { font-size: calc(70pt / var(--k)); }
+  .pe16 .loc { display: grid; grid-template-columns: repeat(4, max-content); gap: 4pt 9pt; margin-bottom: 4pt; font: 600 12pt/1.2 "Inter"; color: var(--ink); }
+  .pe16 .loc > span { display: inline-grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4pt; white-space: nowrap; }
+  .pe16 .loc b { display: inline-block; font: 800 10.5pt/1 "Inter"; padding: 2pt 3pt; border: 1pt solid var(--ink); font-variant-numeric: tabular-nums; }
+  .pe16 .pnl { font-weight: 800; white-space: nowrap; }
+  /* panel 01: condition → action rail */
+  .pe16 .act01 { display: grid; grid-template-columns: 1.27in minmax(0, 1fr); gap: 0 10pt; font-size: 11.2pt; line-height: 1.28; }
+  .pe16 .act01 > dt { font-weight: 800; color: var(--stop); padding: 3pt 0; border-top: 0.75pt solid var(--rule); }
+  .pe16 .act01 > dd { margin: 0; padding: 3pt 0; border-top: 0.75pt solid var(--rule); }
+  .pe16 .act01 > dt:first-of-type, .pe16 .act01 > dt:first-of-type + dd { border-top: none; padding-top: 0; }
+  .pe16 .act01 dd p { margin-top: 2pt; }
+  .pe16 .act01.cus > dt { color: var(--ink); }
+  .pe16 .acute-dose { display: block; margin: 2pt 0 1pt; font-weight: 700; }
+  .pe16 .acute-dose .dose { font-size: 16pt; }
+  .pe16 .acute-dose .tag.med-alert { vertical-align: .25em; margin-left: .4em; }
+  /* panel 02: eligibility, then YEARS as an explicit stepwise flow */
+  .pe16 .elig { font-size: 11.4pt; line-height: 1.28; font-weight: 600; }
+  .pe16 .elig b { color: var(--stop); }
+  .pe16 .yflow .node { background: color-mix(in srgb, var(--c) 12%, white); border-width: 4pt 0 0; border-radius: 0; font-size: 11.2pt; line-height: 1.26; padding: 5pt 9pt 7pt; }
+  .pe16 .yflow .node .lbl { font-size: 9.6pt; }
+  .pe16 .s1 { display: grid; grid-template-columns: 1fr; gap: 4pt; }
+  .pe16 .cus-results { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2pt 8pt; margin-left: 8pt; border-left: 1.6pt solid var(--c); padding-left: 10pt; align-items: baseline; }
+  .pe16 .cus-results > div { grid-column: 2; }
+  .pe16 .cus-results .after { grid-column: 1; grid-row: 1 / span 2; align-self: start; padding-top: 2pt; font: 800 9.6pt/1.1 "Inter"; letter-spacing: .08em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--ink-3); }
+  .pe16 .items { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 2pt 14pt; font-weight: 700; margin-top: 1pt; }
+  .pe16 .arrow.lab { height: 18pt; }
+  .pe16 .arrow.lab > span { position: absolute; left: calc(50% + 8pt); top: 2pt; font: 700 9.6pt/1.1 "Inter"; color: var(--ink-2); white-space: nowrap; }
+  .pe16 :is(.yflow, .img2) .split { padding-top: 22pt; }
+  .pe16 :is(.yflow, .img2) .split > .arm::before { top: -22pt; height: 16pt; }
+  .pe16 :is(.yflow, .img2) .split > .arm > .yn { top: -18pt; }
+  .pe16 .yflow .split > .arm > .yn { font-size: 12pt; color: var(--ink); }
+  .pe16 .thr .cond { display: block; font: 800 12pt/1.15 "Inter"; color: var(--ink); }
+  /* large non-medication values take the Display cut (ax1 #15) */
+  .pe16 .thr .val { display: block; font: 800 calc(26pt / var(--k))/1.05 "Inter Display"; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; white-space: nowrap; margin: 1pt 0; }
+  .pe16 .thr .val small { font: 700 11.5pt/1 "Inter"; letter-spacing: 0; margin-left: 2pt; }
+  /* YEARS threshold questions: each ends in its own Yes / No exit (no shared connector into imaging) */
+  .pe16 .yflow .node.thr { background: #fff; border: 1.4pt solid var(--c); border-left-width: 5pt; }
+  .pe16 .thr .exits { display: grid; gap: 2pt; margin-top: 4pt; font: 800 11.2pt/1.2 "Inter"; }
+  .pe16 .thr .exits > span { display: block; padding: 3pt 6pt; border-left: 3pt solid; }
+  .pe16 .thr .exits .y { border-color: var(--go); background: var(--t-go); color: var(--go); }
+  .pe16 .thr .exits .n { border-color: var(--ink); background: var(--t-ink); color: var(--ink); }
+  .pe16 .thr .exits b { font-weight: 900; }
+  /* companion note: alternative algorithm + evidence, outside the main path */
+  .pe16 .alternative { border-top: 1pt solid var(--rule); padding-top: 5pt; display: flex; flex-direction: column; gap: 3pt; }
+  .pe16 .alternative .alt-h { font: 800 9.6pt/1.1 "Inter"; letter-spacing: .09em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--ink-3); }
+  .pe16 .alternative p { font-size: 10.6pt; line-height: 1.28; }
+  table.gen td { font-size: 10.6pt; }
+  table.gen td.num { width: 0.4in; }
+  .pe16 table.gen .pairline { display: block; }
+  /* panel 04: CXR split */
+  .pe16 .img2 .node { background: color-mix(in srgb, var(--c) 12%, white); border-width: 4pt 0 0; border-radius: 0; font-size: 11pt; line-height: 1.26; padding: 5pt 9pt 7pt; }
+  .pe16 .img2 .node.q { background: #fff; border: 1.4pt solid var(--c); border-left-width: 5pt; font-size: 11.2pt; }
+  .pe16 .img2 .method { display: block; font: 800 15pt/1.15 "Inter"; margin-bottom: 0; }
+  .pe16 .img2 .split { grid-template-columns: repeat(2, minmax(0, 1fr)); --bus-l: 25%; --bus-r: 25%; }
+  .pe16 .img2 .split .node { text-align: center; padding: 6pt 9pt 6pt; }
+  .pe16 .imaging-evidence { font-size: 11pt; line-height: 1.27; }
+  .pe16 .img2 .split > .arm > .yn { font-size: 10pt; }
+  .pe16 .nondx { border-left: 4pt solid var(--c); padding: 3pt 0 3pt 8pt; font-size: 11.2pt; line-height: 1.26; font-weight: 600; }
+  table.rx { --cell-y: 4pt; }
+  table.rx td { font-size: 11pt; line-height: 1.26; }
+  table.rx td.k { width: 1.25in; white-space: normal; }
+  .pe16 .rx .primary { display: block; margin-bottom: 3pt; background: color-mix(in srgb, var(--wf) 12%, white); border-left: 3pt solid var(--wf); padding: 3pt 6pt; }
+  .pe16 .rx .primary .dose { font-size: 14pt; }
+  .pe16 .pre-rx { font-size: 11.2pt; line-height: 1.27; border-left: 4pt solid var(--c); padding: 2pt 0 2pt 8pt; }
+  /* prescribing prohibition: red rail + STOP badge, not a solid emergency field */
+  .pe16 .box.prohibition { font-weight: 700; }
+  .pe16 .box.prohibition .tag.stop { margin-right: 5pt; }
+  /* panel 06: timing table */
+  .pe16 table.timing td { font-size: 11pt; line-height: 1.26; vertical-align: top; }
+  .pe16 table.timing { table-layout: fixed; --cell-y: 4pt; }
+  .pe16 table.timing td.k { white-space: normal; }
+  .pe16 table.timing col.c1 { width: 1.15in; } .pe16 table.timing col.c2 { width: 2.25in; }
+  .pe16 table.timing th { white-space: normal; }
+  .pe16 .timing .restart-condition { display: block; }
+  .pe16 .timing .restart-caveat { display: block; border-top: .75pt solid var(--rule); margin-top: 4pt; padding-top: 3pt; }
+  .pe16 .timing .interval { font-size: 14pt; font-weight: 800; white-space: nowrap; }
+  /* stop vs restart: two time directions, visibly separated */
+  .pe16 table.t.timing :is(th, td):nth-child(2) { background: color-mix(in srgb, var(--wf) 12%, white); }
+  .pe16 table.t.timing :is(th, td):nth-child(3) { border-left: 1pt solid var(--rule); padding-left: 8pt; }
+  .reas { gap: 3pt 10pt; font-size: 10.8pt; line-height: 1.26; }
+  .reas dt { font-weight: 800; color: var(--c); }
+  /* use spare height for rhythm */
+  .sheet .col { gap: .1in; }
+  .sheet .panel { gap: .07in; }
+  .sheet table.gen { --cell-y: 2pt; --table-leading: 1.26; }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="15-sick-newborn.html" title="The sick newborn">‹ 15</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html" selected="">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="17-syphilis-newborn.html" title="Maternal syphilis → newborn">17 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/16-pe-dvt.pdf">PDF</a></nav>
+<div class="sheet portrait-18x24 c-wf pe16" style="--k:1.11">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Antepartum&nbsp;· postpartum&nbsp;· triage</div>
+      <h1><span class="sid">16</span>Suspected PE / DVT</h1>
+    </div>
+    <div class="sub"><div class="loc"><span>Unstable<b>01</b></span><span>Stable, pregnant<b>02</b></span><span>Leg<b>03</b></span><span>Chest<b>04</b></span><span>Treat<b>05</b></span><span>Delivery<b>06</b></span><span>Postpartum<b>07</b></span><span>Not PE?<b>08</b></span></div><span class="muted">Adult doses, normal renal function.</span></div>
+    <nav class="setnav rel"><em>See also</em><a href="20-neuraxial.html" class="xlink"><span><b>20</b>Neuraxial</span></a><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="02-emergencies.html" class="xlink"><span><b>2</b>Emergencies</span></a><a href="27-ob-consult.html" class="xlink"><span><b>27</b>OB/GYN consult</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-16.svg)"></div>
+
+  <div class="cols" style="grid-template-columns: minmax(0, .83fr) minmax(0, 1.17fr);">
+    <!-- LEFT -->
+    <div class="col">
+      <section class="panel c-stop" id="p-01">
+        <div class="ph"><span class="num">01</span><h2>Unstable? No D-dimer/scores</h2><span class="src">2026 AHA/ACC multisociety PE guideline&nbsp;· ASH 2018 recs 7–8&nbsp;· Activase label</span></div>
+        <div class="callout-stop small"><div class="ico">!</div><div>Arrest → CPR, left uterine displacement. Fundus ≥ umbilicus: prepare resuscitative delivery now; no ROSC → aim birth by 5&nbsp;min <a href="02-emergencies.html#p-D" class="xlink"><span class="xref inverse c-stop">2&nbsp;· D</span></a>. Suspected PE: lysis may be considered during CPR.</div></div>
+        <dl class="act01">
+          <dt>Unstable</dt><dd><b>Shock, persistent hypotension, severe hypoxemia, syncope</b> → no D-dimer or scores; bedside echo for RV dilation; CT pulmonary angiography (CTPA) once safe.</dd>
+          <dt>Call now</dt><dd><b>FM attending + OB/GYN</b>, <b>PE response team</b> or critical care, OB anesthesia, MFM; manual left uterine displacement if fundus ≥ umbilicus. Higher-level care / handoff <a href="27-ob-consult.html#p-E" class="xlink"><span class="xref c-wf">27&nbsp;· E</span></a> <a href="27-ob-consult.html#p-F" class="xlink"><span class="xref c-wf">27&nbsp;· F</span></a></dd>
+          <dt>Anticoagulate now</dt><dd>IV UFH by weight-based nomogram (reversible; keeps lysis and procedures open).</dd>
+          <dt><span class="nowrap">Life-threatening</span><br>instability</dt><dd>Systemic thrombolysis is suggested in pregnancy (ASH rec 8):<span class="acute-dose">alteplase <span class="dose">100&nbsp;mg IV over 2&nbsp;h</span><span class="tag med-alert">High alert</span></span>
+            <p><b>Stop IV UFH during alteplase</b>; restart when aPTT ≤ 2 × normal. PE dose&nbsp;— not stroke 0.9&nbsp;mg/kg, not tenecteplase.</p>
+            <p>Bleeding risk peaks at and just after birth → catheter-directed therapy, embolectomy or VA-ECMO where available.</p>
+            <p>RV strain alone, stable: no routine lysis (ASH rec 7); normotensive shock or deterioration → urgent PERT/MFM.</p></dd>
+        </dl>
+      </section>
+
+      <section class="panel c-wf" id="p-02">
+        <div class="ph"><span class="num">02</span><h2>Stable, pregnant: YEARS</h2><span class="src">Artemis&nbsp;— van der Pol, NEJM 2019&nbsp;· 2026 AHA/ACC (2b)&nbsp;· Righini 2018</span></div>
+        <div class="box ink elig"><b>Validated only in pregnancy</b>, not after ≥ 24&nbsp;h of therapeutic anticoagulation. Postpartum or anticoagulated → image: <span class="pnl">panel 04</span>.</div>
+        <div class="flow yflow">
+          <div class="node" data-kind="decision"><span class="lbl">Step 1&nbsp;· Signs of DVT?</span>
+            <div class="s1">
+              <div>Yes → <b>compression ultrasound (CUS) first</b> → <span class="pnl">panel 03</span></div>
+              <div class="cus-results"><span class="after">After CUS</span><div><b>Clot → treat, no CTPA</b> → <span class="pnl">panel 05</span></div><div>No clot → step 2; DVT signs still count.</div></div>
+            </div>
+          </div>
+          <div class="arrow lab"><span>No DVT signs, or no clot</span></div>
+          <div class="node"><span class="lbl">Step 2&nbsp;· Count YEARS items + D-dimer</span>
+            <div class="items"><span>① Clinical signs of DVT</span><span>② Hemoptysis</span><span>③ PE the most likely diagnosis</span></div>
+          </div>
+          <div class="stem"></div>
+          <div class="split two">
+            <div class="arm"><span class="yn">0 items</span><div class="node thr" data-kind="decision"><span class="cond">D-dimer</span><span class="val">&lt; 1,000<small>ng/mL FEU?</small></span><div class="exits"><span class="y"><b>Yes</b> → PE excluded</span><span class="n"><b>No</b> → chest imaging → <span class="pnl">panel 04</span></span></div></div></div>
+            <div class="arm"><span class="yn">≥ 1 item</span><div class="node thr" data-kind="decision"><span class="cond">D-dimer</span><span class="val">&lt; 500<small>ng/mL FEU?</small></span><div class="exits"><span class="y"><b>Yes</b> → PE excluded</span><span class="n"><b>No</b> → chest imaging → <span class="pnl">panel 04</span></span></div></div></div>
+          </div>
+        </div>
+        <div class="box local small">D-dimer assay <span class="lfv" data-local="ddimer_assay">____</span>, FEU or DDU (cutoffs are FEU; DDU ≈ half)&nbsp;· PERT: <span class="lfv" data-local="pe_response_team">____</span></div>
+      </section>
+
+      <section class="panel c-wf grow" id="p-03">
+        <div class="ph"><span class="num">03</span><h2>Leg: compression ultrasound</h2><span class="src">ASH 2018 rec 31&nbsp;· ACOG PB 196&nbsp;· Chan, CMAJ 2013&nbsp;· Le Gal (EDVIGE), BMJ 2012</span></div>
+        <dl class="act01 cus">
+          <dt>First test</dt><dd><b>Proximal or whole-leg CUS, both with iliac imaging.</b> Pregnancy DVT is mostly left-sided, proximal.</dd>
+          <dt>Iliac clue</dt><dd>Whole-leg swelling, buttock, flank or back pain → <b>iliac Doppler or MRV</b> even with clear femoral veins.</dd>
+          <dt>Positive</dt><dd><b>Treat</b> → <span class="pnl">panel 05</span>.</dd>
+          <dt>Negative, still suspected</dt><dd>Serial CUS (days 3 and 7) or MRV, no gadolinium.</dd>
+          <dt>Negative, low suspicion</dt><dd><b>Stop DVT testing only.</b> If evaluating PE, continue its workup.</dd>
+        </dl>
+      </section>
+
+      <aside class="alternative">
+        <div class="alt-h">Companion note&nbsp;· evidence and alternative (not a step in YEARS)</div>
+        <p><b>Artemis:</b> 3-mo VTE after rule-out 0.21%; CTPA avoided in 39% (65% 1st trimester, 32% 3rd).</p>
+        <p><b>Alternative pathway&nbsp;— use instead of YEARS (CT-PE-Pregnancy):</b> revised Geneva low (0–3) or intermediate (4–10) + D-dimer &lt; 500 → excluded; otherwise bilateral CUS: proximal DVT → treat; negative → CTPA. 0% 3-mo VTE (95% CI 0–1.0%).</p>
+        <table class="t gen">
+          <thead><tr><th>History</th><th class="right">Pts</th><th>Current findings</th><th class="right">Pts</th></tr></thead>
+          <tbody>
+            <tr><td>Age &gt; 65</td><td class="num">1</td><td>Hemoptysis</td><td class="num">2</td></tr>
+            <tr><td>Prior DVT or PE</td><td class="num">3</td><td>Unilateral leg pain</td><td class="num">3</td></tr>
+            <tr><td>Surgery (general anesthesia) or leg fracture ≤ 1 mo</td><td class="num">2</td><td>Leg vein tenderness + unilateral edema</td><td class="num">4</td></tr>
+            <tr><td>Active cancer</td><td class="num">2</td><td><span class="pairline">HR 75–94</span><span class="pairline">HR ≥&nbsp;95</span></td><td class="num"><span class="pairline">3</span><span class="pairline">5</span></td></tr>
+          </tbody>
+        </table>
+      </aside>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col">
+      <section class="panel c-wf" id="p-04">
+        <div class="ph"><span class="num">04</span><h2>Chest imaging</h2><span class="src">ASH 2018 rec 30&nbsp;· 2026 AHA/ACC (2a)&nbsp;· ACOG PB 196&nbsp;· CO 723</span></div>
+        <div class="flow img2">
+          <div class="node q" data-kind="decision"><b>Pregnant:</b> leg symptoms → CUS first → <span class="pnl">panel 03</span>; otherwise <b>chest x-ray</b> first. <b>Postpartum: CTPA.</b></div>
+          <div class="stem"></div>
+          <div class="split two">
+            <div class="arm"><span class="yn">CXR normal</span><div class="node"><span class="method">V/Q or low-dose CTPA</span></div></div>
+            <div class="arm"><span class="yn">CXR abnormal</span><div class="node"><span class="method">CTPA</span></div></div>
+          </div>
+        </div>
+        <div class="imaging-evidence"><b>CXR normal:</b> <b>V/Q</b>, perfusion-only first (ASH prefers) <b>or low-dose CTPA</b> (AHA/ACC 2026, 2a)&nbsp;— use the faster test.</div>
+        <div class="nondx">Nondiagnostic V/Q or CTPA → the other test, or CUS if not done. Negative CUS does not exclude PE.</div>
+        <div class="nondx wait"><b>Waiting for imaging?</b> Start therapeutic LMWH now and continue until PE is excluded, unless bleeding risk forbids (RCOG 37b); birth, neuraxial or lysis near → IV UFH → <span class="pnl">panel 05</span>.</div>
+        <ul class="ls small">
+          <li>Fetal dose from either test ≪ <b>50&nbsp;mGy</b>; no anomalies, FGR or loss reported below it (<span class="nowrap">CO 723</span>). Don’t withhold imaging.</li>
+          <li>Iodinated contrast is acceptable in pregnancy; breastfeeding continues (CO 723).</li>
+        </ul>
+      </section>
+
+      <section class="panel c-wf" id="p-05">
+        <div class="ph"><span class="num">05</span><h2>Treat</h2><span class="src">ACOG PB 196 tables&nbsp;· ASH 2018 recs 2, 4, 5, 9&nbsp;· ACCP 2012&nbsp;· Lovenox label</span></div>
+        <div class="pre-rx"><b>Delivery or neuraxial procedure?</b> Check timing and anesthesia review first → <span class="pnl">panel 06</span> <a href="20-neuraxial.html#p-02" class="xlink"><span class="xref c-wf">20&nbsp;· 02</span></a></div>
+        <table class="t rx">
+          <tbody>
+            <tr><td class="k">LMWH (first line)</td><td><span class="primary"><b>Enoxaparin</b> <span class="dose">1&nbsp;mg/kg SUBQ q12h</span> (actual weight).</span>Alt: dalteparin <span class="dose">200&nbsp;units/kg daily</span> or <span class="dose">100&nbsp;units/kg q12h</span>. Low risk → outpatient OK if FM attending agrees: normal vitals; no severe pain, extensive clot, late gestation or comorbidity; teaching + follow-up arranged.</td></tr>
+            <tr><td class="k">UFH</td><td>Birth, neuraxial or surgery near → <b>IV</b> per nomogram (stop 4–6&nbsp;h before). Otherwise SUBQ: start <span class="dose">10,000&nbsp;units q12h</span>, adjust to aPTT 1.5–2.5 × control at 6&nbsp;h; longer neuraxial hold <a href="20-neuraxial.html#p-02" class="xlink"><span class="xref c-wf">20&nbsp;· 02</span></a></td></tr>
+            <tr><td class="k">Renal</td><td>CrCl &lt; 30: enoxaparin <span class="dose">1&nbsp;mg/kg SUBQ q24h</span> or UFH&nbsp;— pharmacy.</td></tr>
+            <tr><td class="k">Anti-Xa</td><td><b>Not routine</b> (ASH rec 5). Check for weight extremes, renal impairment, recurrence on treatment. For q12h dosing, check the peak 4&nbsp;h after a dose; target 0.6–1.0&nbsp;units/mL.</td></tr>
+            <tr><td class="k">Duration</td><td>Continue until <b>both</b> are met: <b>≥ 3 mo total treatment AND ≥ 6&nbsp;wk postpartum</b>.</td></tr>
+          </tbody>
+        </table>
+        <div class="box stop prohibition small"><span class="tag stop">Stop</span> In pregnancy: no warfarin, no DOACs (AHA/ACC 2026: Harm).</div>
+        <div class="box local small">IV UFH nomogram: <span class="lfv" data-local="ufh_vte_nomogram">____</span>&nbsp;· enoxaparin syringe rounding: <span class="lfv" data-local="enoxaparin_rounding">____</span>&nbsp;· anticoag pharmacy / hematology: <span class="lfv" data-local="anticoag_pharmacy_hematology">____</span></div>
+      </section>
+
+      <section class="panel c-wf" id="p-06">
+        <div class="ph"><span class="num">06</span><h2>Delivery &amp; neuraxial</h2><span class="src">ASH 2018 rec 10&nbsp;· ACOG PB 196&nbsp;· SOAP 2018</span></div>
+        <ul class="ls small">
+          <li><b>Schedule delivery</b>, anticoagulant held first; antenatal anesthesia consult; MFM + hematology.</li>
+          <li><b>Labor, ROM or bleeding → hold the next dose</b>; note last dose time; call FM attending + anesthesia (SOAP).</li>
+          <li>Optional (protocol): UFH before delivery, timed to likely labor; or stop and induce within 24&nbsp;h (PB 196).</li>
+        </ul>
+        <table class="t timing stripe"><colgroup><col class="c1"><col class="c2"><col></colgroup>
+          <thead><tr><th>Drug</th><th>Stop before induction, cesarean or neuraxial</th><th>Restart&nbsp;— after hemostasis and anesthesia review</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Therapeutic LMWH</td><td><span class="interval">≥ 24&nbsp;h</span><span class="restart-caveat">CrCl &lt; 30 (q24h dosing): <b>≥ 48&nbsp;h</b></span></td><td><span class="restart-condition"><b>Meet all:</b> <span class="interval">≥ 24&nbsp;h</span> after neuraxial puncture</span><span class="restart-condition"><b>and</b> <span class="interval">≥ 4&nbsp;h</span> after catheter removal</span><span class="restart-condition"><b>and</b> <span class="interval">≥ 24&nbsp;h</span> after surgery (48–72&nbsp;h if high bleeding risk)</span></td></tr>
+            <tr><td class="k">IV UFH</td><td><span class="interval">4–6&nbsp;h</span> + normal aPTT</td><td><span class="restart-condition"><b>Meet both:</b> <span class="interval">≥ 1&nbsp;h</span> after puncture</span><span class="restart-condition"><b>and</b> <span class="interval">≥ 1&nbsp;h</span> after catheter removal</span></td></tr>
+          </tbody>
+        </table>
+        <div class="small">Individualize with anesthesia/hematology <a href="06-postpartum.html#p-E" class="xlink"><span class="xref c-wf">6&nbsp;· E</span></a> <a href="20-neuraxial.html#p-02" class="xlink"><span class="xref c-wf">20&nbsp;· 02</span></a></div>
+        <ul class="ls small">
+          <li>Acute VTE near term: IV UFH (stop 4–6&nbsp;h before birth) + hematology; IVC filter only if anticoagulation impossible.</li>
+        </ul>
+      </section>
+
+      <section class="panel c-wf" id="p-07">
+        <div class="ph"><span class="num">07</span><h2>Postpartum &amp; breastfeeding</h2><span class="src">ASH 2018 recs 12–13&nbsp;· LactMed (NLM, 2026)&nbsp;· ACCP 2012</span></div>
+        <ul class="ls small">
+          <li><b>Compatible:</b> LMWH, UFH, fondaparinux, <b>warfarin</b> (INR 2–3; overlap parenteral ≥ 5&nbsp;d + INR ≥ 2 for 24&nbsp;h).</li>
+          <li><b>DOACs: avoid while breastfeeding</b> (ASH strong rec). LactMed: apixaban milk levels high; rivaroxaban, dabigatran low, data limited. Not breastfeeding → DOAC OK.</li>
+          <li>Contraception: progestin-only or nonhormonal; CHC is MEC 3 on therapeutic anticoagulation for acute VTE (MEC 4 early postpartum) <a href="06-postpartum.html#p-C" class="xlink"><span class="xref c-wf">6&nbsp;· C</span></a></li>
+        </ul>
+      </section>
+
+      <section class="panel c-wf grow" id="p-08">
+        <div class="ph"><span class="num">08</span><h2>Not PE? Think of</h2><span class="src">SMFM AFE checklist 2026&nbsp;· ESC HFA PPCM 2010&nbsp;· AHA SCAD statement 2018</span></div>
+        <dl class="kv reas c-wf">
+          <dt>PPCM</dt><dd>Late pregnancy to months postpartum; orthopnea, edema; BNP, echo: LVEF &lt; 45%.</dd>
+          <dt>ACS / SCAD</dt><dd>Chest pain: ECG, troponin; SCAD is the leading cause of pregnancy-associated MI, mostly postpartum.</dd>
+          <dt>AFE</dt><dd>Sudden hypoxia + hypotension or arrest, ± DIC, in labor or ≤&nbsp;30&nbsp;min after placenta → code <a href="02-emergencies.html#p-D" class="xlink"><span class="xref c-stop">2&nbsp;· D</span></a></dd>
+          <dt>Workup</dt><dd>ECG, troponin, BNP or NT-proBNP, CXR, SpO₂ / ABG, echo if hypoxic, hypotensive or RV strain suspected.</dd>
+          <dt>Others</dt><dd>Pneumonia or aspiration, pulmonary edema of preeclampsia <a href="02-emergencies.html#p-B" class="xlink"><span class="xref c-htn">2&nbsp;· B</span></a>, sepsis <a href="13-sepsis.html#p-01" class="xlink"><span class="xref c-inf">13&nbsp;· 01</span></a>, asthma, anemia.</dd>
+        </dl>
+      </section>
+    </div>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> Creager MA et al., 2026 AHA/ACC/ACCP/ACEP/CHEST/SCAI/SHM/SIR/SVM/SVN Guideline for the Evaluation and Management of Acute Pulmonary Embolism in Adults, Circulation 2026;153(12):e977–e1051 (doi 10.1161/CIR.0000000000001415; JACC doi 10.1016/j.jacc.2025.11.005); van der Pol LM et al., Pregnancy-adapted YEARS algorithm (Artemis), N Engl J Med 2019;380:1139–49; Righini M et al., Diagnosis of PE during pregnancy (CT-PE-Pregnancy), Ann Intern Med 2018;169:766–73; Le Gal G et al., revised Geneva score, Ann Intern Med 2006; Bates SM et al., ASH 2018 guidelines: VTE in the context of pregnancy, Blood Adv 2018;2(22):3317–59; ACOG Practice Bulletin 196, Thromboembolism in Pregnancy (2018, reaff. 2025); ACOG CO 723, Imaging during pregnancy and lactation; RCOG GTG 37b (2015) §6.1; Douketis JD et al., ACCP perioperative, Chest 2012 (rec 4.4); Bates SM et al., ACCP 9th ed., Chest 2012;141(2 Suppl):e691S–736S; Chan WS et al., CMAJ 2013;185:E194–200; Le Gal G et al., BMJ 2012;344:e2635; Leffert L et al., SOAP consensus on neuraxial procedures in obstetric patients on anticoagulants, Anesth Analg 2018; SMFM Consult #9, Amniotic fluid embolism (2016); Martinez-King LC et al., SMFM checklist for initial management of amniotic fluid embolism, updated 2026, Pregnancy 2026;2(5):e70364; Sliwa K et al., ESC HFA PPCM position statement, Eur J Heart Fail 2010; Hayes SN et al., AHA SCAD scientific statement, Circulation 2018; FDA labels (Lovenox, Activase); NLM LactMed 2026 (apixaban, rivaroxaban, dabigatran, warfarin, enoxaparin, heparin). Items tagged <b>LOCAL</b> are program policy.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek04LDBIOVYxSDh6TTEwLDBIMTFWMUgxMHpNMTEsMEgxMlYxSDExek0xMiwwSDEzVjFIMTJ6TTEzLDBIMTRWMUgxM3pNMTUsMEgxNlYxSDE1ek0xNiwwSDE3VjFIMTZ6TTE3LDBIMThWMUgxN3pNMTgsMEgxOVYxSDE4ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNOSwxSDEwVjJIOXpNMTAsMUgxMVYySDEwek0xMywxSDE0VjJIMTN6TTE3LDFIMThWMkgxN3pNMTksMUgyMFYySDE5ek0yMCwxSDIxVjJIMjB6TTIyLDFIMjNWMkgyMnpNMjgsMUgyOVYySDI4ek0wLDJIMVYzSDB6TTIsMkgzVjNIMnpNMywySDRWM0gzek00LDJINVYzSDR6TTYsMkg3VjNINnpNOCwySDlWM0g4ek05LDJIMTBWM0g5ek0xMCwySDExVjNIMTB6TTExLDJIMTJWM0gxMXpNMTcsMkgxOFYzSDE3ek0xOSwySDIwVjNIMTl6TTIyLDJIMjNWM0gyMnpNMjQsMkgyNVYzSDI0ek0yNSwySDI2VjNIMjV6TTI2LDJIMjdWM0gyNnpNMjgsMkgyOVYzSDI4ek0wLDNIMVY0SDB6TTIsM0gzVjRIMnpNMywzSDRWNEgzek00LDNINVY0SDR6TTYsM0g3VjRINnpNOCwzSDlWNEg4ek0xMCwzSDExVjRIMTB6TTExLDNIMTJWNEgxMXpNMTIsM0gxM1Y0SDEyek0xMywzSDE0VjRIMTN6TTE2LDNIMTdWNEgxNnpNMTgsM0gxOVY0SDE4ek0yMiwzSDIzVjRIMjJ6TTI0LDNIMjVWNEgyNHpNMjUsM0gyNlY0SDI1ek0yNiwzSDI3VjRIMjZ6TTI4LDNIMjlWNEgyOHpNMCw0SDFWNUgwek0yLDRIM1Y1SDJ6TTMsNEg0VjVIM3pNNCw0SDVWNUg0ek02LDRIN1Y1SDZ6TTksNEgxMFY1SDl6TTExLDRIMTJWNUgxMXpNMTIsNEgxM1Y1SDEyek0xNCw0SDE1VjVIMTR6TTE1LDRIMTZWNUgxNXpNMTYsNEgxN1Y1SDE2ek0xNyw0SDE4VjVIMTd6TTE4LDRIMTlWNUgxOHpNMjIsNEgyM1Y1SDIyek0yNCw0SDI1VjVIMjR6TTI1LDRIMjZWNUgyNXpNMjYsNEgyN1Y1SDI2ek0yOCw0SDI5VjVIMjh6TTAsNUgxVjZIMHpNNiw1SDdWNkg2ek04LDVIOVY2SDh6TTksNUgxMFY2SDl6TTEwLDVIMTFWNkgxMHpNMTMsNUgxNFY2SDEzek0xNiw1SDE3VjZIMTZ6TTE4LDVIMTlWNkgxOHpNMTksNUgyMFY2SDE5ek0yMiw1SDIzVjZIMjJ6TTI4LDVIMjlWNkgyOHpNMCw2SDFWN0gwek0xLDZIMlY3SDF6TTIsNkgzVjdIMnpNMyw2SDRWN0gzek00LDZINVY3SDR6TTUsNkg2VjdINXpNNiw2SDdWN0g2ek04LDZIOVY3SDh6TTEwLDZIMTFWN0gxMHpNMTIsNkgxM1Y3SDEyek0xNCw2SDE1VjdIMTR6TTE2LDZIMTdWN0gxNnpNMTgsNkgxOVY3SDE4ek0yMCw2SDIxVjdIMjB6TTIyLDZIMjNWN0gyMnpNMjMsNkgyNFY3SDIzek0yNCw2SDI1VjdIMjR6TTI1LDZIMjZWN0gyNXpNMjYsNkgyN1Y3SDI2ek0yNyw2SDI4VjdIMjd6TTI4LDZIMjlWN0gyOHpNOSw3SDEwVjhIOXpNMTIsN0gxM1Y4SDEyek0xNCw3SDE1VjhIMTR6TTE1LDdIMTZWOEgxNXpNMTcsN0gxOFY4SDE3ek0xOCw3SDE5VjhIMTh6TTIwLDdIMjFWOEgyMHpNMCw4SDFWOUgwek0xLDhIMlY5SDF6TTQsOEg1VjlINHpNNSw4SDZWOUg1ek02LDhIN1Y5SDZ6TTExLDhIMTJWOUgxMXpNMTIsOEgxM1Y5SDEyek0xNyw4SDE4VjlIMTd6TTE5LDhIMjBWOUgxOXpNMjMsOEgyNFY5SDIzek0yNSw4SDI2VjlIMjV6TTI2LDhIMjdWOUgyNnpNMjcsOEgyOFY5SDI3ek0yOCw4SDI5VjlIMjh6TTQsOUg1VjEwSDR6TTgsOUg5VjEwSDh6TTksOUgxMFYxMEg5ek0xMSw5SDEyVjEwSDExek0xMiw5SDEzVjEwSDEyek0xMyw5SDE0VjEwSDEzek0xNSw5SDE2VjEwSDE1ek0xNiw5SDE3VjEwSDE2ek0xNyw5SDE4VjEwSDE3ek0xOCw5SDE5VjEwSDE4ek0yMSw5SDIyVjEwSDIxek0yMiw5SDIzVjEwSDIyek0yMyw5SDI0VjEwSDIzek0yNCw5SDI1VjEwSDI0ek0yNSw5SDI2VjEwSDI1ek0yNiw5SDI3VjEwSDI2ek0yNyw5SDI4VjEwSDI3ek0yOCw5SDI5VjEwSDI4ek0xLDEwSDJWMTFIMXpNMiwxMEgzVjExSDJ6TTQsMTBINVYxMUg0ek01LDEwSDZWMTFINXpNNiwxMEg3VjExSDZ6TTcsMTBIOFYxMUg3ek04LDEwSDlWMTFIOHpNMTEsMTBIMTJWMTFIMTF6TTEyLDEwSDEzVjExSDEyek0xMywxMEgxNFYxMUgxM3pNMTUsMTBIMTZWMTFIMTV6TTE2LDEwSDE3VjExSDE2ek0xOCwxMEgxOVYxMUgxOHpNMjIsMTBIMjNWMTFIMjJ6TTIzLDEwSDI0VjExSDIzek0yOCwxMEgyOVYxMUgyOHpNMiwxMUgzVjEySDJ6TTMsMTFINFYxMkgzek03LDExSDhWMTJIN3pNOCwxMUg5VjEySDh6TTEwLDExSDExVjEySDEwek0xNSwxMUgxNlYxMkgxNXpNMTcsMTFIMThWMTJIMTd6TTE4LDExSDE5VjEySDE4ek0yMSwxMUgyMlYxMkgyMXpNMjIsMTFIMjNWMTJIMjJ6TTI1LDExSDI2VjEySDI1ek0yNywxMUgyOFYxMkgyN3pNMjgsMTFIMjlWMTJIMjh6TTIsMTJIM1YxM0gyek0zLDEySDRWMTNIM3pNNCwxMkg1VjEzSDR6TTYsMTJIN1YxM0g2ek03LDEySDhWMTNIN3pNMTAsMTJIMTFWMTNIMTB6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMjAsMTJIMjFWMTNIMjB6TTIxLDEySDIyVjEzSDIxek0yMywxMkgyNFYxM0gyM3pNMjcsMTJIMjhWMTNIMjd6TTEsMTNIMlYxNEgxek0zLDEzSDRWMTRIM3pNNCwxM0g1VjE0SDR6TTUsMTNINlYxNEg1ek04LDEzSDlWMTRIOHpNMTEsMTNIMTJWMTRIMTF6TTEzLDEzSDE0VjE0SDEzek0xNCwxM0gxNVYxNEgxNHpNMTUsMTNIMTZWMTRIMTV6TTE2LDEzSDE3VjE0SDE2ek0xNywxM0gxOFYxNEgxN3pNMTgsMTNIMTlWMTRIMTh6TTIyLDEzSDIzVjE0SDIyek0yMywxM0gyNFYxNEgyM3pNMjQsMTNIMjVWMTRIMjR6TTI1LDEzSDI2VjE0SDI1ek0yNiwxM0gyN1YxNEgyNnpNMjcsMTNIMjhWMTRIMjd6TTI4LDEzSDI5VjE0SDI4ek0wLDE0SDFWMTVIMHpNMiwxNEgzVjE1SDJ6TTMsMTRINFYxNUgzek01LDE0SDZWMTVINXpNNiwxNEg3VjE1SDZ6TTksMTRIMTBWMTVIOXpNMTEsMTRIMTJWMTVIMTF6TTEyLDE0SDEzVjE1SDEyek0xNCwxNEgxNVYxNUgxNHpNMTUsMTRIMTZWMTVIMTV6TTE4LDE0SDE5VjE1SDE4ek0yMSwxNEgyMlYxNUgyMXpNMjQsMTRIMjVWMTVIMjR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjgsMTRIMjlWMTVIMjh6TTAsMTVIMVYxNkgwek0zLDE1SDRWMTZIM3pNNCwxNUg1VjE2SDR6TTgsMTVIOVYxNkg4ek05LDE1SDEwVjE2SDl6TTExLDE1SDEyVjE2SDExek0xMiwxNUgxM1YxNkgxMnpNMTQsMTVIMTVWMTZIMTR6TTE1LDE1SDE2VjE2SDE1ek0xNiwxNUgxN1YxNkgxNnpNMTcsMTVIMThWMTZIMTd6TTE4LDE1SDE5VjE2SDE4ek0yMCwxNUgyMVYxNkgyMHpNMjQsMTVIMjVWMTZIMjR6TTI3LDE1SDI4VjE2SDI3ek0yOCwxNUgyOVYxNkgyOHpNMCwxNkgxVjE3SDB6TTEsMTZIMlYxN0gxek0zLDE2SDRWMTdIM3pNNCwxNkg1VjE3SDR6TTUsMTZINlYxN0g1ek02LDE2SDdWMTdINnpNMTAsMTZIMTFWMTdIMTB6TTEyLDE2SDEzVjE3SDEyek0xNSwxNkgxNlYxN0gxNXpNMTcsMTZIMThWMTdIMTd6TTE5LDE2SDIwVjE3SDE5ek0yMSwxNkgyMlYxN0gyMXpNMjcsMTZIMjhWMTdIMjd6TTAsMTdIMVYxOEgwek0xLDE3SDJWMThIMXpNMiwxN0gzVjE4SDJ6TTMsMTdINFYxOEgzek00LDE3SDVWMThINHpNOSwxN0gxMFYxOEg5ek0xMSwxN0gxMlYxOEgxMXpNMTMsMTdIMTRWMThIMTN6TTE0LDE3SDE1VjE4SDE0ek0xNSwxN0gxNlYxOEgxNXpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0xOCwxN0gxOVYxOEgxOHpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNCwxN0gyNVYxOEgyNHpNMjUsMTdIMjZWMThIMjV6TTI3LDE3SDI4VjE4SDI3ek0yOCwxN0gyOVYxOEgyOHpNMywxOEg0VjE5SDN6TTQsMThINVYxOUg0ek02LDE4SDdWMTlINnpNOSwxOEgxMFYxOUg5ek0xMCwxOEgxMVYxOUgxMHpNMTEsMThIMTJWMTlIMTF6TTEyLDE4SDEzVjE5SDEyek0xMywxOEgxNFYxOUgxM3pNMTQsMThIMTVWMTlIMTR6TTE1LDE4SDE2VjE5SDE1ek0xOCwxOEgxOVYxOUgxOHpNMjAsMThIMjFWMTlIMjB6TTIyLDE4SDIzVjE5SDIyek0yMywxOEgyNFYxOUgyM3pNMjQsMThIMjVWMTlIMjR6TTI2LDE4SDI3VjE5SDI2ek0yOCwxOEgyOVYxOUgyOHpNMiwxOUgzVjIwSDJ6TTMsMTlINFYyMEgzek01LDE5SDZWMjBINXpNOSwxOUgxMFYyMEg5ek0xMCwxOUgxMVYyMEgxMHpNMTYsMTlIMTdWMjBIMTZ6TTE3LDE5SDE4VjIwSDE3ek0xOCwxOUgxOVYyMEgxOHpNMjIsMTlIMjNWMjBIMjJ6TTIzLDE5SDI0VjIwSDIzek0yNywxOUgyOFYyMEgyN3pNMjgsMTlIMjlWMjBIMjh6TTAsMjBIMVYyMUgwek0xLDIwSDJWMjFIMXpNNCwyMEg1VjIxSDR6TTUsMjBINlYyMUg1ek02LDIwSDdWMjFINnpNNywyMEg4VjIxSDd6TTgsMjBIOVYyMUg4ek05LDIwSDEwVjIxSDl6TTEyLDIwSDEzVjIxSDEyek0xNiwyMEgxN1YyMUgxNnpNMTcsMjBIMThWMjFIMTd6TTIwLDIwSDIxVjIxSDIwek0yMSwyMEgyMlYyMUgyMXpNMjIsMjBIMjNWMjFIMjJ6TTIzLDIwSDI0VjIxSDIzek0yNCwyMEgyNVYyMUgyNHpNMjUsMjBIMjZWMjFIMjV6TTI4LDIwSDI5VjIxSDI4ek04LDIxSDlWMjJIOHpNOSwyMUgxMFYyMkg5ek0xMCwyMUgxMVYyMkgxMHpNMTEsMjFIMTJWMjJIMTF6TTEzLDIxSDE0VjIySDEzek0xNCwyMUgxNVYyMkgxNHpNMTUsMjFIMTZWMjJIMTV6TTE2LDIxSDE3VjIySDE2ek0xOCwyMUgxOVYyMkgxOHpNMTksMjFIMjBWMjJIMTl6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjgsMjFIMjlWMjJIMjh6TTAsMjJIMVYyM0gwek0xLDIySDJWMjNIMXpNMiwyMkgzVjIzSDJ6TTMsMjJINFYyM0gzek00LDIySDVWMjNINHpNNSwyMkg2VjIzSDV6TTYsMjJIN1YyM0g2ek0xMSwyMkgxMlYyM0gxMXpNMTQsMjJIMTVWMjNIMTR6TTE1LDIySDE2VjIzSDE1ek0xOSwyMkgyMFYyM0gxOXpNMjAsMjJIMjFWMjNIMjB6TTIyLDIySDIzVjIzSDIyek0yNCwyMkgyNVYyM0gyNHpNMjUsMjJIMjZWMjNIMjV6TTI2LDIySDI3VjIzSDI2ek0yOCwyMkgyOVYyM0gyOHpNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek04LDIzSDlWMjRIOHpNMTIsMjNIMTNWMjRIMTJ6TTE0LDIzSDE1VjI0SDE0ek0xNSwyM0gxNlYyNEgxNXpNMTcsMjNIMThWMjRIMTd6TTE5LDIzSDIwVjI0SDE5ek0yMCwyM0gyMVYyNEgyMHpNMjQsMjNIMjVWMjRIMjR6TTI3LDIzSDI4VjI0SDI3ek0yOCwyM0gyOVYyNEgyOHpNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek04LDI0SDlWMjVIOHpNOSwyNEgxMFYyNUg5ek0xMCwyNEgxMVYyNUgxMHpNMTEsMjRIMTJWMjVIMTF6TTEyLDI0SDEzVjI1SDEyek0xNywyNEgxOFYyNUgxN3pNMTgsMjRIMTlWMjVIMTh6TTE5LDI0SDIwVjI1SDE5ek0yMCwyNEgyMVYyNUgyMHpNMjEsMjRIMjJWMjVIMjF6TTIyLDI0SDIzVjI1SDIyek0yMywyNEgyNFYyNUgyM3pNMjQsMjRIMjVWMjVIMjR6TTI1LDI0SDI2VjI1SDI1ek0yNywyNEgyOFYyNUgyN3pNMCwyNUgxVjI2SDB6TTIsMjVIM1YyNkgyek0zLDI1SDRWMjZIM3pNNCwyNUg1VjI2SDR6TTYsMjVIN1YyNkg2ek05LDI1SDEwVjI2SDl6TTEwLDI1SDExVjI2SDEwek0xMSwyNUgxMlYyNkgxMXpNMTMsMjVIMTRWMjZIMTN6TTE1LDI1SDE2VjI2SDE1ek0xNiwyNUgxN1YyNkgxNnpNMTcsMjVIMThWMjZIMTd6TTE4LDI1SDE5VjI2SDE4ek0yNywyNUgyOFYyNkgyN3pNMjgsMjVIMjlWMjZIMjh6TTAsMjZIMVYyN0gwek0yLDI2SDNWMjdIMnpNMywyNkg0VjI3SDN6TTQsMjZINVYyN0g0ek02LDI2SDdWMjdINnpNOSwyNkgxMFYyN0g5ek0xMCwyNkgxMVYyN0gxMHpNMTEsMjZIMTJWMjdIMTF6TTEyLDI2SDEzVjI3SDEyek0xMywyNkgxNFYyN0gxM3pNMTUsMjZIMTZWMjdIMTV6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTgsMjZIMTlWMjdIMTh6TTE5LDI2SDIwVjI3SDE5ek0yMSwyNkgyMlYyN0gyMXpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yNywyNkgyOFYyN0gyN3pNMjgsMjZIMjlWMjdIMjh6TTAsMjdIMVYyOEgwek02LDI3SDdWMjhINnpNOCwyN0g5VjI4SDh6TTksMjdIMTBWMjhIOXpNMTEsMjdIMTJWMjhIMTF6TTEyLDI3SDEzVjI4SDEyek0xNiwyN0gxN1YyOEgxNnpNMTcsMjdIMThWMjhIMTd6TTE4LDI3SDE5VjI4SDE4ek0yMCwyN0gyMVYyOEgyMHpNMjUsMjdIMjZWMjhIMjV6TTI3LDI3SDI4VjI4SDI3ek0yOCwyN0gyOVYyOEgyOHpNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek0xMCwyOEgxMVYyOUgxMHpNMTIsMjhIMTNWMjlIMTJ6TTE2LDI4SDE3VjI5SDE2ek0xNywyOEgxOFYyOUgxN3pNMjAsMjhIMjFWMjlIMjB6TTIyLDI4SDIzVjI5SDIyek0yMywyOEgyNFYyOUgyM3pNMjUsMjhIMjZWMjlIMjV6TTI3LDI4SDI4VjI5SDI3eiIgaWQ9InFyLXBhdGgiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIiBzdHJva2U9Im5vbmUiLz48L3N2Zz4="><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

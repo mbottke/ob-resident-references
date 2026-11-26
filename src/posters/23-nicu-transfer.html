@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>NICU transfer&nbsp;· stabilize until transport</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--nb); --body: 11.4pt; --gap: 0.18in; }
+  .masthead h1 { font-size: calc(68pt / var(--k)); }
+  .masthead h1 .tl { display: block; font: 700 calc(24pt / var(--k))/1.1 "Inter Display"; letter-spacing: -0.01em; color: var(--ink-3); margin-top: 4pt; }
+  .masthead .sub { max-width: 7.8in; font-size: 13.5pt; margin-top: 30pt; }
+  .sheet .small { font-size: var(--body); line-height: 1.28; }
+  .sheet .panel { gap: 6pt; }
+  .ph h2 { font-size: 25pt; font-family: "Inter", sans-serif; }   /* < 24 pt printed: text face (css2 #9) */
+  .ph .num { min-width: 1.5em; text-align: center; }
+  .ph.inl .src { grid-column: 3; grid-row: 1; text-align: right; align-self: baseline; padding-inline-start: 0; }
+  /* in-sheet section locator (as on 15): black-outlined letter tile, distinct from coloured sheet chips */
+  .nicu23 .sec { display: inline-block; font: 800 max(0.86em, 10.4pt)/1 "Inter"; padding: 1.5pt 3pt; border: 1pt solid var(--ink); color: var(--ink); vertical-align: 0.06em; white-space: nowrap; }
+  .nicu23 .tag.local { margin-right: 3pt; }
+  .sheet > .entry, .sheet > .panel, .sheet > .closing, .sheet > .urgent-head { flex: none; }
+  .sheet > .urgent-head { margin-bottom: var(--gap); font-size: 13pt; line-height: 1.25; }
+  .sheet > .urgent-head b { font-weight: 800; }
+  .sheet > .urgent-head .soft { font-weight: 600; }
+  .sheet > .entry, .sheet > .panel { margin-bottom: var(--gap); }
+
+  /* row 1: A triggers | B activation */
+  .entry { display: grid; grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.84fr); gap: 0.26in; align-items: stretch; }
+  .entry > .panel > :last-child { margin-top: auto; }
+  .rail.trg { grid-template-columns: 1.2in minmax(0, 1fr); font-size: var(--body); line-height: 1.28; }
+  .rail.trg > .when { color: var(--c); }
+  .rail.trg > .do { font-weight: 400; }
+  /* consecutive rails own their spacing (fo3 #2) */
+  .rail-list { display: flex; flex-direction: column; gap: 0; }
+  .rail-list > .rail { margin: 0; padding-block: calc(4pt / var(--k)); }
+  .rail-list > .rail + .rail { border-top: calc(.75pt / var(--k)) solid var(--rule); }
+  .rail-list > .rail:first-child { padding-top: 0; }
+  .rail-list > .rail:last-child { padding-bottom: 0; }
+  .box.decision.lg { font-size: 11.8pt; line-height: 1.28; }
+  .clear { font-size: var(--body); line-height: 1.28; border-left: 4pt solid var(--c); padding: 2pt 0 2pt 9pt; }
+
+  /* B: parallel start */
+  .fork { margin: 0; break-inside: avoid; }
+  .fork figcaption { font: 800 10.4pt/1.1 "Inter"; letter-spacing: .09em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--ink-2); text-align: center; margin-bottom: 4pt; }
+  .fork .node { font-size: var(--body); line-height: 1.26; }
+  .fork > .node { text-align: center; font-weight: 800; padding: 3pt 9pt; width: 60%; margin: 0 auto; }
+  .fork .arrow { height: 8pt; }
+  .fork .arrow::before { bottom: 0; }
+  .fork .arrow::after { display: none; }
+  .fork .split { padding-top: 18pt; }
+  .fork .split > .arm::before { top: -18pt; height: 12pt; }
+  .fork .node b { display: block; font-size: 12.2pt; }
+  ul.ls.check.dst { display: grid; grid-template-columns: auto auto; justify-content: start; gap: 4pt 18pt; font-size: var(--body); line-height: 1.28; }
+  .lim { display: grid; grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr); gap: 0 8pt; font-size: 11pt; line-height: 1.25; }
+  .lim > .hd { grid-column: 1 / -1; font: 800 10.4pt/1.18 "Inter"; letter-spacing: .04em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--ink-3); padding-bottom: 3pt; border-bottom: 1.2pt solid var(--ink); }
+  .lim > dt { font-weight: 700; white-space: nowrap; padding: 3.5pt 0; border-bottom: 0.75pt solid var(--rule); }
+  .lim > dd { margin: 0; padding: 3.5pt 6pt 3.5pt 0; border-bottom: 0.75pt solid var(--rule); }
+  .lim > .z { border-bottom: none; }
+  .lim > dd.w { grid-column: 2 / -1; }
+
+  /* C: S.T.A.B.L.E. rows — domain | actions | target / time */
+  .stab { display: grid; grid-template-columns: 1.55in minmax(0, 1fr) 3.9in; column-gap: 0.2in; }
+  .stab > .hd { font: 800 10.4pt/1.18 "Inter"; letter-spacing: .04em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; color: var(--ink-3); padding-bottom: 4pt; border-bottom: 1.6pt solid var(--ink); }
+  .stab > .hd b { color: var(--ink); font-weight: 800; }
+  .stab > .dom, .stab > .act, .stab > .goal { padding: 5pt 0 5pt; border-bottom: 0.75pt solid var(--rule); }
+  .stab > .last { border-bottom: none; padding-bottom: 0; }
+  .stab .dom { display: flex; align-items: baseline; gap: 6pt; font: 700 14pt/1.15 "Inter"; color: var(--c); }
+  .stab .dom .ini { font: 900 26pt/0.9 "Inter", sans-serif; letter-spacing: -0.01em; }   /* 23.7 pt printed: below the Display cutoff */
+  .stab .dom.plain { font-size: 13pt; color: var(--ink-2); padding-left: 2pt; }
+  .stab .act { font-size: var(--body); line-height: 1.3; }
+  .stab .act b.st { font-weight: 800; }
+  .stab .act b:not(.st) { font-weight: 600; }   /* one 800-weight start-now phrase per row (K5-07) */
+  .stab .goal { font-size: 11pt; line-height: 1.27; border-left: 2.4pt solid var(--c); padding-left: 9pt; display: flex; flex-direction: column; gap: 3pt; align-items: flex-start; }
+  .stab .goal .hero { font-size: 21pt; }
+  .stab .goal .lc { color: var(--wf); font-weight: 600; }
+  .stab .goal .chips { display: flex; flex-wrap: wrap; gap: 3pt 6pt; align-items: center; }
+  .stab .goal .chips > i { font-style: normal; font-weight: 600; color: var(--ink-2); }
+  .stab .act .lcl { margin-top: 3pt; font-size: 11pt; color: var(--wf); }
+  .stab .act .lcl .lc { font-weight: 600; }
+  .stab .span2 { grid-column: 2 / span 2; }
+  ul.ls.fam { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2pt 14pt; margin-top: 3pt; }
+  .hie { display: grid; grid-template-columns: minmax(0, 1fr) 2.7in; gap: 0 0.2in; align-items: start; border-left: 4pt solid var(--c); background: color-mix(in srgb, var(--c) var(--tint-2), white); padding: 6pt 10pt 7pt; font-size: var(--body); line-height: 1.3; margin-top: 2pt; }
+  .hie-h { display: flex; align-items: center; flex-wrap: wrap; gap: 4pt 8pt; font: 800 14.5pt/1.15 "Inter"; margin-bottom: 3pt; }
+  .hie-h .deadline { background: var(--c); }
+  .hie-txt { columns: 2; column-gap: 0.25in; margin: 0; }   /* ~90-character measure (K5-11) */
+  .hie .box.local { margin-top: 6pt; background: #fff; }
+
+  /* lower row: D | E */
+  .closing { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 0.26in; align-items: stretch; }
+  .closing .panel > .box.local:last-child { margin-top: auto; }
+  .loop { margin: 0; break-inside: avoid; }
+  .loop svg { display: block; width: 100%; height: auto; }
+  .loop text { font-family: "Inter", sans-serif; font-weight: 700; fill: var(--ink); }
+  .loop rect { fill: color-mix(in srgb, var(--nb) 12%, white); stroke: var(--nb); stroke-width: 1.4; }
+  .loop path { fill: none; stroke: var(--nb); stroke-width: 1.8; }
+  .loop polygon { fill: var(--nb); }
+  ul.ls.rs { font-size: var(--body); line-height: 1.28; gap: 3pt; }
+  .closing .urgent-head { font-size: 12pt; line-height: 1.25; flex-wrap: wrap; }
+  .closing .urgent-head .soft { font-weight: 600; }
+  .box.move { font-size: var(--body); line-height: 1.28; }
+  .sbar { display: grid; grid-template-columns: 1fr; gap: 0; }
+  .sbar > div { display: grid; grid-template-columns: 1.3in minmax(0, 1fr); gap: 0 10pt; border-top: 0.75pt solid var(--rule); padding: 4pt 0; font-size: var(--body); line-height: 1.28; }
+  .sbar > div:first-child { border-top: none; padding-top: 0; }
+  .sbar .L { font: 700 12pt/1.15 "Inter"; color: var(--ink); }
+  .sbar .L b { font: 800 17pt/1 "Inter", sans-serif; letter-spacing: 0; color: var(--c); margin-right: 3pt; }   /* < 24 pt printed: text face */
+  .sbar q { quotes: "“" "”"; }
+  .send-h { font: 800 12.4pt/1.2 "Inter"; border-top: 1.5pt solid var(--c); padding-top: 4pt; }
+  ul.ls.check.pk { display: block; columns: 2; column-gap: 14pt; margin-bottom: 7pt; font-size: 11pt; line-height: 1.26; }
+  ul.ls.check.pk > li { break-inside: avoid; margin-bottom: 4pt; }
+  .lfx { white-space: nowrap; }
+  .sheet > .foot { font-size: calc(7.5pt / var(--k)); }   /* room for the footer QR; citations stay tiny */
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="22-hearing-cmv.html" title="Failed hearing screen · cCMV">‹ 22</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html" selected="">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="24-substance-dyad.html" title="Opioid- or THC-exposed dyad">24 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/23-nicu-transfer.pdf">PDF</a></nav>
+<div class="sheet portrait-24x36 nicu23 c-nb" style="--k:1.36">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>L&amp;D&nbsp;· nursery&nbsp;· mother-baby</div>
+      <h1><span class="sid">23</span>NICU transfer<span class="tl">stabilize until transport</span></h1>
+    </div>
+    <div class="sub">Call early&nbsp;· stabilize in parallel&nbsp;· prepare neonatal transport.<br><span class="muted">Acute actions and doses</span> <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a> <span class="muted">· delivery-room resuscitation</span> <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a></div>
+    <nav class="setnav rel"><em>See also</em><a href="15-sick-newborn.html" class="xlink"><span><b>15</b>Sick newborn</span></a><a href="05-newborn.html" class="xlink"><span><b>5</b>Newborn</span></a><a href="18-nursery.html" class="xlink"><span><b>18</b>Nursery card</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-15.svg)"></div>
+
+  <div class="urgent-head"><span><b>Any clinical red flag → FM attending + peds / NICU now.</b> <span class="soft">Start bedside care</span> <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a> <span class="soft">· apnea / gasping or HR &lt; 100/min despite initial steps → assisted ventilation now</span> <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a></span></div>
+
+  <!-- A + B -->
+  <div class="entry">
+    <section class="panel c-nb" id="nicu-a"><span id="p-A" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="ph"><span class="num">A</span><h2>Call NICU now</h2><span class="src">AHA/AAP 2025 Part 5&nbsp;· KP EOS calculator (2024), clinical illness&nbsp;· PES 2015&nbsp;· CDC CCHD 2026&nbsp;· AAP bilirubin 2022&nbsp;· BAPM 2024</span></div>
+      <div class="box decision lg"><b>Arrange transfer when the baby needs assessment, monitoring or treatment beyond this unit’s capability.</b></div>
+      <div class="rail-list">
+        <div class="rail trg c-nb"><span class="when">Respiratory</span><span class="do">Apnea / gasping; recurrent apnea or desaturation; grunting / retractions or worsening respiratory distress; increasing oxygen or respiratory-support requirement <a href="15-sick-newborn.html#p-B" class="xlink"><span class="xref c-nb">15&nbsp;· B</span></a></span></div>
+        <div class="rail trg c-nb"><span class="when">Cardiovascular</span><span class="do">Central cyanosis; poor perfusion, gray / mottled appearance; weak or absent femoral pulses; suspected shock or duct-dependent heart disease <a href="15-sick-newborn.html#p-C" class="xlink"><span class="xref c-nb">15&nbsp;· C</span></a></span></div>
+        <div class="rail trg c-nb"><span class="when">Neurologic</span><span class="do">Suspected seizure; encephalopathy; persistent depressed consciousness or abnormal tone; concern for HIE <a href="15-sick-newborn.html#p-F" class="xlink"><span class="xref c-nb">15&nbsp;· F</span></a></span></div>
+        <div class="rail trg c-inf"><span class="when">Infection</span><span class="do">Ill appearance or unexplained deterioration with concern for infection; <b>clinically ill</b> (persistent CPAP / HFNC / vent or O₂ &gt; 2&nbsp;h outside the delivery room; pressors; encephalopathy / perinatal depression, e.g. 5‑min Apgar &lt; 5) → culture, strongly consider antibiotics, any EOS score. Poor feeding / lethargy may be the first sign; <b>temperature may be normal</b> <a href="15-sick-newborn.html#p-D" class="xlink"><span class="xref c-inf">15&nbsp;· D</span></a></span></div>
+        <div class="rail trg c-met"><span class="when">Glucose</span><span class="do">Symptomatic hypoglycemia; recurrent / persistent low glucose despite the adopted pathway; increasing IV glucose requirement <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a> <a href="05-newborn.html#p-B" class="xlink"><span class="xref c-met">5&nbsp;· B</span></a></span></div>
+        <div class="rail trg c-nb"><span class="when">Temperature</span><span class="do">Unable to maintain <b>36.5–37.5&nbsp;°C</b> despite appropriate support, or temperature abnormality with clinical illness. Directed therapeutic hypothermia is an exception.</span></div>
+        <div class="rail trg c-nb"><span class="when">After resuscitation</span><span class="do">Prolonged ventilation, intubation, chest compressions or EPINEPHrine → monitored postresuscitation care; discuss location with NICU <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a></span></div>
+        <div class="rail trg c-nb"><span class="when">Bilious emesis</span><span class="do">Any green / bilious emesis → NPO + decompress; neonatal assessment and pediatric surgery call now <a href="15-sick-newborn.html#p-E" class="xlink"><span class="xref c-nb">15&nbsp;· E</span></a> Tenderness / distension or lactic acidosis → <b>time-critical surgical review / transfer</b>. Normal abdominal x-ray does not exclude malrotation.</span></div>
+        <div class="rail trg c-nb"><span class="when">Bilirubin</span><span class="do">At <b>≥ 35&nbsp;wk</b>: TSB <b>≥ exchange threshold − 2&nbsp;mg/dL</b> (age-, GA-, risk-specific; risk-factor curve if TSB rises despite phototherapy) or hypertonia, arching, high-pitched cry → <b>emergency escalation:</b> intensive phototherapy, IV hydration, urgent transfer to an exchange-capable NICU <a href="05-newborn.html#p-C" class="xlink"><span class="xref c-nb">5&nbsp;· C</span></a> Continue in transit when feasible; TSB at least q2h.</span></div>
+      </div>
+      <div class="clear"><b>Failed CCHD screen → evaluate hypoxemia now</b> <a href="05-newborn.html#p-D" class="xlink"><span class="xref c-nb">5&nbsp;· D</span></a> A passed CCHD screen or low EOS risk does not clear a clinically ill baby.</div>
+    </section>
+
+    <section class="panel c-wf" id="nicu-b"><span id="p-B" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="ph"><span class="num">B</span><h2>Activate transport&nbsp;· confirm destination</h2><span class="src">AAP Levels of Neonatal Care 2023, Std V–VI&nbsp;· S.T.A.B.L.E. 7th ed.&nbsp;· receiving-center protocol (LOCAL)</span></div>
+      <figure class="fork" data-tile-keep="">
+        <figcaption>Start together&nbsp;— call while stabilization starts</figcaption>
+        <div class="node tint c-nb">Escalation indicated</div>
+        <div class="arrow c-nb"></div>
+        <div class="split two">
+          <div class="arm c-wf"><div class="node c-wf"><b>Call NICU&nbsp;· activate transport</b>SBAR <span class="sec">E</span>: immediate threat, current support, why higher-level care is needed.</div></div>
+          <div class="arm c-nb"><div class="node c-nb"><b>Stabilize</b>S.T.A.B.L.E. <span class="sec">C</span>&nbsp;· reassess until handoff <span class="sec">D</span></div></div>
+        </div>
+      </figure>
+      <div class="small"><b>Agree with NICU</b> on destination and required capabilities: respiratory support, cooling, cardiology / echo, pediatric surgery or exchange transfusion.</div>
+      <ul class="ls check dst">
+        <li>Accepting clinician</li>
+        <li>Transport team, mode, ETA</li>
+      </ul>
+      <div class="box local">
+        <dl class="lim">
+          <div class="hd">This unit’s limits&nbsp;· retention / treatment capability&nbsp;— verified</div>
+          <dt>Minimum GA</dt><dd><span class="lfv" data-local="nursery_min_ga_wk">____</span> wk <span class="lfv" data-local="nursery_min_ga_d">____</span> d</dd><dt>Minimum birth weight</dt><dd><span class="lfv" data-local="nursery_min_bw">____</span> g</dd>
+          <dt>Oxygen</dt><dd class="w">Maximum FiO₂ <span class="lfv" data-local="nursery_max_fio2">____</span>&nbsp;· flow <span class="lfv" data-local="nursery_o2_max_flow">____</span>&nbsp;· duration <span class="lfv" data-local="nursery_o2_max_duration">____</span></dd>
+          <dt>CPAP</dt><dd class="w">Available outside NICU? <span class="lfv" data-local="cpap_outside_nicu">____</span>&nbsp;· maximum pressure <span class="lfv" data-local="cpap_max_pressure">____</span> cm H₂O&nbsp;· duration <span class="lfv" data-local="cpap_max_duration">____</span></dd>
+          <dt>IV glucose</dt><dd class="w"><span class="lfx">Max dextrose <span class="lfv" data-local="max_peripheral_dextrose">____</span>%</span>&nbsp;· <span class="lfx">maximum GIR manageable on this unit <span class="lfv" data-local="nursery_max_gir">____</span> mg/kg/min</span></dd>
+          <dt class="z">Service scope</dt><dd class="z w"><span class="lfx">Approved nursery service scope <span class="lfv" data-local="nursery_service_scope">____</span></span>&nbsp;· <span class="lfx">qualified staff and monitoring currently available <span class="lfv" data-local="nursery_staff_monitoring_available">____</span></span>&nbsp;· <span class="lfx">monitoring / thermal support <span class="lfv" data-local="nursery_monitoring_thermal">____</span></span></dd>
+        </dl>
+      </div>
+      <div class="box decision c-nb small"><b>Below an agreed GA / weight limit, or support beyond capability → peds / NICU consultation and higher-level care.</b> Do not wait for a limit to be reached if the baby is deteriorating.</div>
+      <div class="box local small"><span class="lfx">Transport center / phone <span class="lfv" data-local="neonatal_transport_center">____</span></span>&nbsp;· <span class="lfx">accepting NICU / clinician <span class="lfv" data-local="accepting_nicu">____</span></span>&nbsp;· <span class="lfx">bedside medical lead until handoff <span class="lfv" data-local="bedside_lead_until_handoff">____</span></span>&nbsp;· <span class="lfx">alternate destination / escalation if delayed <span class="lfv" data-local="transport_delay_escalation">____</span></span></div>
+    </section>
+  </div>
+
+  <!-- C -->
+  <section class="panel c-nb" id="nicu-c"><span id="p-C" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+    <div class="ph inl"><span class="num">C</span><h2>Stabilize while waiting&nbsp;— S.T.A.B.L.E.</h2><span class="src">S.T.A.B.L.E. 7th ed. 2024&nbsp;· AHA/AAP 2025&nbsp;· AAP HIE 2026&nbsp;· Prostin VR label 2026&nbsp;· AAP EOS 2018&nbsp;· PES 2015&nbsp;· doses on 15 / 5 / 18</span></div>
+    <div class="stab">
+      <div class="hd">Domain</div><div class="hd">Start now&nbsp;— assign tasks in parallel&nbsp;· <b>resuscitation takes priority</b></div><div class="hd">Target&nbsp;· doses&nbsp;· LOCAL</div>
+
+      <div class="dom c-met"><span class="ini">S</span>Sugar</div>
+      <div class="act"><b class="st">Bedside glucose now.</b> Symptomatic and &lt; 40&nbsp;mg/dL → <span class="dose">D10W 2&nbsp;mL/kg IV</span>, then GIR <span class="dose">5–8&nbsp;mg/kg/min</span>; persistent low → adopted pathway. Confirm low bedside values with a lab glucose; don’t delay treatment. Unsafe to feed → <b>NPO</b> + dextrose maintenance per neonatal plan.<div class="lcl"><span class="lc"><span class="tag local">Local</span> <span class="lfx">adopted pathway <span class="lfv" data-local="hypoglycemia_pathway">____</span></span>&nbsp;· <span class="lfx">target by age and clinical condition <span class="lfv" data-local="glucose_target_by_age">____</span></span>&nbsp;· <span class="lfx">post-treatment recheck <span class="lfv" data-local="glucose_recheck_after_treatment">____</span> min</span>&nbsp;· <span class="lfx">escalation plan <span class="lfv" data-local="hypoglycemia_nicu_escalation">____</span></span></span></div></div>
+      <div class="goal c-met"><span class="chips"><i>Doses</i> <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a> <a href="05-newborn.html#p-B" class="xlink"><span class="xref c-met">5&nbsp;· B</span></a> <i>· pumps</i> <a href="18-nursery.html#p-04" class="xlink"><span class="xref c-met">18&nbsp;· 04</span></a></span></div>
+
+      <div class="dom c-nb"><span class="ini">T</span>Temperature</div>
+      <div class="act">Radiant warmer; reduce heat loss; monitor temperature. Maintain normothermia <b>unless the cooling center directs a monitored cooling protocol</b>. <b>Avoid hyperthermia.</b></div>
+      <div class="goal c-nb"><span class="hero">36.5–37.5&nbsp;°C</span></div>
+
+      <div class="dom c-nb"><span class="ini">A</span>Airway</div>
+      <div class="act">Position airway; suction if obstructed. <b class="st">Apnea / gasping, or HR &lt; 100/min despite initial steps → assisted ventilation now</b> <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a> Reassess HR response. Titrate oxygen to the agreed SpO₂ target. For a spontaneously breathing infant, CPAP when indicated by the neonatal team, with trained staff and appropriate monitoring <a href="15-sick-newborn.html#p-B" class="xlink"><span class="xref c-nb">15&nbsp;· B</span></a> Recurrent apnea or worsening support needs → reassess airway and transport urgency.</div>
+      <div class="goal c-nb"><span class="lc"><span class="tag local">Local</span> <span class="lfx">SpO₂ target <span class="lfv" data-local="nursery_spo2_target">____</span>%</span>&nbsp;· <span class="lfx">respiratory settings <span class="lfv" data-local="respiratory_settings">____</span></span></span></div>
+
+      <div class="dom c-nb"><span class="ini">B</span>Blood pressure</div>
+      <div class="act">Assess HR, pulses, capillary refill, BP, urine output; gas / lactate as indicated. With NICU, treat the cause (blood loss, sepsis, cardiac disease, obstruction); fluids / vasoactive therapy per neonatal plan; reassess response <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a> <b class="st">Suspected duct-dependent lesion → discuss PGE₁ now</b> <a href="15-sick-newborn.html#p-C" class="xlink"><span class="xref c-nb">15&nbsp;· C</span></a> <b>If PGE₁ starts:</b> watch breathing throughout, ventilation ready; <b>significant BP fall → reduce the infusion rate now</b> and update NICU.</div>
+      <div class="goal c-nb"><span class="chips"><i>PGE₁ dose</i> <a href="15-sick-newborn.html#p-C" class="xlink"><span class="xref c-nb">15&nbsp;· C</span></a></span></div>
+
+      <div class="dom c-inf"><span class="ini">L</span>Lab work</div>
+      <div class="act">Blood culture promptly <b>before antibiotics</b> when obtainable without delaying treatment. <b class="st">Suspected infection → start antibiotics</b> <a href="15-sick-newborn.html#p-D" class="xlink"><span class="xref c-inf">15&nbsp;· D</span></a> Glucose; gas / lactate, CBC and electrolytes as indicated.</div>
+      <div class="goal c-inf"><b>Do not delay urgent treatment or transport for LP, difficult sampling or central access.</b></div>
+
+      <div class="dom c-wf"><span class="ini">E</span>Emotional support</div>
+      <div class="act">Assign a <b>family liaison</b> now. <b>Short updates:</b> what is wrong, what is being done, why transfer is needed, destination and next update.
+        <ul class="ls fam">
+          <li>Preferred language / interpreter; check understanding</li>
+          <li>Offer seeing / touching the baby when clinically feasible</li>
+          <li>Give the receiving unit’s name, location and phone</li>
+          <li>Support milk expression; arrange lactation help</li>
+          <li>Coordinate maternal care, family travel and communication</li>
+        </ul></div>
+      <div class="goal c-wf"><span class="lc"><span class="tag local">Local</span> <span class="lfx">parent / guardian contact ____</span>&nbsp;· <span class="lfx">interpreter <span class="lfv" data-local="interpreter_access">____</span></span>&nbsp;· <span class="lfx">family-update lead <span class="lfv" data-local="family_update_lead">____</span></span>&nbsp;· <span class="lfx">maternal care / travel plan <span class="lfv" data-local="maternal_care_travel_plan">____</span></span>&nbsp;· <span class="lfx">receiving-unit arrival update <span class="lfv" data-local="receiving_unit_arrival_update">____</span></span></span></div>
+
+      <div class="dom plain last">Access</div>
+      <div class="act span2 last">PIV for dextrose and medications. Emergency vascular access during resuscitation → <b>UVC</b> by a trained clinician; <b>IO</b> if IV access is unsuccessful or not feasible <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a> Secure access and document position / confirmation.</div>
+    </div>
+    <div class="hie" data-tile-keep="">
+      <div>
+        <div class="hie-h"><span>Possible HIE → cooling center now</span><span class="deadline">begin ≤ 6&nbsp;h of birth</span><a href="15-sick-newborn.html#p-F" class="xlink"><span class="xref c-nb">15&nbsp;· F</span></a></div>
+        <p class="hie-txt">After advanced resuscitation, assess promptly for encephalopathy: cord gases in depressed newborns (if unavailable, neonatal gas within the first hour or as soon as possible); repeat and document the neurological examination (serially if maternal medication clouds it); discuss borderline findings with the cooling center. Standard: <b>≥ 36w0d with moderate–severe HIE</b>; aim to begin protocol-directed treatment <b>within 6&nbsp;h of birth</b>. Passive cooling before / during transport only on the cooling center’s protocol, with close core-temperature and vital-sign monitoring; servo-controlled cooling is preferred. Selected 35w0d–35w6d or 6–24&nbsp;h cases: specialist + family risk–benefit discussion, documented&nbsp;— <b>call even when the usual GA or age window is uncertain.</b></p>
+      </div>
+      <div class="box local small">Cooling-center temperature / monitoring plan <span class="lfv" data-local="passive_cooling_plan">____</span></div>
+    </div>
+  </section>
+
+  <!-- D | E -->
+  <div class="closing">
+    <section class="panel c-nb" id="nicu-d"><span id="p-D" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="ph"><span class="num">D</span><h2>Reassess until handoff</h2><span class="src">AHA/AAP 2025 Part 5, postnatal + postresuscitation care&nbsp;· S.T.A.B.L.E. 7th ed.&nbsp;· receiving-center protocol (LOCAL)</span></div>
+      <figure class="loop" data-tile-keep="">
+        <svg viewBox="0 0 600 82" role="img" aria-labelledby="loop-t">
+          <title id="loop-t">Reassessment loop: assess, act, recheck, update NICU and transport, then assess again</title>
+          <defs><marker id="loop-ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><polygon points="0,0 8,4 0,8"></polygon></marker></defs>
+          <rect x="2" y="4" width="118" height="36"></rect><rect x="152" y="4" width="118" height="36"></rect><rect x="302" y="4" width="118" height="36"></rect><rect x="452" y="4" width="146" height="36"></rect>
+          <g font-size="17" text-anchor="middle">
+            <text x="61" y="28">Assess</text><text x="211" y="28">Act</text><text x="361" y="28">Recheck</text><text x="525" y="28">Update NICU</text>
+          </g>
+          <g marker-end="url(#loop-ar)">
+            <path d="M120 22 H146"></path><path d="M270 22 H296"></path><path d="M420 22 H446"></path>
+            <path d="M525 40 V62 H61 V46"></path>
+          </g>
+          <text x="293" y="78" font-size="14" text-anchor="middle" style="font-weight:600;fill:var(--ink-2)">repeat until handoff to the transport team</text>
+        </svg>
+      </figure>
+      <div class="box decision small"><b>Unstable infant: continuous HR and SpO₂ monitoring; repeated bedside assessment.</b></div>
+      <ul class="ls rs">
+        <li>Reassess breathing, perfusion, temperature and glucose; document response after interventions.</li>
+        <li>Record support / settings, infusion rates and trends.</li>
+        <li>Transport delayed → recontact the center; revise the stabilization and escalation plan.</li>
+      </ul>
+      <div class="urgent-head stack"><span><b>Deterioration → immediate bedside action and update NICU / transport.</b> <a href="05-newborn.html#p-A" class="xlink"><span class="xref c-nb">5&nbsp;· A</span></a> <a href="15-sick-newborn.html#p-A" class="xlink"><span class="xref c-nb">15&nbsp;· A</span></a></span><span class="soft">Name who reassesses and who updates NICU; confirm the new plan before resuming handoff.</span></div>
+      <div class="box move c-wf"><b>Before movement:</b> transport team verifies airway / support, thermal and glucose plans, access, infusions and equipment. Agree departure timing around remaining instability and time-critical care needs.</div>
+      <div class="box local small"><span class="lfx">BP q<span class="lfv" data-local="transport_wait_bp_interval">____</span> min</span>&nbsp;· <span class="lfx">temperature q<span class="lfv" data-local="transport_wait_temp_interval">____</span> min</span>&nbsp;· <span class="lfx">glucose q<span class="lfv" data-local="transport_wait_glucose_interval">____</span> min</span>&nbsp;· <span class="lfx">bedside reassessment lead <span class="lfv" data-local="bedside_lead_until_handoff">____</span></span></div>
+    </section>
+
+    <section class="panel c-wf" id="nicu-e"><span id="p-E" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="ph"><span class="num">E</span><h2>Call script&nbsp;· SBAR&nbsp;· packet travels with baby</h2><span class="src">CPQCC/CPeTS 2026 Neonatal Transport Form: time sequence C.14–19, infant condition C.20–29, referral process C.30–35&nbsp;· CPQCC Perinatal Transport Systems 2026</span></div>
+      <div class="small"><b>Use for the initial call; update before departure.</b> Existing summary <a href="15-sick-newborn.html#p-H" class="xlink"><span class="xref c-wf">15&nbsp;· H</span></a></div>
+      <div class="sbar">
+        <div><span class="L"><b>S</b>Situation</span><p><q>This is ____ [name / role] at <span class="lfv" data-local="hospital_name">____</span>, callback ____. Newborn born ____ [date / time], age ____ h as of ____ [time]; GA ____ wk ____ d, birth weight ____ g. Concern for ____. Current threat / support ____. I need peds / NICU consult / transport.</q></p></div>
+        <div><span class="L"><b>B</b>Background</span><p>Birth / resuscitation, Apgars, cord gas; maternal infection risks, ROM, GBS and antibiotics / times; relevant diagnoses, medications and prenatal findings.</p></div>
+        <div><span class="L"><b>A</b>Assessment</span><p>Current vitals and trends; SpO₂ pre / post when relevant; respiratory device / settings / FiO₂; glucose and temperature; perfusion / BP; access; treatments, rates and administration times.</p></div>
+        <div><span class="L"><b>R</b>Request&nbsp;· read-back</span><p>Accepting clinician / unit? Team and ETA? Airway, glucose, temperature, PGE₁ or other treatment before arrival? What should trigger another call? <b>Read back the plan.</b></p></div>
+      </div>
+      <div class="send-h">Send / document</div>
+      <ul class="ls check pk">
+        <li>Baby’s identification, GA, birth weight and current treatment weight</li>
+        <li>Birth / resuscitation record; relevant maternal / prenatal records</li>
+        <li>Vital / glucose trends; laboratory results and collection times; pending tests</li>
+        <li>Medication administration record: doses, times, concentrations and current rates</li>
+        <li>Access / airway details and confirmation; imaging transferred</li>
+        <li>Transfer indication, receiving acceptance, consultation instructions and departure condition</li>
+        <li>Required transfer / consent forms; family contacts</li>
+      </ul>
+      <div class="box local small"><span class="lfx">Acceptance time ____</span>&nbsp;· <span class="lfx">team / ETA ____</span>&nbsp;· <span class="lfx">pending-result owner / contact <span class="lfv" data-local="pending_result_owner">____</span></span>&nbsp;· <span class="lfx">forms <span class="lfv" data-local="neonatal_transfer_forms">____</span></span>&nbsp;· <span class="lfx">imaging-transfer method <span class="lfv" data-local="imaging_transfer_method">____</span></span></div>
+    </section>
+  </div>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> Lee HC et al., Part 5: Neonatal Resuscitation, 2025 AHA/AAP, Pediatrics 2026;157(1):e2025074352; Kaiser Permanente EOS Calculator, 2024 model, Clinical Illness; Thornton PS et al., PES persistent hypoglycemia recommendations (2015); CDC, Clinical Screening for CCHD (2026); Kemper AR et al., AAP Hyperbilirubinemia CPG, Pediatrics 2022;150:e2022058859, §III.F, KAS 17–23; BAPM, Bilious Vomiting in the Newborn Period framework (2024), pp9–11; AAP COFN, Standards for Levels of Neonatal Care, Pediatrics 2023;151(6):e2023061957, Std V–VI; Tennessee DOH, Transportation Manual, 8th ed. (2025), model consulted (Neonatal Referral Process p47, Documentation p52); S.T.A.B.L.E. Program Learner Manual, 7th ed. (2024); AAP COFN, Therapeutic Hypothermia for Neonatal HIE, Pediatrics 2026 (doi 10.1542/peds.2025-073627); Pfizer, Prostin VR Pediatric label, rev. 2026, Boxed Warning and Precautions; Puopolo KM et al., AAP EOS ≥ 35&nbsp;wk, Pediatrics 2018;142:e20182894; CPQCC/CPeTS 2026 Neonatal Transport Form and manual; CPQCC, Perinatal Transport Systems (2026). <b>LOCAL</b> = program policy or the receiving NICU’s protocol.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek0xMSwwSDEyVjFIMTF6TTEyLDBIMTNWMUgxMnpNMTUsMEgxNlYxSDE1ek0xNywwSDE4VjFIMTd6TTE4LDBIMTlWMUgxOHpNMTksMEgyMFYxSDE5ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTAsMUgxMVYySDEwek0xMSwxSDEyVjJIMTF6TTE0LDFIMTVWMkgxNHpNMTUsMUgxNlYySDE1ek0xNiwxSDE3VjJIMTZ6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTEyLDJIMTNWM0gxMnpNMTUsMkgxNlYzSDE1ek0xNywySDE4VjNIMTd6TTE4LDJIMTlWM0gxOHpNMTksMkgyMFYzSDE5ek0yMiwySDIzVjNIMjJ6TTI0LDJIMjVWM0gyNHpNMjUsMkgyNlYzSDI1ek0yNiwySDI3VjNIMjZ6TTI4LDJIMjlWM0gyOHpNMCwzSDFWNEgwek0yLDNIM1Y0SDJ6TTMsM0g0VjRIM3pNNCwzSDVWNEg0ek02LDNIN1Y0SDZ6TTExLDNIMTJWNEgxMXpNMTIsM0gxM1Y0SDEyek0xOCwzSDE5VjRIMTh6TTE5LDNIMjBWNEgxOXpNMjIsM0gyM1Y0SDIyek0yNCwzSDI1VjRIMjR6TTI1LDNIMjZWNEgyNXpNMjYsM0gyN1Y0SDI2ek0yOCwzSDI5VjRIMjh6TTAsNEgxVjVIMHpNMiw0SDNWNUgyek0zLDRINFY1SDN6TTQsNEg1VjVINHpNNiw0SDdWNUg2ek04LDRIOVY1SDh6TTksNEgxMFY1SDl6TTExLDRIMTJWNUgxMXpNMTIsNEgxM1Y1SDEyek0xNCw0SDE1VjVIMTR6TTE1LDRIMTZWNUgxNXpNMTYsNEgxN1Y1SDE2ek0xNyw0SDE4VjVIMTd6TTE4LDRIMTlWNUgxOHpNMjIsNEgyM1Y1SDIyek0yNCw0SDI1VjVIMjR6TTI1LDRIMjZWNUgyNXpNMjYsNEgyN1Y1SDI2ek0yOCw0SDI5VjVIMjh6TTAsNUgxVjZIMHpNNiw1SDdWNkg2ek04LDVIOVY2SDh6TTEwLDVIMTFWNkgxMHpNMTIsNUgxM1Y2SDEyek0xMyw1SDE0VjZIMTN6TTE1LDVIMTZWNkgxNXpNMTYsNUgxN1Y2SDE2ek0xOSw1SDIwVjZIMTl6TTIyLDVIMjNWNkgyMnpNMjgsNUgyOVY2SDI4ek0wLDZIMVY3SDB6TTEsNkgyVjdIMXpNMiw2SDNWN0gyek0zLDZINFY3SDN6TTQsNkg1VjdINHpNNSw2SDZWN0g1ek02LDZIN1Y3SDZ6TTgsNkg5VjdIOHpNMTAsNkgxMVY3SDEwek0xMiw2SDEzVjdIMTJ6TTE0LDZIMTVWN0gxNHpNMTYsNkgxN1Y3SDE2ek0xOCw2SDE5VjdIMTh6TTIwLDZIMjFWN0gyMHpNMjIsNkgyM1Y3SDIyek0yMyw2SDI0VjdIMjN6TTI0LDZIMjVWN0gyNHpNMjUsNkgyNlY3SDI1ek0yNiw2SDI3VjdIMjZ6TTI3LDZIMjhWN0gyN3pNMjgsNkgyOVY3SDI4ek04LDdIOVY4SDh6TTksN0gxMFY4SDl6TTEyLDdIMTNWOEgxMnpNMTQsN0gxNVY4SDE0ek0xNSw3SDE2VjhIMTV6TTE3LDdIMThWOEgxN3pNMTgsN0gxOVY4SDE4ek0yMCw3SDIxVjhIMjB6TTAsOEgxVjlIMHpNMSw4SDJWOUgxek0zLDhINFY5SDN6TTYsOEg3VjlINnpNNyw4SDhWOUg3ek0xMCw4SDExVjlIMTB6TTEyLDhIMTNWOUgxMnpNMTMsOEgxNFY5SDEzek0xNCw4SDE1VjlIMTR6TTE2LDhIMTdWOUgxNnpNMjAsOEgyMVY5SDIwek0yMiw4SDIzVjlIMjJ6TTIzLDhIMjRWOUgyM3pNMjQsOEgyNVY5SDI0ek0yNiw4SDI3VjlIMjZ6TTI3LDhIMjhWOUgyN3pNMSw5SDJWMTBIMXpNMiw5SDNWMTBIMnpNMyw5SDRWMTBIM3pNNCw5SDVWMTBINHpNNyw5SDhWMTBIN3pNOCw5SDlWMTBIOHpNMTMsOUgxNFYxMEgxM3pNMTQsOUgxNVYxMEgxNHpNMTYsOUgxN1YxMEgxNnpNMjAsOUgyMVYxMEgyMHpNMjIsOUgyM1YxMEgyMnpNMjUsOUgyNlYxMEgyNXpNMjgsOUgyOVYxMEgyOHpNMSwxMEgyVjExSDF6TTIsMTBIM1YxMUgyek0zLDEwSDRWMTFIM3pNNCwxMEg1VjExSDR6TTUsMTBINlYxMUg1ek02LDEwSDdWMTFINnpNOCwxMEg5VjExSDh6TTksMTBIMTBWMTFIOXpNMTAsMTBIMTFWMTFIMTB6TTE0LDEwSDE1VjExSDE0ek0xNywxMEgxOFYxMUgxN3pNMTksMTBIMjBWMTFIMTl6TTIwLDEwSDIxVjExSDIwek0yMSwxMEgyMlYxMUgyMXpNMjQsMTBIMjVWMTFIMjR6TTI1LDEwSDI2VjExSDI1ek0yNiwxMEgyN1YxMUgyNnpNMjcsMTBIMjhWMTFIMjd6TTAsMTFIMVYxMkgwek0xLDExSDJWMTJIMXpNOCwxMUg5VjEySDh6TTExLDExSDEyVjEySDExek0xMywxMUgxNFYxMkgxM3pNMTQsMTFIMTVWMTJIMTR6TTE1LDExSDE2VjEySDE1ek0xNiwxMUgxN1YxMkgxNnpNMTgsMTFIMTlWMTJIMTh6TTE5LDExSDIwVjEySDE5ek0yMCwxMUgyMVYxMkgyMHpNMjEsMTFIMjJWMTJIMjF6TTIzLDExSDI0VjEySDIzek0yNiwxMUgyN1YxMkgyNnpNMjcsMTFIMjhWMTJIMjd6TTEsMTJIMlYxM0gxek0yLDEySDNWMTNIMnpNNSwxMkg2VjEzSDV6TTYsMTJIN1YxM0g2ek0xMywxMkgxNFYxM0gxM3pNMTYsMTJIMTdWMTNIMTZ6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMTksMTJIMjBWMTNIMTl6TTIwLDEySDIxVjEzSDIwek0yMSwxMkgyMlYxM0gyMXpNMjIsMTJIMjNWMTNIMjJ6TTIzLDEySDI0VjEzSDIzek0yNSwxMkgyNlYxM0gyNXpNMjcsMTJIMjhWMTNIMjd6TTI4LDEySDI5VjEzSDI4ek0wLDEzSDFWMTRIMHpNMSwxM0gyVjE0SDF6TTMsMTNINFYxNEgzek00LDEzSDVWMTRINHpNOCwxM0g5VjE0SDh6TTEwLDEzSDExVjE0SDEwek0xMiwxM0gxM1YxNEgxMnpNMTksMTNIMjBWMTRIMTl6TTIwLDEzSDIxVjE0SDIwek0yMSwxM0gyMlYxNEgyMXpNMSwxNEgyVjE1SDF6TTMsMTRINFYxNUgzek02LDE0SDdWMTVINnpNOSwxNEgxMFYxNUg5ek0xMCwxNEgxMVYxNUgxMHpNMTEsMTRIMTJWMTVIMTF6TTE0LDE0SDE1VjE1SDE0ek0yNSwxNEgyNlYxNUgyNXpNMjYsMTRIMjdWMTVIMjZ6TTI3LDE0SDI4VjE1SDI3ek0yOCwxNEgyOVYxNUgyOHpNMCwxNUgxVjE2SDB6TTIsMTVIM1YxNkgyek00LDE1SDVWMTZINHpNNSwxNUg2VjE2SDV6TTEwLDE1SDExVjE2SDEwek0xMSwxNUgxMlYxNkgxMXpNMTIsMTVIMTNWMTZIMTJ6TTEzLDE1SDE0VjE2SDEzek0xNCwxNUgxNVYxNkgxNHpNMTUsMTVIMTZWMTZIMTV6TTE3LDE1SDE4VjE2SDE3ek0xOCwxNUgxOVYxNkgxOHpNMTksMTVIMjBWMTZIMTl6TTIwLDE1SDIxVjE2SDIwek0yMiwxNUgyM1YxNkgyMnpNMjQsMTVIMjVWMTZIMjR6TTI1LDE1SDI2VjE2SDI1ek0yNywxNUgyOFYxNkgyN3pNMSwxNkgyVjE3SDF6TTMsMTZINFYxN0gzek00LDE2SDVWMTdINHpNNSwxNkg2VjE3SDV6TTYsMTZIN1YxN0g2ek03LDE2SDhWMTdIN3pNMTAsMTZIMTFWMTdIMTB6TTEyLDE2SDEzVjE3SDEyek0xNSwxNkgxNlYxN0gxNXpNMTcsMTZIMThWMTdIMTd6TTE5LDE2SDIwVjE3SDE5ek0yMSwxNkgyMlYxN0gyMXpNMjcsMTZIMjhWMTdIMjd6TTMsMTdINFYxOEgzek00LDE3SDVWMThINHpNNywxN0g4VjE4SDd6TTgsMTdIOVYxOEg4ek05LDE3SDEwVjE4SDl6TTEwLDE3SDExVjE4SDEwek0xMSwxN0gxMlYxOEgxMXpNMTIsMTdIMTNWMThIMTJ6TTEzLDE3SDE0VjE4SDEzek0xNCwxN0gxNVYxOEgxNHpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0yMSwxN0gyMlYxOEgyMXpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNSwxN0gyNlYxOEgyNXpNMjgsMTdIMjlWMThIMjh6TTAsMThIMVYxOUgwek0yLDE4SDNWMTlIMnpNMywxOEg0VjE5SDN6TTYsMThIN1YxOUg2ek03LDE4SDhWMTlIN3pNMTMsMThIMTRWMTlIMTN6TTE3LDE4SDE4VjE5SDE3ek0yMSwxOEgyMlYxOUgyMXpNMjIsMThIMjNWMTlIMjJ6TTI3LDE4SDI4VjE5SDI3ek0yOCwxOEgyOVYxOUgyOHpNMiwxOUgzVjIwSDJ6TTUsMTlINlYyMEg1ek03LDE5SDhWMjBIN3pNOSwxOUgxMFYyMEg5ek0xNiwxOUgxN1YyMEgxNnpNMTcsMTlIMThWMjBIMTd6TTE4LDE5SDE5VjIwSDE4ek0yMiwxOUgyM1YyMEgyMnpNMjMsMTlIMjRWMjBIMjN6TTI3LDE5SDI4VjIwSDI3ek0yOCwxOUgyOVYyMEgyOHpNMCwyMEgxVjIxSDB6TTMsMjBINFYyMUgzek00LDIwSDVWMjFINHpNNSwyMEg2VjIxSDV6TTYsMjBIN1YyMUg2ek03LDIwSDhWMjFIN3pNOCwyMEg5VjIxSDh6TTksMjBIMTBWMjFIOXpNMTAsMjBIMTFWMjFIMTB6TTExLDIwSDEyVjIxSDExek0xMiwyMEgxM1YyMUgxMnpNMTMsMjBIMTRWMjFIMTN6TTE0LDIwSDE1VjIxSDE0ek0xOSwyMEgyMFYyMUgxOXpNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNiwyMEgyN1YyMUgyNnpNOCwyMUg5VjIySDh6TTEyLDIxSDEzVjIySDEyek0xMywyMUgxNFYyMkgxM3pNMTYsMjFIMTdWMjJIMTZ6TTE3LDIxSDE4VjIySDE3ek0xOSwyMUgyMFYyMkgxOXpNMjAsMjFIMjFWMjJIMjB6TTI0LDIxSDI1VjIySDI0ek0yNiwyMUgyN1YyMkgyNnpNMjcsMjFIMjhWMjJIMjd6TTI4LDIxSDI5VjIySDI4ek0wLDIySDFWMjNIMHpNMSwyMkgyVjIzSDF6TTIsMjJIM1YyM0gyek0zLDIySDRWMjNIM3pNNCwyMkg1VjIzSDR6TTUsMjJINlYyM0g1ek02LDIySDdWMjNINnpNOCwyMkg5VjIzSDh6TTksMjJIMTBWMjNIOXpNMTIsMjJIMTNWMjNIMTJ6TTEzLDIySDE0VjIzSDEzek0xNiwyMkgxN1YyM0gxNnpNMTcsMjJIMThWMjNIMTd6TTE4LDIySDE5VjIzSDE4ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yNywyMkgyOFYyM0gyN3pNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek0xMSwyM0gxMlYyNEgxMXpNMTIsMjNIMTNWMjRIMTJ6TTEzLDIzSDE0VjI0SDEzek0xNSwyM0gxNlYyNEgxNXpNMTYsMjNIMTdWMjRIMTZ6TTIwLDIzSDIxVjI0SDIwek0yNCwyM0gyNVYyNEgyNHpNMjUsMjNIMjZWMjRIMjV6TTI2LDIzSDI3VjI0SDI2ek0yNywyM0gyOFYyNEgyN3pNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek05LDI0SDEwVjI1SDl6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTMsMjRIMTRWMjVIMTN6TTE2LDI0SDE3VjI1SDE2ek0xNywyNEgxOFYyNUgxN3pNMTgsMjRIMTlWMjVIMTh6TTIwLDI0SDIxVjI1SDIwek0yMSwyNEgyMlYyNUgyMXpNMjIsMjRIMjNWMjVIMjJ6TTIzLDI0SDI0VjI1SDIzek0yNCwyNEgyNVYyNUgyNHpNMjcsMjRIMjhWMjVIMjd6TTI4LDI0SDI5VjI1SDI4ek0wLDI1SDFWMjZIMHpNMiwyNUgzVjI2SDJ6TTMsMjVINFYyNkgzek00LDI1SDVWMjZINHpNNiwyNUg3VjI2SDZ6TTgsMjVIOVYyNkg4ek05LDI1SDEwVjI2SDl6TTEwLDI1SDExVjI2SDEwek0xMiwyNUgxM1YyNkgxMnpNMTQsMjVIMTVWMjZIMTR6TTE5LDI1SDIwVjI2SDE5ek0yMCwyNUgyMVYyNkgyMHpNMjEsMjVIMjJWMjZIMjF6TTIyLDI1SDIzVjI2SDIyek0yMywyNUgyNFYyNkgyM3pNMjQsMjVIMjVWMjZIMjR6TTI1LDI1SDI2VjI2SDI1ek0yNiwyNUgyN1YyNkgyNnpNMCwyNkgxVjI3SDB6TTIsMjZIM1YyN0gyek0zLDI2SDRWMjdIM3pNNCwyNkg1VjI3SDR6TTYsMjZIN1YyN0g2ek0xMCwyNkgxMVYyN0gxMHpNMTEsMjZIMTJWMjdIMTF6TTEzLDI2SDE0VjI3SDEzek0xNiwyNkgxN1YyN0gxNnpNMTcsMjZIMThWMjdIMTd6TTE5LDI2SDIwVjI3SDE5ek0yNCwyNkgyNVYyN0gyNHpNMjUsMjZIMjZWMjdIMjV6TTI2LDI2SDI3VjI3SDI2ek0yOCwyNkgyOVYyN0gyOHpNMCwyN0gxVjI4SDB6TTYsMjdIN1YyOEg2ek04LDI3SDlWMjhIOHpNMTEsMjdIMTJWMjhIMTF6TTEyLDI3SDEzVjI4SDEyek0xMywyN0gxNFYyOEgxM3pNMTcsMjdIMThWMjhIMTd6TTE4LDI3SDE5VjI4SDE4ek0xOSwyN0gyMFYyOEgxOXpNMjAsMjdIMjFWMjhIMjB6TTIyLDI3SDIzVjI4SDIyek0yNywyN0gyOFYyOEgyN3pNMCwyOEgxVjI5SDB6TTEsMjhIMlYyOUgxek0yLDI4SDNWMjlIMnpNMywyOEg0VjI5SDN6TTQsMjhINVYyOUg0ek01LDI4SDZWMjlINXpNNiwyOEg3VjI5SDZ6TTgsMjhIOVYyOUg4ek05LDI4SDEwVjI5SDl6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>

@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1"><meta charset="utf-8"><title>OB emergencies</title>
+<link rel="stylesheet" href="../css/system.css">
+<style>
+  .sheet { --accent: var(--wf); }
+  .sheet > .mt3, .sheet > section.mt3 { margin-top: 0.09in; }
+  section.block { gap: 0.065in; }
+  .tag.med-alert { vertical-align: .18em; margin-left: .25em; }
+  /* band letter anchored to the title's top edge, not hanging toward the subtitle */
+  .band .lt { align-self: start; margin-top: calc(2pt / var(--k)); }
+
+  /* PPH recognition: two frameworks, each headed once; the trigger volume is the glance target */
+  .recfw { display: grid; grid-template-columns: calc(0.8in / var(--k)) minmax(0, 1fr); gap: 0 6pt; align-items: start; }
+  .recfw .fw { font: 800 9.5pt/1.1 "Inter"; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); padding-top: .55em; }
+  .recfw + .recfw { border-top: 0.75pt solid var(--rule); margin-top: 6pt; padding-top: 6pt; }
+  .recfw .rr { display: grid; grid-template-columns: calc(1.4in / var(--k)) minmax(0, 1fr); gap: 4pt 9pt; align-items: baseline; font-size: 11pt; line-height: 1.28; }
+  .recfw .hero { --c: var(--hem); font-size: calc(19pt / var(--k)); }
+  /* ACOG defines; WHO triggers the bundle: only the action numbers keep the hemorrhage colour */
+  .recfw .rr.def .hero { --c: var(--ink-2); }
+
+  /* first-response bundle: the 15-min clock is the dominant landmark, MOTIVE names follow */
+  .bundle { display: grid; grid-template-columns: calc(1.85in / var(--k)) minmax(0, 1fr); grid-template-rows: auto 1fr; gap: 5pt calc(8pt / var(--k)); }
+  .bundle-clock { grid-row: 1 / span 2; background: var(--hem); color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 8pt 6pt; }
+  .bundle-clock small { font: 800 calc(11pt / var(--k))/1.15 "Inter"; letter-spacing: .08em; text-transform: uppercase; font-feature-settings: "case" 1, "ss04" 1; }
+  .bundle-clock b { font: 900 calc(54pt / var(--k))/0.9 "Inter Display"; letter-spacing: -0.03em; white-space: nowrap; margin-top: 3pt; }
+  .bundle-clock b span { font: 800 calc(20pt / var(--k))/1 "Inter"; letter-spacing: 0; margin-left: .12em; }
+  .bundle-go { font-size: 12.5pt; line-height: 1.2; }
+  .bundle-go .bh { font-size: 14pt; white-space: nowrap; }
+  /* MOTIVE: one outlined strip, six identical cells, letters read as a word */
+  .motive { display: grid; grid-template-columns: 0.88fr 0.95fr 1.25fr 1.12fr 0.95fr 0.95fr; grid-template-rows: auto auto 1fr; border: 1.5pt solid var(--c); border-top-width: 4pt; }
+  .motive .m { display: grid; grid-row: 1 / span 3; grid-template-rows: subgrid; align-content: start; padding: 5pt 9pt 8pt; border-right: 0.75pt solid var(--rule); }
+  .motive .m:last-child { border-right: none; }
+  .motive .m .L { font: 800 calc(15pt / var(--k))/1 "Inter"; letter-spacing: .04em; color: var(--c); }
+  .motive .m .w { font: 800 calc(18pt / var(--k))/1.12 "Inter"; margin-top: 2pt; align-self: end; }
+  .motive .m .d { font: 400 11.5pt/1.25 "Inter"; color: var(--ink-2); margin-top: 3pt; }
+
+  /* PPH escalation: prevention strip + bypass above three aligned stages */
+  .pph-pre { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 12pt; align-items: center; border-top: 0.75pt solid var(--rule); border-bottom: 0.75pt solid var(--rule); padding: 3pt 0; font-size: 11pt; line-height: 1.25; }
+  .pph-pre .k { font: 800 12pt/1 "Inter"; margin-right: .35em; }
+  .pph-pre .k b { font: 800 calc(19pt / var(--k))/0.8 "Inter"; margin-right: .2em; vertical-align: -.05em; }
+  #pph .bypass { display: inline-block; margin-left: 10pt; font: 800 12.5pt/1.2 "Inter"; color: var(--ink); background: color-mix(in srgb, var(--hem) 14%, white); border-left: 4pt solid var(--hem); padding: 2pt 9pt; white-space: nowrap; vertical-align: .05em; letter-spacing: 0; text-transform: none; }
+  .stages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: auto auto 1fr; gap: 0; }
+  .stage { display: grid; grid-row: 1 / span 3; grid-template-rows: subgrid; background: #fff; }
+  .stage + .stage { border-left: 3pt solid #fff; }
+  .stage .sh { display: flex; align-items: flex-end; gap: 7pt; padding: 5pt 10pt; min-height: calc(0.5in / var(--k)); color: var(--ink); }
+  .stage .sh .n { font: 900 calc(26pt / var(--k))/0.85 "Inter Display"; }
+  .stage .sh .t { font: 800 12pt/1.1 "Inter"; padding-bottom: 2pt; }
+  .stage .trig { font-size: 11pt; line-height: 1.28; font-weight: 500; padding: 6pt 10pt 5pt; border-bottom: 0.75pt solid var(--rule); }
+  .stage .trig .vol { font-size: 14.5pt; font-weight: 800; white-space: nowrap; }
+  .stage .trig strong { font-weight: 800; }
+  .stage ul.ls { font-size: 11pt; padding: 6pt 10pt 9pt; }
+  .stage + .stage .trig, .stage + .stage ul.ls { box-shadow: inset 0.75pt 0 0 var(--rule); }
+  .s1 .sh { background: color-mix(in srgb, var(--hem) 22%, white); }
+  .s2 .sh { background: color-mix(in srgb, var(--hem) 55%, white); }
+  .s3 .sh { background: var(--hem); color: #fff; }
+
+  .fourT { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1.5pt solid var(--c); }
+  .fourT div { padding: 6pt 8pt 6pt 0; font-size: 11pt; border-bottom: 0.75pt solid var(--rule); }
+  .fourT b { font: 800 14pt/1 "Inter"; color: var(--c); display: block; margin-bottom: 2pt; }
+  /* cause-specific exceptions to the atony pathway */
+  .pph-exc { display: grid; grid-template-columns: 1.65fr 1fr; gap: 0 .2in; font-size: 11pt; line-height: 1.25; }
+  .pph-exc > div { border-left: 4pt solid var(--hem); padding: 2pt 0 2pt 8pt; }
+  .pph-exc b { font-weight: 800; }
+
+  /* uterotonics: shared tracks so name / dose / restriction / notes line up across all five cards */
+  .drugs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: auto auto auto auto 1fr; gap: 0 0.16in; }
+  .drugs .grp { grid-row: 1; font: 800 9.5pt/1.15 "Inter"; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); padding-bottom: 4pt; }
+  .drugs .grp.span3 { grid-column: 2 / 5; }
+  .drugs > .drug { display: grid; grid-row: 2 / span 4; grid-template-rows: subgrid; align-content: start; }
+  .drug .rx { margin: 4pt 0 0; }
+  .drug.txa { border-top-color: var(--ink); }
+  .drug .safety { margin-top: 4pt; padding-top: 4pt; border-top: 0.75pt solid var(--rule); font: 700 12pt/1.22 "Inter"; color: var(--stop); }
+  .drug .sel { margin-top: 4pt; padding-top: 4pt; border-top: 0.75pt solid var(--rule); font: 700 12pt/1.22 "Inter"; color: var(--ink); }
+  .drug .notes { margin-top: 3pt; }
+  .drug .notes .meta { font-size: 11pt; color: var(--ink-2); margin-top: 3pt; }
+  .drug.txa .repeat { display: block; margin-top: 3pt; font-size: 13pt; line-height: 1.22; white-space: normal; }
+
+  /* numbered maneuver tiles on paper (colour stays in the numerals and top rules) */
+  .sd-steps { display: grid; grid-template-columns: 0.92fr 0.92fr 1.16fr; gap: 5pt; counter-reset: sd; }
+  .sd-steps > div {
+    counter-increment: sd; background: var(--paper); border: 0.75pt solid var(--rule);
+    border-top: 4pt solid var(--c); padding: 5pt 10pt 7pt; font-size: 11pt; line-height: 1.24;
+  }
+  .sd-steps > div::before { content: counter(sd) "\2009·\2009" attr(data-m); font: 800 19pt/1 "Inter"; color: var(--c); display: inline; margin-right: 5pt; vertical-align: -1pt; }
+  .sd-steps > div b { font-size: 12.5pt; }
+  .sd-steps .sd-next { display: block; margin-top: 6pt; font: 800 11.5pt/1.1 "Inter"; color: var(--c); }
+  .sd-steps .last-resort { margin-top: 5pt; padding-top: 5pt; border-top: 0.75pt solid var(--rule); }
+  .doc-after { border-top: 1.5pt solid var(--ink-3); padding-top: 5pt; }
+  .after-h { display: inline-block; font: 800 9.5pt/1 "Inter"; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--ink-3); padding: 3pt 5pt 2pt; margin-right: 6pt; vertical-align: .1em; }
+  .doc-h { font: 700 14pt/1.2 "Inter"; margin-right: .3em; }
+
+  /* eclamptic seizure: main path with a conditional rescue branch */
+  .ecl-head { background: var(--htn); color: #fff; font: 800 calc(22pt / var(--k))/1.05 "Inter"; padding: 3pt 12pt 4pt; display: flex; align-items: baseline; gap: 12pt; }
+  .ecl-head small { font: 600 12pt/1.2 "Inter"; opacity: .92; }
+  .ecl-flow { display: grid; grid-template-columns: minmax(0, 0.95fr) 18pt minmax(0, 1.3fr) 18pt minmax(0, 0.44fr) 26pt minmax(0, 1.5fr) 18pt minmax(0, 1.4fr); grid-template-rows: auto auto; margin-top: 6pt; font-size: 11.5pt; line-height: 1.26; }
+  .ecl-flow .nd { border: 1.2pt solid var(--htn); border-top-width: 4pt; background: var(--paper); padding: 5pt 10pt 8pt; }
+  .ecl-flow .nd > b:first-child { display: block; font-size: 14pt; margin-bottom: 2pt; }
+  .ecl-flow .sp { grid-row: 1 / span 2; }
+  .ecl-flow .ar { display: flex; align-items: center; justify-content: center; color: var(--htn); font: 800 16pt/1 "Inter"; }
+  .ecl-flow .ar.lbl { flex-direction: column; font-size: 9.5pt; letter-spacing: .04em; text-transform: uppercase; gap: 1pt; }
+  .ecl-flow .ar.lbl i { font: 800 16pt/1 "Inter"; font-style: normal; }
+  .ecl-flow .q { grid-row: 1 / span 2; display: flex; align-items: center; justify-content: center; text-align: center; background: color-mix(in srgb, var(--htn) 18%, white); font: 800 13pt/1.15 "Inter"; padding: 6pt 4pt; }
+  .ecl-flow .rescue { border-style: solid; background: color-mix(in srgb, var(--htn) 12%, white); }
+  .ecl-flow .rescue > b:first-child { color: var(--htn); text-transform: uppercase; font-size: 11pt; letter-spacing: .06em; }
+  .ecl-flow .inset { display: block; margin-top: 5pt; padding: 3pt 7pt; border-left: 3pt solid var(--htn); background: color-mix(in srgb, var(--htn) 10%, white); }
+  .ecl-flow .bypass { display: flex; align-items: center; gap: 6pt; color: var(--htn); font: 700 10pt/1 "Inter"; padding: 7pt 0 2pt; }
+  .ecl-flow .bypass::before { content: ""; flex: 1; border-top: 2pt solid var(--htn); }
+  .ecl-flow .bypass::after { content: ""; border-left: 7pt solid var(--htn); border-top: 4.5pt solid transparent; border-bottom: 4.5pt solid transparent; }
+  .ecl-flow .r1 { grid-row: 1; } .ecl-flow .r2 { grid-row: 2; }
+
+  /* severe-range BP entry strip: complete trigger + deadline + goal, outside the title */
+  .bp-entry { display: grid; grid-template-columns: auto auto auto minmax(0, 1fr); gap: 0 calc(12pt / var(--k)); align-items: center; border-top: 5pt solid var(--htn); border-bottom: 0.75pt solid var(--rule); padding: 3pt 0 4pt; }
+  .bp-entry .hero { --c: var(--htn); font-size: calc(28pt / var(--k)); line-height: 1; }
+  .bp-entry .hero i { font-style: normal; font-weight: 700; color: var(--ink-2); font-size: .62em; padding: 0 .12em; vertical-align: .12em; }
+  .bp-entry .per { display: block; font: 800 calc(14pt / var(--k))/1.1 "Inter"; color: var(--ink); margin-top: 2pt; }
+  .bp-entry .to { font: 800 calc(26pt / var(--k))/1 "Inter"; color: var(--htn); }
+  .bp-entry .dl small { display: block; font: 800 calc(12pt / var(--k))/1 "Inter"; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); margin-bottom: 3pt; }
+  .bp-entry .dl .deadline { background: var(--htn); font-size: calc(24pt / var(--k)); padding: calc(3pt / var(--k)) calc(11pt / var(--k)); }
+  .bp-entry .goal { justify-self: end; text-align: right; font: 600 13pt/1.25 "Inter"; color: var(--ink-2); border-left: 0.75pt solid var(--rule); padding-left: 12pt; }
+  .bp-entry .goal b { display: block; font: 800 calc(19pt / var(--k))/1.1 "Inter"; color: var(--ink); }
+  .severe-features { list-style: none; display: flex; flex-wrap: wrap; gap: 2pt calc(16pt / var(--k)); margin: 2pt 0 3pt; }
+  .severe-features li { padding-left: 11pt; position: relative; }
+  .sevf-notes { margin-top: 3pt; }
+  .sevf-notes > p { display: inline; }
+  .sevf-notes > p + p::before { content: " · "; }
+  .severe-features li::before { content: ""; position: absolute; left: 0; top: .5em; width: 5pt; height: 5pt; background: var(--htn); }
+  /* magnesium: eligibility first, then load → maintenance (renal choices subordinate) → alternatives → monitoring */
+  .mg-treatment { position: relative; }
+  .mg-treatment::before { content: ""; position: absolute; inset-block: 0; left: calc(var(--gap, 0.2in) / -2); border-left: .75pt solid var(--rule); }
+  .mg-ind { margin-top: 3pt; font: 600 11pt/1.25 "Inter"; color: var(--ink-2); }
+  .mg-ind b { color: var(--htn); font-weight: 800; }
+  .mg-avoid { margin-top: 4pt; font: 600 10pt/1.25 "Inter"; color: var(--stop); }
+  .mg-avoid b { font-weight: 800; }
+  /* load + maintenance share one dose track so the explanations start together */
+  .mgdoses { display: grid; grid-template-columns: 1.15in max-content minmax(0, 1fr); column-gap: 9pt; }
+  .mgdose { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: baseline; padding: 3pt 0; }
+  .mgdose + .mgdose { border-top: 0.75pt solid var(--rule); }
+  .mgdose .lbl { font: 800 calc(11pt / var(--k))/1 "Inter"; letter-spacing: .06em; text-transform: uppercase; color: var(--htn); }
+  .mgdose .v { font: 800 calc(30pt / var(--k))/1.05 "Inter Display"; color: var(--ink); white-space: nowrap; }
+  .mgdose .t { font: 700 calc(17pt / var(--k))/1.15 "Inter"; }
+  .mg-renal { margin: 1pt 0 4pt 0.3in; padding: 3pt 0 3pt 9pt; border-left: 2pt solid color-mix(in srgb, var(--htn) 50%, white); font-size: 11pt; line-height: 1.25; }
+  .mg-renal .rh { font: 800 9.5pt/1.2 "Inter"; letter-spacing: .06em; text-transform: uppercase; color: var(--htn); margin-bottom: 2pt; }
+  .mg-renal .rail { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }
+  .mg-renal .rail > .do { font-weight: 500; }
+  .mg-renal .rail > .do b { font-weight: 800; }
+  .mg-safety { margin: 4pt 0 4pt; font: 600 11pt/1.24 "Inter"; border-left: calc(4pt / var(--k)) solid var(--stop); background: var(--t-stop); padding: 5pt 8pt; }
+  .mg-safety b { color: var(--stop); font-weight: 800; }
+  .mg-safety p + p { margin-top: 2pt; }
+  .kv.mg { gap: 4pt 10pt; font-size: 11pt; }
+  .kv.mg dt { color: var(--htn); white-space: normal; max-width: 1.45in; }
+  table.mglvl th { vertical-align: bottom; }
+  .mg-treatment .box.local { margin-top: 3pt; padding-top: calc(8pt / var(--k)); padding-bottom: 4pt; }
+  table.mglvl th:last-child, table.mglvl td:last-child { color: var(--stop); }
+
+  /* maternal arrest: clock beside continuous work; parallel tasks unnumbered; calcium as its own rail */
+  .arrest-clock { background: var(--t-stop); border-left: calc(4pt / var(--k)) solid var(--stop); padding: 7pt 10pt 8pt 12pt; }
+  /* clock numerals as white-on-red chips: the shortest clock on the sheet reads as its strongest landmark */
+  .arrest-clock .ac .hero { background: var(--stop); color: #fff; padding: 1pt 4pt 0; min-width: 2.6em; text-align: center; }
+  .arrest-clock .op { margin-top: 4pt; padding-top: 4pt; border-top: 0.75pt solid color-mix(in srgb, var(--stop) 30%, white); font: 600 11pt/1.25 "Inter"; }
+  .arrest-clock .cond { font: 800 13pt/1.15 "Inter"; color: var(--stop); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3pt; }
+  .arrest-clock .cond small { font: 700 12pt/1.15 "Inter"; text-transform: none; letter-spacing: 0; color: var(--ink); }
+  .arrest-clock .cond small b { font-weight: 800; color: var(--stop); }
+  .arrest-clock .ac { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 10pt; align-items: baseline; font-size: 13pt; line-height: 1.18; padding: 1pt 0; }
+  .arrest-clock .ac + .ac { border-top: 0.75pt solid color-mix(in srgb, var(--stop) 30%, white); padding-top: 4pt; }
+  .arrest-clock .hero { --c: var(--stop); font-size: calc(25pt / var(--k)); font-family: "Inter Display", sans-serif; }
+  .arrest-clock .hero-unit { font: 600 calc(17pt / var(--k))/1 "Inter"; letter-spacing: 0; margin-left: calc(3pt / var(--k)); }
+  .arrest-body { display: flex; flex-direction: column; gap: 7pt; flex: 1; }
+  .amode .mode { display: flex; align-items: baseline; gap: 8pt; font: 800 10pt/1 "Inter"; letter-spacing: .1em; text-transform: uppercase; color: var(--stop); padding-bottom: 4pt; border-bottom: 1.5pt solid var(--stop); margin-bottom: 5pt; }
+  .amode .mode small { font: 600 10pt/1 "Inter"; letter-spacing: 0; text-transform: none; color: var(--ink-3); }
+  .amode ul.ls { font-size: 11.5pt; line-height: 1.22; gap: 2pt; }
+  .amode.cont ul.ls > li::before { background: var(--stop); }
+  .amode.cont ul.ls > li { font-weight: 500; }
+  #arrest > .amode.cont { margin-bottom: -2pt; }
+  .arrest-mg { border: 0; border-left: calc(4pt / var(--k)) solid var(--stop); background: var(--t-stop); padding: 4pt 9pt 5pt; font-size: 11.5pt; line-height: 1.22; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+  .arrest-mg .when { color: var(--stop); font-weight: 800; }
+  .arrest-mg + .arrest-mg { border-top: 0; margin-top: 0; padding-top: 5pt; }
+  .arrest-mg .ca { display: block; font-weight: 800; }
+  .arrest-mg .ca + .ca { margin-top: 3pt; }
+  .arrest-mg .ca i { font-style: normal; font-weight: 600; color: var(--ink-3); margin-right: .25em; }
+  .arrest-ddx { margin-top: auto; border-top: 0.75pt solid var(--rule); padding-top: 4pt; font-size: 11.5pt; line-height: 1.25; color: var(--ink-2); }
+  .arrest-ddx b { color: var(--ink); }
+  .masthead .sub .ix { display: inline-block; width: 1.1em; font-weight: 800; color: var(--ink); }
+  .masthead .sub .ix-d { color: var(--stop); font-weight: 700; }
+  .masthead .sub .ix-d .ix { color: var(--stop); }
+</style><style>a.xlink{color:inherit;text-decoration:none}a.xlink:hover>*{outline:2px solid #1B5FA8;outline-offset:1px;cursor:pointer}
+  .offnav{position:sticky;top:0;z-index:99;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12151C;color:#fff;font:600 14px/1 Inter,system-ui,sans-serif}
+  .offnav a,.offnav button,.offnav select{font:inherit;color:#fff;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:8px 10px;text-decoration:none;cursor:pointer}
+  .offnav select{max-width:320px}.offnav .sp{flex:1}.offnav a:hover,.offnav button:hover{background:rgba(255,255,255,.22)}
+  body{margin:0;background:#2A2E36}.sheet{margin:12px auto;box-shadow:0 2px 24px rgba(0,0,0,.45)}:target{outline:4px solid #1B5FA8;outline-offset:4px}
+  @media print{.offnav{display:none}body{background:none}.sheet{margin:0;box-shadow:none}}</style></head>
+<body><nav class="offnav"><a href="../../index.html" title="All sheets">☰ All sheets</a><a href="01-triage.html" title="OB triage">‹ 01</a>
+    <select aria-label="Go to sheet"><option value="01-triage.html">01 · OB triage</option><option value="02-emergencies.html" selected="">02 · OB emergencies</option><option value="03-labor-efm.html">03 · Labor &amp; fetal monitoring</option><option value="04-workflow.html">04 · Workflow</option><option value="05-newborn.html">05 · Newborn</option><option value="06-postpartum.html">06 · Postpartum</option><option value="07-prenatal.html">07 · Prenatal &amp; Timing</option><option value="08-infections.html">08 · Infections</option><option value="09-early-pregnancy.html">09 · Early pregnancy</option><option value="10-feeding.html">10 · Feeding</option><option value="11-bp-meds.html">11 · BP maintenance</option><option value="12-diabetes.html">12 · Diabetes</option><option value="13-sepsis.html">13 · Maternal sepsis</option><option value="14-pp-headache.html">14 · Postpartum headache</option><option value="15-sick-newborn.html">15 · The sick newborn</option><option value="16-pe-dvt.html">16 · Suspected PE / DVT</option><option value="17-syphilis-newborn.html">17 · Maternal syphilis → newborn</option><option value="17b-syphilis-back.html">17b · Syphilis serology patterns</option><option value="18-nursery.html">18 · Nursery card</option><option value="19-med-card.html">19 · Medication companion</option><option value="20-neuraxial.html">20 · Neuraxial &amp; anticoagulation</option><option value="21-before-discharge.html">21 · Before discharge</option><option value="22-hearing-cmv.html">22 · Failed hearing screen · cCMV</option><option value="23-nicu-transfer.html">23 · NICU transferstabilize until transport</option><option value="24-substance-dyad.html">24 · Opioid- or THC-exposed dyad</option><option value="25-dyad-discharge.html">25 · Mother-baby discharge</option><option value="26-induction-labor.html">26 · Induction &amp; stages of labor</option><option value="27-ob-consult.html">27 · When to call OB/GYN</option><option value="28-fm-signal.html">28 · Fetal monitoring: signal</option><option value="29-fm-response.html">29 · Fetal monitoring: response</option></select>
+    <a href="03-labor-efm.html" title="Labor &amp; fetal monitoring">03 ›</a><span class="sp"></span>
+    <button type="button" data-fit="width">Fit width</button><button type="button" data-fit="page">Fit page</button><button type="button" data-fit="1">Actual size</button>
+    <a href="../../pdf/02-emergencies.pdf">PDF</a></nav>
+<div class="sheet portrait-24x36" style="--k:1.17">
+  <header class="masthead">
+    <div>
+      <div class="kicker"><i class="dot"></i>Labor &amp; delivery&nbsp;· act in the first 15 minutes</div>
+      <h1><span class="sid">02</span>OB emergencies</h1>
+    </div>
+    <div class="sub"><span class="ix-d"><span class="ix">D</span>Maternal arrest&nbsp;— 4‑min clock</span>&nbsp;· <span class="ix">C</span>Shoulder dystocia<br><span class="ix">A</span>Postpartum hemorrhage<br><span class="ix">B</span>Severe hypertension &amp; eclamptic seizure<br><span class="muted">Adult doses; IV unless stated.</span></div>
+    <nav class="setnav rel"><em>See also</em><a href="01-triage.html" class="xlink"><span><b>1</b>Triage</span></a><a href="03-labor-efm.html" class="xlink"><span><b>3</b>Labor &amp; EFM</span></a><a href="06-postpartum.html" class="xlink"><span><b>6</b>Postpartum</span></a><a href="11-bp-meds.html" class="xlink"><span><b>11</b>BP meds</span></a><a href="27-ob-consult.html" class="xlink"><span><b>27</b>OB/GYN consult</span></a></nav>
+  </header>
+  <div class="strip" style="background-image:url(../../assets/svg/strip-02.svg)"></div>
+
+  <!-- ======================= ARREST + SD (shortest clocks first) ======================= -->
+  <div class="row" style="align-items:stretch">
+    <section class="block c-stop" id="arrest" style="flex:1.4"><span id="p-D" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="band">
+        <div class="lt">D</div>
+        <h2>Maternal arrest<small>Code <span class="lfv" data-local="maternal_code_activation">____</span>&nbsp;· OB/GYN <span class="lfv" data-local="obgyn_first_call">____</span>&nbsp;· anesthesia <span class="lfv" data-local="anesthesia_contact">____</span>&nbsp;· neonatal <span class="lfv" data-local="neonatal_code">____</span>&nbsp;· FM attending</small></h2>
+        <div class="src">AHA 2025 ECC</div>
+      </div>
+      <div class="amode cont">
+        <div class="mode">Start now<small>continue throughout</small></div>
+        <ul class="ls">
+          <li><b>High-quality CPR</b>, standard ACLS drugs, doses, and defibrillation&nbsp;— unchanged in pregnancy (except LAST).</li>
+          <li><b>Manual left uterine displacement</b>, patient supine, continuously if fundus ≥ umbilicus.</li>
+        </ul>
+      </div>
+      <div class="arrest-clock">
+        <div class="cond">Fundus ≥ umbilicus <small>· clock starts at arrest</small></div>
+        <div class="ac"><span class="hero">0<span class="hero-unit">min</span></span><span><b>Prepare resuscitative delivery now</b>&nbsp;— kit <span class="lfv" data-local="hysterotomy_kit_location">____</span>; OB/GYN to bedside</span></div>
+        <div class="ac"><span class="hero">4<span class="hero-unit">min</span></span><span><b>No ROSC → resuscitative delivery</b> (“perimortem CS”) at the bedside</span></div>
+        <div class="ac"><span class="hero">5<span class="hero-unit">min</span></span><span><b>Aim delivery by 5&nbsp;min</b>&nbsp;— it resuscitates the mother</span></div>
+        <div class="op"><span class="tag local">Local</span> If OB/GYN not at bedside by 4&nbsp;min: operator <span class="lfv" data-local="resuscitative_hysterotomy_operator">____</span></div>
+      </div>
+      <div class="arrest-body">
+        <div class="amode">
+          <div class="mode">In parallel<small>leader assigns; recorder calls time aloud</small></div>
+          <ul class="ls">
+            <li>IV/IO <b>above the diaphragm</b>. Early advanced airway by most experienced; 100% O₂.</li>
+            <li>Remove fetal monitors. Stop oxytocin, magnesium, epidural infusion.</li>
+            <li><b>LAST</b>: lipid 20% 1.5&nbsp;mL/kg (≥ 70&nbsp;kg: 100&nbsp;mL) over 2–3&nbsp;min, then 0.25&nbsp;mL/kg/min; epinephrine &lt; 1&nbsp;mcg/kg; no vasopressin, lidocaine, β- or Ca-blockers; anesthesia leads.</li>
+          </ul>
+        </div>
+        <div class="rail arrest-mg"><span class="when">If receiving magnesium during arrest</span><span class="do"><span class="ca">Calcium chloride 10%: 10&nbsp;mL (1&nbsp;g) IV push</span><span class="ca"><i>OR</i>calcium gluconate 10%: 30&nbsp;mL (3&nbsp;g) IV push</span></span></div>
+        <div class="arrest-ddx"><b>Think:</b> hemorrhage&nbsp;· <b>AFE → MTP + TXA now</b>&nbsp;· magnesium&nbsp;· LAST / high block&nbsp;· cardiac&nbsp;· PE&nbsp;· eclampsia&nbsp;· sepsis.</div>
+      </div>
+    </section>
+
+    <section class="block c-lab" id="shoulder" style="flex:1.4"><span id="p-C" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+      <div class="band">
+        <div class="lt">C</div>
+        <h2>Shoulder dystocia<small>Call it out loud: OB/GYN <span class="lfv" data-local="obgyn_first_call">____</span>&nbsp;· peds <span class="lfv" data-local="peds_nicu_oncall">____</span>&nbsp;· anesthesia <span class="lfv" data-local="anesthesia_contact">____</span>. Stop maternal pushing.</small></h2>
+        <div class="src">ACOG PB 178<br>(reaff. 2024)</div>
+      </div>
+      <div class="callout-stop"><div class="ico">!</div><div>No fundal pressure&nbsp;· no lateral or excessive traction&nbsp;· E: episiotomy only to make room for hands.</div></div>
+      <div class="sd-steps">
+        <div data-m="H"><b>Help + time</b><br>Axial traction fails (turtle sign, no restitution). Call FM attending, OB/GYN, anesthesia, peds, extra RN. Stop oxytocin. Recorder: head-delivery time, then each min aloud.</div>
+        <div data-m="L"><b>McRoberts</b><br>Hyperflex hips onto abdomen. First-line. Axial traction only.</div>
+        <div data-m="P"><b>Suprapubic pressure</b><br>Downward + lateral toward fetal face, with McRoberts.<span class="sd-next">Not resolved → posterior arm (4)</span></div>
+        <div data-m="R"><b>Posterior arm</b><br>Hand in posteriorly; grasp wrist; draw arm out gently in a straight line. Not resolved → say so; next.</div>
+        <div data-m="E"><b>Rotate</b><br>Rubin II (push back of anterior shoulder toward chest)&nbsp;· Woods screw (via posterior shoulder).</div>
+        <div data-m="R"><b>All-fours</b><br>Gaskin (unmedicated pt).<div class="last-resort"><b>After standard maneuvers fail</b><br>Posterior-axilla traction (sling: case reports, injury risk)&nbsp;· <b>OB/GYN + OR:</b> Zavanelli → CS, abdominal rescue&nbsp;· clavicle fracture.</div></div>
+      </div>
+      <div class="small doc-after">
+        <span class="after-h">After delivery</span><b class="doc-h">Document</b> Head &amp; body delivery times (head-to-body interval)&nbsp;· <b>which shoulder was anterior</b>&nbsp;· each maneuver, order, duration, who&nbsp;· traction&nbsp;· team arrival times&nbsp;· Apgars, paired cord gases, arm movement, birth weight&nbsp;· maternal lacerations, QBL&nbsp;· debrief. <span class="muted">HELPERR (ALSO) letters shown; after L–P the order is not fixed&nbsp;— posterior arm succeeds most often (86%).</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- ======================= PPH ======================= -->
+  <section class="block c-hem mt3" id="pph"><span id="p-A" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+    <div class="band">
+      <div class="lt">A</div>
+      <h2>Postpartum hemorrhage<small>Call first: FM attending <span class="lfv" data-local="fm_attending_contact">____</span>&nbsp;· anesthesia <span class="lfv" data-local="anesthesia_contact">____</span>&nbsp;· OB/GYN <span class="lfv" data-local="obgyn_first_call">____</span>&nbsp;· MTP / blood bank <span class="lfv" data-local="mtp_activation">____</span>&nbsp;· PPH cart + uterotonic fridge <span class="lfv" data-local="hemorrhage_cart_location">____</span></small></h2>
+      <div class="src">ACOG PB 183 (reaff. 2024)&nbsp;· ACOG CPU 2025 (devices)<br>WHO/FIGO/ICM 2025&nbsp;· CMQCC Toolkit v3.0&nbsp;· E-MOTIVE (NEJM 2023)</div>
+    </div>
+
+    <div class="row pph-response" style="align-items:stretch">
+      <div class="box" style="flex:0 0 6in">
+        <h4>Recognize <span class="bypass">Unstable VS → stage 3 now</span></h4>
+        <div class="recfw">
+          <div class="fw">Define&nbsp;· ACOG</div>
+          <div class="rr def">
+            <span class="hero">≥ 1,000&nbsp;mL</span><span>cumulative loss <i>or</i> any loss with signs of hypovolemia, within 24&nbsp;h of birth (any route)</span>
+            <span class="hero">&gt; 500&nbsp;mL</span><span>at vaginal birth is abnormal → act on the WHO rows</span>
+          </div>
+        </div>
+        <div class="recfw">
+          <div class="fw">Act now&nbsp;· WHO 2025</div>
+          <div class="rr">
+            <span class="hero">≥ 300&nbsp;mL</span><span>measured, <b>+ any</b> HR &gt; 100, SBP &lt; 100, DBP &lt; 60, shock index (HR ÷ SBP) &gt; 1 → treat</span>
+            <span class="hero">≥ 500&nbsp;mL</span><span>measured → treat. Watch closely for the first 2&nbsp;h.</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5pt">
+        <div class="bundle">
+          <div class="bundle-clock"><small>Start all<br>within</small><b>15<span>min</span></b></div>
+          <div class="urgent-head bundle-go" style="--c:var(--hem)"><span class="bh">First-response bundle</span><span>Clock starts at the WHO trigger: ≥ 500&nbsp;mL, or ≥ 300&nbsp;mL + an abnormal sign. All six together; call first.</span></div>
+          <div class="motive">
+            <div class="m"><div class="L">M</div><div class="w">Massage</div><div class="d">Fundal / bimanual. Empty bladder.</div></div>
+            <div class="m"><div class="L">O</div><div class="w">Oxytocic</div><div class="d">↑ oxytocin to PPH rate (card), then 2nd‑line.</div></div>
+            <div class="m"><div class="L">T</div><div class="w">Tranexamic acid</div><div class="d">1&nbsp;g IV over 10&nbsp;min, ≤ 3&nbsp;h from birth.</div></div>
+            <div class="m"><div class="L">I</div><div class="w">IV fluids</div><div class="d">2 large-bore IVs, warmed isotonic crystalloid. T&amp;C 2&nbsp;units.</div></div>
+            <div class="m"><div class="L">V</div><div class="w">Vaginal exam</div><div class="d">Lacerations, hematoma, retained tissue, inversion.</div></div>
+            <div class="m"><div class="L">E</div><div class="w">Escalate</div><div class="d">FM attending, anesthesia, charge RN. Prepare OR.</div></div>
+          </div>
+        </div>
+        <div class="xs"><b>Tell anesthesia&nbsp;· document:</b> QBL + VS trend&nbsp;· uterotonics / TXA + times&nbsp;· products&nbsp;· epidural in?&nbsp;· who came when&nbsp;· debrief.</div>
+      </div>
+    </div>
+
+    <div class="row pph-escalation" style="align-items:stretch">
+      <div style="flex:2.35;display:flex;flex-direction:column;gap:5pt">
+        <h3 class="mt0">Escalation by stage <span class="h3-note">— CMQCC v3.0&nbsp;· CBL = cumulative blood loss&nbsp;· OB response / care ownership</span> <a href="27-ob-consult.html#p-A" class="xlink"><span class="xref c-wf">27&nbsp;· A / D</span></a></h3>
+        <div class="pph-pre">
+          <div><span class="k"><b>0</b>Every birth</span>Hemorrhage risk assessment on admission&nbsp;· oxytocin after every birth (10&nbsp;units IM or dilute IV)&nbsp;· QBL for every birth</div>
+        </div>
+        <div class="stages">
+          <div class="stage s1"><div class="sh"><span class="n">1</span><span class="t">Activate</span></div>
+            <div class="trig">CBL <span class="vol">≥ 500&nbsp;mL</span> vaginal / <span class="vol">≥ 1,000&nbsp;mL</span> CS with <strong>ongoing bleeding</strong>&nbsp;— or HR ≥ 110, BP ≤ 85/45, SpO₂ &lt; 95%, shock index ≥ 0.9, confusion</div>
+            <ul class="ls tight"><li>FM attending + anesthesia; ↑ oxytocin; massage</li><li>IV access; empty bladder</li><li>Type &amp; crossmatch 2&nbsp;units RBC</li><li>Rule out retained tissue, laceration, hematoma</li><li>Give tranexamic acid</li></ul></div>
+          <div class="stage s2"><div class="sh"><span class="n">2</span><span class="t">Escalate</span></div>
+            <div class="trig"><strong>Still bleeding</strong> after stage 1 steps, CBL <span class="vol">&lt; 1,500&nbsp;mL</span>&nbsp;— or VS still abnormal</div>
+            <ul class="ls tight"><li>2nd‑line uterotonic; 2nd IV</li><li>CBC, coags + fibrinogen, CMP, ABG</li><li>Transfuse; emergency-release O-neg if unstable</li><li>Balloon or vacuum device</li><li><b>OB/GYN to bedside</b>; OR; MTP standby</li></ul></div>
+          <div class="stage s3"><div class="sh"><span class="n">3</span><span class="t">Massive</span></div>
+            <div class="trig"><strong>Continued bleeding</strong> + CBL <span class="vol">&gt; 1,500&nbsp;mL</span>, or &gt; 2&nbsp;units RBC given, <strong>unstable VS</strong>, or <strong>suspected DIC</strong> (disseminated intravascular coagulation)</div>
+            <ul class="ls tight"><li><b>Activate MTP</b></li><li>Labs q30–60&nbsp;min; warm fluids + patient</li><li><b>OB/GYN:</b> compression sutures, artery ligation; IR if stable</li><li>Hysterectomy&nbsp;— don’t delay</li></ul></div>
+        </div>
+      </div>
+      <div style="flex:1.22;display:flex;flex-direction:column;gap:6pt">
+        <h3 class="mt0">Blood &amp; devices</h3>
+        <dl class="kv small">
+          <dt>MTP</dt><dd>RBC : FFP : platelets ≈ <b>1 : 1 : 1</b> (1 apheresis pack ≈ 6&nbsp;units)</dd>
+          <dt>Fibrinogen</dt><dd><b>&lt; 200&nbsp;mg/dL</b> → target ≥ 200: fibrinogen 3–4&nbsp;g or cryo <span class="lfv" data-local="cryo_dose">____</span>; recheck. Give early in abruption / AFE.</dd>
+          <dt>Bakri</dt><dd>Fill <b>300–500&nbsp;mL</b> fluid (max 500). Remove ≤ 24&nbsp;h.</dd>
+          <dt>JADA</dt><dd>Vacuum <b>80&nbsp;mmHg</b> (max 90); cervix ≥ 3&nbsp;cm; seal 60&nbsp;mL sterile fluid (up to 120&nbsp;mL, never air); ≤ 24&nbsp;h. For ≥ 28&nbsp;wk (2026 IFU); PAS not studied.</dd>
+        </dl>
+        <div class="fourT mt1">
+          <div><b>Tone</b>Atony (70–80%)&nbsp;— uterotonics, massage</div>
+          <div><b>Trauma</b>Laceration, hematoma, rupture, inversion</div>
+          <div><b>Tissue</b>Retained placenta → manual removal + abx&nbsp;— unless it won’t detach (below)</div>
+          <div><b>Thrombin</b>DIC, abruption, AFE, HELLP</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pph-exc">
+      <div><b>Inversion</b> → stop uterotonics; call anesthesia; replace the uterus now, attached placenta left on; relaxant or laparotomy if it fails; restart uterotonic once replaced.</div>
+      <div><b>Placenta won’t detach</b> → suspect accreta: stop manual removal; <b>OB/GYN</b>, OR.</div>
+    </div>
+
+    <div class="pph-drugs">
+      <h3>Uterotonics &amp; tranexamic acid <span class="h3-note">— oxytocin first; add a 2nd-line agent by contraindication; TXA alongside</span></h3>
+      <div class="drugs mt1">
+        <div class="grp">First-line</div><div class="grp span3">Second-line&nbsp;— choose by contraindication</div><div class="grp">Antifibrinolytic&nbsp;— any cause</div>
+        <div class="drug">
+          <div class="nm">Oxytocin <small>Pitocin</small><span class="tag med-alert">High alert&nbsp;· IV</span></div>
+          <div class="rx"><span class="nowrap">10–40&nbsp;units</span> <span class="nowrap">in 500–1,000&nbsp;mL</span><br><span class="nowrap">continuous IV</span><br><span class="nowrap">or 10&nbsp;units IM</span></div>
+          <div class="safety">No rapid IV push&nbsp;— hypotension.</div>
+          <div class="notes"><div class="ci">Prolonged high dose → hyponatremia.</div><div class="meta"><span class="tag local">Local</span> PPH bag&nbsp;· rate&nbsp;· max <span class="lfv" data-local="pph_oxytocin_rate">____</span></div></div>
+        </div>
+        <div class="drug">
+          <div class="nm">Methylergonovine <small>Methergine</small></div>
+          <div class="rx">0.2&nbsp;mg IM<br>q2–4h</div>
+          <div class="safety">Contraindicated: HTN, preeclampsia, CV disease. Not IV.</div>
+          <div class="notes"><div class="ci">Avoid with strong/moderate CYP3A4 inhibitors (protease inhibitors, macrolides, azoles).</div></div>
+        </div>
+        <div class="drug">
+          <div class="nm">Carboprost <small>Hemabate&nbsp;· PGF₂α</small></div>
+          <div class="rx"><span class="nowrap">0.25&nbsp;mg IM</span> <span class="nowrap">or intramyometrial</span><br><span class="nowrap">q15–90&nbsp;min</span><br><span class="nowrap">max 8&nbsp;doses (2&nbsp;mg)</span></div>
+          <div class="safety">Contraindicated: asthma; active cardiac, pulmonary, renal or hepatic disease.</div>
+          <div class="notes"><div class="ci">Caution: HTN. Diarrhea, fever, bronchospasm. Refrigerated.</div></div>
+        </div>
+        <div class="drug">
+          <div class="nm">miSOPROStol <small>Cytotec</small></div>
+          <div class="rx"><span class="nowrap">600&nbsp;mcg PO <i>or</i></span><br><span class="nowrap">800&nbsp;mcg SL <i>or</i></span><br><span class="nowrap">800–1,000&nbsp;mcg rectal&nbsp;· once</span></div>
+          <div class="sel">Use when HTN <i>and</i> asthma exclude the others.</div>
+          <div class="notes"><div class="ci">Shivering, fever. Slower onset; adjunct to oxytocin adds little.</div></div>
+        </div>
+        <div class="drug txa">
+          <div class="nm">Tranexamic acid <small>antifibrinolytic</small></div>
+          <div class="rx"><span class="nowrap">1&nbsp;g IV over 10&nbsp;min</span><span class="repeat">Repeat 1&nbsp;g once if bleeding continues 30&nbsp;min after the first dose.</span></div>
+          <div class="safety">IV only. Avoid: thromboembolic event in pregnancy.</div>
+          <div class="notes"><div class="ci">IM is investigational. First dose <b>≤ 3&nbsp;h</b> from birth; repeat also if bleeding recurs ≤ 24&nbsp;h. Any cause of PPH. <b>Not</b> for prophylaxis (WOMAN-2).</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= HTN ======================= -->
+  <section class="block c-htn mt3" id="htn"><span id="p-B" aria-hidden="true" style="position: absolute; width: 0px; height: 0px; overflow: hidden;"></span>
+    <div class="band">
+      <div class="lt">B</div>
+      <h2>Severe hypertension &amp; eclampsia<small>Seizing → seizure strip first. Severe BP without seizure → first-line lanes below.</small></h2>
+      <div class="src">ACOG PB 222 (reaff. 2026)&nbsp;· PB 203 Boxes 4–6 (CO 767 withdrawn)<br>ACOG eclampsia &amp; acute HTN algorithms (2023)&nbsp;· CMQCC HDP toolkit (2021)</div>
+    </div>
+
+    <div class="eclampsia">
+      <div class="ecl-head">Eclamptic seizure<small>Protect → magnesium → rescue only if still seizing → stabilize</small></div>
+      <div class="ecl-flow">
+        <div class="nd sp"><b>Protect</b>Call <span class="lfv" data-local="ob_rapid_response">____</span>: FM attending, OB/GYN, anesthesia&nbsp;· left lateral&nbsp;· airway, O₂, suction&nbsp;· don’t restrain.</div>
+        <div class="ar sp">→</div>
+        <div class="nd sp"><b>Magnesium sulfate</b><span class="dose">4–6&nbsp;g IV</span> over 20–30&nbsp;min (if no IV access: <span class="dose">10&nbsp;g IM</span>); renal dosing → magnesium box below.<span class="inset"><b>Seizes on magnesium:</b> <span class="dose">2–4&nbsp;g IV</span> over 5&nbsp;min.</span></div>
+        <div class="ar sp">→</div>
+        <div class="q">Seizing after extra 2–4&nbsp;g?</div>
+        <div class="ar lbl r1">Yes<i>→</i></div>
+        <div class="nd rescue r1"><b>If still seizing</b>Keep magnesium running. <b>Lorazepam 4&nbsp;mg IV over 3–5&nbsp;min</b> (no IV: midazolam 10&nbsp;mg IM). <b>Anesthesia: airway.</b> Still seizing → fosphenytoin 20&nbsp;mg PE/kg IV ≤ 150&nbsp;mg PE/min on monitor; neurology; image head.</div>
+        <div class="ar r1">→</div>
+        <div class="nd sp" style="grid-column:9"><b>Stabilize; delivery plan</b>Treat BP; stabilize, then deliver. Late (&gt; 48–72&nbsp;h postpartum) or breakthrough seizure → magnesium still applies; image. Abnormal FHR once stable <a href="29-fm-response.html#p-A" class="xlink"><span class="xref c-fet">29&nbsp;· A</span></a></div>
+        <div class="ar lbl r2" style="grid-column:6">No<i>→</i></div>
+        <div class="bypass r2" style="grid-column:7 / span 2"></div>
+      </div>
+    </div>
+
+    <div class="row bp-treatment" style="align-items:stretch">
+      <div style="flex:1.45;display:flex;flex-direction:column;gap:7pt">
+        <div class="bp-entry">
+          <div><span class="hero">SBP ≥ 160 <i>or</i> DBP ≥ 110</span><span class="per">recheck ≤ 15&nbsp;min (sooner OK)&nbsp;· tell FM attending now</span></div>
+          <div class="to">→</div>
+          <div class="dl"><small>treat within</small><span class="deadline">30–60&nbsp;min</span></div>
+          <div class="goal">Goal<b>130–150 / 80–100</b>don’t normalize.</div>
+        </div>
+        <h3 class="mt0">First-line lanes <span class="h3-note">— pick one&nbsp;· recheck at every dot&nbsp;· max cumulative dose → switch class</span></h3>
+        <img class="flow" src="../../assets/svg/flow-bp-lanes.svg" alt="First-line lanes for labetalol IV, hydrALAZINE IV and NIFEdipine immediate-release PO, each lane labelled with its maximum dose and caution; every IV dose over 2 min; a blood-pressure recheck before each next dose: still SBP ≥ 160 or DBP ≥ 110 → next dose; SBP below 160 and DBP below 110 → monitoring schedule; emergent consult at the first switch of drug class; escalation to FM attending → OB/GYN, plus anesthesia and MFM/ICU on the labetalol lane, MFM on the others; first BP or any recheck SBP ≥ 180 or DBP ≥ 120, or refractory → escalate">
+    <div class="box sevf">
+          <h4>Severe features&nbsp;— any <u>one</u> <span class="h3-note">— severe-range BP not required</span> <a href="01-triage.html#p-03" class="xlink"><span class="xref c-htn">1&nbsp;· 03</span></a></h4>
+          <div class="small">
+            <ul class="severe-features">
+              <li>SBP ≥ 160 or DBP ≥ 110</li>
+              <li>Platelets &lt; 100,000/µL</li>
+              <li>AST/ALT &gt; 2× ULN, or severe persistent RUQ/epigastric pain unresponsive to medication</li>
+              <li>Cr &gt; 1.1&nbsp;mg/dL or doubled</li>
+              <li>Pulmonary edema</li>
+              <li>New headache unresponsive to medication</li>
+              <li>Visual disturbance</li>
+            </ul>
+            <div class="sevf-notes"><p>Exclude other causes of headache, liver or renal findings.</p><p><b>Proteinuria amount is not a severe feature.</b></p><p><b>Deliver ≥ 34w0d after stabilization.</b></p></div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="mg-treatment" style="flex:1;display:flex;flex-direction:column;gap:7pt">
+        <div class="drug c-htn">
+          <div class="nm">Magnesium sulfate<span class="tag med-alert">High alert</span></div>
+          <div class="mg-ind"><b>Give for</b> preeclampsia with severe features (gestational HTN: severe BP alone counts) or eclampsia&nbsp;— before or after birth, with the first BP dose. Not an antihypertensive.</div>
+          <div class="mg-avoid"><b>Avoid</b> (alternative anticonvulsant only for these): myasthenia gravis, hypocalcemia, heart block, cardiac ischemia, myocarditis; severe renal failure → reduced dosing below.</div>
+          <div class="mgdoses">
+          <div class="mgdose"><span class="lbl">Load</span><span class="v">4–6&nbsp;g IV</span><span class="t">over 20–30&nbsp;min</span></div>
+          <div class="mgdose"><span class="lbl">Maintenance</span><span class="v">1–2&nbsp;g/h</span><span class="t">after the load</span></div>
+          </div>
+          <div class="mg-renal">
+            <div class="rh">Renal impairment&nbsp;— still load; cut maintenance&nbsp;· both rows fit → use the lower</div>
+            <div class="rail"><span class="when">Cr 1.0–1.5&nbsp;mg/dL or UOP &lt; 30&nbsp;mL/h × 4&nbsp;h</span><span class="do"><b>Load 4–6&nbsp;g → 1&nbsp;g/h</b>; level q4h; FM attending + MFM</span></div>
+            <div class="rail"><span class="when">Cr &gt; 1.5, UOP &lt; 100&nbsp;mL / 4&nbsp;h, or anuria</span><span class="do"><b>Load 4&nbsp;g</b>; maintenance only by level, ≤ 1&nbsp;g/h (≤ 20&nbsp;g / 48&nbsp;h); level q2h; MFM + pharmacy now</span></div>
+          </div>
+          <dl class="kv mg">
+            <dt>If no IV access</dt><dd><span class="dose">10&nbsp;g IM</span> (5&nbsp;g each buttock), then <span class="dose">5&nbsp;g IM q4h</span></dd>
+            <dt>Duration</dt><dd>≥ 24&nbsp;h after birth or last seizure, whichever later; run through CS</dd>
+          </dl>
+          <div class="mg-safety"><p><b>Load from a separate premixed piggy-back bag on a pump</b>&nbsp;— never by raising the maintenance rate.</p><p>Check reflexes, RR, hourly urine output&nbsp;— reflexes vanish first; kidneys clear magnesium.</p><p>Absent reflexes: <b>stop magnesium</b> + stat level. RR &lt; 12: <b>stop</b> → toxicity box below.</p><p><b>Stop</b> = pump off, notify per LOCAL box; restart only on a new order.</p></div>
+          <div class="callout-stop"><div class="ico">!</div><div>Toxicity (not in arrest): stop magnesium → <span class="nowrap">calcium gluconate 10%</span> <span class="nowrap">10&nbsp;mL (1&nbsp;g) IV over 3&nbsp;min</span>; furosemide; airway.</div></div>
+          <dl class="kv mg">
+            <dt>Level &gt; 9.6&nbsp;mg/dL</dt><dd>Stop; level q2h; restart lower, on a new order, when &lt; 8.4 (back in range)</dd>
+          </dl>
+        </div>
+        <table class="t small mglvl">
+          <thead><tr><th><span class="nc">Mg</span> level</th><th class="right">Therapeutic</th><th class="right">Loss of patellar reflex</th><th class="right">Respiratory paralysis</th><th class="right">Cardiac arrest</th></tr></thead>
+          <tbody>
+            <tr><td class="nc">mg/dL</td><td class="num">4.8–8.4</td><td class="num">&gt; 8.4</td><td class="num">&gt; 12</td><td class="num"><b>&gt; 30</b></td></tr>
+            <tr><td class="nc">mEq/L</td><td class="num">4–7</td><td class="num">&gt; 7</td><td class="num">&gt; 10</td><td class="num"><b>&gt; 25</b></td></tr>
+          </tbody>
+        </table>
+        <div class="box local small"><span class="lfx">Load: double check <span class="lfv" data-local="magnesium_loading_check">____</span></span>&nbsp;· <span class="lfx">RN checks <span class="lfv" data-local="magnesium_assessment_schedule">____</span></span>&nbsp;· <span class="lfx">notify / RN actions <span class="lfv" data-local="magnesium_rn_response">____</span></span></div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer class="foot has-qr">
+    <div><b>Sources:</b> ACOG PB 183 Postpartum Hemorrhage (2017, reaff. 2024); ACOG Clinical Practice Update, Nonsurgical Hemorrhage-Control Devices (2025); WHO/FIGO/ICM Consolidated PPH Guidelines (Oct 2025); CMQCC OB Hemorrhage Toolkit v3.0; E-MOTIVE (NEJM 2023); WOMAN (Lancet 2017); WOMAN-2 (Lancet 2024); ACOG PB 178 Shoulder Dystocia (reaff. 2024); RCOG GTG 42 (2026); ACOG PB 222 Gestational Hypertension &amp; Preeclampsia (reaff. 2026); ACOG PB 203 Chronic Hypertension in Pregnancy (reaff. 2024; order sets Boxes 4–6); ACOG CHAP Practice Advisory (reaff. 2025); ACOG eclampsia &amp; acute HTN algorithms (2023); CMQCC HDP Toolkit (2021); AHA Guidelines for CPR &amp; ECC (2025); ASRA LAST checklist (2020). Match staging and MTP activation to your unit protocol.<div class="legend"><span><span class="tag local">Local</span> program workflow / policy</span><span><span class="tag new">Updated</span> new or changed guidance</span><span><span class="tag stop">Stop</span> do not</span><span><a href="02-emergencies.html#p-B" class="xlink"><span class="xref">2&nbsp;· B</span></a> sheet&nbsp;· section</span></div></div>
+  <div class="sheet-qr"><img alt="QR: this sheet in the online kit" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyOSAyOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCwwSDFWMUgwek0xLDBIMlYxSDF6TTIsMEgzVjFIMnpNMywwSDRWMUgzek00LDBINVYxSDR6TTUsMEg2VjFINXpNNiwwSDdWMUg2ek0xMSwwSDEyVjFIMTF6TTEyLDBIMTNWMUgxMnpNMTUsMEgxNlYxSDE1ek0xNywwSDE4VjFIMTd6TTE4LDBIMTlWMUgxOHpNMTksMEgyMFYxSDE5ek0yMCwwSDIxVjFIMjB6TTIyLDBIMjNWMUgyMnpNMjMsMEgyNFYxSDIzek0yNCwwSDI1VjFIMjR6TTI1LDBIMjZWMUgyNXpNMjYsMEgyN1YxSDI2ek0yNywwSDI4VjFIMjd6TTI4LDBIMjlWMUgyOHpNMCwxSDFWMkgwek02LDFIN1YySDZ6TTgsMUg5VjJIOHpNMTAsMUgxMVYySDEwek0xMSwxSDEyVjJIMTF6TTE0LDFIMTVWMkgxNHpNMTUsMUgxNlYySDE1ek0xNiwxSDE3VjJIMTZ6TTE4LDFIMTlWMkgxOHpNMjIsMUgyM1YySDIyek0yOCwxSDI5VjJIMjh6TTAsMkgxVjNIMHpNMiwySDNWM0gyek0zLDJINFYzSDN6TTQsMkg1VjNINHpNNiwySDdWM0g2ek04LDJIOVYzSDh6TTEwLDJIMTFWM0gxMHpNMTEsMkgxMlYzSDExek0xMiwySDEzVjNIMTJ6TTE1LDJIMTZWM0gxNXpNMTcsMkgxOFYzSDE3ek0xOCwySDE5VjNIMTh6TTE5LDJIMjBWM0gxOXpNMjIsMkgyM1YzSDIyek0yNCwySDI1VjNIMjR6TTI1LDJIMjZWM0gyNXpNMjYsMkgyN1YzSDI2ek0yOCwySDI5VjNIMjh6TTAsM0gxVjRIMHpNMiwzSDNWNEgyek0zLDNINFY0SDN6TTQsM0g1VjRINHpNNiwzSDdWNEg2ek0xMSwzSDEyVjRIMTF6TTEyLDNIMTNWNEgxMnpNMTgsM0gxOVY0SDE4ek0xOSwzSDIwVjRIMTl6TTIyLDNIMjNWNEgyMnpNMjQsM0gyNVY0SDI0ek0yNSwzSDI2VjRIMjV6TTI2LDNIMjdWNEgyNnpNMjgsM0gyOVY0SDI4ek0wLDRIMVY1SDB6TTIsNEgzVjVIMnpNMyw0SDRWNUgzek00LDRINVY1SDR6TTYsNEg3VjVINnpNOCw0SDlWNUg4ek05LDRIMTBWNUg5ek0xMSw0SDEyVjVIMTF6TTEyLDRIMTNWNUgxMnpNMTQsNEgxNVY1SDE0ek0xNSw0SDE2VjVIMTV6TTE2LDRIMTdWNUgxNnpNMTcsNEgxOFY1SDE3ek0xOCw0SDE5VjVIMTh6TTIyLDRIMjNWNUgyMnpNMjQsNEgyNVY1SDI0ek0yNSw0SDI2VjVIMjV6TTI2LDRIMjdWNUgyNnpNMjgsNEgyOVY1SDI4ek0wLDVIMVY2SDB6TTYsNUg3VjZINnpNOCw1SDlWNkg4ek0xMCw1SDExVjZIMTB6TTEyLDVIMTNWNkgxMnpNMTMsNUgxNFY2SDEzek0xNSw1SDE2VjZIMTV6TTE2LDVIMTdWNkgxNnpNMTksNUgyMFY2SDE5ek0yMiw1SDIzVjZIMjJ6TTI4LDVIMjlWNkgyOHpNMCw2SDFWN0gwek0xLDZIMlY3SDF6TTIsNkgzVjdIMnpNMyw2SDRWN0gzek00LDZINVY3SDR6TTUsNkg2VjdINXpNNiw2SDdWN0g2ek04LDZIOVY3SDh6TTEwLDZIMTFWN0gxMHpNMTIsNkgxM1Y3SDEyek0xNCw2SDE1VjdIMTR6TTE2LDZIMTdWN0gxNnpNMTgsNkgxOVY3SDE4ek0yMCw2SDIxVjdIMjB6TTIyLDZIMjNWN0gyMnpNMjMsNkgyNFY3SDIzek0yNCw2SDI1VjdIMjR6TTI1LDZIMjZWN0gyNXpNMjYsNkgyN1Y3SDI2ek0yNyw2SDI4VjdIMjd6TTI4LDZIMjlWN0gyOHpNOCw3SDlWOEg4ek05LDdIMTBWOEg5ek0xMiw3SDEzVjhIMTJ6TTE0LDdIMTVWOEgxNHpNMTUsN0gxNlY4SDE1ek0xNyw3SDE4VjhIMTd6TTE4LDdIMTlWOEgxOHpNMjAsN0gyMVY4SDIwek0wLDhIMVY5SDB6TTEsOEgyVjlIMXpNMyw4SDRWOUgzek02LDhIN1Y5SDZ6TTcsOEg4VjlIN3pNMTAsOEgxMVY5SDEwek0xMiw4SDEzVjlIMTJ6TTEzLDhIMTRWOUgxM3pNMTQsOEgxNVY5SDE0ek0xNiw4SDE3VjlIMTZ6TTIwLDhIMjFWOUgyMHpNMjIsOEgyM1Y5SDIyek0yMyw4SDI0VjlIMjN6TTI0LDhIMjVWOUgyNHpNMjYsOEgyN1Y5SDI2ek0yNyw4SDI4VjlIMjd6TTIsOUgzVjEwSDJ6TTMsOUg0VjEwSDN6TTQsOUg1VjEwSDR6TTcsOUg4VjEwSDd6TTEzLDlIMTRWMTBIMTN6TTE0LDlIMTVWMTBIMTR6TTE2LDlIMTdWMTBIMTZ6TTIwLDlIMjFWMTBIMjB6TTIyLDlIMjNWMTBIMjJ6TTI1LDlIMjZWMTBIMjV6TTI4LDlIMjlWMTBIMjh6TTIsMTBIM1YxMUgyek0zLDEwSDRWMTFIM3pNNiwxMEg3VjExSDZ6TTksMTBIMTBWMTFIOXpNMTAsMTBIMTFWMTFIMTB6TTE0LDEwSDE1VjExSDE0ek0xNywxMEgxOFYxMUgxN3pNMTksMTBIMjBWMTFIMTl6TTIwLDEwSDIxVjExSDIwek0yMSwxMEgyMlYxMUgyMXpNMjQsMTBIMjVWMTFIMjR6TTI1LDEwSDI2VjExSDI1ek0yNiwxMEgyN1YxMUgyNnpNMjcsMTBIMjhWMTFIMjd6TTIsMTFIM1YxMkgyek0zLDExSDRWMTJIM3pNOCwxMUg5VjEySDh6TTExLDExSDEyVjEySDExek0xMywxMUgxNFYxMkgxM3pNMTQsMTFIMTVWMTJIMTR6TTE1LDExSDE2VjEySDE1ek0xNiwxMUgxN1YxMkgxNnpNMTgsMTFIMTlWMTJIMTh6TTE5LDExSDIwVjEySDE5ek0yMCwxMUgyMVYxMkgyMHpNMjEsMTFIMjJWMTJIMjF6TTIzLDExSDI0VjEySDIzek0yNiwxMUgyN1YxMkgyNnpNMjcsMTFIMjhWMTJIMjd6TTEsMTJIMlYxM0gxek0yLDEySDNWMTNIMnpNNSwxMkg2VjEzSDV6TTYsMTJIN1YxM0g2ek0xMywxMkgxNFYxM0gxM3pNMTYsMTJIMTdWMTNIMTZ6TTE3LDEySDE4VjEzSDE3ek0xOCwxMkgxOVYxM0gxOHpNMTksMTJIMjBWMTNIMTl6TTIwLDEySDIxVjEzSDIwek0yMSwxMkgyMlYxM0gyMXpNMjIsMTJIMjNWMTNIMjJ6TTIzLDEySDI0VjEzSDIzek0yNSwxMkgyNlYxM0gyNXpNMjcsMTJIMjhWMTNIMjd6TTI4LDEySDI5VjEzSDI4ek0wLDEzSDFWMTRIMHpNMSwxM0gyVjE0SDF6TTMsMTNINFYxNEgzek01LDEzSDZWMTRINXpNOCwxM0g5VjE0SDh6TTEwLDEzSDExVjE0SDEwek0xMiwxM0gxM1YxNEgxMnpNMTksMTNIMjBWMTRIMTl6TTIwLDEzSDIxVjE0SDIwek0yMSwxM0gyMlYxNEgyMXpNMSwxNEgyVjE1SDF6TTMsMTRINFYxNUgzek00LDE0SDVWMTVINHpNNiwxNEg3VjE1SDZ6TTgsMTRIOVYxNUg4ek05LDE0SDEwVjE1SDl6TTEwLDE0SDExVjE1SDEwek0xMSwxNEgxMlYxNUgxMXpNMTQsMTRIMTVWMTVIMTR6TTI1LDE0SDI2VjE1SDI1ek0yNiwxNEgyN1YxNUgyNnpNMjcsMTRIMjhWMTVIMjd6TTI4LDE0SDI5VjE1SDI4ek0wLDE1SDFWMTZIMHpNMSwxNUgyVjE2SDF6TTgsMTVIOVYxNkg4ek0xMSwxNUgxMlYxNkgxMXpNMTIsMTVIMTNWMTZIMTJ6TTEzLDE1SDE0VjE2SDEzek0xNCwxNUgxNVYxNkgxNHpNMTUsMTVIMTZWMTZIMTV6TTE3LDE1SDE4VjE2SDE3ek0xOCwxNUgxOVYxNkgxOHpNMTksMTVIMjBWMTZIMTl6TTIwLDE1SDIxVjE2SDIwek0yMiwxNUgyM1YxNkgyMnpNMjQsMTVIMjVWMTZIMjR6TTI1LDE1SDI2VjE2SDI1ek0yNywxNUgyOFYxNkgyN3pNMSwxNkgyVjE3SDF6TTQsMTZINVYxN0g0ek02LDE2SDdWMTdINnpNNywxNkg4VjE3SDd6TTgsMTZIOVYxN0g4ek0xMCwxNkgxMVYxN0gxMHpNMTIsMTZIMTNWMTdIMTJ6TTE1LDE2SDE2VjE3SDE1ek0xNywxNkgxOFYxN0gxN3pNMTksMTZIMjBWMTdIMTl6TTIxLDE2SDIyVjE3SDIxek0yNywxNkgyOFYxN0gyN3pNMiwxN0gzVjE4SDJ6TTQsMTdINVYxOEg0ek01LDE3SDZWMThINXpNNywxN0g4VjE4SDd6TTEwLDE3SDExVjE4SDEwek0xMSwxN0gxMlYxOEgxMXpNMTIsMTdIMTNWMThIMTJ6TTEzLDE3SDE0VjE4SDEzek0xNCwxN0gxNVYxOEgxNHpNMTYsMTdIMTdWMThIMTZ6TTE3LDE3SDE4VjE4SDE3ek0yMSwxN0gyMlYxOEgyMXpNMjIsMTdIMjNWMThIMjJ6TTIzLDE3SDI0VjE4SDIzek0yNSwxN0gyNlYxOEgyNXpNMjgsMTdIMjlWMThIMjh6TTAsMThIMVYxOUgwek0yLDE4SDNWMTlIMnpNNCwxOEg1VjE5SDR6TTUsMThINlYxOUg1ek02LDE4SDdWMTlINnpNOCwxOEg5VjE5SDh6TTksMThIMTBWMTlIOXpNMTMsMThIMTRWMTlIMTN6TTE3LDE4SDE4VjE5SDE3ek0yMSwxOEgyMlYxOUgyMXpNMjIsMThIMjNWMTlIMjJ6TTI3LDE4SDI4VjE5SDI3ek0yOCwxOEgyOVYxOUgyOHpNMiwxOUgzVjIwSDJ6TTksMTlIMTBWMjBIOXpNMTAsMTlIMTFWMjBIMTB6TTE2LDE5SDE3VjIwSDE2ek0xNywxOUgxOFYyMEgxN3pNMTgsMTlIMTlWMjBIMTh6TTIyLDE5SDIzVjIwSDIyek0yMywxOUgyNFYyMEgyM3pNMjcsMTlIMjhWMjBIMjd6TTI4LDE5SDI5VjIwSDI4ek0wLDIwSDFWMjFIMHpNMiwyMEgzVjIxSDJ6TTMsMjBINFYyMUgzek01LDIwSDZWMjFINXpNNiwyMEg3VjIxSDZ6TTgsMjBIOVYyMUg4ek05LDIwSDEwVjIxSDl6TTExLDIwSDEyVjIxSDExek0xMiwyMEgxM1YyMUgxMnpNMTMsMjBIMTRWMjFIMTN6TTE0LDIwSDE1VjIxSDE0ek0xOSwyMEgyMFYyMUgxOXpNMjAsMjBIMjFWMjFIMjB6TTIxLDIwSDIyVjIxSDIxek0yMiwyMEgyM1YyMUgyMnpNMjMsMjBIMjRWMjFIMjN6TTI0LDIwSDI1VjIxSDI0ek0yNiwyMEgyN1YyMUgyNnpNOCwyMUg5VjIySDh6TTEwLDIxSDExVjIySDEwek0xMiwyMUgxM1YyMkgxMnpNMTMsMjFIMTRWMjJIMTN6TTE2LDIxSDE3VjIySDE2ek0xNywyMUgxOFYyMkgxN3pNMTksMjFIMjBWMjJIMTl6TTIwLDIxSDIxVjIySDIwek0yNCwyMUgyNVYyMkgyNHpNMjYsMjFIMjdWMjJIMjZ6TTI3LDIxSDI4VjIySDI3ek0yOCwyMUgyOVYyMkgyOHpNMCwyMkgxVjIzSDB6TTEsMjJIMlYyM0gxek0yLDIySDNWMjNIMnpNMywyMkg0VjIzSDN6TTQsMjJINVYyM0g0ek01LDIySDZWMjNINXpNNiwyMkg3VjIzSDZ6TTgsMjJIOVYyM0g4ek0xMCwyMkgxMVYyM0gxMHpNMTIsMjJIMTNWMjNIMTJ6TTEzLDIySDE0VjIzSDEzek0xNiwyMkgxN1YyM0gxNnpNMTcsMjJIMThWMjNIMTd6TTE4LDIySDE5VjIzSDE4ek0yMCwyMkgyMVYyM0gyMHpNMjIsMjJIMjNWMjNIMjJ6TTI0LDIySDI1VjIzSDI0ek0yNywyMkgyOFYyM0gyN3pNMCwyM0gxVjI0SDB6TTYsMjNIN1YyNEg2ek0xMSwyM0gxMlYyNEgxMXpNMTIsMjNIMTNWMjRIMTJ6TTEzLDIzSDE0VjI0SDEzek0xNSwyM0gxNlYyNEgxNXpNMTYsMjNIMTdWMjRIMTZ6TTIwLDIzSDIxVjI0SDIwek0yNCwyM0gyNVYyNEgyNHpNMjUsMjNIMjZWMjRIMjV6TTI2LDIzSDI3VjI0SDI2ek0yNywyM0gyOFYyNEgyN3pNMCwyNEgxVjI1SDB6TTIsMjRIM1YyNUgyek0zLDI0SDRWMjVIM3pNNCwyNEg1VjI1SDR6TTYsMjRIN1YyNUg2ek05LDI0SDEwVjI1SDl6TTExLDI0SDEyVjI1SDExek0xMiwyNEgxM1YyNUgxMnpNMTMsMjRIMTRWMjVIMTN6TTE2LDI0SDE3VjI1SDE2ek0xNywyNEgxOFYyNUgxN3pNMTgsMjRIMTlWMjVIMTh6TTIwLDI0SDIxVjI1SDIwek0yMSwyNEgyMlYyNUgyMXpNMjIsMjRIMjNWMjVIMjJ6TTIzLDI0SDI0VjI1SDIzek0yNCwyNEgyNVYyNUgyNHpNMjcsMjRIMjhWMjVIMjd6TTI4LDI0SDI5VjI1SDI4ek0wLDI1SDFWMjZIMHpNMiwyNUgzVjI2SDJ6TTMsMjVINFYyNkgzek00LDI1SDVWMjZINHpNNiwyNUg3VjI2SDZ6TTgsMjVIOVYyNkg4ek05LDI1SDEwVjI2SDl6TTEwLDI1SDExVjI2SDEwek0xMiwyNUgxM1YyNkgxMnpNMTQsMjVIMTVWMjZIMTR6TTE5LDI1SDIwVjI2SDE5ek0yMCwyNUgyMVYyNkgyMHpNMjEsMjVIMjJWMjZIMjF6TTIyLDI1SDIzVjI2SDIyek0yMywyNUgyNFYyNkgyM3pNMjQsMjVIMjVWMjZIMjR6TTI1LDI1SDI2VjI2SDI1ek0yNiwyNUgyN1YyNkgyNnpNMCwyNkgxVjI3SDB6TTIsMjZIM1YyN0gyek0zLDI2SDRWMjdIM3pNNCwyNkg1VjI3SDR6TTYsMjZIN1YyN0g2ek05LDI2SDEwVjI3SDl6TTEwLDI2SDExVjI3SDEwek0xMSwyNkgxMlYyN0gxMXpNMTMsMjZIMTRWMjdIMTN6TTE2LDI2SDE3VjI3SDE2ek0xNywyNkgxOFYyN0gxN3pNMTksMjZIMjBWMjdIMTl6TTI0LDI2SDI1VjI3SDI0ek0yNSwyNkgyNlYyN0gyNXpNMjYsMjZIMjdWMjdIMjZ6TTI4LDI2SDI5VjI3SDI4ek0wLDI3SDFWMjhIMHpNNiwyN0g3VjI4SDZ6TTgsMjdIOVYyOEg4ek05LDI3SDEwVjI4SDl6TTEwLDI3SDExVjI4SDEwek0xMSwyN0gxMlYyOEgxMXpNMTIsMjdIMTNWMjhIMTJ6TTEzLDI3SDE0VjI4SDEzek0xNywyN0gxOFYyOEgxN3pNMTgsMjdIMTlWMjhIMTh6TTE5LDI3SDIwVjI4SDE5ek0yMCwyN0gyMVYyOEgyMHpNMjIsMjdIMjNWMjhIMjJ6TTI3LDI3SDI4VjI4SDI3ek0wLDI4SDFWMjlIMHpNMSwyOEgyVjI5SDF6TTIsMjhIM1YyOUgyek0zLDI4SDRWMjlIM3pNNCwyOEg1VjI5SDR6TTUsMjhINlYyOUg1ek02LDI4SDdWMjlINnpNOCwyOEg5VjI5SDh6TTksMjhIMTBWMjlIOXpNMTAsMjhIMTFWMjlIMTB6TTEyLDI4SDEzVjI5SDEyek0xNiwyOEgxN1YyOUgxNnpNMTcsMjhIMThWMjlIMTd6TTIwLDI4SDIxVjI5SDIwek0yMiwyOEgyM1YyOUgyMnpNMjMsMjhIMjRWMjlIMjN6TTI1LDI4SDI2VjI5SDI1ek0yNywyOEgyOFYyOUgyN3oiIGlkPSJxci1wYXRoIiBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIgc3Ryb2tlPSJub25lIi8+PC9zdmc+"><span>Open on phone</span></div></footer>
+</div>
+
+<script>(function(){var s=document.querySelector('.sheet'),k=parseFloat(getComputedStyle(s).getPropertyValue('--k'))||1,mode=localStorage.getItem('obwall-fit')||'width',cur=1;
+  function fit(m){mode=m;try{localStorage.setItem('obwall-fit',m)}catch(e){}var r=s.getBoundingClientRect(),w=r.width/cur,h=r.height/cur,
+  f=m==='width'?(innerWidth-24)/w:m==='page'?Math.min((innerWidth-24)/w,(innerHeight-70)/h):1;f=Math.max(.08,Math.min(f,4));cur=f;s.style.zoom=k*f;
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)t.scrollIntoView({block:'start'})}}
+  document.querySelectorAll('[data-fit]').forEach(function(b){b.onclick=function(){fit(b.dataset.fit==='1'?1:b.dataset.fit)}});
+  document.querySelector('.offnav select').onchange=function(e){location.href=e.target.value};
+  addEventListener('resize',function(){if(mode!==1)fit(mode)});addEventListener('load',function(){fit(mode)});})();</script></body></html>
